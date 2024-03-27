@@ -34,18 +34,13 @@ public class BlockFenceNetherBrick extends BlockFence {
     }
 
     @Override
-    public double getHardness() {
-        return 2;
-    }
-
-    @Override
     public double getResistance() {
         return 10;
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };

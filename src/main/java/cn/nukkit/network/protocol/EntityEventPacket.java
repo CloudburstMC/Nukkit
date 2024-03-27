@@ -3,12 +3,13 @@ package cn.nukkit.network.protocol;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
 public class EntityEventPacket extends DataPacket {
-    public static final int NETWORK_ID = ProtocolInfo.ENTITY_EVENT_PACKET;
+
+    public static final byte NETWORK_ID = ProtocolInfo.ENTITY_EVENT_PACKET;
 
     public static final int JUMP = 1;
     public static final int HURT_ANIMATION = 2;
@@ -49,9 +50,7 @@ public class EntityEventPacket extends DataPacket {
     public static final int ENDER_DRAGON_DEATH = 37;
     public static final int DUST_PARTICLES = 38;
     public static final int ARROW_SHAKE = 39;
-
     public static final int EATING_ITEM = 57;
-
     public static final int BABY_ANIMAL_FEED = 60;
     public static final int DEATH_SMOKE_CLOUD = 61;
     public static final int COMPLETE_TRADE = 62;
@@ -79,7 +78,7 @@ public class EntityEventPacket extends DataPacket {
 
     public long eid;
     public int event;
-    public int data;
+    public int data = 0;
 
     @Override
     public void decode() {

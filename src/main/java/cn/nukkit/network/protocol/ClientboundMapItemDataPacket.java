@@ -15,7 +15,7 @@ public class ClientboundMapItemDataPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.CLIENTBOUND_MAP_ITEM_DATA_PACKET;
 
-    public int[] eids = new int[0];
+    public long[] eids = new long[0];
 
     public long mapId;
     public int update;
@@ -45,7 +45,7 @@ public class ClientboundMapItemDataPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -68,11 +68,12 @@ public class ClientboundMapItemDataPacket extends DataPacket {
         this.putUnsignedVarInt(update);
         this.putByte(this.dimensionId);
         this.putBoolean(this.isLocked);
-        this.putBlockVector3(this.origin);
+
+        this.putSignedBlockPosition(origin);
 
         if ((update & ENTITIES_UPDATE) != 0) {
             this.putUnsignedVarInt(eids.length);
-            for (int eid : eids) {
+            for (long eid : eids) {
                 this.putEntityUniqueId(eid);
             }
         }
@@ -101,7 +102,7 @@ public class ClientboundMapItemDataPacket extends DataPacket {
                 this.putByte(decorator.offsetX);
                 this.putByte(decorator.offsetZ);
                 this.putString(decorator.label);
-                this.putUnsignedVarInt(decorator.color.getRGB());
+                this.putUnsignedVarInt(decorator.color.getRGB()); //toABGR?
             }
         }
 
@@ -123,7 +124,7 @@ public class ClientboundMapItemDataPacket extends DataPacket {
                 image.flush();
             } else if (colors.length > 0) {
                 for (int color : colors) {
-                    this.putUnsignedVarInt(color);
+                    this.putUnsignedVarInt(color); //toABGR?
                 }
             }
         }

@@ -1,12 +1,10 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.utils.Utils;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-/**
- * Created by PetteriM1
- */
-public class EntityTurtle extends EntityAnimal {
+public class EntityTurtle extends EntityWaterAnimal {
 
     public static final int NETWORK_ID = 74;
 
@@ -17,10 +15,6 @@ public class EntityTurtle extends EntityAnimal {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public String getName() {
-        return "Turtle";
     }
 
     @Override
@@ -35,7 +29,12 @@ public class EntityTurtle extends EntityAnimal {
 
     @Override
     public void initEntity() {
-        super.initEntity();
         this.setMaxHealth(30);
+        super.initEntity();
+    }
+
+    @Override
+    public int getKillExperience() {
+        return this.isBaby() ? 0 : Utils.rand(1, 3);
     }
 }

@@ -6,10 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class LevelProviderManager {
+
     protected static final Map<String, Class<? extends LevelProvider>> providers = new HashMap<>();
 
     public static void addProvider(Server server, Class<? extends LevelProvider> clazz) {
@@ -34,8 +35,6 @@ public abstract class LevelProviderManager {
     }
 
     public static Class<? extends LevelProvider> getProviderByName(String name) {
-        name = name.trim().toLowerCase();
-        return providers.getOrDefault(name, null);
+        return providers.getOrDefault(name.trim().toLowerCase(), null);
     }
-
 }

@@ -2,10 +2,10 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemCake;
 import cn.nukkit.item.food.Food;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -43,17 +43,12 @@ public class BlockCake extends BlockTransparentMeta {
 
     @Override
     public double getResistance() {
-        return 2.5;
+        return 0.5;
     }
 
     @Override
     public double getMinX() {
-        return this.x + (1 + getDamage() * 2) / 16;
-    }
-
-    @Override
-    public double getMinY() {
-        return this.y;
+        return this.x + ((1 + (getDamage() << 1)) >> 4);
     }
 
     @Override
@@ -79,8 +74,7 @@ public class BlockCake extends BlockTransparentMeta {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (down().getId() != Block.AIR) {
-            getLevel().setBlock(block, this, true, true);
-
+            this.getLevel().setBlock(this, this, true, true);
             return true;
         }
         return false;
@@ -106,12 +100,12 @@ public class BlockCake extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemCake();
+        return Item.get(Item.CAKE);
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (player != null && (player.getFoodData().getLevel() < player.getFoodData().getMaxLevel() || player.isCreative() || player.getServer().getDifficulty() == 0)) {
+        if (player != null && player.canEat(false)) {
             if (getDamage() <= 0x06) setDamage(getDamage() + 1);
             if (getDamage() >= 0x06) {
                 getLevel().setBlock(this, Block.get(BlockID.AIR), true);
@@ -119,6 +113,7 @@ public class BlockCake extends BlockTransparentMeta {
                 Food.getByRelative(this).eatenBy(player);
                 getLevel().setBlock(this, this, true);
             }
+            player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BURP);
             return true;
         }
         return false;
@@ -130,10 +125,20 @@ public class BlockCake extends BlockTransparentMeta {
     }
 
     public int getComparatorInputOverride() {
-        return (7 - this.getDamage()) * 2;
+        return (7 - this.getDamage()) << 1;
     }
 
     public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
         return true;
     }
 }

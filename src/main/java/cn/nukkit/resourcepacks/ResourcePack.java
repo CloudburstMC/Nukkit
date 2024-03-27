@@ -3,6 +3,7 @@ package cn.nukkit.resourcepacks;
 import java.util.UUID;
 
 public interface ResourcePack {
+
     String getPackName();
 
     UUID getPackId();
@@ -15,5 +16,7 @@ public interface ResourcePack {
 
     byte[] getPackChunk(int off, int len);
 
-    String getEncryptionKey();
+    default String getEncryptionKey() { // Default for backwards compatibility
+        return "";
+    }
 }

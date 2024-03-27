@@ -3,7 +3,7 @@ package cn.nukkit.event.plugin;
 import cn.nukkit.plugin.Plugin;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class PluginEnableEvent extends PluginEvent {

@@ -1,11 +1,14 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.potion.Effect;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 
 import java.util.List;
@@ -19,9 +22,45 @@ public class EntityXPOrb extends Entity {
     public static final int NETWORK_ID = 69;
 
     /**
-     * Split sizes used for dropping experience orbs.
+     * Split sizes used for dropping experience orbs
      */
-    public static final int[] ORB_SPLIT_SIZES = {2477, 1237, 617, 307, 149, 73, 37, 17, 7, 3, 1}; //This is indexed biggest to smallest so that we can return as soon as we found the biggest value.
+    public static final int[] ORB_SPLIT_SIZES = {2477, 1237, 617, 307, 149, 73, 37, 17, 7, 3, 1}; // This is indexed biggest to smallest so that we can return as soon as we found the biggest value
+    public Player closestPlayer = null;
+    private int pickupDelay;
+    private int exp;
+
+    public EntityXPOrb(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
+    /**
+     * Returns the largest size of normal XP orb that will be spawned for the specified amount of XP. Used to split XP
+     * up into multiple orbs when an amount of XP is dropped.
+     */
+    public static int getMaxOrbSize(int amount) {
+        for (int split : ORB_SPLIT_SIZES) {
+            if (amount >= split) {
+                return split;
+            }
+        }
+
+        return 1;
+    }
+
+    /**
+     * Splits the specified amount of XP into an array of acceptable XP orb sizes.
+     */
+    public static List<Integer> splitIntoOrbSizes(int amount) {
+        List<Integer> result = new IntArrayList();
+
+        while (amount > 0) {
+            int size = getMaxOrbSize(amount);
+            result.add(size);
+            amount -= size;
+        }
+
+        return result;
+    }
 
     @Override
     public int getNetworkId() {
@@ -30,17 +69,17 @@ public class EntityXPOrb extends Entity {
 
     @Override
     public float getWidth() {
-        return 0.25f;
+        return 0.1f;
     }
 
     @Override
     public float getLength() {
-        return 0.25f;
+        return 0.1f;
     }
 
     @Override
     public float getHeight() {
-        return 0.25f;
+        return 0.1f;
     }
 
     @Override
@@ -58,32 +97,25 @@ public class EntityXPOrb extends Entity {
         return false;
     }
 
-    public EntityXPOrb(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
-    }
-
-    private int age;
-    private int pickupDelay;
-    private int exp;
-
-    public Player closestPlayer = null;
-
     @Override
     protected void initEntity() {
+        this.setMaxHealth(5);
         super.initEntity();
-
-        setMaxHealth(5);
-        setHealth(5);
 
         if (namedTag.contains("Health")) {
             this.setHealth(namedTag.getShort("Health"));
+        } else {
+            this.setHealth(5);
         }
+
         if (namedTag.contains("Age")) {
             this.age = namedTag.getShort("Age");
         }
+
         if (namedTag.contains("PickupDelay")) {
             this.pickupDelay = namedTag.getShort("PickupDelay");
         }
+
         if (namedTag.contains("Value")) {
             this.exp = namedTag.getShort("Value");
         }
@@ -93,17 +125,15 @@ public class EntityXPOrb extends Entity {
         }
 
         this.dataProperties.putInt(DATA_EXPERIENCE_VALUE, this.exp);
-
-        //call event item spawn event
     }
 
     @Override
     public boolean attack(EntityDamageEvent source) {
         return (source.getCause() == DamageCause.VOID ||
                 source.getCause() == DamageCause.FIRE_TICK ||
-                (source.getCause() == DamageCause.ENTITY_EXPLOSION ||
+                source.getCause() == DamageCause.ENTITY_EXPLOSION ||
                 source.getCause() == DamageCause.BLOCK_EXPLOSION) &&
-                !this.isInsideOfWater()) && super.attack(source);
+                super.attack(source);
     }
 
     @Override
@@ -116,43 +146,60 @@ public class EntityXPOrb extends Entity {
         if (tickDiff <= 0 && !this.justCreated) {
             return true;
         }
-        this.lastUpdate = currentTick;
 
-        boolean hasUpdate = entityBaseTick(tickDiff);
+        this.minimalEntityTick(currentTick, tickDiff);
+
+        if (this.age > 6000) {
+            this.close();
+            return false;
+        }
+
         if (this.isAlive()) {
-
-            if (this.pickupDelay > 0 && this.pickupDelay < 32767) { //Infinite delay
+            if (this.pickupDelay > 0) {
                 this.pickupDelay -= tickDiff;
                 if (this.pickupDelay < 0) {
                     this.pickupDelay = 0;
                 }
-            }/* else { // Done in Player#checkNearEntities
-                for (Entity entity : this.level.getCollidingEntities(this.boundingBox, this)) {
-                    if (entity instanceof Player) {
-                        if (((Player) entity).pickupEntity(this, false)) {
-                            return true;
+            }
+
+            if (this.isOnGround()) {
+                this.motionY = 0;
+            } else if (Block.hasWater(level.getBlockIdAt(this.chunk, this.getFloorX(), NukkitMath.floorDouble(this.y + 0.53), this.getFloorZ()))) {
+                this.motionY = this.getGravity() / 2;
+            } else {
+                this.motionY -= this.getGravity();
+            }
+
+            this.checkBlockCollision();
+
+            /*if (this.checkObstruction(this.x, this.y, this.z)) {
+                hasUpdate = true;
+            }*/
+
+            // Force occasional check for nearby blocks changed even if the item doesn't move
+            if (this.motionY == 0 && this.age % 20 == 0) {
+                this.motionY = 0.00001;
+            }
+
+            if (this.age % 2 == 0) {
+                if (this.closestPlayer != null &&
+                        (this.closestPlayer.level != this.level ||
+                        this.closestPlayer.closed ||
+                        !this.closestPlayer.isAlive() ||
+                        this.closestPlayer.isSpectator() ||
+                        !this.closestPlayer.canPickupXP() ||
+                        this.closestPlayer.distanceSquared(this) > 64.0D)) {
+                    this.closestPlayer = null;
+                }
+
+                if (this.closestPlayer == null) {
+                    for (Player p : this.getViewers().values()) {
+                        if (!p.isSpectator() && p.canPickupXP() && p.distanceSquared(this) <= 64.0D) {
+                            this.closestPlayer = p;
+                            break;
                         }
                     }
                 }
-            }*/
-
-            this.motionY -= this.getGravity();
-
-            if (this.checkObstruction(this.x, this.y, this.z)) {
-                hasUpdate = true;
-            }
-
-            if (this.closestPlayer == null || this.closestPlayer.distanceSquared(this) > 64.0D) {
-                for (Player p : this.getViewers().values()) {
-                    if (!p.isSpectator() && p.distance(this) <= 8) {
-                        this.closestPlayer = p;
-                        break;
-                    }
-                }
-            }
-
-            if (this.closestPlayer != null && this.closestPlayer.isSpectator()) {
-                this.closestPlayer = null;
             }
 
             if (this.closestPlayer != null) {
@@ -172,10 +219,33 @@ public class EntityXPOrb extends Entity {
 
             this.move(this.motionX, this.motionY, this.motionZ);
 
+            if (this.y < (this.getLevel().getMinBlockY() - 16)) {
+                this.attack(new EntityDamageEvent(this, DamageCause.VOID, 10));
+            }
+
+            if (this.fireTicks > 0) {
+                if (this.fireProof) {
+                    this.fireTicks -= tickDiff << 2;
+                    if (this.fireTicks < 0) {
+                        this.fireTicks = 0;
+                    }
+                } else {
+                    if (((this.fireTicks % 20) == 0 || tickDiff > 20) && !this.hasEffect(Effect.FIRE_RESISTANCE)) {
+                        this.attack(new EntityDamageEvent(this, DamageCause.FIRE_TICK, 1));
+                    }
+                    this.fireTicks -= tickDiff;
+                }
+                if (this.fireTicks <= 0) {
+                    this.extinguish();
+                } else if (!this.fireProof) {
+                    this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, true);
+                }
+            }
+
             double friction = 1d - this.getDrag();
 
             if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction = this.getLevel().getBlock(this.temporalVector.setComponents((int) Math.floor(this.x), (int) Math.floor(this.y - 1), (int) Math.floor(this.z) - 1)).getFrictionFactor() * friction;
+                friction = this.getLevel().getBlock(this.chunk, getFloorX(), getFloorY() - 1, getFloorZ(), false).getFrictionFactor() * friction;
             }
 
             this.motionX *= friction;
@@ -183,19 +253,16 @@ public class EntityXPOrb extends Entity {
             this.motionZ *= friction;
 
             if (this.onGround) {
-                this.motionY *= -0.5;
+                this.motionY = 0;
             }
 
             this.updateMovement();
-
-            if (this.age > 6000) {
-                this.kill();
-                hasUpdate = true;
-            }
-
+        } else {
+            this.close();
+            return false;
         }
 
-        return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
+        return !(this.motionX == 0 && this.motionY == 0 && this.motionZ == 0);
     }
 
     @Override
@@ -229,34 +296,5 @@ public class EntityXPOrb extends Entity {
 
     public void setPickupDelay(int pickupDelay) {
         this.pickupDelay = pickupDelay;
-    }
-
-    /**
-     * Returns the largest size of normal XP orb that will be spawned for the specified amount of XP. Used to split XP
-     * up into multiple orbs when an amount of XP is dropped.
-     */
-    public static int getMaxOrbSize(int amount) {
-        for (int split : ORB_SPLIT_SIZES){
-            if (amount >= split) {
-                return split;
-            }
-        }
-
-        return 1;
-    }
-
-    /**
-     * Splits the specified amount of XP into an array of acceptable XP orb sizes.
-     */
-    public static List<Integer> splitIntoOrbSizes(int amount) {
-        List<Integer> result = new IntArrayList();
-
-        while (amount > 0) {
-            int size = getMaxOrbSize(amount);
-            result.add(size);
-            amount -= size;
-        }
-
-        return result;
     }
 }

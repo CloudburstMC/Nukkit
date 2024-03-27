@@ -21,6 +21,11 @@ public class SaveOffCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
+        if (args.length == 1 && args[0].equalsIgnoreCase("hold")) {
+            sender.getServer().holdWorldSave = true;
+            Command.broadcastCommandMessage(sender, new TranslationContainer("commands.save.hold-on"));
+            return true;
+        }
         sender.getServer().setAutoSave(false);
         Command.broadcastCommandMessage(sender, new TranslationContainer("commands.save.disabled"));
         return true;

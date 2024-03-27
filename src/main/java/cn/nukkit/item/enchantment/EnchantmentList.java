@@ -28,5 +28,4 @@ public class EnchantmentList {
     public int getSize() {
         return enchantments.length;
     }
-
 }

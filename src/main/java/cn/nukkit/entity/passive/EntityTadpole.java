@@ -3,12 +3,22 @@ package cn.nukkit.entity.passive;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-public class EntityTadpole extends EntityAnimal {
+public class EntityTadpole extends EntityFish {
 
     public static final int NETWORK_ID = 133;
 
     public EntityTadpole(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
+
+    @Override
+    public int getKillExperience() {
+        return 0;
+    }
+
+    @Override
+    int getBucketMeta() {
+        return 13;
     }
 
     @Override
@@ -28,12 +38,7 @@ public class EntityTadpole extends EntityAnimal {
 
     @Override
     protected void initEntity() {
-        super.initEntity();
         this.setMaxHealth(6);
-    }
-
-    @Override
-    public String getName() {
-        return "Tadpole";
+        super.initEntity();
     }
 }

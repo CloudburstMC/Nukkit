@@ -6,10 +6,11 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockSandstone extends BlockSolidMeta {
+
     public static final int NORMAL = 0;
     public static final int CHISELED = 1;
     public static final int SMOOTH = 2;
@@ -39,7 +40,7 @@ public class BlockSandstone extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
+        String[] names = {
                 "Sandstone",
                 "Chiseled Sandstone",
                 "Smooth Sandstone",
@@ -51,7 +52,7 @@ public class BlockSandstone extends BlockSolidMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };

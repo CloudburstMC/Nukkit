@@ -17,9 +17,6 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 
-/**
- * Created by PetteriM1
- */
 public class BlockBanner extends BlockTransparentMeta implements Faceable {
 
     public BlockBanner() {
@@ -56,7 +53,7 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    protected AxisAlignedBB recalculateBoundingBox() {
+    public AxisAlignedBB getBoundingBox() {
         return null;
     }
 
@@ -71,29 +68,34 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
             if (face == BlockFace.UP) {
                 this.setDamage(NukkitMath.floorDouble(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
                 this.getLevel().setBlock(block, this, true);
+            } else if (target.canBeReplaced()) {
+                this.setDamage(NukkitMath.floorDouble(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
+                this.getLevel().setBlock(target, this, true);
             } else {
                 this.setDamage(face.getIndex());
-                this.getLevel().setBlock(block, Block.get(BlockID.WALL_BANNER, this.getDamage()), true);
+                this.getLevel().setBlock(block, Block.get(WALL_BANNER, this.getDamage()), true);
             }
 
             CompoundTag nbt = BlockEntity.getDefaultCompound(this, BlockEntity.BANNER)
                     .putInt("Base", item.getDamage() & 0xf);
 
             Tag type = item.getNamedTagEntry("Type");
+
             if (type instanceof IntTag) {
                 nbt.put("Type", type);
             }
+
             Tag patterns = item.getNamedTagEntry("Patterns");
             if (patterns instanceof ListTag) {
                 nbt.put("Patterns", patterns);
             }
 
-            BlockEntityBanner banner = (BlockEntityBanner) BlockEntity.createBlockEntity(BlockEntity.BANNER, this.getChunk(), nbt);
-            return banner != null;
+            BlockEntity.createBlockEntity(BlockEntity.BANNER, this.getChunk(), nbt);
+            return true;
         }
         return false;
     }
-
+    
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
@@ -153,5 +155,15 @@ public class BlockBanner extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean isSolid() {
         return false;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

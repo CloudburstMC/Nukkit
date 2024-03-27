@@ -5,7 +5,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockEntityEnchantTable extends BlockEntitySpawnable implements BlockEntityNameable {
@@ -16,7 +16,7 @@ public class BlockEntityEnchantTable extends BlockEntitySpawnable implements Blo
 
     @Override
     public boolean isBlockEntityValid() {
-        return getBlock().getId() == Block.ENCHANT_TABLE;
+        return level.getBlockIdAt(chunk, (int) x, (int) y, (int) z) == Block.ENCHANT_TABLE;
     }
 
     @Override
@@ -31,7 +31,9 @@ public class BlockEntityEnchantTable extends BlockEntitySpawnable implements Blo
 
     @Override
     public void setName(String name) {
-        if (name == null || name.equals("")) {
+        setDirty();
+
+        if (name == null || name.isEmpty()) {
             this.namedTag.remove("CustomName");
             return;
         }
@@ -53,5 +55,4 @@ public class BlockEntityEnchantTable extends BlockEntitySpawnable implements Blo
 
         return c;
     }
-
 }

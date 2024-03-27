@@ -1,22 +1,21 @@
 package cn.nukkit.entity.item;
 
-import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.data.NBTEntityData;
-import cn.nukkit.entity.data.Vector3fEntityData;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemFirework;
+import cn.nukkit.level.Explosion;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.EntityEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -26,30 +25,35 @@ public class EntityFirework extends Entity {
 
     public static final int NETWORK_ID = 72;
 
-    private int fireworkAge;
     private int lifetime;
     private Item firework;
 
     public EntityFirework(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
 
-        this.fireworkAge = 0;
-        Random rand = ThreadLocalRandom.current();
-        this.lifetime = 30 + rand.nextInt(12);
+    @Override
+    public void initEntity() {
+        super.initEntity();
+
+        ThreadLocalRandom rand = ThreadLocalRandom.current();
 
         this.motionX = rand.nextGaussian() * 0.001D;
         this.motionZ = rand.nextGaussian() * 0.001D;
         this.motionY = 0.05D;
 
-        if (nbt.contains("FireworkItem")) {
-            firework = NBTIO.getItemHelper(nbt.getCompound("FireworkItem"));
-        } else {
-            firework = new ItemFirework();
+        if (namedTag.contains("FireworkItem")) {
+            this.setFirework(NBTIO.getItemHelper(namedTag.getCompound("FireworkItem")));
         }
+    }
 
-        this.setDataProperty(new NBTEntityData(Entity.DATA_DISPLAY_ITEM, firework.getNamedTag()));
-        this.setDataProperty(new Vector3fEntityData(Entity.DATA_DISPLAY_OFFSET, new Vector3f(0, 1, 0)));
-        this.setDataProperty(new LongEntityData(Entity.DATA_HAS_DISPLAY, -1));
+    @Override
+    public void saveNBT() {
+        super.saveNBT();
+
+        if (this.firework != null) {
+            this.namedTag.putCompound("FireworkItem", NBTIO.putItemHelper(this.firework));
+        }
     }
 
     @Override
@@ -61,6 +65,9 @@ public class EntityFirework extends Entity {
     public boolean onUpdate(int currentTick) {
         if (this.closed) {
             return false;
+        } else if (this.age > this.lifetime) {
+            this.close();
+            return false;
         }
 
         int tickDiff = currentTick - this.lastUpdate;
@@ -71,50 +78,59 @@ public class EntityFirework extends Entity {
 
         this.lastUpdate = currentTick;
 
-        this.timing.startTiming();
-
-
         boolean hasUpdate = this.entityBaseTick(tickDiff);
 
         if (this.isAlive()) {
-
             this.motionX *= 1.15D;
             this.motionZ *= 1.15D;
             this.motionY += 0.04D;
+
             this.move(this.motionX, this.motionY, this.motionZ);
 
             this.updateMovement();
 
-
             float f = (float) Math.sqrt(this.motionX * this.motionX + this.motionZ * this.motionZ);
-            this.yaw = (float) (Math.atan2(this.motionX, this.motionZ) * (180D / Math.PI));
+            this.yaw = (float) (Math.atan2(this.motionX, this.motionZ) * (57.29577951308232));
+            this.pitch = (float) (Math.atan2(this.motionY, f) * (57.29577951308232));
 
-            this.pitch = (float) (Math.atan2(this.motionY, f) * (180D / Math.PI));
-
-
-            if (this.fireworkAge == 0) {
+            if (this.age == 0) {
                 this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LAUNCH);
             }
 
-            this.fireworkAge++;
-
-            hasUpdate = true;
-            if (this.fireworkAge >= this.lifetime) {
+            if (this.age >= this.lifetime) {
                 EntityEventPacket pk = new EntityEventPacket();
-                pk.data = 0;
                 pk.event = EntityEventPacket.FIREWORK_EXPLOSION;
                 pk.eid = this.getId();
+                this.level.addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
 
-                level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LARGE_BLAST, -1, NETWORK_ID);
+                this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_LARGE_BLAST, -1, NETWORK_ID);
 
-                Server.broadcastPacket(getViewers().values(), pk);
+                if (this.firework != null) {
+                    Tag nbt = this.firework.getNamedTag();
+                    if (nbt != null) {
+                        nbt = ((CompoundTag) nbt).get("Fireworks");
+                        if (nbt instanceof CompoundTag) {
+                            nbt = ((CompoundTag) nbt).get("Explosions");
+                            if (nbt instanceof ListTag) {
+                                if (!((ListTag) nbt).getAll().isEmpty()) {
+                                    EntityExplosionPrimeEvent ev = new EntityExplosionPrimeEvent(this, 2.5);
+                                    ev.setBlockBreaking(false);
+                                    server.getPluginManager().callEvent(ev);
+                                    if (!ev.isCancelled()) {
+                                        Explosion explosion = new Explosion(this, ev.getForce(), this);
+                                        explosion.explodeEntity();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
-                this.kill();
+                this.kill(); // Using close() here would remove the firework before the explosion is displayed
+
                 hasUpdate = true;
             }
         }
-
-        this.timing.stopTiming();
 
         return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
     }
@@ -130,7 +146,11 @@ public class EntityFirework extends Entity {
 
     public void setFirework(Item item) {
         this.firework = item;
-        this.setDataProperty(new NBTEntityData(Entity.DATA_DISPLAY_ITEM, item.getNamedTag()));
+        this.setDataProperty(new NBTEntityData(Entity.DATA_DISPLAY_ITEM, this.firework));
+
+        int level = Math.max(1, this.firework instanceof ItemFirework ? ((ItemFirework) this.firework).getFlight() : 1); // Level 1 minimum
+        ThreadLocalRandom rand = ThreadLocalRandom.current();
+        this.lifetime = 10 * (level + 1) + rand.nextInt(5) + rand.nextInt(6); // Wiki
     }
 
     @Override

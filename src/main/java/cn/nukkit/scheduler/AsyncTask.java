@@ -2,7 +2,6 @@ package cn.nukkit.scheduler;
 
 import cn.nukkit.Server;
 import cn.nukkit.utils.ThreadStore;
-import co.aikar.timings.Timings;
 
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -50,11 +49,11 @@ public abstract class AsyncTask implements Runnable {
     }
 
     public Object getFromThreadStore(String identifier) {
-        return this.isFinished() ? null : ThreadStore.store.get(identifier);
+        return this.finished ? null : ThreadStore.store.get(identifier);
     }
 
     public void saveToThreadStore(String identifier, Object value) {
-        if (!this.isFinished()) {
+        if (!this.finished) {
             if (value == null) {
                 ThreadStore.store.remove(identifier);
             } else {
@@ -76,18 +75,15 @@ public abstract class AsyncTask implements Runnable {
     }
 
     public static void collectTask() {
-        Timings.schedulerAsyncTimer.startTiming();
         while (!FINISHED_LIST.isEmpty()) {
             AsyncTask task = FINISHED_LIST.poll();
             try {
                 task.onCompletion(Server.getInstance());
             } catch (Exception e) {
                 Server.getInstance().getLogger().critical("Exception while async task "
-                        + task.getTaskId()
+                        + task.taskId
                         + " invoking onCompletion", e);
             }
         }
-        Timings.schedulerAsyncTimer.stopTiming();
     }
-
 }

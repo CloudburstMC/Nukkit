@@ -1,7 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Rail;
 
@@ -36,21 +38,15 @@ public class BlockRailActivator extends BlockRail {
                 return 0; // Already broken
             }
 
-            boolean wasPowered = isActive();
-            boolean isPowered = level.isBlockPowered(this.getLocation())
+            boolean isPowered = level.isBlockPowered(this)
                     || checkSurrounding(this, true, 0)
                     || checkSurrounding(this, false, 0);
-            boolean hasUpdate = false;
 
-            if (wasPowered != isPowered) {
+            if (isActive() != isPowered) {
                 setActive(isPowered);
-                hasUpdate = true;
-            }
-
-            if (hasUpdate) {
-                level.updateAround(down());
+                level.updateAround(getSideVec(BlockFace.DOWN));
                 if (getOrientation().isAscending()) {
-                    level.updateAround(up());
+                    level.updateAround(getSideVec(BlockFace.UP));
                 }
             }
             return type;
@@ -75,7 +71,7 @@ public class BlockRailActivator extends BlockRail {
         int dz = pos.getFloorZ();
 
         BlockRail block;
-        Block block2 = level.getBlock(new Vector3(dx, dy, dz));
+        Block block2 = level.getBlock(dx, dy, dz);
 
         if (Rail.isRailBlock(block2)) {
             block = (BlockRail) block2;
@@ -170,14 +166,19 @@ public class BlockRailActivator extends BlockRail {
     }
 
     @Override
+    public Item toItem() {
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(Item.ACTIVATOR_RAIL, 0, 1)
+                toItem()
         };
     }
 
     @Override
     public double getHardness() {
-        return 0.5;
+        return 0.5; // 0.7
     }
 }

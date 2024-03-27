@@ -6,12 +6,13 @@ import cn.nukkit.utils.ThreadCache;
  * @author https://github.com/boy0001/
  */
 public final class BitArray256 {
+
     private final int bitsPerEntry;
     protected final long[] data;
 
     public BitArray256(int bitsPerEntry) {
         this.bitsPerEntry = bitsPerEntry;
-        int longLen = (this.bitsPerEntry * 256) >> 6;
+        int longLen = (this.bitsPerEntry << 8) >> 6;
         this.data = new long[longLen];
     }
 
@@ -26,7 +27,7 @@ public final class BitArray256 {
         int localBitIndexStart = bitIndexStart & 63;
         this.data[longIndexStart] = this.data[longIndexStart] & ~((long) ((1 << bitsPerEntry) - 1) << localBitIndexStart) | ((long) value) << localBitIndexStart;
 
-        if(localBitIndexStart > 64 - bitsPerEntry) {
+        if (localBitIndexStart > 64 - bitsPerEntry) {
             int longIndexEnd = longIndexStart + 1;
             int localShiftStart = 64 - localBitIndexStart;
             int localShiftEnd = bitsPerEntry - localShiftStart;
@@ -40,11 +41,10 @@ public final class BitArray256 {
         int longIndexStart = bitIndexStart >> 6;
 
         int localBitIndexStart = bitIndexStart & 63;
-        if(localBitIndexStart <= 64 - bitsPerEntry) {
+        if (localBitIndexStart <= 64 - bitsPerEntry) {
             return (int)(this.data[longIndexStart] >>> localBitIndexStart & ((1 << bitsPerEntry) - 1));
         } else {
-            int localShift = 64 - localBitIndexStart;
-            return (int) ((this.data[longIndexStart] >>> localBitIndexStart | this.data[longIndexStart + 1] << localShift) & ((1 << bitsPerEntry) - 1));
+            return (int) ((this.data[longIndexStart] >>> localBitIndexStart | this.data[longIndexStart + 1] << (64 - localBitIndexStart)) & ((1 << bitsPerEntry) - 1));
         }
     }
 
@@ -55,8 +55,7 @@ public final class BitArray256 {
     }
 
     public BitArray256 grow(int newBitsPerEntry) {
-        int amtGrow = newBitsPerEntry - this.bitsPerEntry;
-        if (amtGrow <= 0) return this;
+        if (newBitsPerEntry - this.bitsPerEntry <= 0) return this;
         BitArray256 newBitArray = new BitArray256(newBitsPerEntry);
 
         int[] buffer = ThreadCache.intCache256.get();

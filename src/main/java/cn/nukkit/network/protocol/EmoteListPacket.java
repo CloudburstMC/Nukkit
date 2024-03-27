@@ -8,6 +8,7 @@ import java.util.UUID;
 
 @ToString
 public class EmoteListPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.EMOTE_LIST_PACKET;
 
     public long runtimeId;
@@ -22,6 +23,9 @@ public class EmoteListPacket extends DataPacket {
     public void decode() {
         this.runtimeId = this.getEntityRuntimeId();
         int size = (int) this.getUnsignedVarInt();
+        if (size > 1000) {
+            throw new RuntimeException("Too big EmoteListPacket: " + size);
+        }
         for (int i = 0; i < size; i++) {
             UUID id = this.getUUID();
             pieceIds.add(id);

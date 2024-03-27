@@ -5,7 +5,7 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.enchantment.EnchantmentType;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class EnchantmentDamage extends Enchantment {
@@ -16,11 +16,8 @@ public abstract class EnchantmentDamage extends Enchantment {
         ARTHROPODS
     }
 
-    protected final TYPE damageType;
-
     protected EnchantmentDamage(int id, String name, Rarity rarity, TYPE type) {
         super(id, name, rarity, EnchantmentType.SWORD);
-        this.damageType = type;
     }
 
     @Override

@@ -2,8 +2,9 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-public class EntityGoat extends EntityAnimal {
+public class EntityGoat extends EntityWalkingAnimal {
 
     public static final int NETWORK_ID = 128;
 
@@ -12,28 +13,34 @@ public class EntityGoat extends EntityAnimal {
     }
 
     @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
-    }
-
-    @Override
-    public float getHeight() {
-        return this.isBaby() ? 0.65f : 1.3f;
+    public void initEntity() {
+        this.setMaxHealth(10);
+        super.initEntity();
     }
 
     @Override
     public float getWidth() {
-        return this.isBaby() ? 0.45f : 0.9f;
+        if (this.isBaby()) {
+            return 0.65f;
+        }
+        return 1.3f;
     }
 
     @Override
-    protected void initEntity() {
-        super.initEntity();
-        this.setMaxHealth(10);
+    public float getHeight() {
+        if (this.isBaby()) {
+            return 0.45f;
+        }
+        return 0.9f;
     }
 
     @Override
-    public String getName() {
-        return "Goat";
+    public int getKillExperience() {
+        return Utils.rand(1, 3);
+    }
+
+    @Override
+    public int getNetworkId() {
+        return NETWORK_ID;
     }
 }

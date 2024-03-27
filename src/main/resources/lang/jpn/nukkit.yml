@@ -1,0 +1,98 @@
+# Nukkitの設定ファイル（機械翻訳みたいな和訳でごめんなさいｗ)
+# 安全な設定もありますが、誤って設定すると鯖が壊れる設定の項目もあります。
+# 鯖をアップデートしても、新しい設定はこのファイルには追加されません。
+
+settings:
+ #言語設定
+ #現在選べる言語: eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, cze
+ language: "jpn"
+ #端末に送る言語を強制するかどうか
+ force-language: false
+ shutdown-message: "サーバーが終了しました"
+ #クエリーからプラグインリストを見えるようにする
+ query-plugins: true
+ #プラグインが非推奨APIメソッドを使用すると、コンソールにメッセージを表示します
+ deprecated-verbose: true
+ #AsyncTask workersの数
+ #auto に設定すると, コア数を検出しようとします（少なくとも4）
+ async-workers: auto
+
+network:
+ #バイト単位のバッチ処理パケットのしきい値。これらのパケットは圧縮されます
+ #0にするとすべてのパケットを圧縮します, -1 で無効です.
+ batch-threshold: 256
+ #バッチパケットを送信するときのzlibの圧縮レベルですす。 値を大きくするとcpuに多く負荷かけ、低くすると通信量が増えます。
+ compression-level: 4
+ #Enable network encryption
+ encryption: true
+
+debug:
+ #1より大きいと、コンソールにデバッグメッセージが表示されます
+ level: 1
+
+level-settings:
+ #マップが使用するデフォルトのフォーマット
+ default-format: leveldb
+ #自動的にレベルが毎秒20ティックを維持するためにtickの速度を変えます。
+ auto-tick-rate: true
+ auto-tick-rate-limit: 20
+ #基本のチックレートを設定します。 (1 = 20 ticks/毎秒, 2 = 10 ticks /毎秒, etc.)
+ base-tick-rate: 1
+ #ほかの設定がこれを許可しなくても、全員のtickを同じにする
+ always-tick-players: false
+
+chunk-sending:
+ #チックあたりのプレイヤーに送られるチャンクの量
+ per-tick: 4
+ #プレーヤーがスポーンする前に送信する必要があるチャンクの量
+ spawn-threshold: 56
+ #より速く送信するために、メモリ内にチャンクのシリアル化されたコピーを保存します
+ #プレイヤーがたくさんが同時に参加し、主にあまりブロックを設置したり壊したりしないワールドに効果ありです。
+ cache-chunks: false
+
+chunk-ticking:
+ #各チックで処理する最大のチャンク量
+ per-tick: 40
+ #プレイヤーの周りのチャンクの半径のtick
+ tick-radius: 3
+ clear-tick-list: false
+
+chunk-generation:
+ # マップ生成のキューが待機できるチャンクのサイズ
+ queue-size: 8
+ #読み込みのキューが待機できるチャンクのサイズ
+ population-queue-size: 8
+
+leveldb:
+ #Use native LevelDB implementation for better performance
+ use-native: false
+ #Set LevelDB memory cache size
+ cache-size-mb: 80
+
+ticks-per:
+ autosave: 6000
+
+player:
+ #trueの場合、プレーヤーデータは players/playername.dat として保存されます
+ #falseの場合、nukkitはプレーヤのデータを "dat"ファイルとして保存せず、プラグインが何かを実行できるようにします。
+ save-player-data: true
+ #スキンを変更する時のクールダウンを設定（秒単位）。なお不要な場合は0を設定してください。
+ skin-change-cooldown: 15
+ 
+aliases:
+ #コマンドのショートカット
+ #例:
+ #showtheversion: version
+ #savestop: [save-all, stop]
+
+worlds:
+ #Worlds that the server will use. Options are specific to the chosen generator, and may result in broken generation or
+ #be ignored completely.
+ world:
+  #seed: 404
+  generator: normal
+  options:
+ nether:
+  #seed: my_cool_nether_seed
+  generator: nether
+  options:

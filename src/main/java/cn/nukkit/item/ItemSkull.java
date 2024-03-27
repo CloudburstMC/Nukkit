@@ -1,6 +1,10 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.mob.EntityCreeper;
+import cn.nukkit.entity.mob.EntitySkeleton;
+import cn.nukkit.entity.mob.EntityWitherSkeleton;
+import cn.nukkit.entity.mob.EntityZombie;
 
 /**
  * Created by Snake1999 on 2016/2/3.
@@ -46,6 +50,26 @@ public class ItemSkull extends Item {
             case SKELETON_SKULL:
             default:
                 return "Skeleton Skull";
+        }
+    }
+
+    @Override
+    public boolean canBePutInHelmetSlot() {
+        return true;
+    }
+
+    public static Item getMobHead(int networkId) {
+        switch (networkId) {
+            case EntitySkeleton.NETWORK_ID:
+                return Item.get(SKULL, SKELETON_SKULL, 1);
+            case EntityWitherSkeleton.NETWORK_ID:
+                return Item.get(SKULL, WITHER_SKELETON_SKULL, 1);
+            case EntityZombie.NETWORK_ID:
+                return Item.get(SKULL, ZOMBIE_HEAD, 1);
+            case EntityCreeper.NETWORK_ID:
+                return Item.get(SKULL, CREEPER_HEAD, 1);
+            default:
+                return null;
         }
     }
 }

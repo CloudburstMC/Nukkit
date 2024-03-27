@@ -10,6 +10,7 @@ import cn.nukkit.utils.BlockColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockStairsWood extends BlockStairs {
+
     public BlockStairsWood() {
         this(0);
     }
@@ -35,7 +36,7 @@ public class BlockStairsWood extends BlockStairs {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
@@ -62,6 +63,7 @@ public class BlockStairsWood extends BlockStairs {
     public BlockColor getColor() {
         return BlockColor.WOOD_BLOCK_COLOR;
     }
+
     @Override
     public Item[] getDrops(Item item) {
          return new Item[]{

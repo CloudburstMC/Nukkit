@@ -17,5 +17,4 @@ public class ItemSalmon extends ItemFish {
     public ItemSalmon(Integer meta, int count) {
         super(RAW_SALMON, meta, count, "Raw Salmon");
     }
-
 }

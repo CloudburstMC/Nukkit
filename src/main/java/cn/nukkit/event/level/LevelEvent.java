@@ -4,7 +4,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.level.Level;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class LevelEvent extends Event {

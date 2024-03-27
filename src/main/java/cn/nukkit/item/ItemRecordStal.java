@@ -21,4 +21,9 @@ public class ItemRecordStal extends ItemRecord {
     public String getSoundId() {
         return "record.stal";
     }
+
+    @Override
+    public String getDiscName() {
+        return "C418 - stal";
+    }
 }

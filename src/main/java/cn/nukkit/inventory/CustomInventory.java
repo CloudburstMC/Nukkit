@@ -5,10 +5,11 @@ import cn.nukkit.item.Item;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class CustomInventory extends ContainerInventory {
+
     public CustomInventory(InventoryHolder holder, InventoryType type) {
         super(holder, type);
     }

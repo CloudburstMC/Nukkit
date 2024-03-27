@@ -3,11 +3,12 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.Faceable;
 
 /**
  * @author CreeperFace
  */
-public class BlockPistonHead extends BlockTransparentMeta {
+public class BlockPistonHead extends BlockTransparentMeta implements Faceable {
 
     public BlockPistonHead() {
         this(0);
@@ -29,12 +30,12 @@ public class BlockPistonHead extends BlockTransparentMeta {
 
     @Override
     public double getResistance() {
-        return 2.5;
+        return 1.5;
     }
 
     @Override
     public double getHardness() {
-        return 0.5;
+        return 1.5;
     }
 
     @Override
@@ -45,16 +46,19 @@ public class BlockPistonHead extends BlockTransparentMeta {
     @Override
     public boolean onBreak(Item item) {
         this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
-        Block piston = getSide(getFacing().getOpposite());
-
-        if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getFacing() == this.getFacing()) {
+        Block piston = getSide(getBlockFace().getOpposite());
+        if (piston instanceof BlockPistonBase && ((BlockPistonBase) piston).getFacing() == this.getBlockFace()) {
             piston.onBreak(item);
         }
         return true;
     }
 
-    public BlockFace getFacing() {
-        return BlockFace.fromIndex(this.getDamage()).getOpposite();
+    @Override
+    public BlockFace getBlockFace() {
+        BlockFace face = BlockFace.fromIndex(this.getDamage()).getOpposite();
+        if (face == BlockFace.UP) return BlockFace.DOWN;
+        if (face == BlockFace.DOWN) return BlockFace.UP;
+        return face;
     }
 
     @Override

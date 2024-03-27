@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public interface Inventory {
@@ -27,6 +27,10 @@ public interface Inventory {
 
     Item getItem(int index);
 
+    default Item getItemFast(int index) {
+        return getItem(index);
+    }
+
     default boolean setItem(int index, Item item) {
         return setItem(index, item, true);
     }
@@ -36,6 +40,10 @@ public interface Inventory {
     Item[] addItem(Item... slots);
 
     boolean canAddItem(Item item);
+
+    default boolean allowedToAdd(int itemId) {
+        return true;
+    }
 
     Item[] removeItem(Item... slots);
 
@@ -68,7 +76,7 @@ public interface Inventory {
     int firstEmpty(Item item);
 
     void decreaseCount(int slot);
-
+    
     void remove(Item item);
 
     default boolean clear(int index) {

@@ -35,4 +35,9 @@ public class SavannaMBiome extends SavannaBiome {
     public boolean doesOverhang() {
         return true;
     }
+
+    @Override
+    public boolean canRain() {
+        return true;
+    }
 }

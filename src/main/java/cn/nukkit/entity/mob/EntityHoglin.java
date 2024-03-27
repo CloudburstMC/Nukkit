@@ -1,12 +1,17 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Erik Miller | EinBexiii
  */
-public class EntityHoglin extends EntityMob {
+public class EntityHoglin extends EntityWalkingMob {
 
     public final static int NETWORK_ID = 124;
 
@@ -20,9 +25,14 @@ public class EntityHoglin extends EntityMob {
     }
 
     @Override
+    public int getKillExperience() {
+        return Utils.rand(1, 3);
+    }
+
+    @Override
     protected void initEntity() {
-        super.initEntity();
         this.setMaxHealth(40);
+        super.initEntity();
     }
 
     @Override
@@ -36,7 +46,19 @@ public class EntityHoglin extends EntityMob {
     }
 
     @Override
-    public String getName() {
-        return "Hoglin";
+    public Item[] getDrops() {
+        List<Item> drops = new ArrayList<>();
+
+        if (!this.isBaby()) {
+            for (int i = 0; i < Utils.rand(2, 4); i++) {
+                drops.add(Item.get(this.isOnFire() ? Item.COOKED_PORKCHOP : Item.RAW_PORKCHOP, 0, 1));
+            }
+
+            if (Utils.rand()) {
+                drops.add(Item.get(Item.LEATHER));
+            }
+        }
+
+        return drops.toArray(new Item[0]);
     }
 }

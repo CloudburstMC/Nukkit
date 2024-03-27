@@ -26,5 +26,4 @@ public class EnchantmentEntry {
     public String getRandomName() {
         return randomName;
     }
-
 }

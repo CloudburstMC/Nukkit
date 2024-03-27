@@ -8,7 +8,7 @@ import cn.nukkit.network.SourceInterface;
 import java.net.InetSocketAddress;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class PlayerCreationEvent extends Event {

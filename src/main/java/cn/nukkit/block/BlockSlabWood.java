@@ -21,7 +21,7 @@ public class BlockSlabWood extends BlockSlab {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
+        String[] names = {
                 "Oak",
                 "Spruce",
                 "Birch",
@@ -63,12 +63,13 @@ public class BlockSlabWood extends BlockSlab {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
+        int damage = this.getDamage() & 0x07;
+        return new ItemBlock(Block.get(this.getId(),damage ), damage);
     }
 
     @Override
     public BlockColor getColor() {
-        switch(getDamage() & 0x07){
+        switch (getDamage() & 0x07) {
             default:
             case 0: //OAK
                 return BlockColor.WOOD_BLOCK_COLOR;

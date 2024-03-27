@@ -5,7 +5,7 @@ import cn.nukkit.plugin.Plugin;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public interface Permissible extends ServerOperator {
@@ -29,5 +29,4 @@ public interface Permissible extends ServerOperator {
     void recalculatePermissions();
 
     Map<String, PermissionAttachmentInfo> getEffectivePermissions();
-
 }

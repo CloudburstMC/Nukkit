@@ -1,6 +1,10 @@
 package cn.nukkit.item;
 
+/**
+ * List of item IDs
+ */
 public interface ItemID {
+
     int IRON_SHOVEL = 256;
     int IRON_PICKAXE = 257;
     int IRON_AXE = 258;
@@ -59,9 +63,13 @@ public interface ItemID {
     int LEATHER_LEGGINGS = 300;
     int LEATHER_BOOTS = 301;
     int CHAIN_HELMET = 302;
+    int CHAINMAIL_HELMET = 302;
     int CHAIN_CHESTPLATE = 303;
+    int CHAINMAIL_CHESTPLATE = 303;
     int CHAIN_LEGGINGS = 304;
+    int CHAINMAIL_LEGGINGS = 304;
     int CHAIN_BOOTS = 305;
+    int CHAINMAIL_BOOTS = 305;
     int IRON_HELMET = 306;
     int IRON_CHESTPLATE = 307;
     int IRON_LEGGINGS = 308;
@@ -86,6 +94,7 @@ public interface ItemID {
     int SIGN = 323;
     int WOODEN_DOOR = 324;
     int BUCKET = 325;
+    //
     int MINECART = 328;
     int SADDLE = 329;
     int IRON_DOOR = 330;
@@ -107,6 +116,7 @@ public interface ItemID {
     int SLIME_BALL = 341;
     int CHEST_MINECART = 342;
     int MINECART_WITH_CHEST = 342;
+    //
     int EGG = 344;
     int COMPASS = 345;
     int FISHING_ROD = 346;
@@ -220,16 +230,26 @@ public interface ItemID {
     int CHORUS_FRUIT = 432;
     int POPPED_CHORUS_FRUIT = 433;
     int BANNER_PATTERN = 434;
+    //
     int DRAGON_BREATH = 437;
     int SPLASH_POTION = 438;
+    //
     int LINGERING_POTION = 441;
+    int SPARKLER = 442;
     int COMMAND_BLOCK_MINECART = 443;
     int ELYTRA = 444;
     int SHULKER_SHELL = 445;
     int BANNER = 446;
+    int EYE_DROP = 447;
+    int BALLOON = 448;
+    int SUPER_FERTILIZER = 449;
     int TOTEM = 450;
+    int BLEACH = 451;
     int IRON_NUGGET = 452;
+    int ICE_BOMB = 453;
+    //
     int TRIDENT = 455;
+    //
     int BEETROOT = 457;
     int BEETROOT_SEEDS = 458;
     int BEETROOT_SEED = 458;
@@ -250,7 +270,15 @@ public interface ItemID {
     int TURTLE_HELMET = 469;
     int PHANTOM_MEMBRANE = 470;
     int CROSSBOW = 471;
+    int SPRUCE_SIGN = 472;
+    int BIRCH_SIGN = 473;
+    int JUNGLE_SIGN = 474;
+    int ACACIA_SIGN = 475;
+    int DARKOAK_SIGN = 476;
     int SWEET_BERRIES = 477;
+    //
+    int CAMERA = 498;
+    int COMPOUND = 499;
     int RECORD_13 = 500;
     int RECORD_CAT = 501;
     int RECORD_BLOCKS = 502;
@@ -263,12 +291,39 @@ public interface ItemID {
     int RECORD_WARD = 509;
     int RECORD_11 = 510;
     int RECORD_WAIT = 511;
+    //
     int SHIELD = 513;
-    int RECORD_5 = 643;
+    //
+    int COPPER_INGOT = 519;
+    int RAW_IRON = 520;
+    int RAW_GOLD = 521;
+    int RAW_COPPER = 522;
+    //
+    int RECORD_5 = 636; //TODO: 643
+    int DISC_FRAGMENT_5 = 637;
+    //
+    int OAK_CHEST_BOAT = 638;
+    int BIRCH_CHEST_BOAT = 639;
+    int JUNGLE_CHEST_BOAT = 640;
+    int SPRUCE_CHEST_BOAT = 641;
+    int ACACIA_CHEST_BOAT = 642;
+    int DARK_OAK_CHEST_BOAT = 643;
+    int MANGROVE_CHEST_BOAT = 644;
+    //
+    int ECHO_SHARD = 647;
+    int RECOVERY_COMPASS = 648;
+    //
+    int GLOW_BERRIES = 654;
+    //
     int RECORD_RELIC = 701;
+    //
+    int CAMPFIRE = 720;
+    //
     int SUSPICIOUS_STEW = 734;
+    //
     int HONEYCOMB = 736;
     int HONEY_BOTTLE = 737;
+    //
     int LODESTONECOMPASS = 741;
     int LODESTONE_COMPASS = 741;
     int NETHERITE_INGOT = 742;
@@ -282,8 +337,23 @@ public interface ItemID {
     int NETHERITE_LEGGINGS = 750;
     int NETHERITE_BOOTS = 751;
     int NETHERITE_SCRAP = 752;
+    int CRIMSON_SIGN = 753;
+    int WARPED_SIGN = 754;
+    int CRIMSON_DOOR = 755;
+    int WARPED_DOOR = 756;
+    //
     int WARPED_FUNGUS_ON_A_STICK = 757;
+    //
+    int CHAIN = 758;
     int RECORD_PIGSTEP = 759;
+    int NETHER_SPROUTS = 760;
+    int GOAT_HORN = 761;
+    //
+    int AMETHYST_SHARD = 771;
     int SPYGLASS = 772;
     int RECORD_OTHERSIDE = 773;
+    //
+    int SOUL_CAMPFIRE = 801;
+    //
+    int GLOW_ITEM_FRAME = 850;
 }

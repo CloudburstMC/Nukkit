@@ -5,7 +5,6 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityHopper;
 import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemHopper;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -56,13 +55,13 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
         this.setDamage(facing.getIndex());
 
-        boolean powered = this.level.isBlockPowered(this.getLocation());
+        boolean powered = this.level.isBlockPowered(this);
 
         if (powered == this.isEnabled()) {
             this.setEnabled(!powered);
         }
 
-        this.level.setBlock(this, this);
+        this.getLevel().setBlock(this, this, true, true);
 
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
@@ -71,8 +70,8 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
 
-        BlockEntityHopper hopper = (BlockEntityHopper) BlockEntity.createBlockEntity(BlockEntity.HOPPER, this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), nbt);
-        return hopper != null;
+        BlockEntity.createBlockEntity(BlockEntity.HOPPER, this.getChunk(), nbt);
+        return true;
     }
 
     @Override
@@ -123,11 +122,11 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            boolean powered = this.level.isBlockPowered(this.getLocation());
+            boolean powered = this.level.isBlockPowered(this);
 
             if (powered == this.isEnabled()) {
                 this.setEnabled(!powered);
-                this.level.setBlock(this, this, true, false);
+                this.level.setBlock((int) this.x, (int) this.y, (int) this.z, BlockLayer.NORMAL, this, false, false, false); // No need to send this to client
             }
 
             return type;
@@ -152,7 +151,7 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemHopper();
+        return Item.get(Item.HOPPER);
     }
 
     @Override
@@ -162,6 +161,16 @@ public class BlockHopper extends BlockTransparentMeta implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false; // prevent item loss issue with pistons until a working implementation
     }
 }

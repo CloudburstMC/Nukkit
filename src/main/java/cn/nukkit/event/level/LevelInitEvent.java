@@ -4,7 +4,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class LevelInitEvent extends LevelEvent {
@@ -18,5 +18,4 @@ public class LevelInitEvent extends LevelEvent {
     public LevelInitEvent(Level level) {
         super(level);
     }
-
 }

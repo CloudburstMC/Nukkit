@@ -22,7 +22,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -32,6 +32,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
         this.putBoolean(this.hasAddonPacks);
         this.putBoolean(this.scripting);
         this.putBoolean(this.forceServerPacks);
+
         this.encodeBehaviourPacks(this.behaviourPackEntries);
         this.encodeResourcePacks(this.resourcePackEntries);
 

@@ -16,5 +16,4 @@ public class PlayerBucketFillEvent extends PlayerBucketEvent {
     public PlayerBucketFillEvent(Player who, Block blockClicked, BlockFace blockFace, Item bucket, Item itemInHand) {
         super(who, blockClicked, blockFace, bucket, itemInHand);
     }
-
 }

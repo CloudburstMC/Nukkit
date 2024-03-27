@@ -2,25 +2,25 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.item.EntityPrimedTNT;
+import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.level.Sound;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Utils;
 
 /**
  * Created on 2015/12/8 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockTNT extends BlockSolid {
-
-    public BlockTNT() {
-    }
 
     @Override
     public String getName() {
@@ -67,7 +67,7 @@ public class BlockTNT extends BlockSolid {
 
     public void prime(int fuse, Entity source) {
         this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
-        double mot = (new NukkitRandom()).nextSignedFloat() * Math.PI * 2;
+        double mot = Utils.nukkitRandom.nextSignedFloat() * 6.283185307179586;
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", this.x + 0.5))
@@ -80,21 +80,17 @@ public class BlockTNT extends BlockSolid {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", 0))
                         .add(new FloatTag("", 0)))
-                .putShort("Fuse", fuse);
-        Entity tnt = Entity.createEntity("PrimedTnt",
-                this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
+                .putByte("Fuse", fuse);
+        Entity tnt = new EntityPrimedTNT(
+                this.getLevel().getChunk(this.getChunkX(), this.getChunkZ()),
                 nbt, source
         );
-        if(tnt == null) {
-            return;
-        }
         tnt.spawnToAll();
-        this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TNT);
     }
 
     @Override
     public int onUpdate(int type) {
-        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && this.level.isBlockPowered(this.getLocation())) {
+        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && this.level.isBlockPowered(this)) {
             this.prime();
         }
 
@@ -109,18 +105,33 @@ public class BlockTNT extends BlockSolid {
             return true;
         } else if (item.getId() == Item.FIRE_CHARGE) {
             if (!player.isCreative()) item.count--;
+            this.level.addSound(this, Sound.MOB_GHAST_FIREBALL);
             this.prime(80, player);
             return true;
-        } else if (item.hasEnchantment(Enchantment.ID_FIRE_ASPECT)) {
+        } else if (item instanceof ItemTool && item.hasEnchantment(Enchantment.ID_FIRE_ASPECT)) {
             item.useOn(this);
             this.prime(80, player);
             return true;
         }
+
         return false;
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.TNT_BLOCK_COLOR;
+    }
+    
+    @Override
+    public boolean hasEntityCollision() {
+        return true;
+    }
+    
+    @Override
+    public void onEntityCollide(Entity entity) {
+        if (entity instanceof EntityArrow && entity.isOnFire()) {
+            entity.close();
+            this.prime();
+        }
     }
 }

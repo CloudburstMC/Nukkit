@@ -6,9 +6,6 @@ import cn.nukkit.utils.BlockColor;
 
 public class BlockBricksEndStone extends BlockSolid {
 
-    public BlockBricksEndStone() {
-    }
-
     @Override
     public String getName() {
         return "End Stone Bricks";
@@ -36,7 +33,7 @@ public class BlockBricksEndStone extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     Item.get(Item.END_BRICKS, 0, 1)
             };

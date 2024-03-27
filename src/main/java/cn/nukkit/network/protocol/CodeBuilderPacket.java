@@ -4,6 +4,7 @@ import lombok.ToString;
 
 @ToString
 public class CodeBuilderPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.CODE_BUILDER_PACKET;
 
     public boolean isOpening;
@@ -16,8 +17,7 @@ public class CodeBuilderPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.url = this.getString();
-        this.isOpening = this.getBoolean();
+        this.decodeUnsupported();
     }
 
     @Override

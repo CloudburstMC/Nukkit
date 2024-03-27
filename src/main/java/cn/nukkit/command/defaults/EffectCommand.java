@@ -12,38 +12,26 @@ import cn.nukkit.potion.InstantEffect;
 import cn.nukkit.utils.ServerException;
 import cn.nukkit.utils.TextFormat;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Created by Snake1999 and Pub4Game on 2016/1/23.
  * Package cn.nukkit.command.defaults in project nukkit.
  */
 public class EffectCommand extends Command {
+
     public EffectCommand(String name) {
         super(name, "%nukkit.command.effect.description", "%commands.effect.usage");
         this.setPermission("nukkit.command.effect");
         this.commandParameters.clear();
-
-        List<String> effects = new ArrayList<>();
-        for (Field field : Effect.class.getDeclaredFields()) {
-            if (field.getType() == int.class && field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL)) {
-                effects.add(field.getName().toLowerCase());
-            }
-        }
-
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("effect", new CommandEnum("Effect", effects)),
-                CommandParameter.newType("seconds", true, CommandParamType.INT),
-                CommandParameter.newType("amplifier", true, CommandParamType.INT),
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("effect", CommandParamType.STRING, false), //Do not use Enum here because of buggy behavior
+                new CommandParameter("seconds", CommandParamType.INT, true),
+                new CommandParameter("amplifier", true),
                 CommandParameter.newEnum("hideParticle", true, CommandEnum.ENUM_BOOLEAN)
         });
         this.commandParameters.put("clear", new CommandParameter[]{
-                CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("clear", new CommandEnum("ClearEffects", "clear"))
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("clear", new String[]{"clear"})
         });
     }
 
@@ -56,7 +44,7 @@ public class EffectCommand extends Command {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
         }
-        Player player = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
+        Player player = sender.getServer().getPlayerExact(args[0].replace("@s", sender.getName()));
         if (player == null) {
             sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             return true;
@@ -79,7 +67,7 @@ public class EffectCommand extends Command {
                 return true;
             }
         }
-        int duration = 300;
+        int duration = 600;
         int amplification = 0;
         if (args.length >= 3) {
             try {
@@ -110,7 +98,7 @@ public class EffectCommand extends Command {
         }
         if (duration == 0) {
             if (!player.hasEffect(effect.getId())) {
-                if (player.getEffects().size() == 0) {
+                if (player.getEffects().isEmpty()) {
                     sender.sendMessage(new TranslationContainer("commands.effect.failure.notActive.all", player.getDisplayName()));
                 } else {
                     sender.sendMessage(new TranslationContainer("commands.effect.failure.notActive", effect.getName(), player.getDisplayName()));

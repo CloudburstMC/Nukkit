@@ -6,7 +6,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class PlayerItemHeldEvent extends PlayerEvent implements Cancellable {
@@ -30,7 +30,6 @@ public class PlayerItemHeldEvent extends PlayerEvent implements Cancellable {
         return this.hotbarSlot;
     }
 
-    @Deprecated
     public int getInventorySlot() {
         return hotbarSlot;
     }
@@ -38,5 +37,4 @@ public class PlayerItemHeldEvent extends PlayerEvent implements Cancellable {
     public Item getItem() {
         return item;
     }
-
 }

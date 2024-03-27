@@ -1,9 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemPotato;
-
-import java.util.Random;
+import cn.nukkit.utils.Utils;
 
 /**
  * Created by Pub4Game on 15.01.2016.
@@ -30,18 +28,25 @@ public class BlockPotato extends BlockCrops {
 
     @Override
     public Item toItem() {
-        return new ItemPotato();
+        return Item.get(Item.POTATO);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         if (getDamage() >= 0x07) {
-            return new Item[]{
-                    new ItemPotato(0, new Random().nextInt(3) + 1)
-            };
+            if (Utils.random.nextInt(100) < 2) {
+                return new Item[]{
+                        Item.get(Item.POTATO, 0, Utils.random.nextInt(3) + 2),
+                        Item.get(Item.POISONOUS_POTATO, 0, 1)
+                };
+            } else {
+                return new Item[]{
+                        Item.get(Item.POTATO, 0, Utils.random.nextInt(3) + 2)
+                };
+            }
         } else {
             return new Item[]{
-                    new ItemPotato()
+                    Item.get(Item.POTATO)
             };
         }
     }

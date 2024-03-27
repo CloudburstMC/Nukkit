@@ -16,7 +16,9 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
+ * Config
+ *
+ * @author MagicDroidX
  * Nukkit
  */
 public class Config {
@@ -31,12 +33,14 @@ public class Config {
     public static final int ENUM = 5; // .txt, .list, .enum
     public static final int ENUMERATION = Config.ENUM;
 
-    //private LinkedHashMap<String, Object> config = new LinkedHashMap<>();
     private ConfigSection config = new ConfigSection();
     private File file;
     private boolean correct = false;
     private int type = Config.DETECT;
 
+    /**
+     * List of supported config file formats and their types
+     */
     public static final Map<String, Integer> format = new TreeMap<>();
 
     static {
@@ -107,23 +111,45 @@ public class Config {
         this(file.toString(), type, new ConfigSection(defaultMap));
     }
 
+    /**
+     * Reload config from disk
+     */
     public void reload() {
         this.config.clear();
         this.correct = false;
-        //this.load(this.file.toString());
         if (this.file == null) throw new IllegalStateException("Failed to reload Config. File object is undefined.");
         this.load(this.file.toString(), this.type);
-
     }
 
+    /**
+     * Try to load a config file and automatically detect its type
+     *
+     * @param file file path
+     * @return loaded
+     */
     public boolean load(String file) {
         return this.load(file, Config.DETECT);
     }
 
+    /**
+     * Try to load a config file with a given type
+     *
+     * @param file file path
+     * @param type file type
+     * @return loaded
+     */
     public boolean load(String file, int type) {
         return this.load(file, type, new ConfigSection());
     }
 
+    /**
+     * Try to load a config file with a given type and default content
+     *
+     * @param file file path
+     * @param type file type
+     * @param defaultMap default content
+     * @return loaded
+     */
     public boolean load(String file, int type, ConfigSection defaultMap) {
         this.correct = true;
         this.type = type;
@@ -140,8 +166,8 @@ public class Config {
         } else {
             if (this.type == Config.DETECT) {
                 String extension = "";
-                if (this.file.getName().lastIndexOf(".") != -1 && this.file.getName().lastIndexOf(".") != 0) {
-                    extension = this.file.getName().substring(this.file.getName().lastIndexOf(".") + 1);
+                if (this.file.getName().lastIndexOf('.') != -1 && this.file.getName().lastIndexOf('.') != 0) {
+                    extension = this.file.getName().substring(this.file.getName().lastIndexOf('.') + 1);
                 }
                 if (format.containsKey(extension)) {
                     this.type = format.get(extension);
@@ -168,6 +194,12 @@ public class Config {
         return true;
     }
 
+    /**
+     * Load Config from InputStream
+     *
+     * @param inputStream InputStream
+     * @return loaded
+     */
     public boolean load(InputStream inputStream) {
         if (inputStream == null) return false;
         if (this.correct) {
@@ -183,36 +215,84 @@ public class Config {
         return correct;
     }
 
+    /**
+     * Load and return a Config from InputStream
+     *
+     * @param inputStream InputStream
+     * @return Config
+     */
+    public Config loadFromStream(InputStream inputStream) {
+        if (inputStream == null) return null;
+        if (this.correct) {
+            String content;
+            try {
+                content = Utils.readFile(inputStream);
+            } catch (IOException e) {
+                Server.getInstance().getLogger().logException(e);
+                return null;
+            }
+            this.parseContent(content);
+        }
+        return this;
+    }
+
+    /**
+     * Check if the config is valid
+     *
+     * @return valid
+     */
     public boolean check() {
         return this.correct;
     }
 
+    /**
+     * Check if the config is valid
+     *
+     * @return valid
+     */
     public boolean isCorrect() {
-        return correct;
+        return this.correct;
     }
 
     /**
      * Save configuration into provided file. Internal file object will be set to new file.
      *
-     * @param file
-     * @param async
-     * @return
+     * @param file file
+     * @param async async
+     * @return save success
      */
     public boolean save(File file, boolean async) {
         this.file = file;
         return save(async);
     }
 
+    /**
+     * Save configuration into provided file. Internal file object will be set to new file.
+     *
+     * @param file file
+     * @return save success
+     */
     public boolean save(File file) {
         this.file = file;
         return save();
     }
 
+    /**
+     * Save the config to disk
+     *
+     * @return saved
+     */
     public boolean save() {
         return this.save(false);
     }
 
-    public boolean save(Boolean async) {
+    /**
+     * Save the config to disk
+     *
+     * @param async async
+     * @return saved
+     */
+    public boolean save(Boolean async) { // Note: do not change to 'boolean' or plugins will break
         if (this.file == null) throw new IllegalStateException("Failed to save Config. File object is undefined.");
         if (this.correct) {
             StringBuilder content = new StringBuilder();
@@ -238,7 +318,6 @@ public class Config {
             }
             if (async) {
                 Server.getInstance().getScheduler().scheduleAsyncTask(new FileWriteTask(this.file, content.toString()));
-
             } else {
                 try {
                     Utils.writeFile(this.file, content.toString());
@@ -252,10 +331,22 @@ public class Config {
         }
     }
 
+    /**
+     * Set a value in the config
+     *
+     * @param key key
+     * @param value value
+     */
     public void set(final String key, Object value) {
         this.config.set(key, value);
     }
 
+    /**
+     * Get a value in the config
+     *
+     * @param key key
+     * @return value
+     */
     public Object get(String key) {
         return this.get(key, null);
     }
@@ -419,7 +510,7 @@ public class Config {
     /**
      * Get root (main) config section of the Config
      *
-     * @return
+     * @return root config section of the Config
      */
     public ConfigSection getRootSection() {
         return config;
@@ -456,7 +547,7 @@ public class Config {
     }
 
     private String writeProperties() {
-        StringBuilder content = new StringBuilder("#Properties Config file\r\n#" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + "\r\n");
+        StringBuilder content = new StringBuilder("#Properties Config File\r\n#" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + "\r\n");
         for (Object o : this.config.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
             Object v = entry.getValue();
@@ -464,7 +555,7 @@ public class Config {
             if (v instanceof Boolean) {
                 v = (Boolean) v ? "on" : "off";
             }
-            content.append(k).append("=").append(v).append("\r\n");
+            content.append(k).append('=').append(v).append("\r\n");
         }
         return content.toString();
     }
@@ -478,11 +569,10 @@ public class Config {
                 }
                 final String key = line.substring(0, splitIndex);
                 final String value = line.substring(splitIndex + 1);
-                final String valueLower = value.toLowerCase();
                 if (this.config.containsKey(key)) {
-                    MainLogger.getLogger().debug("[Config] Repeated property " + key + " on file " + this.file.toString());
+                    MainLogger.getLogger().debug("[Config] Repeated property " + key + " in file " + this.file.toString());
                 }
-                switch (valueLower) {
+                switch (value.toLowerCase()) {
                     case "on":
                     case "true":
                     case "yes":
@@ -534,6 +624,7 @@ public class Config {
         remove(key);
     }
 
+    @SuppressWarnings("unchecked")
     private void parseContent(String content) {
         switch (this.type) {
             case Config.PROPERTIES:
@@ -542,8 +633,7 @@ public class Config {
             case Config.JSON:
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
-                this.config = new ConfigSection(gson.fromJson(content, new TypeToken<LinkedHashMap<String, Object>>() {
-                }.getType()));
+                this.config = new ConfigSection(gson.fromJson(content, new LinkedHashMapTypeToken().getType()));
                 break;
             case Config.YAML:
                 DumperOptions dumperOptions = new DumperOptions();
@@ -568,5 +658,8 @@ public class Config {
     public Set<String> getKeys(boolean child) {
         if (this.correct) return config.getKeys(child);
         return new HashSet<>();
+    }
+
+    private static class LinkedHashMapTypeToken extends TypeToken<LinkedHashMap<String, Object>> {
     }
 }

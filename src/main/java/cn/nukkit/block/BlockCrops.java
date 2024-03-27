@@ -4,15 +4,15 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.utils.Utils;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class BlockCrops extends BlockFlowable {
@@ -26,7 +26,6 @@ public abstract class BlockCrops extends BlockFlowable {
         return true;
     }
 
-
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (block.down().getId() == FARMLAND) {
@@ -38,11 +37,10 @@ public abstract class BlockCrops extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        //Bone meal
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+        if (item.getId() == Item.DYE && item.getDamage() == ItemDye.BONE_MEAL) {
             if (this.getDamage() < 7) {
                 BlockCrops block = (BlockCrops) this.clone();
-                block.setDamage(block.getDamage() + ThreadLocalRandom.current().nextInt(3) + 2);
+                block.setDamage(block.getDamage() + Utils.random.nextInt(3) + 2);
                 if (block.getDamage() > 7) {
                     block.setDamage(7);
                 }
@@ -54,9 +52,10 @@ public abstract class BlockCrops extends BlockFlowable {
                 }
 
                 this.getLevel().setBlock(this, ev.getNewState(), false, true);
+
                 this.level.addParticle(new BoneMealParticle(this));
 
-                if (player != null && (player.gamemode & 0x01) == 0) {
+                if (player != null && !player.isCreative()) {
                     item.count--;
                 }
             }
@@ -75,7 +74,7 @@ public abstract class BlockCrops extends BlockFlowable {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (ThreadLocalRandom.current().nextInt(2) == 1) {
+            if (Utils.random.nextInt(2) == 1) {
                 if (this.getDamage() < 0x07) {
                     BlockCrops block = (BlockCrops) this.clone();
                     block.setDamage(block.getDamage() + 1);

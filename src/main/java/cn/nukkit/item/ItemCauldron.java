@@ -1,10 +1,9 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 
 /**
- * author: CreeperFace
+ * @author CreeperFace
  * Nukkit Project
  */
 public class ItemCauldron extends Item {
@@ -19,6 +18,6 @@ public class ItemCauldron extends Item {
 
     public ItemCauldron(Integer meta, int count) {
         super(CAULDRON, meta, count, "Cauldron");
-        this.block = Block.get(BlockID.CAULDRON_BLOCK);
+        this.block = Block.get(CAULDRON_BLOCK);
     }
 }

@@ -8,11 +8,11 @@ import cn.nukkit.math.NukkitRandom;
 import static cn.nukkit.block.BlockID.STONE;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
-//porktodo: rewrite this, the whole class is terrible and generated ores look stupid
 public class OreType {
+
     public final int fullId;
     public final int clusterCount;
     public final int clusterSize;
@@ -79,7 +79,7 @@ public class OreType {
                 }
             }
         }
-        
+
         return true;
     }
 }

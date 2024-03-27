@@ -4,6 +4,7 @@ package cn.nukkit.item.enchantment;
  * @author Rover656
  */
 public class EnchantmentMending extends Enchantment {
+
     protected EnchantmentMending() {
         super(ID_MENDING, "mending", Rarity.RARE, EnchantmentType.BREAKABLE);
     }
@@ -16,6 +17,11 @@ public class EnchantmentMending extends Enchantment {
     @Override
     public int getMaxEnchantAbility(int level) {
         return this.getMinEnchantAbility(level) + 50;
+    }
+
+    @Override
+    public boolean isTreasure() {
+        return true;
     }
 
     @Override

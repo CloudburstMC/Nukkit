@@ -18,10 +18,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockNoteblock extends BlockSolid {
 
-    public BlockNoteblock() {
-
-    }
-
     @Override
     public String getName() {
         return "Note Block";
@@ -55,7 +51,8 @@ public class BlockNoteblock extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.getLevel().setBlock(block, this, true);
-        return this.createBlockEntity() != null;
+        BlockEntity.createBlockEntity(BlockEntity.MUSIC, this.getChunk(), BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
+        return true;
     }
 
     public int getStrength() {
@@ -203,6 +200,7 @@ public class BlockNoteblock extends BlockSolid {
             case CONCRETE:
             case STONECUTTER:
             case OBSERVER:
+            case RESPAWN_ANCHOR:
                 return Instrument.BASS_DRUM;
             default:
                 return Instrument.PIANO;
@@ -210,7 +208,7 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     public void emitSound() {
-        if (this.up().getId() != AIR) return;
+        if (!this.isBlockAboveAir()) return;
 
         Instrument instrument = this.getInstrument();
 
@@ -222,11 +220,12 @@ public class BlockNoteblock extends BlockSolid {
         pk.z = this.getFloorZ();
         pk.case1 = instrument.ordinal();
         pk.case2 = this.getStrength();
-        this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
+        this.getLevel().addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
+        if (player.isSneaking()) return false;
         this.increaseStrength();
         this.emitSound();
         return true;
@@ -256,11 +255,6 @@ public class BlockNoteblock extends BlockSolid {
             return (BlockEntityMusic) blockEntity;
         }
         return null;
-    }
-
-    private BlockEntityMusic createBlockEntity() {
-        return (BlockEntityMusic) BlockEntity.createBlockEntity(BlockEntity.MUSIC, this.getLevel().getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4),
-                                        BlockEntity.getDefaultCompound(this, BlockEntity.MUSIC));
     }
 
     public enum Instrument {
@@ -295,5 +289,10 @@ public class BlockNoteblock extends BlockSolid {
     @Override
     public BlockColor getColor() {
         return BlockColor.WOOD_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false; // prevent item loss issue with pistons until a working implementation
     }
 }

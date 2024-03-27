@@ -14,6 +14,8 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockEndRod extends BlockTransparentMeta implements Faceable {
 
+    private static final int[] FACES = {0, 1, 3, 2, 5, 4};
+
     public BlockEndRod() {
         this(0);
     }
@@ -48,11 +50,6 @@ public class BlockEndRod extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean canBePushed() {
-        return true;
-    }
-
-    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
@@ -79,8 +76,7 @@ public class BlockEndRod extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {0, 1, 3, 2, 5, 4};
-        this.setDamage(faces[player != null ? face.getIndex() : 0]);
+        this.setDamage(FACES[player != null ? face.getIndex() : 0]);
         this.getLevel().setBlock(block, this, true, true);
 
         return true;
@@ -88,12 +84,21 @@ public class BlockEndRod extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.FLOW_INTO_BLOCK;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
 }

@@ -6,6 +6,7 @@ import cn.nukkit.nbt.stream.NBTOutputStream;
 import java.io.IOException;
 
 public class FloatTag extends NumberTag<Float> {
+
     public float data;
 
     @Override
@@ -28,12 +29,12 @@ public class FloatTag extends NumberTag<Float> {
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
+    public void write(NBTOutputStream dos) throws IOException {
         dos.writeFloat(data);
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis) throws IOException {
         data = dis.readFloat();
     }
 
@@ -49,7 +50,7 @@ public class FloatTag extends NumberTag<Float> {
 
     @Override
     public String toString() {
-        return "FloatTag " + this.getName() + " (data: " + data + ")";
+        return "FloatTag " + this.getName() + " (data: " + data + ')';
     }
 
     @Override
@@ -65,5 +66,4 @@ public class FloatTag extends NumberTag<Float> {
         }
         return false;
     }
-
 }

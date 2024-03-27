@@ -1,17 +1,14 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.api.API;
-
-import java.util.HashMap;
-import java.util.Map;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 /**
  * Helper class of Minecart variants
- * <p>
+ * 
  * By Adam Matthew
  * Creation time: 2017/7/17 19:55.
  */
-@API(usage = API.Usage.STABLE, definition = API.Definition.INTERNAL)
 public enum MinecartType {
     /**
      * Represents an empty vehicle.
@@ -49,11 +46,11 @@ public enum MinecartType {
     private final int type;
     private final boolean hasBlockInside;
     private final String realName;
-    private static final Map<Integer, MinecartType> TYPES = new HashMap<>();
+    private static final Int2ObjectMap<MinecartType> TYPES = new Int2ObjectOpenHashMap<>();
 
     static {
         for (MinecartType var3 : values()) {
-            TYPES.put(var3.getId(), var3);
+            TYPES.put(var3.type, var3);
         }
     }
 

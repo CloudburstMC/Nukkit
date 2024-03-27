@@ -4,6 +4,7 @@ import lombok.ToString;
 
 @ToString
 public class SetLocalPlayerAsInitializedPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET;
 
     public long eid;
@@ -15,7 +16,7 @@ public class SetLocalPlayerAsInitializedPacket extends DataPacket {
 
     @Override
     public void decode() {
-        eid = this.getUnsignedVarLong();
+        this.eid = this.getUnsignedVarLong();
     }
 
     @Override

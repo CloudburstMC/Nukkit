@@ -58,7 +58,7 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
     public RakNetPlayerSession(RakNetInterface server, RakNetServerSession session) {
         this.server = server;
         this.session = session;
-        this.tickFuture = session.getEventLoop().scheduleAtFixedRate(this::networkTick, 0, 50, TimeUnit.MILLISECONDS);
+        this.tickFuture = session.getEventLoop().scheduleAtFixedRate(this::networkTick, 0, 20, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -66,6 +66,15 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
         ByteBuf buffer = packet.getBuffer();
         short packetId = buffer.readUnsignedByte();
         if (packetId == 0xfe) {
+            int len = buffer.readableBytes();
+            if (len > 12582912) {
+                Server.getInstance().getLogger().error("Received too big packet: " + len);
+                if (this.player != null) {
+                    this.player.close("Too big packet");
+                }
+                return;
+            }
+
             byte[] packetBuffer;
 
             CompressionProvider compressionIn = CompressionProvider.NONE;
@@ -95,7 +104,7 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
             buffer.readBytes(packetBuffer);
 
             try {
-                this.server.getNetwork().processBatch(packetBuffer, this.inbound, compressionIn);
+                this.server.getNetwork().processBatch(packetBuffer, this.inbound, compressionIn, this.player);
             } catch (Exception e) {
                 this.disconnect("Sent malformed packet");
                 log.error("[{}] Unable to process batch packet", (this.player == null ? this.session.getAddress() : this.player.getName()), e);
@@ -178,8 +187,8 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
             DataPacket packet;
             while ((packet = this.outbound.poll()) != null) {
                 if (packet instanceof DisconnectPacket) {
-                    BinaryStream batched = new BinaryStream();
                     byte[] buf = packet.getBuffer();
+                    BinaryStream batched = new BinaryStream(new byte[5 + buf.length]).reset();
                     batched.putUnsignedVarInt(buf.length);
                     batched.put(buf);
 

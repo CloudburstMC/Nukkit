@@ -11,10 +11,10 @@ public class BlockPrismarine extends BlockSolidMeta {
     public static final int DARK = 1;
     public static final int BRICKS = 2;
 
-    private static final String[] NAMES = new String[]{
+    private static final String[] NAMES = {
             "Prismarine",
-            "Dark prismarine",
-            "Prismarine bricks"
+            "Dark Prismarine",
+            "Prismarine Bricks"
     };
 
     public BlockPrismarine() {
@@ -52,7 +52,7 @@ public class BlockPrismarine extends BlockSolidMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };
@@ -68,11 +68,11 @@ public class BlockPrismarine extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        switch(getDamage() & 0x07){
+        switch (getDamage() & 0x07) {
             case NORMAL:
                 return BlockColor.CYAN_BLOCK_COLOR;
-            case DARK:
             case BRICKS:
+            case DARK:
                 return BlockColor.DIAMOND_BLOCK_COLOR;
             default:
                 return BlockColor.STONE_BLOCK_COLOR;

@@ -7,18 +7,14 @@ import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.permission.Permissible;
 import cn.nukkit.utils.TextFormat;
-import co.aikar.timings.Timing;
-import co.aikar.timings.Timings;
 
 import java.util.*;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class Command {
-
-    private static CommandData defaultDataTemplate = null;
 
     protected CommandData commandData;
 
@@ -28,23 +24,21 @@ public abstract class Command {
 
     private String label;
 
-    private String[] aliases = new String[0];
+    private String[] aliases;
 
-    private String[] activeAliases = new String[0];
+    private String[] activeAliases;
 
     private CommandMap commandMap = null;
 
-    protected String description = "";
+    protected String description;
 
-    protected String usageMessage = "";
+    protected String usageMessage;
 
     private String permission = null;
 
     private String permissionMessage = null;
 
     protected Map<String, CommandParameter[]> commandParameters = new HashMap<>();
-
-    public Timing timing;
 
     public Command(String name) {
         this(name, "", null, new String[0]);
@@ -60,15 +54,14 @@ public abstract class Command {
 
     public Command(String name, String description, String usageMessage, String[] aliases) {
         this.commandData = new CommandData();
-        this.name = name.toLowerCase(); // Uppercase letters crash the client?!?
+        this.name = name.toLowerCase(); // Prevent client crash
         this.nextLabel = name;
         this.label = name;
         this.description = description;
-        this.usageMessage = usageMessage == null ? "/" + name : usageMessage;
+        this.usageMessage = usageMessage == null ? '/' + name : usageMessage;
         this.aliases = aliases;
         this.activeAliases = aliases;
-        this.timing = Timings.getCommandTiming(this);
-        this.commandParameters.put("default", new CommandParameter[]{CommandParameter.newType("args", true, CommandParamType.RAWTEXT)});
+        this.commandParameters.put("default", new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
     }
 
     /**
@@ -104,7 +97,7 @@ public abstract class Command {
      * @return CommandData|null
      */
     public CommandDataVersions generateCustomCommandData(Player player) {
-        if (!this.testPermission(player)) {
+        if (!this.testPermissionSilent(player)) {
             return null;
         }
 
@@ -125,7 +118,7 @@ public abstract class Command {
             overload.input.parameters = par;
             customData.overloads.put(key, overload);
         });
-        if (customData.overloads.size() == 0) customData.overloads.put("default", new CommandOverload());
+        if (customData.overloads.isEmpty()) customData.overloads.put("default", new CommandOverload());
         CommandDataVersions versions = new CommandDataVersions();
         versions.versions.add(customData);
         return versions;
@@ -156,7 +149,7 @@ public abstract class Command {
 
         if (this.permissionMessage == null) {
             target.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.unknown", this.name));
-        } else if (!this.permissionMessage.equals("")) {
+        } else if (!this.permissionMessage.isEmpty()) {
             target.sendMessage(this.permissionMessage.replace("<permission>", this.permission));
         }
 
@@ -164,7 +157,7 @@ public abstract class Command {
     }
 
     public boolean testPermissionSilent(CommandSender target) {
-        if (this.permission == null || this.permission.equals("")) {
+        if (this.permission == null || this.permission.isEmpty()) {
             return true;
         }
 
@@ -186,7 +179,6 @@ public abstract class Command {
         this.nextLabel = name;
         if (!this.isRegistered()) {
             this.label = name;
-            this.timing = Timings.getCommandTiming(this);
             return true;
         }
         return false;
@@ -254,10 +246,7 @@ public abstract class Command {
     }
 
     public static CommandData generateDefaultData() {
-        if (defaultDataTemplate == null) {
-            //defaultDataTemplate = new Gson().fromJson(new InputStreamReader(Server.class.getClassLoader().getResourceAsStream("command_default.json")));
-        }
-        return defaultDataTemplate.clone();
+        return null; //defaultDataTemplate.clone();
     }
 
     public static void broadcastCommandMessage(CommandSender source, String message) {
@@ -292,7 +281,7 @@ public abstract class Command {
 
     public static void broadcastCommandMessage(CommandSender source, TextContainer message, boolean sendToSource) {
         TextContainer m = message.clone();
-        String resultStr = "[" + source.getName() + ": " + (!m.getText().equals(source.getServer().getLanguage().get(m.getText())) ? "%" : "") + m.getText() + "]";
+        String resultStr = '[' + source.getName() + ": " + (!m.getText().equals(source.getServer().getLanguage().get(m.getText())) ? "%" : "") + m.getText() + ']';
 
         Set<Permissible> users = source.getServer().getPluginManager().getPermissionSubscriptions(Server.BROADCAST_CHANNEL_ADMINISTRATIVE);
 
@@ -322,5 +311,4 @@ public abstract class Command {
     public String toString() {
         return this.name;
     }
-
 }

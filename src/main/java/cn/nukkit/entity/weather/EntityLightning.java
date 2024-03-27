@@ -11,8 +11,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-
-import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.utils.Utils;
 
 /**
  * Created by boybook on 2016/2/27.
@@ -21,11 +20,10 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
 
     public static final int NETWORK_ID = 93;
 
-    protected boolean isEffect = true;
+    private boolean isEffect = true;
 
     public int state;
     public int liveTime;
-
 
     @Override
     public int getNetworkId() {
@@ -40,11 +38,8 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
     protected void initEntity() {
         super.initEntity();
 
-        this.setHealth(4);
-        this.setMaxHealth(4);
-
         this.state = 2;
-        this.liveTime = ThreadLocalRandom.current().nextInt(3) + 1;
+        this.liveTime = Utils.random.nextInt(3) + 1;
 
         if (isEffect && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK) && (this.server.getDifficulty() >= 2)) {
             Block block = this.getLevelBlock();
@@ -62,7 +57,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
 
                     if (!e.isCancelled()) {
                         level.setBlock(fire, fire, true);
-                        level.scheduleUpdate(fire, fire.tickRate() + ThreadLocalRandom.current().nextInt(10));
+                        level.scheduleUpdate(fire, fire.tickRate() + Utils.random.nextInt(10));
                     }
                 }
             }
@@ -79,7 +74,6 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-        //false?
         source.setDamage(0);
         return super.attack(source);
     }
@@ -111,7 +105,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
             if (this.liveTime == 0) {
                 this.close();
                 return false;
-            } else if (this.state < -ThreadLocalRandom.current().nextInt(10)) {
+            } else if (this.state < -Utils.random.nextInt(10)) {
                 this.liveTime--;
                 this.state = 1;
 
@@ -145,6 +139,4 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
 
         return true;
     }
-
-
 }

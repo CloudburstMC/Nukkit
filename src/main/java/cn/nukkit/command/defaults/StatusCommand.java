@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class StatusCommand extends VanillaCommand {
+
     private static final String UPTIME_FORMAT = TextFormat.RED + "%d" + TextFormat.GOLD + " days " +
             TextFormat.RED + "%d" + TextFormat.GOLD + " hours " +
             TextFormat.RED + "%d" + TextFormat.GOLD + " minutes " +
@@ -47,13 +48,13 @@ public class StatusCommand extends VanillaCommand {
             tpsColor = TextFormat.GOLD;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Current TPS: " + tpsColor + NukkitMath.round(tps, 2));
+        sender.sendMessage(TextFormat.GOLD + "TPS / Average: " + tpsColor + NukkitMath.round(tps, 2) + " / " + NukkitMath.round(server.getTicksPerSecondAverage(), 2));
 
-        sender.sendMessage(TextFormat.GOLD + "Load: " + tpsColor + server.getTickUsage() + "%");
+        sender.sendMessage(TextFormat.GOLD + "Load / Average: " + tpsColor + server.getTickUsage() + "% / " + server.getTickUsageAverage() * 100 + '%');
 
-        sender.sendMessage(TextFormat.GOLD + "Network upload: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getUpload() / 1024 * 1000), 2) + " kB/s");
+        //sender.sendMessage(TextFormat.GOLD + "Network upload: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getUpload() / 1024 * 1000), 2) + " kB/s");
 
-        sender.sendMessage(TextFormat.GOLD + "Network download: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getDownload() / 1024 * 1000), 2) + " kB/s");
+        //sender.sendMessage(TextFormat.GOLD + "Network download: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getDownload() / 1024 * 1000), 2) + " kB/s");
 
         sender.sendMessage(TextFormat.GOLD + "Thread count: " + TextFormat.GREEN + Thread.getAllStackTraces().size());
 
@@ -69,38 +70,40 @@ public class StatusCommand extends VanillaCommand {
             usageColor = TextFormat.GOLD;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Used memory: " + usageColor + usedMB + " MB. (" + NukkitMath.round(usage, 2) + "%)");
+        sender.sendMessage(TextFormat.GOLD + "Used memory: " + usageColor + usedMB + " MB (" + NukkitMath.round(usage, 2) + "%)");
 
-        sender.sendMessage(TextFormat.GOLD + "Total memory: " + TextFormat.RED + totalMB + " MB.");
+        sender.sendMessage(TextFormat.GOLD + "Total memory: " + TextFormat.RED + totalMB + " MB");
 
-        sender.sendMessage(TextFormat.GOLD + "Maximum VM memory: " + TextFormat.RED + maxMB + " MB.");
+        sender.sendMessage(TextFormat.GOLD + "Maximum VM memory: " + TextFormat.RED + maxMB + " MB");
 
         sender.sendMessage(TextFormat.GOLD + "Available processors: " + TextFormat.GREEN + runtime.availableProcessors());
 
 
+        int players = server.getOnlinePlayersCount();
+
         TextFormat playerColor = TextFormat.GREEN;
-        if (((float) server.getOnlinePlayers().size() / (float) server.getMaxPlayers()) > 0.85) {
+        if (((float) players / (float) server.getMaxPlayers()) > 0.85) {
             playerColor = TextFormat.GOLD;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Players: " + playerColor + server.getOnlinePlayers().size() + TextFormat.GREEN + " online, " +
-                TextFormat.RED + server.getMaxPlayers() + TextFormat.GREEN + " max. ");
+        sender.sendMessage(TextFormat.GOLD + "Players: " + playerColor + players + TextFormat.GREEN + " online, " +
+                TextFormat.RED + server.getMaxPlayers() + TextFormat.GREEN + " max");
 
         for (Level level : server.getLevels().values()) {
             sender.sendMessage(
-                    TextFormat.GOLD + "World \"" + level.getFolderName() + "\"" + (!Objects.equals(level.getFolderName(), level.getName()) ? " (" + level.getName() + ")" : "") + ": " +
+                    TextFormat.GOLD + "World \"" + level.getFolderName() + '"' + (!Objects.equals(level.getFolderName(), level.getName()) ? " (" + level.getName() + ')' : "") + ": " +
                             TextFormat.RED + level.getChunks().size() + TextFormat.GREEN + " chunks, " +
-                            TextFormat.RED + level.getEntities().length + TextFormat.GREEN + " entities, " +
-                            TextFormat.RED + level.getBlockEntities().size() + TextFormat.GREEN + " blockEntities." +
+                            TextFormat.RED + level.entities.size() + TextFormat.GREEN + " entities, " +
+                            TextFormat.RED + level.getBlockEntities().size() + TextFormat.GREEN + " block entities." +
                             " Time " + ((level.getTickRate() > 1 || level.getTickRateTime() > 40) ? TextFormat.RED : TextFormat.YELLOW) + NukkitMath.round(level.getTickRateTime(), 2) + "ms" +
-                            (level.getTickRate() > 1 ? " (tick rate " + level.getTickRate() + ")" : "")
+                            (level.getTickRate() > 1 ? " (tick rate " + level.getTickRate() + ')' : "")
             );
         }
 
         return true;
     }
 
-    private static String formatUptime(long uptime) {
+    public static String formatUptime(long uptime) {
         long days = TimeUnit.MILLISECONDS.toDays(uptime);
         uptime -= TimeUnit.DAYS.toMillis(days);
         long hours = TimeUnit.MILLISECONDS.toHours(uptime);

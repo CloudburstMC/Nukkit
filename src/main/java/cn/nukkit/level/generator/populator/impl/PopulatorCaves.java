@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.biome.type.CoveredBiome;
@@ -13,7 +12,7 @@ import cn.nukkit.math.NukkitRandom;
 import java.util.Random;
 
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
 public class PopulatorCaves extends Populator {
@@ -22,11 +21,11 @@ public class PopulatorCaves extends Populator {
 
     private Random random;
 
-    public static int caveRarity = 7;//7
-    public static int caveFrequency = 40;//40
+    public static int caveRarity = 7;
+    public static int caveFrequency = 40;
     public static int caveMinAltitude = 8;
     public static int caveMaxAltitude = 67;
-    public static int individualCaveRarity = 25;//25
+    public static int individualCaveRarity = 25;
     public static int caveSystemFrequency = 1;
     public static int caveSystemPocketChance = 0;
     public static int caveSystemPocketMinSize = 0;
@@ -61,8 +60,8 @@ public class PopulatorCaves extends Populator {
         int chunkX = chunk.getX();
         int chunkZ = chunk.getZ();
 
-        double realX = chunkX * 16 + 8;
-        double realZ = chunkZ * 16 + 8;
+        double realX = (chunkX << 4) + 8;
+        double realZ = (chunkZ << 4) + 8;
 
         float f1 = 0.0F;
         float f2 = 0.0F;
@@ -70,17 +69,17 @@ public class PopulatorCaves extends Populator {
         Random localRandom = new Random(seed);
 
         if (maxAngle <= 0) {
-            int checkAreaSize = this.checkAreaSize * 16 - 16;
-            maxAngle = checkAreaSize - localRandom.nextInt(checkAreaSize / 4);
+            int checkAreaSize = (this.checkAreaSize << 4) - 16;
+            maxAngle = checkAreaSize - localRandom.nextInt(checkAreaSize >> 2);
         }
         boolean isLargeCave = false;
 
         if (angle == -1) {
-            angle = maxAngle / 2;
+            angle = maxAngle >> 1;
             isLargeCave = true;
         }
 
-        int randomAngel = localRandom.nextInt(maxAngle / 2) + maxAngle / 4;
+        int randomAngel = localRandom.nextInt(maxAngle >> 1) + (maxAngle >> 2);
         boolean bigAngel = localRandom.nextInt(6) == 0;
 
         for (; angle < maxAngle; angle++) {
@@ -129,14 +128,14 @@ public class PopulatorCaves extends Populator {
                 continue;
 
 
-            int xFrom = MathHelper.floor(x - offsetXZ) - chunkX * 16 - 1;
-            int xTo = MathHelper.floor(x + offsetXZ) - chunkX * 16 + 1;
+            int xFrom = MathHelper.floor(x - offsetXZ) - (chunkX << 4) - 1;
+            int xTo = MathHelper.floor(x + offsetXZ) - (chunkX << 4) + 1;
 
             int yFrom = MathHelper.floor(y - offsetY) - 1;
             int yTo = MathHelper.floor(y + offsetY) + 1;
 
-            int zFrom = MathHelper.floor(z - offsetXZ) - chunkZ * 16 - 1;
-            int zTo = MathHelper.floor(z + offsetXZ) - chunkZ * 16 + 1;
+            int zFrom = MathHelper.floor(z - offsetXZ) - (chunkZ << 4) - 1;
+            int zTo = MathHelper.floor(z + offsetXZ) - (chunkZ << 4) + 1;
 
             if (xFrom < 0)
                 xFrom = 0;
@@ -176,22 +175,21 @@ public class PopulatorCaves extends Populator {
 
             // Generate cave
             for (int xx = xFrom; xx < xTo; xx++) {
-                double modX = (xx + chunkX * 16 + 0.5D - x) / offsetXZ;
+                double modX = (xx + (chunkX << 4) + 0.5D - x) / offsetXZ;
                 for (int zz = zFrom; zz < zTo; zz++) {
-                    double modZ = (zz + chunkZ * 16 + 0.5D - z) / offsetXZ;
+                    double modZ = (zz + (chunkZ << 4) + 0.5D - z) / offsetXZ;
 
                     boolean grassFound = false;
                     if (modX * modX + modZ * modZ < 1.0D) {
                         for (int yy = yTo; yy > yFrom; yy--) {
                             double modY = ((yy - 1) + 0.5D - y) / offsetY;
-                            if ((modY > -0.7D) && (modX * modX + modY * modY + modZ * modZ < 1.0D)) {
-                                Biome biome = EnumBiome.getBiome(chunk.getBiomeId(xx, zz));
+                            if ((modY > -0.7) && (modX * modX + modY * modY + modZ * modZ < 1.0D)) {
+                                Biome biome = Biome.getBiome(chunk.getBiomeId(xx, zz));
                                 if (!(biome instanceof CoveredBiome)) {
                                     continue;
                                 }
 
                                 int material = chunk.getBlockId(xx, yy, zz);
-                                int materialAbove = chunk.getBlockId(xx, yy + 1, zz);
                                 if (material == Block.GRASS || material == Block.MYCELIUM) {
                                     grassFound = true;
                                 }
@@ -230,16 +228,16 @@ public class PopulatorCaves extends Populator {
             i = 0;
 
         for (int j = 0; j < i; j++) {
-            double x = chunkX * 16 + this.random.nextInt(16);
+            double x = (chunkX << 4) + this.random.nextInt(16);
 
             double y;
 
             if (evenCaveDistribution)
-                y = numberInRange(random, caveMinAltitude, caveMaxAltitude);
+                y = MathHelper.getRandomNumberInRange(random, caveMinAltitude, caveMaxAltitude);
             else
                 y = this.random.nextInt(this.random.nextInt(caveMaxAltitude - caveMinAltitude + 1) + 1) + caveMinAltitude;
 
-            double z = chunkZ * 16 + this.random.nextInt(16);
+            double z = (chunkZ << 4) + this.random.nextInt(16);
 
             int count = caveSystemFrequency;
             boolean largeCaveSpawned = false;
@@ -249,20 +247,16 @@ public class PopulatorCaves extends Populator {
             }
 
             if ((largeCaveSpawned) || (this.random.nextInt(100) <= caveSystemPocketChance - 1)) {
-                count += numberInRange(random, caveSystemPocketMinSize, caveSystemPocketMaxSize);
+                count += MathHelper.getRandomNumberInRange(random, caveSystemPocketMinSize, caveSystemPocketMaxSize);
             }
             while (count > 0) {
                 count--;
-                float f1 = this.random.nextFloat() * 3.141593F * 2.0F;
+                float f1 = this.random.nextFloat() * 6.283186f;
                 float f2 = (this.random.nextFloat() - 0.5F) * 2.0F / 8.0F;
                 float f3 = this.random.nextFloat() * 2.0F + this.random.nextFloat();
 
                 generateCaveNode(this.random.nextLong(), generatingChunkBuffer, x, y, z, f3, f1, f2, 0, 0, 1.0D);
             }
         }
-    }
-
-    public static int numberInRange(Random random, int min, int max) {
-        return min + random.nextInt(max - min + 1);
     }
 }

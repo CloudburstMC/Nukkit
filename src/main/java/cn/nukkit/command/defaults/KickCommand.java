@@ -20,8 +20,8 @@ public class KickCommand extends VanillaCommand {
         this.setPermission("nukkit.command.kick");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newType("reason", true, CommandParamType.MESSAGE)
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("reason", CommandParamType.STRING, false),
         });
     }
 
@@ -39,16 +39,16 @@ public class KickCommand extends VanillaCommand {
 
         StringBuilder reason = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
-            reason.append(args[i]).append(" ");
+            reason.append(args[i]).append(' ');
         }
 
         if (reason.length() > 0) {
             reason = new StringBuilder(reason.substring(0, reason.length() - 1));
         }
 
-        Player player = sender.getServer().getPlayer(name);
+        Player player = sender.getServer().getPlayerExact(name);
         if (player != null) {
-            player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, reason.toString());
+            player.kick(PlayerKickEvent.Reason.KICKED_BY_ADMIN, reason.toString(), true);
             if (reason.length() >= 1) {
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kick.success.reason", player.getName(), reason.toString())
                 );

@@ -3,9 +3,6 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
 
-/**
- * Created by Leonidius20 on 20.08.18.
- */
 public class ItemChorusFruit extends ItemEdible {
 
     public ItemChorusFruit() {
@@ -17,7 +14,7 @@ public class ItemChorusFruit extends ItemEdible {
     }
 
     public ItemChorusFruit(Integer meta, int count) {
-        super(CHORUS_FRUIT, meta, count, "Chorus Fruit");
+        super(CHORUS_FRUIT, 0, count, "Chorus Fruit");
     }
 
     @Override
@@ -27,10 +24,9 @@ public class ItemChorusFruit extends ItemEdible {
 
     @Override
     public boolean onUse(Player player, int ticksUsed) {
-        boolean successful = super.onUse(player, ticksUsed);
-        if (successful) {
+        if (super.onUse(player, ticksUsed)) {
             player.onChorusFruitTeleport();
         }
-        return successful;
+        return true;
     }
 }

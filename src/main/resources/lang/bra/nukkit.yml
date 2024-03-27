@@ -1,0 +1,98 @@
+# Configurações avançadas para o Nukkit
+# Algumas destas configurações são seguras, outras podem destruir o seu servidor caso modificadas incorretamente
+# Novas configurações/padrões não irão aparecer neste arquivo ao atualizar.
+
+settings:
+ #Configuração de Multi-Linguagem
+ #Disponível: eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, cze
+ language: "bra"
+ #Se é para enviar todos os textos traduzidos para a linguagem do servidor ou se é para o próprio dispositivo traduzir elas
+ force-language: false
+ shutdown-message: "Servidor fechado"
+ #Permitir a listagem dos plugins via query
+ query-plugins: true
+ #Mostrar no console uma mensagem quando um plugin usa métodos obsoletos da API
+ deprecated-verbose: true
+ #Número de trabalhadores da AsyncTask
+ #Se marcado como auto, ele irá tentar detectar o número de núcleos (e no mínimo 4)
+ async-workers: auto
+
+network:
+ #Limite de lotes de packets, em bytes. Somente estes packets serão compactados
+ #Coloque 0 para compactar tudo, -1 para desativar.
+ batch-threshold: 256
+ #Nível de compressão usado pelo Zlib ao enviar packets compactados. Maior = mais uso na CPU, menos bandwidth utilizado.
+ compression-level: 4
+ #Enable network encryption
+ encryption: true
+
+debug:
+ #Se maior de 1, as mensagens para debug irão ser mostradas no console
+ level: 1
+
+level-settings:
+ #O formato padrão que os mundos irão usar ao serem criados
+ default-format: leveldb
+ #Mudar automaticamente o tick rate dos mundos para manter 20 ticks por segundo
+ auto-tick-rate: true
+ auto-tick-rate-limit: 20
+ #Altera a base do tick rate (1 = 20 ticks por segundos, 2 = 10 ticks por segundo, etc.)
+ base-tick-rate: 1
+ #Fazer tick em todos os players em todos os ticks mesmo quando as outras opções não permitem isto.
+ always-tick-players: false
+
+chunk-sending:
+ #Número de chunks enviados para os players por tick
+ per-tick: 4
+ #Número de chunks que deverão ser enviados antes de spawnar o player
+ spawn-threshold: 56
+ #Salva uma cópia serializada do chunk na memória para enviar mais rapidamente.
+ #Útil em mundos normalmente estásticos que muitos players entram ao mesmo tempo
+ cache-chunks: false
+
+chunk-ticking:
+ #Máximo número de chunks processados em cada tick
+ per-tick: 40
+ #Raio de chunks em volta do player a ser tickados
+ tick-radius: 3
+ clear-tick-list: false
+
+chunk-generation:
+ #Máximo número de chunks na fila de chunks para serem gerados
+ queue-size: 8
+ #Máximo número de chunks na fila de chunks para serem populados
+ population-queue-size: 8
+
+leveldb:
+ #Use native LevelDB implementation for better performance
+ use-native: false
+ #Set LevelDB memory cache size
+ cache-size-mb: 80
+
+ticks-per:
+ autosave: 6000
+
+player:
+ #If true, player data will be saved as players/playername.dat
+ #If false, nukkit won't save player data as "dat" files, in order that plugins can do something on it.
+ save-player-data: true
+ #The time between skin change action in seconds, set to 0 if you dont want the cooldown
+ skin-change-cooldown: 15
+
+aliases:
+ #Aliases para comandos
+ #Exemplos:
+ #showtheversion: version
+ #savestop: [save-all, stop]
+
+worlds:
+ #Worlds that the server will use. Options are specific to the chosen generator, and may result in broken generation or
+ #be ignored completely.
+ world:
+  #seed: 404
+  generator: normal
+  options:
+ nether:
+  #seed: my_cool_nether_seed
+  generator: nether
+  options:

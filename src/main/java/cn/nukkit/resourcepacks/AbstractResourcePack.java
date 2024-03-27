@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import java.util.UUID;
 
 public abstract class AbstractResourcePack implements ResourcePack {
+
     protected JsonObject manifest;
     private UUID id = null;
 

@@ -1,0 +1,98 @@
+# Nukkit용 고급 구성 파일
+# 이 설정들 중 일부는 안전하지만, 다른 것들은 잘못 수정되면 서버를 미작동하게 할 수 있습니다.
+# 새로운 설정/기본은 업그레이드할 때 이 파일에 자동으로 나타나지 않습니다
+
+settings:
+ #다국어 설정
+ #사용 가능: eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, cze
+ language: "kor"
+ #모든 문자열을 서버 로캘로 번역해 전송하거나 기기가 처리할 수 있게 할지 여부
+ force-language: false
+ shutdown-message: "Server closed"
+ #Query를 통한 플러그인 목록 보기를 허용합니다
+ query-plugins: true
+ #플러그인이 사용되지 않는 API 메서드를 사용할 때 콘솔 메시지를 표시합니다
+ deprecated-verbose: true
+ #AsyncTask Works의 개수
+ #auto로 설정하면, 자동으로 코어의 개수를 감지하려고 시도합니다(최소 4개)
+ async-workers: auto
+
+network:
+ #일괄 처리 패킷에 대한 임곗값(바이트)입니다. 이 패킷들만 압축됩니다
+ #모두 압축하려면 0으로 설정하고, 비활성화하려면 -1으로 설정하세요
+ batch-threshold: 256
+ #일괄 처리된 패킷을 전송할 때 Zlib에 사용되는 압축 수준입니다. 높을수록 더 많은 CPU 사용량으로, 적은 대역폭을 사용합니다
+ compression-level: 4
+ #Enable network encryption
+ encryption: true
+
+debug:
+ #1보다 크면, 콘솔에 디버그 메시지를 표시합니다
+ level: 1
+
+level-settings:
+ #레벨이 생성될 때 사용할 기본 포맷
+ default-format: mcregion
+ #1초당 20틱을 유지하기 위해 자동으로 레벨의 틱을 변경합니다
+ auto-tick-rate: true
+ auto-tick-rate-limit: 20
+ #기본 틱을 설정합니다 (1 = 1초당 20틱, 2 = 1초당 10틱, 등등.)
+ base-tick-rate: 1
+ #다른 설정들이 이를 허용하지 않더라도 모든 플레이어를 틱 처리합니다
+ always-tick-players: false
+
+chunk-sending:
+ #플레이어에게 틱 당 보낼 청크의 양
+ per-tick: 4
+ #플레이어를 생성하기 전에 보내져야 할 청크의 양
+ spawn-threshold: 56
+ #빠른 전송을 위해 메모리에 직렬화된 청크의 복사본을 저장합니다
+ #많은 플레이어가 동시에 참여하는 대부분 정적인 세계에서 유용합니다
+ cache-chunks: false
+
+chunk-ticking:
+ #각 틱 당 처리될 청크의 최대량
+ per-tick: 40
+ #플레이어 주변의 틱 처리할 청크의 범위
+ tick-radius: 3
+ clear-tick-list: false
+
+chunk-generation:
+ #대기열에 있는 생성 대기 중인 청크의 최대량
+ queue-size: 8
+ #대기열에 있는 채울 대기 중인 청크의 최대량
+ population-queue-size: 8
+
+leveldb:
+ #Use native LevelDB implementation for better performance
+ use-native: false
+ #Set LevelDB memory cache size
+ cache-size-mb: 80
+
+ticks-per:
+ autosave: 6000
+
+player:
+ #true로 설정하면, 플레이어 데이터가 players/플레이어 이름.dat으로 저장됩니다
+ #false로 설정하면, Nukkit이 플레이어 데이터를 "dat" 파일로 저장하지 않으므로 플러그인에서 무언가를 수행할 수 있습니다.
+ save-player-data: true
+ #The time between skin change action in seconds, set to 0 if you dont want the cooldown
+ skin-change-cooldown: 15
+ 
+aliases:
+ #명령어의 별칭
+ #예:
+ # showtheversion: version
+ # savestop: [save-all, stop]
+
+worlds:
+ #Worlds that the server will use. Options are specific to the chosen generator, and may result in broken generation or
+ #be ignored completely.
+ world:
+  #seed: 404
+  generator: normal
+  options:
+ nether:
+  #seed: my_cool_nether_seed
+  generator: nether
+  options:

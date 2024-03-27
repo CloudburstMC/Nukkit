@@ -2,14 +2,15 @@ package cn.nukkit.blockentity;
 
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockLayer;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.persistence.PersistentDataContainer;
+import cn.nukkit.level.persistence.impl.PersistentDataContainerBlockWrapper;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.ChunkException;
-import cn.nukkit.utils.MainLogger;
-import co.aikar.timings.Timing;
-import co.aikar.timings.Timings;
+import cn.nukkit.utils.LevelException;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
@@ -19,6 +20,7 @@ import java.lang.reflect.Constructor;
  * @author MagicDroidX
  */
 public abstract class BlockEntity extends Position {
+
     //WARNING: DO NOT CHANGE ANY NAME HERE, OR THE CLIENT WILL CRASH
     public static final String CHEST = "Chest";
     public static final String ENDER_CHEST = "EnderChest";
@@ -42,41 +44,49 @@ public abstract class BlockEntity extends Position {
     public static final String JUKEBOX = "Jukebox";
     public static final String SHULKER_BOX = "ShulkerBox";
     public static final String BANNER = "Banner";
+    public static final String DROPPER = "Dropper";
+    public static final String DISPENSER = "Dispenser";
+    public static final String BARREL = "Barrel";
+    public static final String CAMPFIRE = "Campfire";
+    public static final String BELL = "Bell";
+    public static final String LECTERN = "Lectern";
+    public static final String BLAST_FURNACE = "BlastFurnace";
+    public static final String SMOKER = "Smoker";
 
+    // Not a vanilla block entity
+    public static final String PERSISTENT_CONTAINER = "PersistentContainer";
 
     public static long count = 1;
 
-    private static final BiMap<String, Class<? extends BlockEntity>> knownBlockEntities = HashBiMap.create(21);
+    private static final BiMap<String, Class<? extends BlockEntity>> knownBlockEntities = HashBiMap.create(30);
 
     public FullChunk chunk;
     public String name;
     public long id;
 
-    public boolean movable = true;
+    public boolean movable;
 
     public boolean closed = false;
     public CompoundTag namedTag;
-    protected long lastUpdate;
     protected Server server;
-    protected Timing timing;
+
+    private PersistentDataContainer persistentContainer;
 
     public BlockEntity(FullChunk chunk, CompoundTag nbt) {
         if (chunk == null || chunk.getProvider() == null) {
-            throw new ChunkException("Invalid garbage Chunk given to Block Entity");
+            throw new ChunkException("Invalid garbage chunk given to BlockEntity");
         }
 
-        this.timing = Timings.getBlockEntityTiming(this);
         this.server = chunk.getProvider().getLevel().getServer();
         this.chunk = chunk;
         this.setLevel(chunk.getProvider().getLevel());
         this.namedTag = nbt;
         this.name = "";
-        this.lastUpdate = System.currentTimeMillis();
         this.id = BlockEntity.count++;
         this.x = this.namedTag.getInt("x");
         this.y = this.namedTag.getInt("y");
         this.z = this.namedTag.getInt("z");
-        this.movable = this.namedTag.getBoolean("isMovable");
+        this.movable = this.namedTag.getBoolean("isMovable", true);
 
         this.initBlockEntity();
 
@@ -84,12 +94,9 @@ public abstract class BlockEntity extends Position {
         this.getLevel().addBlockEntity(this);
     }
 
-    protected void initBlockEntity() {
-
-    }
+    protected void initBlockEntity() {}
 
     public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
-        type = type.replaceFirst("BlockEntity", ""); //TODO: Remove this after the first release
         BlockEntity blockEntity = null;
 
         if (knownBlockEntities.containsKey(type)) {
@@ -99,7 +106,7 @@ public abstract class BlockEntity extends Position {
                 return null;
             }
 
-            for (Constructor constructor : clazz.getConstructors()) {
+            for (Constructor<?> constructor : clazz.getConstructors()) {
                 if (blockEntity != null) {
                     break;
                 }
@@ -120,11 +127,10 @@ public abstract class BlockEntity extends Position {
                         blockEntity = (BlockEntity) constructor.newInstance(objects);
 
                     }
-                } catch (Exception e) {
-                    MainLogger.getLogger().logException(e);
-                }
-
+                } catch (Exception ignored) {}
             }
+        } else {
+            Server.getInstance().getLogger().warning("Tried to create block entity that doesn't exists: " + type);
         }
 
         return blockEntity;
@@ -159,7 +165,7 @@ public abstract class BlockEntity extends Position {
         this.saveNBT();
         CompoundTag tag = this.namedTag.clone();
         tag.remove("x").remove("y").remove("z").remove("id");
-        if (tag.getTags().size() > 0) {
+        if (!tag.getTags().isEmpty()) {
             return tag;
         } else {
             return null;
@@ -170,6 +176,18 @@ public abstract class BlockEntity extends Position {
         return this.getLevelBlock();
     }
 
+    @Override
+    public Block getLevelBlock() {
+        if (this.isValid()) return this.level.getBlock(this.chunk, this.getFloorX(), this.getFloorY(), this.getFloorZ(), BlockLayer.NORMAL, true);
+        else throw new LevelException("Undefined Level reference");
+    }
+
+    @Override
+    public Block getLevelBlock(BlockLayer layer) {
+        if (this.isValid()) return this.level.getBlock(this.chunk, this.getFloorX(), this.getFloorY(), this.getFloorZ(), layer, true);
+        else throw new LevelException("Undefined Level reference");
+    }
+
     public abstract boolean isBlockEntityValid();
 
     public boolean onUpdate() {
@@ -177,6 +195,9 @@ public abstract class BlockEntity extends Position {
     }
 
     public final void scheduleUpdate() {
+        if (this.level.isBeingConverted) {
+            return;
+        }
         this.level.scheduleBlockEntityUpdate(this);
     }
 
@@ -193,12 +214,12 @@ public abstract class BlockEntity extends Position {
         }
     }
 
-    public void onBreak() {
-
-    }
+    public void onBreak() {}
 
     public void setDirty() {
-        chunk.setChanged();
+        if (this.chunk != null) {
+            this.chunk.setChanged();
+        }
     }
 
     public String getName() {
@@ -210,10 +231,34 @@ public abstract class BlockEntity extends Position {
     }
 
     public static CompoundTag getDefaultCompound(Vector3 pos, String id) {
-        return new CompoundTag("")
+        return new CompoundTag()
                 .putString("id", id)
                 .putInt("x", pos.getFloorX())
                 .putInt("y", pos.getFloorY())
                 .putInt("z", pos.getFloorZ());
+    }
+
+    public PersistentDataContainer getPersistentDataContainer() {
+        if (this.persistentContainer == null) {
+            this.persistentContainer = new PersistentDataContainerBlockWrapper(this);
+        }
+        return this.persistentContainer;
+    }
+
+    public boolean hasPersistentDataContainer() {
+        return !this.getPersistentDataContainer().isEmpty();
+    }
+
+    public void onReplacedWith(BlockEntity blockEntity) {
+        blockEntity.getPersistentDataContainer().setStorage(this.getPersistentDataContainer().getStorage().clone());
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof BlockEntity && this.getClass().equals(obj.getClass()) && super.equals(obj);
+    }
+
+    public boolean canSaveToStorage() {
+        return true;
     }
 }

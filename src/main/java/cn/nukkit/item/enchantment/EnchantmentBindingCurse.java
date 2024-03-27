@@ -1,6 +1,7 @@
 package cn.nukkit.item.enchantment;
 
 public class EnchantmentBindingCurse extends Enchantment {
+
     protected EnchantmentBindingCurse() {
         super(ID_BINDING_CURSE, "curse.binding", Rarity.VERY_RARE, EnchantmentType.WEARABLE);
     }
@@ -13,5 +14,10 @@ public class EnchantmentBindingCurse extends Enchantment {
     @Override
     public int getMaxEnchantAbility(int level) {
         return 30;
+    }
+
+    @Override
+    public boolean isTreasure() {
+        return true;
     }
 }

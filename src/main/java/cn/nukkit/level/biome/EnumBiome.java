@@ -1,5 +1,6 @@
 package cn.nukkit.level.biome;
 
+import cn.nukkit.level.biome.impl.EndBiome;
 import cn.nukkit.level.biome.impl.HellBiome;
 import cn.nukkit.level.biome.impl.beach.BeachBiome;
 import cn.nukkit.level.biome.impl.beach.ColdBeachBiome;
@@ -16,6 +17,10 @@ import cn.nukkit.level.biome.impl.jungle.*;
 import cn.nukkit.level.biome.impl.mesa.*;
 import cn.nukkit.level.biome.impl.mushroom.MushroomIslandBiome;
 import cn.nukkit.level.biome.impl.mushroom.MushroomIslandShoreBiome;
+import cn.nukkit.level.biome.impl.nether.BasaltDeltasBiome;
+import cn.nukkit.level.biome.impl.nether.CrimsonForestBiome;
+import cn.nukkit.level.biome.impl.nether.SoulSandValleyBiome;
+import cn.nukkit.level.biome.impl.nether.WarpedForestBiome;
 import cn.nukkit.level.biome.impl.ocean.DeepOceanBiome;
 import cn.nukkit.level.biome.impl.ocean.FrozenOceanBiome;
 import cn.nukkit.level.biome.impl.ocean.OceanBiome;
@@ -41,25 +46,27 @@ import cn.nukkit.level.biome.impl.taiga.*;
  * </p>
  */
 public enum EnumBiome {
-    OCEAN(0, new OceanBiome()),//
+
+    OCEAN(0, new OceanBiome()),
     PLAINS(1, new PlainsBiome()),
     DESERT(2, new DesertBiome()),
     EXTREME_HILLS(3, new ExtremeHillsBiome()),
     FOREST(4, new ForestBiome()),
     TAIGA(5, new TaigaBiome()),
     SWAMP(6, new SwampBiome()),
-    RIVER(7, new RiverBiome()),//
+    RIVER(7, new RiverBiome()),
     HELL(8, new HellBiome()),
-    FROZEN_OCEAN(10, new FrozenOceanBiome()), //DOES NOT GENERATE NATUALLY
+    END(9, new EndBiome()),
+    FROZEN_OCEAN(10, new FrozenOceanBiome()),
     FROZEN_RIVER(11, new FrozenRiverBiome()),
     ICE_PLAINS(12, new IcePlainsBiome()),
-    MUSHROOM_ISLAND(14, new MushroomIslandBiome()),//
+    MUSHROOM_ISLAND(14, new MushroomIslandBiome()),
     MUSHROOM_ISLAND_SHORE(15, new MushroomIslandShoreBiome()),
     BEACH(16, new BeachBiome()),
     DESERT_HILLS(17, new DesertHillsBiome()),
     FOREST_HILLS(18, new ForestHillsBiome()),
     TAIGA_HILLS(19, new TaigaHillsBiome()),
-    EXTREME_HILLS_EDGE(20, new ExtremeHillsEdgeBiome()), //DOES NOT GENERATE NATUALLY
+    EXTREME_HILLS_EDGE(20, new ExtremeHillsEdgeBiome()),
     JUNGLE(21, new JungleBiome()),
     JUNGLE_HILLS(22, new JungleHillsBiome()),
     JUNGLE_EDGE(23, new JungleEdgeBiome()),
@@ -79,14 +86,14 @@ public enum EnumBiome {
     MESA(37, new MesaBiome()),
     MESA_PLATEAU_F(38, new MesaPlateauFBiome()),
     MESA_PLATEAU(39, new MesaPlateauBiome()),
-    //    All biomes below this comment are mutated variants of existing biomes
+    // All biomes below this comment are mutated variants of existing biomes
     SUNFLOWER_PLAINS(129, new SunflowerPlainsBiome()),
     DESERT_M(130, new DesertMBiome()),
     EXTREME_HILLS_M(131, new ExtremeHillsMBiome()),
     FLOWER_FOREST(132, new FlowerForestBiome()),
     TAIGA_M(133, new TaigaMBiome()),
     SWAMPLAND_M(134, new SwamplandMBiome()),
-    //no, the following jumps in IDs are NOT mistakes
+    // No, the following jumps in IDs are NOT mistakes
     ICE_PLAINS_SPIKES(140, new IcePlainsSpikesBiome()),
     JUNGLE_M(149, new JungleMBiome()),
     JUNGLE_EDGE_M(151, new JungleEdgeMBiome()),
@@ -100,7 +107,12 @@ public enum EnumBiome {
     SAVANNA_PLATEAU_M(164, new SavannaPlateauMBiome()),
     MESA_BRYCE(165, new MesaBryceBiome()),
     MESA_PLATEAU_F_M(166, new MesaPlateauFMBiome()),
-    MESA_PLATEAU_M(167, new MesaPlateauMBiome());
+    MESA_PLATEAU_M(167, new MesaPlateauMBiome()),
+
+    SOULSAND_VALLEY(178, new SoulSandValleyBiome()),
+    CRIMSON_FOREST(179, new CrimsonForestBiome()),
+    WARPED_FOREST(180, new WarpedForestBiome()),
+    BASALT_DELTAS(181, new BasaltDeltasBiome());
 
     public final int id;
     public final Biome biome;

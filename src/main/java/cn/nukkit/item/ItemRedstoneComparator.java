@@ -1,7 +1,6 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 
 /**
  * @author CreeperFace
@@ -18,6 +17,6 @@ public class ItemRedstoneComparator extends Item {
 
     public ItemRedstoneComparator(Integer meta, int count) {
         super(COMPARATOR, meta, count, "Redstone Comparator");
-        this.block = Block.get(BlockID.UNPOWERED_COMPARATOR);
+        this.block = Block.get(UNPOWERED_COMPARATOR);
     }
 }

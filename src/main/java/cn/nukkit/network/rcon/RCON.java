@@ -10,18 +10,19 @@ import java.io.IOException;
 /**
  * Implementation of Source RCON protocol.
  * https://developer.valvesoftware.com/wiki/Source_RCON_Protocol
- * <p>
+ * 
  * Wrapper for RCONServer. Handles data.
  *
  * @author Tee7even
  */
 public class RCON {
+
     private final Server server;
     private final RCONServer serverThread;
 
     public RCON(Server server, String password, String address, int port) {
         if (password.isEmpty()) {
-            throw new IllegalArgumentException("nukkit.server.rcon.emptyPasswordError");
+            throw new IllegalArgumentException(server.getLanguage().translateString("nukkit.server.rcon.emptyPasswordError"));
         }
 
         this.server = server;
@@ -30,10 +31,11 @@ public class RCON {
             this.serverThread = new RCONServer(address, port, password);
             this.serverThread.start();
         } catch (IOException e) {
-            throw new IllegalArgumentException("nukkit.server.rcon.startupError", e);
+            throw new IllegalArgumentException(server.getLanguage().translateString("nukkit.server.rcon.startupError"), e);
         }
 
-        this.server.getLogger().info(this.server.getLanguage().translateString("nukkit.server.rcon.running", new String[]{address, String.valueOf(port)}));
+        server.getLogger().info(server.getLanguage().translateString("nukkit.server.rcon.running", new String[]{address, String.valueOf(port)}));
+        server.getLogger().warning("RCON is not secure! Please consider using other remote control solutions or at least make sure RCON is running behind a firewall.");
     }
 
     public void check() {
@@ -54,6 +56,7 @@ public class RCON {
             }
 
             this.serverThread.respond(command.getSender(), command.getId(), TextFormat.clean(sender.getMessages()));
+            sender.clearMessages();
         }
     }
 
@@ -63,8 +66,6 @@ public class RCON {
                 serverThread.close();
                 serverThread.wait(5000);
             }
-        } catch (InterruptedException exception) {
-            //
-        }
+        } catch (InterruptedException ignored) {}
     }
 }

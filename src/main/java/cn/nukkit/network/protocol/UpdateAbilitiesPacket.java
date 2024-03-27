@@ -17,6 +17,8 @@ import java.util.Set;
 @Setter
 public class UpdateAbilitiesPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_ABILITIES_PACKET;
+
     protected static final PlayerAbility[] VALID_FLAGS = {
             PlayerAbility.BUILD,
             PlayerAbility.MINE,
@@ -38,6 +40,7 @@ public class UpdateAbilitiesPacket extends DataPacket {
             PlayerAbility.NO_CLIP,
             PlayerAbility.PRIVILEGED_BUILDER
     };
+
     private static final EnumMap<PlayerAbility, Integer> FLAGS_TO_BITS = new EnumMap<>(PlayerAbility.class);
 
     static {
@@ -53,7 +56,7 @@ public class UpdateAbilitiesPacket extends DataPacket {
 
     @Override
     public void decode() {
-        throw new UnsupportedOperationException();
+        this.decodeUnsupported();
     }
 
     @Override
@@ -83,7 +86,7 @@ public class UpdateAbilitiesPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.UPDATE_ABILITIES_PACKET;
+        return NETWORK_ID;
     }
 
     public enum PlayerPermission {

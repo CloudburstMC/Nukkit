@@ -25,27 +25,25 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @Log4j2
 public class RakNetInterface implements RakNetServerListener, AdvancedSourceInterface {
 
     private final Server server;
-    private Network network;
     private final RakNetServer raknet;
+    private Network network;
+
+    private byte[] advertisement;
 
     private final Map<InetSocketAddress, RakNetPlayerSession> sessions = new HashMap<>();
     private final Queue<RakNetPlayerSession> sessionCreationQueue = PlatformDependent.newMpscQueue();
 
-
-    private byte[] advertisement;
-
     public RakNetInterface(Server server) {
         this.server = server;
 
-        InetSocketAddress bindAddress = new InetSocketAddress(Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp(), this.server.getPort());
-        this.raknet = new RakNetServer(bindAddress, Runtime.getRuntime().availableProcessors());
+        this.raknet = new RakNetServer(new InetSocketAddress(Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp(), this.server.getPort()), Runtime.getRuntime().availableProcessors());
         this.raknet.setProtocolVersion(11);
         this.raknet.bind().join();
         this.raknet.setListener(this);
@@ -69,11 +67,11 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
                 Constructor<? extends Player> constructor = event.getPlayerClass().getConstructor(SourceInterface.class, Long.class, InetSocketAddress.class);
                 Player player = constructor.newInstance(this, event.getClientId(), event.getSocketAddress());
-                this.server.addPlayer(address, player);
                 session.setPlayer(player);
+                this.server.addPlayer(address, player);
             } catch (Exception e) {
-                Server.getInstance().getLogger().error("Failed to create player", e);
-                session.disconnect("Internal error");
+                Server.getInstance().getLogger().error("Failed to create Player", e);
+                session.disconnect("Internal Server Error");
                 this.sessions.remove(address);
             }
         }
@@ -151,7 +149,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     @Override
     public void setName(String name) {
         QueryRegenerateEvent info = this.server.getQueryInformation();
-        String[] names = name.split("!@#");  //Split double names within the program
+        String[] names = name.split("!@#"); // Split double names within the program
         String motd = Utils.rtrim(names[0].replace(";", "\\;"), '\\');
         String subMotd = names.length > 1 ? Utils.rtrim(names[1].replace(";", "\\;"), '\\') : "";
         StringJoiner joiner = new StringJoiner(";")

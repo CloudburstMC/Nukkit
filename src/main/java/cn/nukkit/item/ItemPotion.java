@@ -69,6 +69,10 @@ public class ItemPotion extends Item {
 
     @Override
     public boolean onUse(Player player, int ticksUsed) {
+        if (ticksUsed < 30) {
+            player.getServer().getLogger().debug(player.getName() + ": potion ticksUsed=" + ticksUsed);
+            return false;
+        }
         PlayerItemConsumeEvent consumeEvent = new PlayerItemConsumeEvent(player, this);
         player.getServer().getPluginManager().callEvent(consumeEvent);
         if (consumeEvent.isCancelled()) {
@@ -76,10 +80,10 @@ public class ItemPotion extends Item {
         }
         Potion potion = Potion.getPotion(this.getDamage()).setSplash(false);
 
-        if (player.isAdventure() || player.isSurvival()) {
+        if (!player.isCreative()) {
             --this.count;
             player.getInventory().setItemInHand(this);
-            player.getInventory().addItem(new ItemGlassBottle());
+            player.getInventory().addItem(Item.get(Item.GLASS_BOTTLE));
         }
 
         if (potion != null) {

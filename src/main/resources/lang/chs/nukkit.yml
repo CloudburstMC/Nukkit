@@ -1,0 +1,98 @@
+# Nukkit 高级设置
+# 警告：此处部分设置是安全的，而一些在设置不当的情况下可能会损害您的服务器
+# 升级后，新的设置及默认值将不会自动显示在这里，它们将以默认值运行直到您手动更新配置文件
+
+settings:
+ #多语言设置
+ #可用：eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, cze
+ language: "chs"
+ #服务器强制语言
+ force-language: false
+ shutdown-message: "服务器已关闭"
+ #允许使用Query协议查询您的插件
+ query-plugins: true
+ #当某插件使用不被推荐的API时，在控制台提醒
+ deprecated-verbose: true
+ #异步线程数量
+ #如果设置为auto，则自动识别CPU核心数量（最少4线程）
+ async-workers: auto
+
+network:
+ #数据包大小阀值（单位：字节）。仅这些包会被压缩
+ #设为 0 以压缩全部。设为 -1 以禁用此功能
+ batch-threshold: 256
+ #压缩等级。等级越高，CPU 占用越高，占用带宽越少
+ compression-level: 4
+ #Enable network encryption
+ encryption: true
+
+debug:
+ #当调试级别 > 1 时，将在控制台显示调试信息
+ level: 1
+
+level-settings:
+ #默认生成的地图格式
+ default-format: leveldb
+ #自动改变世界 TPS 以维持每秒 20 ticks（TPS：ticks per second）
+ auto-tick-rate: true
+ auto-tick-rate-limit: 20
+ #设置基本 TPS（1 = 20TPS，2 = 10TPS，以此类推）
+ base-tick-rate: 1
+ #始终保持玩家Tick，即使其他选项不允许这么做
+ always-tick-players: false
+
+chunk-sending:
+ #每 tick 内发送给玩家区块的数量
+ per-tick: 4
+ #玩家生成前需要的区块数量
+ spawn-threshold: 56
+ #在内存中存储一系列的区块复制以加快区块发送
+ #在多玩家同时加入一个大多是静态的服务器时较有效
+ cache-chunks: false
+
+chunk-ticking:
+ #每 tick 中处理的区块数量
+ per-tick: 40
+ #玩家周围区块处理的半径
+ tick-radius: 3
+ clear-tick-list: false
+
+chunk-generation:
+ #等待队列中，被生成的区块的数量上限
+ queue-size: 8
+ #等待队列中，被填充的区块的数量上限
+ population-queue-size: 8
+
+leveldb:
+ #Use native LevelDB implementation for better performance
+ use-native: false
+ #Set LevelDB memory cache size
+ cache-size-mb: 80
+
+ticks-per:
+ autosave: 6000
+
+player:
+ #决定服务器是否以 players/playername.dat 的形式保存玩家数据。默认 true 为保存。
+ #如果设置为 false，nukkit 将不会保存玩家数据，这样一些与玩家数据有关的插件就可以大展身手了。
+ save-player-data: true
+ #The time between skin change action in seconds, set to 0 if you dont want the cooldown
+ skin-change-cooldown: 15
+ 
+aliases:
+ #指令别称
+ #例如：
+ #showtheversion: version
+ #savestop: [save-all, stop]
+
+worlds:
+ #Worlds that the server will use. Options are specific to the chosen generator, and may result in broken generation or
+ #be ignored completely.
+ world:
+  #seed: 404
+  generator: normal
+  options:
+ nether:
+  #seed: my_cool_nether_seed
+  generator: nether
+  options:

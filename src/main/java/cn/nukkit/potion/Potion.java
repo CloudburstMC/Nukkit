@@ -1,9 +1,12 @@
 package cn.nukkit.potion;
 
-import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.EntitySmite;
+import cn.nukkit.entity.mob.EntityBlaze;
+import cn.nukkit.entity.mob.EntityEnderman;
+import cn.nukkit.entity.mob.EntitySnowGolem;
+import cn.nukkit.entity.passive.EntityStrider;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
@@ -11,7 +14,7 @@ import cn.nukkit.event.potion.PotionApplyEvent;
 import cn.nukkit.utils.ServerException;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class Potion implements Cloneable {
@@ -60,6 +63,7 @@ public class Potion implements Cloneable {
     public static final int SLOW_FALLING = 40;
     public static final int SLOW_FALLING_LONG = 41;
     public static final int SLOWNESS_LONG_II = 42;
+    public static final int SLOWNESS_IV = 43;
 
     protected static Potion[] potions;
 
@@ -109,6 +113,7 @@ public class Potion implements Cloneable {
         potions[Potion.SLOW_FALLING] = new Potion(Potion.SLOW_FALLING);
         potions[Potion.SLOW_FALLING_LONG] = new Potion(Potion.SLOW_FALLING_LONG);
         potions[Potion.SLOWNESS_LONG_II] = new Potion(Potion.SLOWNESS_LONG_II, 2);
+        potions[Potion.SLOWNESS_IV] = new Potion(Potion.SLOWNESS, 4);
     }
 
     public static Potion getPotion(int id) {
@@ -132,7 +137,7 @@ public class Potion implements Cloneable {
 
     protected final int level;
 
-    protected boolean splash = false;
+    protected boolean splash;
 
     public Potion(int id) {
         this(id, 1);
@@ -149,7 +154,7 @@ public class Potion implements Cloneable {
     }
 
     public Effect getEffect() {
-        return getEffect(this.getId(), this.isSplash());
+        return getEffect(this.id, this.splash);
     }
 
     public int getId() {
@@ -178,17 +183,22 @@ public class Potion implements Cloneable {
             return;
         }
 
-        Effect applyEffect = getEffect(this.getId(), this.isSplash());
+        if (this.id == WATER && (entity instanceof EntityEnderman || entity instanceof EntityStrider || entity instanceof EntitySnowGolem || entity instanceof EntityBlaze)) {
+            entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, 1f));
+            return;
+        }
+
+        Effect applyEffect = getEffect(this.id, this.splash);
 
         if (applyEffect == null) {
             return;
         }
 
-        if (entity instanceof Player) {
+        /*if (entity instanceof Player) {
             if (!((Player) entity).isSurvival() && !((Player) entity).isAdventure() && applyEffect.isBad()) {
                 return;
             }
-        }
+        }*/
 
         PotionApplyEvent event = new PotionApplyEvent(this, applyEffect, entity);
 
@@ -199,26 +209,31 @@ public class Potion implements Cloneable {
 
         applyEffect = event.getApplyEffect();
 
-        switch (this.getId()) {
+        switch (this.id) {
             case INSTANT_HEALTH:
             case INSTANT_HEALTH_II:
                 if (entity instanceof EntitySmite) {
-                    entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, (float) (health * (double) (6 << (applyEffect.getAmplifier() + 1)))));
+                    entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, (float) (health * (6 << (applyEffect.getAmplifier() + 1)))));
                 } else {
                     entity.heal(new EntityRegainHealthEvent(entity, (float) (health * (double) (4 << (applyEffect.getAmplifier() + 1))), EntityRegainHealthEvent.CAUSE_MAGIC));
                 }
                 break;
             case HARMING:
+                if (entity instanceof EntitySmite) {
+                    entity.heal(new EntityRegainHealthEvent(entity, (float) (health * (double) (4 << (applyEffect.getAmplifier() + 1))), EntityRegainHealthEvent.CAUSE_MAGIC));
+                } else {
+                    entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, (float) (health * 6)));
+                }
+                break;
             case HARMING_II:
                 if (entity instanceof EntitySmite) {
                     entity.heal(new EntityRegainHealthEvent(entity, (float) (health * (double) (4 << (applyEffect.getAmplifier() + 1))), EntityRegainHealthEvent.CAUSE_MAGIC));
                 } else {
-                    entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, (float) (health * (double) (6 << (applyEffect.getAmplifier() + 1)))));
+                    entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, (float) (health * 12)));
                 }
                 break;
             default:
-                int duration = (int) ((isSplash() ? health : 1) * (double) applyEffect.getDuration() + 0.5);
-                applyEffect.setDuration(duration);
+                applyEffect.setDuration((int) ((splash ? health : 1) * (double) applyEffect.getDuration() + 0.5));
                 entity.addEffect(applyEffect);
         }
     }
@@ -235,6 +250,12 @@ public class Potion implements Cloneable {
     public static Effect getEffect(int potionType, boolean isSplash) {
         Effect effect;
         switch (potionType) {
+            case NO_EFFECTS:
+            case MUNDANE:
+            case MUNDANE_II:
+            case THICK:
+            case AWKWARD:
+                return null;
             case NIGHT_VISION:
             case NIGHT_VISION_LONG:
                 effect = Effect.getEffect(Effect.NIGHT_VISION);
@@ -259,6 +280,8 @@ public class Potion implements Cloneable {
                 break;
             case SLOWNESS:
             case SLOWNESS_LONG:
+            case SLOWNESS_LONG_II:
+            case SLOWNESS_IV:
                 effect = Effect.getEffect(Effect.SLOWNESS);
                 break;
             case WATER_BREATHING:
@@ -310,6 +333,8 @@ public class Potion implements Cloneable {
 
     public static int getLevel(int potionType) {
         switch (potionType) {
+            case SLOWNESS_IV:
+                return 4;
             case MUNDANE_II:
             case LEAPING_II:
             case SPEED_II:
@@ -320,6 +345,7 @@ public class Potion implements Cloneable {
             case STRENGTH_II:
             case WITHER_II:
             case TURTLE_MASTER_II:
+            case SLOWNESS_LONG_II:
                 return 2;
             default:
                 return 1;
@@ -341,83 +367,163 @@ public class Potion implements Cloneable {
     public static int getApplySeconds(int potionType, boolean isSplash) {
         if (isSplash) {
             switch (potionType) {
+                case NO_EFFECTS:
+                    return 0;
+                case MUNDANE:
+                    return 0;
+                case MUNDANE_II:
+                    return 0;
+                case THICK:
+                    return 0;
+                case AWKWARD:
+                    return 0;
                 case NIGHT_VISION:
-                case STRENGTH:
-                case WATER_BREATHING:
-                case SPEED:
-                case FIRE_RESISTANCE:
-                case LEAPING:
-                case INVISIBLE:
                     return 135;
                 case NIGHT_VISION_LONG:
-                case STRENGTH_LONG:
-                case WATER_BREATHING_LONG:
-                case SPEED_LONG:
-                case FIRE_RESISTANCE_LONG:
-                case LEAPING_LONG:
+                    return 360;
+                case INVISIBLE:
+                    return 135;
                 case INVISIBLE_LONG:
                     return 360;
+                case LEAPING:
+                    return 135;
+                case LEAPING_LONG:
+                    return 360;
                 case LEAPING_II:
-                case WEAKNESS:
-                case STRENGTH_II:
-                case SLOWNESS:
+                    return 67;
+                case FIRE_RESISTANCE:
+                    return 135;
+                case FIRE_RESISTANCE_LONG:
+                    return 360;
+                case SPEED:
+                    return 135;
+                case SPEED_LONG:
+                    return 360;
                 case SPEED_II:
                     return 67;
+                case SLOWNESS:
+                    return 67;
                 case SLOWNESS_LONG:
-                case WEAKNESS_LONG:
                     return 180;
+                case WATER_BREATHING:
+                    return 135;
+                case WATER_BREATHING_LONG:
+                    return 360;
+                case INSTANT_HEALTH:
+                    return 0;
+                case INSTANT_HEALTH_II:
+                    return 0;
+                case HARMING:
+                    return 0;
+                case HARMING_II:
+                    return 0;
                 case POISON:
-                case REGENERATION:
                     return 33;
                 case POISON_LONG:
-                case REGENERATION_LONG:
                     return 90;
                 case POISON_II:
+                    return 16;
+                case REGENERATION:
+                    return 33;
+                case REGENERATION_LONG:
+                    return 90;
                 case REGENERATION_II:
                     return 16;
+                case STRENGTH:
+                    return 135;
+                case STRENGTH_LONG:
+                    return 360;
+                case STRENGTH_II:
+                    return 67;
+                case WEAKNESS:
+                    return 67;
+                case WEAKNESS_LONG:
+                    return 180;
                 case WITHER_II:
                     return 30;
+                case SLOWNESS_IV:
+                    return 15;
                 default:
                     return 0;
             }
         } else {
             switch (potionType) {
+                case NO_EFFECTS:
+                    return 0;
+                case MUNDANE:
+                    return 0;
+                case MUNDANE_II:
+                    return 0;
+                case THICK:
+                    return 0;
+                case AWKWARD:
+                    return 0;
                 case NIGHT_VISION:
-                case STRENGTH:
-                case WATER_BREATHING:
-                case SPEED:
-                case FIRE_RESISTANCE:
-                case LEAPING:
-                case INVISIBLE:
                     return 180;
                 case NIGHT_VISION_LONG:
-                case STRENGTH_LONG:
-                case WATER_BREATHING_LONG:
-                case SPEED_LONG:
-                case FIRE_RESISTANCE_LONG:
-                case LEAPING_LONG:
+                    return 480;
+                case INVISIBLE:
+                    return 180;
                 case INVISIBLE_LONG:
                     return 480;
-                case SPEED_II:
+                case LEAPING:
+                    return 180;
+                case LEAPING_LONG:
+                    return 480;
                 case LEAPING_II:
-                case WEAKNESS:
-                case STRENGTH_II:
+                    return 90;
+                case FIRE_RESISTANCE:
+                    return 180;
+                case FIRE_RESISTANCE_LONG:
+                    return 480;
+                case SPEED:
+                    return 180;
+                case SPEED_LONG:
+                    return 480;
+                case SPEED_II:
+                    return 90;
                 case SLOWNESS:
                     return 90;
                 case SLOWNESS_LONG:
-                case WEAKNESS_LONG:
                     return 240;
+                case WATER_BREATHING:
+                    return 180;
+                case WATER_BREATHING_LONG:
+                    return 480;
+                case INSTANT_HEALTH:
+                    return 0;
+                case INSTANT_HEALTH_II:
+                    return 0;
+                case HARMING:
+                    return 0;
+                case HARMING_II:
+                    return 0;
                 case POISON:
-                case REGENERATION:
                     return 45;
                 case POISON_LONG:
-                case REGENERATION_LONG:
                     return 120;
                 case POISON_II:
+                    return 22;
+                case REGENERATION:
+                    return 45;
+                case REGENERATION_LONG:
+                    return 120;
                 case REGENERATION_II:
                     return 22;
+                case STRENGTH:
+                    return 180;
+                case STRENGTH_LONG:
+                    return 480;
+                case STRENGTH_II:
+                    return 90;
+                case WEAKNESS:
+                    return 90;
+                case WEAKNESS_LONG:
+                    return 240;
                 case WITHER_II:
                     return 30;
+                case SLOWNESS_IV:
+                    return 20;
                 default:
                     return 0;
             }

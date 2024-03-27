@@ -1,9 +1,7 @@
 package cn.nukkit.block;
 
-import cn.nukkit.level.Level;
-
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
 public class BlockLavaStill extends BlockLava {
@@ -28,14 +26,6 @@ public class BlockLavaStill extends BlockLava {
 
     @Override
     public BlockLiquid getBlock(int meta) {
-        return (BlockLiquid) Block.get(BlockID.STILL_LAVA, meta);
-    }
-
-    @Override
-    public int onUpdate(int type) {
-        if (type != Level.BLOCK_UPDATE_SCHEDULED) {
-            return super.onUpdate(type);
-        }
-        return 0;
+        return (BlockLiquid) Block.get(STILL_LAVA, meta);
     }
 }

@@ -6,6 +6,7 @@ import static cn.nukkit.network.protocol.AvailableCommandsPacket.*;
  * @author CreeperFace
  */
 public enum CommandParamType {
+
     INT(ARG_TYPE_INT),
     FLOAT(ARG_TYPE_FLOAT),
     VALUE(ARG_TYPE_VALUE),

@@ -3,7 +3,6 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.command.CommandSender;
-import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
@@ -13,30 +12,41 @@ import cn.nukkit.utils.TextFormat;
  * @author Tee7even
  */
 public class TitleCommand extends VanillaCommand {
+
     public TitleCommand(String name) {
         super(name, "%nukkit.command.title.description", "%nukkit.command.title.usage");
         this.setPermission("nukkit.command.title");
 
         this.commandParameters.clear();
         this.commandParameters.put("clear", new CommandParameter[]{
-                CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("clear", new CommandEnum("TitleClear", "clear"))
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("clear", new String[]{"clear"})
         });
         this.commandParameters.put("reset", new CommandParameter[]{
-                CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("reset", new CommandEnum("TitleReset", "reset"))
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("reset", new String[]{"reset"})
         });
-        this.commandParameters.put("set", new CommandParameter[]{
-                CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("titleLocation", new CommandEnum("TitleSet", "title", "subtitle", "actionbar")),
-                CommandParameter.newType("titleText", CommandParamType.MESSAGE)
+        this.commandParameters.put("title", new CommandParameter[]{
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("title", new String[]{"title"}),
+                new CommandParameter("titleText", CommandParamType.STRING, false)
+        });
+        this.commandParameters.put("subtitle", new CommandParameter[]{
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("subtitle", new String[]{"subtitle"}),
+                new CommandParameter("titleText", CommandParamType.STRING, false)
+        });
+        this.commandParameters.put("actionbar", new CommandParameter[]{
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("actionbar", new String[]{"actionbar"}),
+                new CommandParameter("titleText", CommandParamType.STRING, false)
         });
         this.commandParameters.put("times", new CommandParameter[]{
-                CommandParameter.newType("player", CommandParamType.TARGET),
-                CommandParameter.newEnum("times", new CommandEnum("TitleTimes", "times")),
-                CommandParameter.newType("fadeIn", CommandParamType.INT),
-                CommandParameter.newType("stay", CommandParamType.INT),
-                CommandParameter.newType("fadeOut", CommandParamType.INT)
+                new CommandParameter("player", CommandParamType.TARGET, false),
+                new CommandParameter("times", new String[]{"times"}),
+                new CommandParameter("fadeIn", CommandParamType.INT, false),
+                new CommandParameter("stay", CommandParamType.INT, false),
+                new CommandParameter("fadeOut", CommandParamType.INT, false)
         });
     }
 
@@ -81,10 +91,10 @@ public class TitleCommand extends VanillaCommand {
                     player.setSubtitle(args[2]);
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.subtitle", TextFormat.clean(args[2]), player.getName()));
                     break;
-                /*case "actionbar":
-                    player.sendActionBarTitle(args[2]);
-                    sender.sendMessage(new TranslationContainer("nukkit.command.title.actionbar", new String[]{TextFormat.clean(args[2]), player.getName()}));
-                    break;*/
+                case "actionbar":
+                    player.sendActionBar(args[2]);
+                    sender.sendMessage(new TranslationContainer("nukkit.command.title.actionbar", TextFormat.clean(args[2]), player.getName()));
+                    break;
                 default:
                     sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                     return false;

@@ -1,7 +1,7 @@
 package cn.nukkit.entity;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public interface EntityDamageable {

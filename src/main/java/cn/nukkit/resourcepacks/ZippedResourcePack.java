@@ -14,9 +14,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class ZippedResourcePack extends AbstractResourcePack {
-    private File file;
-    private byte[] sha256 = null;
 
+    private final File file;
+    private byte[] sha256;
     private String encryptionKey = "";
 
     public ZippedResourcePack(File file) {
@@ -30,13 +30,24 @@ public class ZippedResourcePack extends AbstractResourcePack {
         try (ZipFile zip = new ZipFile(file)) {
             ZipEntry entry = zip.getEntry("manifest.json");
             if (entry == null) {
-                throw new IllegalArgumentException(Server.getInstance().getLanguage()
-                        .translateString("nukkit.resources.zip.no-manifest"));
-            } else {
-                this.manifest = new JsonParser()
-                        .parse(new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8))
-                        .getAsJsonObject();
+                entry = zip.stream()
+                        .filter(e-> e.getName().toLowerCase().endsWith("manifest.json") && !e.isDirectory())
+                        .filter(e-> {
+                            File fe = new File(e.getName());
+                            if (!fe.getName().equalsIgnoreCase("manifest.json")) {
+                                return false;
+                            }
+                            return fe.getParent() == null || fe.getParentFile().getParent() == null;
+                        })
+                        .findFirst()
+                        .orElseThrow(()-> new IllegalArgumentException(
+                                Server.getInstance().getLanguage().translateString("nukkit.resources.zip.no-manifest")));
             }
+
+            this.manifest = new JsonParser()
+                    .parse(new InputStreamReader(zip.getInputStream(entry), StandardCharsets.UTF_8))
+                    .getAsJsonObject();
+
             File parentFolder = this.file.getParentFile();
             if (parentFolder == null || !parentFolder.isDirectory()) {
                 throw new IOException("Invalid resource pack path");

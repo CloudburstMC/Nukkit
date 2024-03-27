@@ -83,24 +83,20 @@ public class FastByteArrayOutputStream extends OutputStream {
     }
 
     public void write( final int b ) {
-        if ( position == length ) {
-            length++;
-            if ( position == array.length ) array = grow( array, length );
-        }
+        if ( position >= array.length ) array = grow( array, position + 1, length );
         array[ position++ ] = (byte)b;
+        if ( length < position ) length = position;
     }
 
     public static void ensureOffsetLength( final int arrayLength, final int offset, final int length ) {
         if ( offset < 0 ) throw new ArrayIndexOutOfBoundsException( "Offset (" + offset + ") is negative" );
         if ( length < 0 ) throw new IllegalArgumentException( "Length (" + length + ") is negative" );
-        if ( offset + length > arrayLength ) throw new ArrayIndexOutOfBoundsException( "Last index (" + ( offset + length ) + ") is greater than array length (" + arrayLength + ")" );
+        if ( offset + length > arrayLength ) throw new ArrayIndexOutOfBoundsException( "Last index (" + ( offset + length ) + ") is greater than array length (" + arrayLength + ')');
     }
 
     public static byte[] grow( final byte[] array, final int length ) {
         if ( length > array.length ) {
-            final int newLength = (int)Math.min( Math.max( ( ONEOVERPHI * array.length ) >>> 16, length ), Integer.MAX_VALUE );
-            final byte[] t =
-                    new byte[ newLength ];
+            final byte[] t = new byte[(int) Math.min( Math.max( ( ONEOVERPHI * array.length ) >>> 16, length ), Integer.MAX_VALUE )];
             System.arraycopy( array, 0, t, 0, array.length );
             return t;
         }
@@ -109,9 +105,7 @@ public class FastByteArrayOutputStream extends OutputStream {
 
     public static byte[] grow( final byte[] array, final int length, final int preserve ) {
         if ( length > array.length ) {
-            final int newLength = (int)Math.min( Math.max( ( ONEOVERPHI * array.length ) >>> 16, length ), Integer.MAX_VALUE );
-            final byte[] t =
-                    new byte[ newLength ];
+            final byte[] t = new byte[(int) Math.min( Math.max( ( ONEOVERPHI * array.length ) >>> 16, length ), Integer.MAX_VALUE )];
             System.arraycopy( array, 0, t, 0, preserve );
             return t;
         }
@@ -125,7 +119,7 @@ public class FastByteArrayOutputStream extends OutputStream {
     }
 
     public void position( long newPosition ) {
-        if ( position > Integer.MAX_VALUE ) throw new IllegalArgumentException( "Position too large: " + newPosition );
+        if ( newPosition > Integer.MAX_VALUE ) throw new IllegalArgumentException( "Position too large: " + newPosition );
         position = (int)newPosition;
     }
 

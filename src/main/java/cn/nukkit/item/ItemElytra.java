@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemElytra extends ItemArmor {
@@ -32,5 +32,4 @@ public class ItemElytra extends ItemArmor {
     public boolean isChestplate() {
         return true;
     }
-
 }

@@ -7,9 +7,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockSlime extends BlockSolid {
 
-    public BlockSlime() {
-    }
-
     @Override
     public double getHardness() {
         return 0;
@@ -32,6 +29,6 @@ public class BlockSlime extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.GRASS_BLOCK_COLOR;
+        return BlockColor.GREEN_BLOCK_COLOR;
     }
 }

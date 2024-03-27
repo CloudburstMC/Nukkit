@@ -3,11 +3,12 @@ package cn.nukkit.network.protocol;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString(exclude = "data")
 public class LevelChunkPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.FULL_CHUNK_DATA_PACKET;
 
     @Override
@@ -27,7 +28,7 @@ public class LevelChunkPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -44,11 +45,9 @@ public class LevelChunkPacket extends DataPacket {
             this.putUnsignedVarInt(-2);
             this.putUnsignedVarInt(this.subChunkLimit);
         }
-
         this.putBoolean(cacheEnabled);
         if (this.cacheEnabled) {
             this.putUnsignedVarInt(blobIds.length);
-
             for (long blobId : blobIds) {
                 this.putLLong(blobId);
             }

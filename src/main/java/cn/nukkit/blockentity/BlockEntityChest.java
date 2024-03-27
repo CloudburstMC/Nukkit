@@ -15,63 +15,63 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockEntityChest extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
     protected ChestInventory inventory;
 
-    protected DoubleChestInventory doubleInventory = null;
+    protected DoubleChestInventory doubleInventory;
 
     public BlockEntityChest(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
-    @Override
-    protected void initBlockEntity() {
-        this.inventory = new ChestInventory(this);
-
+    private void initInventory() {
         if (!this.namedTag.contains("Items") || !(this.namedTag.get("Items") instanceof ListTag)) {
             this.namedTag.putList(new ListTag<CompoundTag>("Items"));
         }
-
-        /* for (int i = 0; i < this.getSize(); i++) {
-            this.inventory.setItem(i, this.getItem(i));
-        } */
-
         ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
+
+        this.inventory = new ChestInventory(this);
+
         for (CompoundTag compound : list.getAll()) {
             Item item = NBTIO.getItemHelper(compound);
-            this.inventory.slots.put(compound.getByte("Slot"), item);
+            if (item.getId() != 0 && item.getCount() > 0) {
+                this.inventory.slots.put(compound.getByte("Slot"), item);
+            }
         }
-
-        super.initBlockEntity();
     }
 
     @Override
     public void close() {
-        if (!closed) {
+        if (!this.closed && this.inventory != null) {
+            if (this.doubleInventory != null) {
+                for (Player player : new ArrayList<>(this.doubleInventory.getViewers())) {
+                    player.removeWindow(this.doubleInventory);
+                }
 
-            for (Player player : new HashSet<>(this.getInventory().getViewers())) {
-                player.removeWindow(this.getInventory());
+                this.doubleInventory = null;
             }
 
-            for (Player player : new HashSet<>(this.getInventory().getViewers())) {
-                player.removeWindow(this.getRealInventory());
+            for (Player player : new ArrayList<>(this.inventory.getViewers())) {
+                player.removeWindow(this.inventory);
             }
-            super.close();
         }
+
+        super.close();
     }
 
     @Override
     public void onBreak() {
-        if (this.isPaired()) {
-            unpair();
+        if (this.inventory == null) {
+            this.initInventory();
         }
+        unpair();
         for (Item content : inventory.getContents().values()) {
             level.dropItem(this, content);
         }
@@ -80,16 +80,20 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     @Override
     public void saveNBT() {
-        this.namedTag.putList(new ListTag<CompoundTag>("Items"));
-        for (int index = 0; index < this.getSize(); index++) {
-            this.setItem(index, this.inventory.getItem(index));
+        super.saveNBT();
+
+        if (this.inventory != null) {
+            this.namedTag.putList(new ListTag<CompoundTag>("Items"));
+            for (int index = 0; index < this.getSize(); index++) {
+                this.setItem(index, this.inventory.getItem(index));
+            }
         }
     }
 
     @Override
     public boolean isBlockEntityValid() {
-        int blockID = this.getBlock().getId();
-        return blockID == Block.CHEST || blockID == Block.TRAPPED_CHEST;
+        int id = level.getBlockIdAt(chunk, (int) x, (int) y, (int) z);
+        return id == Block.CHEST || id == Block.TRAPPED_CHEST;
     }
 
     @Override
@@ -141,6 +145,9 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     @Override
     public BaseInventory getInventory() {
+        if (this.inventory == null) {
+            this.initInventory();
+        }
         if (this.doubleInventory == null && this.isPaired()) {
             this.checkPairing();
         }
@@ -149,6 +156,9 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
     }
 
     public ChestInventory getRealInventory() {
+        if (this.inventory == null) {
+            this.initInventory();
+        }
         return inventory;
     }
 
@@ -191,7 +201,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     @Override
     public void setName(String name) {
-        if (name == null || name.equals("")) {
+        if (name == null || name.isEmpty()) {
             this.namedTag.remove("CustomName");
             return;
         }
@@ -205,7 +215,7 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
     public BlockEntityChest getPair() {
         if (this.isPaired()) {
-            BlockEntity blockEntity = this.getLevel().getBlockEntityIfLoaded(new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
+            BlockEntity blockEntity = this.getLevel().getBlockEntityIfLoaded(this.chunk, new Vector3(this.namedTag.getInt("pairx"), this.y, this.namedTag.getInt("pairz")));
             if (blockEntity instanceof BlockEntityChest) {
                 return (BlockEntityChest) blockEntity;
             }
@@ -285,5 +295,4 @@ public class BlockEntityChest extends BlockEntitySpawnable implements InventoryH
 
         return c;
     }
-
 }

@@ -7,8 +7,9 @@ import java.io.File;
 import java.util.*;
 
 public class ResourcePackManager {
+
     private final Map<UUID, ResourcePack> resourcePacksById = new HashMap<>();
-    private ResourcePack[] resourcePacks;
+    @SuppressWarnings("FieldMayBeFinal") private ResourcePack[] resourcePacks;
 
     public ResourcePackManager(File path) {
         if (!path.exists()) {
@@ -24,7 +25,7 @@ public class ResourcePackManager {
                 ResourcePack resourcePack = null;
 
                 String fileExt = Files.getFileExtension(pack.getName());
-                if (!pack.isDirectory() && !fileExt.equals("key")) { //directory resource packs temporarily unsupported
+                if (!pack.isDirectory() && !fileExt.equals("key")) { // Directory resource packs temporarily unsupported
                     switch (fileExt) {
                         case "zip":
                         case "mcpack":

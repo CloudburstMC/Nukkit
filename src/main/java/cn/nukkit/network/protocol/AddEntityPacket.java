@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.entity.Attribute;
+import cn.nukkit.entity.custom.EntityDefinition;
+import cn.nukkit.entity.custom.EntityManager;
 import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
@@ -13,14 +15,15 @@ import com.google.common.collect.ImmutableMap;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
 public class AddEntityPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.ADD_ENTITY_PACKET;
 
-    public static ImmutableMap<Integer, String> LEGACY_IDS = ImmutableMap.<Integer, String>builder()
+    public static final ImmutableMap<Integer, String> LEGACY_IDS = ImmutableMap.<Integer, String>builder()
             .put(51, "minecraft:npc")
             .put(63, "minecraft:player")
             .put(EntityWitherSkeleton.NETWORK_ID, "minecraft:wither_skeleton")
@@ -60,9 +63,9 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityChicken.NETWORK_ID, "minecraft:chicken")
             .put(107, "minecraft:balloon")
             .put(EntityLlama.NETWORK_ID, "minecraft:llama")
-            .put(20, "minecraft:iron_golem")
+            .put(EntityIronGolem.NETWORK_ID, "minecraft:iron_golem")
             .put(EntityRabbit.NETWORK_ID, "minecraft:rabbit")
-            .put(21, "minecraft:snow_golem")
+            .put(EntitySnowGolem.NETWORK_ID, "minecraft:snow_golem")
             .put(EntityBat.NETWORK_ID, "minecraft:bat")
             .put(EntityOcelot.NETWORK_ID, "minecraft:ocelot")
             .put(EntityHorse.NETWORK_ID, "minecraft:horse")
@@ -83,7 +86,7 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityMinecartTNT.NETWORK_ID, "minecraft:tnt_minecart")
             .put(EntityMinecartChest.NETWORK_ID, "minecraft:chest_minecart")
             .put(100, "minecraft:command_block_minecart")
-            .put(61, "minecraft:armor_stand")
+            .put(EntityArmorStand.NETWORK_ID, "minecraft:armor_stand")
             .put(EntityItem.NETWORK_ID, "minecraft:item")
             .put(EntityPrimedTNT.NETWORK_ID, "minecraft:tnt")
             .put(EntityFallingBlock.NETWORK_ID, "minecraft:falling_block")
@@ -109,8 +112,8 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityLightning.NETWORK_ID, "minecraft:lightning_bolt")
             .put(94, "minecraft:small_fireball")
             .put(102, "minecraft:llama_spit")
-            .put(95, "minecraft:area_effect_cloud")
-            .put(101, "minecraft:lingering_potion")
+            .put(EntityAreaEffectCloud.NETWORK_ID, "minecraft:area_effect_cloud")
+            .put(EntityPotionLingering.NETWORK_ID, "minecraft:lingering_potion")
             .put(EntityFirework.NETWORK_ID, "minecraft:fireworks_rocket")
             .put(103, "minecraft:evocation_fang")
             .put(104, "minecraft:evocation_illager")
@@ -138,7 +141,8 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityFrog.NETWORK_ID, "minecraft:frog")
             .put(EntityTadpole.NETWORK_ID, "minecraft:tadpole")
             .put(EntityAllay.NETWORK_ID, "minecraft:allay")
-            .put(138, "minecraft:camel")
+            .put(EntityChestBoat.NETWORK_ID, "minecraft:chest_boat")
+            .put(EntityCamel.NETWORK_ID, "minecraft:camel")
             .build();
 
     @Override
@@ -166,7 +170,7 @@ public class AddEntityPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -174,16 +178,13 @@ public class AddEntityPacket extends DataPacket {
         this.reset();
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);
-        if (id == null) {
-            id = LEGACY_IDS.get(type);
-        }
-        this.putString(this.id);
+        this.putString(this.getEntityIdentifier());
         this.putVector3f(this.x, this.y, this.z);
         this.putVector3f(this.speedX, this.speedY, this.speedZ);
         this.putLFloat(this.pitch);
         this.putLFloat(this.yaw);
         this.putLFloat(this.headYaw);
-        this.putLFloat(this.bodyYaw == -1 ? this.yaw : this.bodyYaw);
+        this.putLFloat(this.bodyYaw == -1 ? this.yaw : this.bodyYaw); // For backwards compatibility
         this.putAttributeList(this.attributes);
         this.put(Binary.writeMetadata(this.metadata));
         this.putUnsignedVarInt(0); // Entity properties int
@@ -192,5 +193,26 @@ public class AddEntityPacket extends DataPacket {
         for (EntityLink link : links) {
             putEntityLink(link);
         }
+    }
+
+    private String getEntityIdentifier() {
+        if (this.id != null) {
+            return this.id;
+        }
+
+        String identifier = LEGACY_IDS.get(type);
+
+        if (identifier == null) {
+            // Maybe a custom entity
+            EntityDefinition definition = EntityManager.get().getDefinition(this.type);
+            if (definition != null) {
+                identifier = definition.getIdentifier();
+            }
+        }
+
+        if (identifier == null) {
+            throw new IllegalStateException("Unknown entity with network id " + this.type);
+        }
+        return identifier;
     }
 }

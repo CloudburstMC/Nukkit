@@ -4,7 +4,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockBricksStone extends BlockSolidMeta {
@@ -12,6 +12,7 @@ public class BlockBricksStone extends BlockSolidMeta {
     public static final int MOSSY = 1;
     public static final int CRACKED = 2;
     public static final int CHISELED = 3;
+
 
     public BlockBricksStone() {
         this(0);
@@ -38,7 +39,7 @@ public class BlockBricksStone extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
+        String[] names = {
                 "Stone Bricks",
                 "Mossy Stone Bricks",
                 "Cracked Stone Bricks",
@@ -50,7 +51,7 @@ public class BlockBricksStone extends BlockSolidMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     Item.get(Item.STONE_BRICKS, this.getDamage() & 0x03, 1)
             };

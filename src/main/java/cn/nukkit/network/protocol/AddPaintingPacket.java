@@ -20,7 +20,7 @@ public class AddPaintingPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -28,7 +28,6 @@ public class AddPaintingPacket extends DataPacket {
         this.reset();
         this.putEntityUniqueId(this.entityUniqueId);
         this.putEntityRuntimeId(this.entityRuntimeId);
-
         this.putVector3f(this.x, this.y, this.z);
         this.putVarInt(this.direction);
         this.putString(this.title);
@@ -38,5 +37,4 @@ public class AddPaintingPacket extends DataPacket {
     public byte pid() {
         return NETWORK_ID;
     }
-
 }
