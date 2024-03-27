@@ -2,14 +2,15 @@
 junit = "5.9.2"
 log4j = "2.20.0"
 jline = "3.22.0"
+fastutilmaps = "8.5.13-SNAPSHOT"
 
 [libraries]
 network = { group = "com.nukkitx.network", name = "raknet", version = "1.6.28-SNAPSHOT" }
 natives = { group = "com.nukkitx", name = "natives", version = "1.0.3" }
 fastutil = { group = "com.nukkitx", name = "fastutil-lite", version = "8.1.1" }
-fastutil1 = { group = "com.nukkitx.fastutil", name = "fastutil-int-short-maps", version = "8.5.3" }
-fastutil2 = { group = "com.nukkitx.fastutil", name = "fastutil-object-int-maps", version = "8.5.3" }
-fastutil3 = { group = "com.nukkitx.fastutil", name = "fastutil-object-object-maps", version = "8.5.3" }
+fastutil-int-short-maps = { group = "org.cloudburstmc.fastutil.maps", name = "int-short-maps", version.ref = "fastutilmaps" }
+fastutil-object-int-maps = { group = "org.cloudburstmc.fastutil.maps", name = "object-int-maps", version.ref = "fastutilmaps" }
+fastutil-object-object-maps = { group = "org.cloudburstmc.fastutil.maps", name = "object-object-maps", version.ref = "fastutilmaps" }
 guava = { group = "com.google.guava", name = "guava", version = "30.1.1-jre" }
 gson = { group = "com.google.code.gson", name = "gson", version = "2.10.1" }
 snakeyaml = { group = "org.yaml", name = "snakeyaml", version = "1.33" }
@@ -42,6 +43,7 @@ junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engi
 log4j = [ "log4j-api", "log4j-core" ]
 terminal = [ "jline-terminal", "jline-terminal-jna", "jline-reader", "terminal-console" ]
 junit = [ "junit-jupiter-api", "junit-jupiter-engine" ]
+fastutilmaps = [ "fastutil-int-short-maps", "fastutil-object-int-maps", "fastutil-object-object-maps" ]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.0.0" }
