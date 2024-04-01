@@ -10,43 +10,93 @@ import cn.nukkit.network.session.NetworkPlayerSession;
 import cn.nukkit.network.session.RakNetPlayerSession;
 import cn.nukkit.utils.Utils;
 import com.google.common.base.Strings;
-import com.nukkitx.network.raknet.*;
+import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelHandlerContext;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollDatagramChannel;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.DatagramChannel;
 import io.netty.channel.socket.DatagramPacket;
+import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.internal.PlatformDependent;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.extern.log4j.Log4j2;
+import org.cloudburstmc.netty.channel.raknet.RakChannelFactory;
+import org.cloudburstmc.netty.channel.raknet.config.RakChannelOption;
+import org.cloudburstmc.netty.handler.codec.raknet.server.RakServerRateLimiter;
 
 import java.lang.reflect.Constructor;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
+import java.util.function.IntFunction;
 
 /**
  * @author MagicDroidX
  * Nukkit Project
  */
 @Log4j2
-public class RakNetInterface implements RakNetServerListener, AdvancedSourceInterface {
+public class RakNetInterface implements AdvancedSourceInterface {
 
     private final Server server;
-    private final RakNetServer raknet;
     private Network network;
 
-    private byte[] advertisement;
-
+    private final List<Channel> channels = new ObjectArrayList<>();
     private final Map<InetSocketAddress, RakNetPlayerSession> sessions = new HashMap<>();
     private final Queue<RakNetPlayerSession> sessionCreationQueue = PlatformDependent.newMpscQueue();
+
+    private final long serverId = ThreadLocalRandom.current().nextLong();
 
     public RakNetInterface(Server server) {
         this.server = server;
 
-        this.raknet = new RakNetServer(new InetSocketAddress(Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp(), this.server.getPort()), Runtime.getRuntime().availableProcessors());
-        this.raknet.setProtocolVersion(11);
-        this.raknet.bind().join();
-        this.raknet.setListener(this);
+        boolean disableNative = Boolean.parseBoolean(System.getProperty("disableNativeEventLoop"));
+
+        Transport transport;
+        if (!disableNative && Epoll.isAvailable()) {
+            transport = new Transport(EpollDatagramChannel.class, EpollEventLoopGroup::new);
+        } else {
+            transport = new Transport(NioDatagramChannel.class, NioEventLoopGroup::new);
+        }
+
+        EventLoopGroup group = transport.eventLoopGroupFactory.apply(Runtime.getRuntime().availableProcessors());
+
+        ServerBootstrap bootstrap = new ServerBootstrap()
+                .channelFactory(RakChannelFactory.server(transport.datagramChannel))
+                .group(group)
+                .option(RakChannelOption.RAK_GUID, this.serverId)
+                .childOption(RakChannelOption.RAK_ORDERING_CHANNELS, 1)
+                .handler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel channel) {
+                        if (server.getPropertyBoolean("enable-query", false)) {
+                            channel.pipeline().addLast("query-handler", new SimpleChannelInboundHandler<DatagramPacket>() {
+                                @Override
+                                protected void channelRead0(ChannelHandlerContext ctx, DatagramPacket packet) {
+                                    server.handlePacket(packet.sender(), packet.content());
+                                }
+                            });
+                        }
+                    }
+                })
+                .childHandler(new ChannelInitializer<Channel>() {
+                    @Override
+                    protected void initChannel(Channel channel) {
+                        RakNetPlayerSession nukkitSession = new RakNetPlayerSession(RakNetInterface.this, channel);
+                        channel.pipeline().addLast("nukkit-handler", nukkitSession);
+                        RakNetInterface.this.sessionCreationQueue.offer(nukkitSession);
+                    }
+                });
+
+        String address = Strings.isNullOrEmpty(this.server.getIp()) ? "0.0.0.0" : this.server.getIp();
+
+        this.channels.add(bootstrap.bind(address, this.server.getPort()).awaitUninterruptibly().channel());
     }
 
     @Override
@@ -58,7 +108,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     public boolean process() {
         RakNetPlayerSession session;
         while ((session = this.sessionCreationQueue.poll()) != null) {
-            InetSocketAddress address = session.getRakNetSession().getAddress();
+            InetSocketAddress address = (InetSocketAddress) session.getChannel().remoteAddress();
             try {
                 PlayerCreationEvent event = new PlayerCreationEvent(this, Player.class, Player.class, null, address);
                 this.server.getPluginManager().callEvent(event);
@@ -92,8 +142,7 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
 
     @Override
     public int getNetworkLatency(Player player) {
-        RakNetServerSession session = this.raknet.getSession(player.getSocketAddress());
-        return session == null ? -1 : (int) session.getPing();
+        return (int) player.getNetworkSession().getPing();
     }
 
     @Override
@@ -117,33 +166,33 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
     @Override
     public void shutdown() {
         this.sessions.values().forEach(session -> session.disconnect("Shutdown"));
-        this.raknet.close();
+        this.channels.forEach(channel -> channel.close().awaitUninterruptibly());
     }
 
     @Override
     public void emergencyShutdown() {
         this.sessions.values().forEach(session -> session.disconnect("Shutdown"));
-        this.raknet.close();
+        this.channels.forEach(channel -> channel.close().awaitUninterruptibly());
     }
 
     @Override
     public void blockAddress(InetAddress address) {
-        this.raknet.block(address);
+        this.channels.get(0).pipeline().get(RakServerRateLimiter.class).blockAddress(address, 100, TimeUnit.DAYS);
     }
 
     @Override
     public void blockAddress(InetAddress address, int timeout) {
-        this.raknet.block(address, timeout, TimeUnit.SECONDS);
+        this.channels.get(0).pipeline().get(RakServerRateLimiter.class).blockAddress(address, timeout, TimeUnit.SECONDS);
     }
 
     @Override
     public void unblockAddress(InetAddress address) {
-        this.raknet.unblock(address);
+        this.channels.get(0).pipeline().get(RakServerRateLimiter.class).unblockAddress(address);
     }
 
     @Override
     public void sendRawPacket(InetSocketAddress socketAddress, ByteBuf payload) {
-        this.raknet.send(socketAddress, payload);
+        this.channels.get(0).write(new DatagramPacket(payload, socketAddress));
     }
 
     @Override
@@ -159,12 +208,16 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
                 .add(ProtocolInfo.MINECRAFT_VERSION_NETWORK)
                 .add(Integer.toString(info.getPlayerCount()))
                 .add(Integer.toString(info.getMaxPlayerCount()))
-                .add(Long.toString(this.raknet.getGuid()))
+                .add(Long.toString(this.serverId))
                 .add(subMotd)
                 .add(Server.getGamemodeString(this.server.getDefaultGamemode(), true))
                 .add("1");
 
-        this.advertisement = joiner.toString().getBytes(StandardCharsets.UTF_8);
+        byte[] advertisement = joiner.toString().getBytes(StandardCharsets.UTF_8);
+
+        for (Channel channel : this.channels) {
+            channel.config().setOption(RakChannelOption.RAK_ADVERTISEMENT, Unpooled.wrappedBuffer(advertisement));
+        }
     }
 
     @Override
@@ -186,39 +239,18 @@ public class RakNetInterface implements RakNetServerListener, AdvancedSourceInte
         return null;
     }
 
-    @Override
-    public boolean onConnectionRequest(InetSocketAddress address, InetSocketAddress realAddress) {
-        return true;
-    }
-
-    @Override
-    public byte[] onQuery(InetSocketAddress inetSocketAddress) {
-        return this.advertisement;
-    }
-
-    @Override
-    public void onSessionCreation(RakNetServerSession session) {
-        // We need to make sure this gets put into the correct thread local hashmap
-        // for ticking or race conditions will occur.
-        if (session.getEventLoop().inEventLoop()) {
-            this.onSessionCreation0(session);
-        } else {
-            session.getEventLoop().execute(() -> this.onSessionCreation0(session));
-        }
-    }
-
-    private void onSessionCreation0(RakNetServerSession session) {
-        RakNetPlayerSession nukkitSession = new RakNetPlayerSession(this, session);
-        session.setListener(nukkitSession);
-        this.sessionCreationQueue.offer(nukkitSession);
-    }
-
-    @Override
-    public void onUnhandledDatagram(ChannelHandlerContext ctx, DatagramPacket datagramPacket) {
-        this.server.handlePacket(datagramPacket.sender(), datagramPacket.content());
-    }
-
     public Network getNetwork() {
         return this.network;
+    }
+
+    private static class Transport {
+
+        private final Class<? extends DatagramChannel> datagramChannel;
+        private final IntFunction<EventLoopGroup> eventLoopGroupFactory;
+
+        private Transport(Class<? extends DatagramChannel> datagramChannel, IntFunction<EventLoopGroup> eventLoopGroupFactory) {
+            this.datagramChannel = datagramChannel;
+            this.eventLoopGroupFactory = eventLoopGroupFactory;
+        }
     }
 }

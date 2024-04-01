@@ -26,4 +26,8 @@ public interface NetworkPlayerSession {
     default void setEncryption(SecretKey encryptionKey, Cipher encryptionCipher, Cipher decryptionCipher) {
 
     }
+
+    default long getPing() {
+        return 0;
+    }
 }

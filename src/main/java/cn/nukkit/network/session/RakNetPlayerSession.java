@@ -13,15 +13,19 @@ import cn.nukkit.utils.BinaryStream;
 import com.google.common.base.Preconditions;
 import com.nukkitx.natives.sha256.Sha256;
 import com.nukkitx.natives.util.Natives;
-import com.nukkitx.network.raknet.*;
-import com.nukkitx.network.util.DisconnectReason;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.util.internal.PlatformDependent;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.message.FormattedMessage;
+import org.cloudburstmc.netty.channel.raknet.RakChannel;
+import org.cloudburstmc.netty.channel.raknet.packet.RakMessage;
+import org.cloudburstmc.netty.handler.codec.raknet.common.RakSessionCodec;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -35,10 +39,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Log4j2
-public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionListener {
+public class RakNetPlayerSession extends SimpleChannelInboundHandler<RakMessage> implements NetworkPlayerSession {
 
     private final RakNetInterface server;
-    private final RakNetServerSession session;
+    private final Channel channel;
 
     private final Queue<DataPacket> inbound = PlatformDependent.newSpscQueue();
     private final Queue<DataPacket> outbound = PlatformDependent.newMpscQueue();
@@ -55,15 +59,15 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
     private Cipher decryptionCipher;
     private final AtomicLong sentEncryptedPacketCount = new AtomicLong();
 
-    public RakNetPlayerSession(RakNetInterface server, RakNetServerSession session) {
+    public RakNetPlayerSession(RakNetInterface server, Channel channel) {
         this.server = server;
-        this.session = session;
-        this.tickFuture = session.getEventLoop().scheduleAtFixedRate(this::networkTick, 0, 20, TimeUnit.MILLISECONDS);
+        this.channel = channel;
+        this.tickFuture = channel.eventLoop().scheduleAtFixedRate(this::networkTick, 0, 20, TimeUnit.MILLISECONDS);
     }
 
     @Override
-    public void onEncapsulated(EncapsulatedPacket packet) {
-        ByteBuf buffer = packet.getBuffer();
+    protected void channelRead0(ChannelHandlerContext channelHandlerContext, RakMessage msg) throws Exception {
+        ByteBuf buffer = msg.content();
         short packetId = buffer.readUnsignedByte();
         if (packetId == 0xfe) {
             int len = buffer.readableBytes();
@@ -104,32 +108,19 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
             buffer.readBytes(packetBuffer);
 
             try {
-                this.server.getNetwork().processBatch(packetBuffer, this.inbound, compressionIn, this.player);
+                this.server.getNetwork().processBatch(packetBuffer, this.inbound, compressionIn);
             } catch (Exception e) {
                 this.disconnect("Sent malformed packet");
-                log.error("[{}] Unable to process batch packet", (this.player == null ? this.session.getAddress() : this.player.getName()), e);
+                log.error("[{}] Unable to process batch packet", (this.player == null ? this.channel.remoteAddress() : this.player.getName()), e);
             }
         } else if (Nukkit.DEBUG > 1) {
-            log.debug("Unknown EncapsulatedPacket: " +packetId);
+            log.debug("Unknown RakMessage: " + packetId);
         }
     }
 
     @Override
-    public void onDirect(ByteBuf byteBuf) {
-        // We don't allow any direct packets so ignore.
-    }
-
-    @Override
-    public void onSessionChangeState(RakNetState rakNetState) {
-    }
-
-    @Override
-    public void onDisconnect(DisconnectReason reason) {
-        if (reason == DisconnectReason.TIMED_OUT) {
-            this.disconnect("Timed out");
-        } else {
-            this.disconnect("Disconnected from Server");
-        }
+    public void channelInactive(ChannelHandlerContext ctx) {
+        this.disconnect("Disconnected from Server"); // TODO: timeout reason
     }
 
     @Override
@@ -144,41 +135,38 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
         }
 
         // Give it a short time to make sure cancel message is delivered
-        this.session.getEventLoop().schedule(() -> this.session.close(), 10, TimeUnit.MILLISECONDS);
+        this.channel.eventLoop().schedule(() -> this.channel.close(), 10, TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void sendPacket(DataPacket packet) {
-        if (this.session.isClosed()) {
+        if (!this.channel.isActive()) {
             return;
         }
 
         if (packet.pid() != ProtocolInfo.BATCH_PACKET) {
             packet.tryEncode();
         }
+
         this.outbound.offer(packet);
     }
 
     @Override
     public void sendImmediatePacket(DataPacket packet, Runnable callback) {
-        if (this.session.isClosed()) {
+        if (!this.channel.isActive()) {
             return;
         }
 
+
         this.sendPacket(packet);
-        this.session.getEventLoop().execute(() -> {
+        this.channel.eventLoop().execute(() -> {
             this.networkTick();
             callback.run();
         });
     }
 
-    @Override
-    public void flush() {
-        this.session.getEventLoop().execute(this::networkTick);
-    }
-
     private void networkTick() {
-        if (this.session.isClosed()) {
+        if (!this.channel.isActive()) {
             return;
         }
 
@@ -193,7 +181,7 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
                     batched.put(buf);
 
                     try {
-                        this.sendPacket(this.compressionOut.compress(batched, Server.getInstance().networkCompressionLevel), RakNetPriority.IMMEDIATE);
+                        this.sendPacket(this.compressionOut.compress(batched, Server.getInstance().networkCompressionLevel));
                     } catch (Exception e) {
                         log.error("Unable to compress disconnect packet", e);
                     }
@@ -204,7 +192,7 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
                         toBatch.clear();
                     }
 
-                    this.sendPacket(((BatchPacket) packet).payload, RakNetPriority.MEDIUM);
+                    this.sendPacket(((BatchPacket) packet).payload);
                 } else {
                     toBatch.add(packet);
                 }
@@ -214,7 +202,7 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
                 this.sendPackets(toBatch);
             }
         } catch (Throwable e) {
-            log.error("[{}] Failed to tick RakNetPlayerSession", this.session.getAddress(), e);
+            log.error("[{}] Failed to tick RakNetPlayerSession", this.channel.remoteAddress(), e);
         }
     }
 
@@ -245,13 +233,13 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
         }
 
         try {
-            this.sendPacket(this.compressionOut.compress(batched, Server.getInstance().networkCompressionLevel), RakNetPriority.MEDIUM);
+            this.sendPacket(this.compressionOut.compress(batched, Server.getInstance().networkCompressionLevel));
         } catch (Exception e) {
             log.error("Unable to compress batched packets", e);
         }
     }
 
-    private void sendPacket(byte[] compressedPayload, RakNetPriority priority) {
+    private void sendPacket(byte[] compressedPayload) {
         ByteBuf finalPayload = ByteBufAllocator.DEFAULT.directBuffer((this.compressionInitialized ? 10 : 9) + compressedPayload.length); // prefix(1)+id(1)+encryption(8)+data
         finalPayload.writeByte(0xfe);
 
@@ -280,7 +268,7 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
             finalPayload.writeBytes(compressedPayload);
         }
 
-        this.session.send(finalPayload, priority);
+        this.channel.writeAndFlush(finalPayload);
     }
 
     @Override
@@ -305,8 +293,8 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
         return this.player;
     }
 
-    public RakNetServerSession getRakNetSession() {
-        return this.session;
+    public Channel getChannel() {
+        return this.channel;
     }
 
     public String getDisconnectReason() {
@@ -318,6 +306,15 @@ public class RakNetPlayerSession implements NetworkPlayerSession, RakNetSessionL
         this.encryptionKey = encryptionKey;
         this.encryptionCipher = encryptionCipher;
         this.decryptionCipher = decryptionCipher;
+    }
+
+    @Override
+    public long getPing() {
+        if (this.channel instanceof RakChannel) {
+            RakChannel rakChannel = (RakChannel) this.channel;
+            return rakChannel.rakPipeline().get(RakSessionCodec.class).getPing();
+        }
+        return -1;
     }
 
     private static final ThreadLocal<Sha256> HASH_LOCAL = ThreadLocal.withInitial(Natives.SHA_256);

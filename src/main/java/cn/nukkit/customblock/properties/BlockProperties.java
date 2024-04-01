@@ -3,7 +3,7 @@ package cn.nukkit.customblock.properties;
 import cn.nukkit.customblock.properties.exception.BlockPropertyNotFoundException;
 import cn.nukkit.utils.functional.ToIntTriFunctionTwoInts;
 import cn.nukkit.utils.functional.ToLongTriFunctionOneIntOneLong;
-import com.nukkitx.network.util.Preconditions;
+import com.google.common.base.Preconditions;
 import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 import net.daporkchop.lib.common.function.plain.TriFunction;
 

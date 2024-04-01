@@ -3,7 +3,7 @@ package cn.nukkit.customblock.properties;
 import cn.nukkit.customblock.properties.exception.InvalidBlockPropertyMetaException;
 import cn.nukkit.customblock.properties.exception.InvalidBlockPropertyPersistenceValueException;
 import cn.nukkit.customblock.properties.exception.InvalidBlockPropertyValueException;
-import com.nukkitx.network.util.Preconditions;
+import com.google.common.base.Preconditions;
 
 import java.io.Serializable;
 

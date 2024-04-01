@@ -6,7 +6,6 @@ import cn.nukkit.network.Network;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.SnappyCompression;
 import cn.nukkit.utils.Zlib;
-import com.nukkitx.network.raknet.RakNetReliability;
 
 /**
  * @author MagicDroidX
@@ -18,9 +17,6 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
 
     @Deprecated
     private int channel = Network.CHANNEL_NONE;
-
-    @Deprecated
-    public RakNetReliability reliability = RakNetReliability.RELIABLE_ORDERED;
 
     public abstract byte pid();
 

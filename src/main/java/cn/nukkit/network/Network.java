@@ -1,7 +1,6 @@
 package cn.nukkit.network;
 
 import cn.nukkit.Nukkit;
-import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.utils.BinaryStream;
@@ -10,7 +9,6 @@ import cn.nukkit.utils.VarInt;
 import io.netty.buffer.ByteBuf;
 import lombok.extern.log4j.Log4j2;
 
-import javax.annotation.Nullable;
 import java.io.ByteArrayInputStream;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -137,17 +135,8 @@ public class Network {
         return server;
     }
 
-    public void processBatch(byte[] payload, Collection<DataPacket> packets, CompressionProvider compression, @Nullable Player player) throws Exception {
-        //byte[] data;
-        //try {
-
-        // Allow first batch to be bigger so large skin in login packet won't get the player kicked
-        byte[] data = compression.decompress(payload, player != null && player.getSkin() == null ? 6291456 : 3145728);
-
-        //} catch (Exception e) {
-        //    log.error("Exception while inflating batch packet", e);
-        //    return;
-        //}
+    public void processBatch(byte[] payload, Collection<DataPacket> packets, CompressionProvider compression) throws Exception {
+        byte[] data = compression.decompress(payload, 6291456);
 
         BinaryStream stream = new BinaryStream(data);
         int count = 0;

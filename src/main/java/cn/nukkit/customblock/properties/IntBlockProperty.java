@@ -4,7 +4,7 @@ import cn.nukkit.customblock.properties.exception.InvalidBlockPropertyMetaExcept
 import cn.nukkit.customblock.properties.exception.InvalidBlockPropertyPersistenceValueException;
 import cn.nukkit.customblock.properties.exception.InvalidBlockPropertyValueException;
 import cn.nukkit.math.NukkitMath;
-import com.nukkitx.network.util.Preconditions;
+import com.google.common.base.Preconditions;
 
 import java.io.Serializable;
 
