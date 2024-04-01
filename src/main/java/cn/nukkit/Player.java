@@ -6675,10 +6675,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     @Override
     protected void preSwitchLevel() {
-        // Make sure batch packets from the previous world gets through first
-        this.networkSession.flush();
-
-        // Remove old chunks
         this.unloadChunks(true);
     }
 
@@ -6702,9 +6698,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         GameRulesChangedPacket packet = new GameRulesChangedPacket();
         packet.gameRulesMap = level.getGameRules().getGameRules();
         this.dataPacket(packet);
-
-        // Reset sleeping timer
-        this.timeSinceRest = 0;
     }
 
     /**

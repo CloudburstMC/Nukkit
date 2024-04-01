@@ -12,10 +12,6 @@ public interface NetworkPlayerSession {
     void sendPacket(DataPacket packet);
     void sendImmediatePacket(DataPacket packet, Runnable callback);
 
-    default void flush() {
-
-    }
-
     void disconnect(String reason);
 
     Player getPlayer();
