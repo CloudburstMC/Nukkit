@@ -110,6 +110,7 @@ public class CraftingDataPacket extends DataPacket {
                     this.putUUID(shaped.getId());
                     this.putString(CRAFTING_TAG_CRAFTING_TABLE);
                     this.putVarInt(shaped.getPriority());
+                    this.putBoolean(true); // Assume symmetry
                     this.putUnsignedVarInt(recipeNetworkId++);
                     break;
                 case FURNACE:

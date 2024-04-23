@@ -88,6 +88,7 @@ public class StartGamePacket extends DataPacket {
     public byte chatRestrictionLevel;
     public boolean disablePlayerInteractions;
     public boolean emoteChatMuted;
+    public boolean hardcore;
 
     @Override
     public void decode() {
@@ -110,6 +111,7 @@ public class StartGamePacket extends DataPacket {
         this.putVarInt(this.dimension);
         this.putVarInt(this.generator);
         this.putVarInt(this.worldGamemode);
+        this.putBoolean(this.hardcore);
         this.putVarInt(this.difficulty);
         this.putBlockVector3(this.spawnX, this.spawnY, this.spawnZ);
         this.putBoolean(this.hasAchievementsDisabled);
