@@ -1824,7 +1824,7 @@ public class Server {
         try (OutputStream dataStream = serializer.write(name, uuid)) {
             NBTIO.writeGZIPCompressed(tag, dataStream, ByteOrder.BIG_ENDIAN);
         } catch (Exception e) {
-            log.error(this.getLanguage().translateString("nukkit.data.saveError", name, e));
+            log.error(this.getLanguage().translateString("nukkit.data.saveError", name, e), e);
         }
     }
 

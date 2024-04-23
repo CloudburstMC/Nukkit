@@ -3112,7 +3112,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 if (authPacket.getInputData().contains(AuthInputAction.START_SPRINTING)) {
                     PlayerToggleSprintEvent playerToggleSprintEvent = new PlayerToggleSprintEvent(this, true);
-                    if ((this.foodData.getLevel() <= 6 && !this.getAdventureSettings().get(Type.FLYING)) || this.hasEffect(Effect.BLINDNESS)) {
+                    if ((this.foodData.getLevel() <= 6 && !this.getAdventureSettings().get(Type.FLYING)) ||
+                            this.riding != null || this.sleeping != null || this.hasEffect(Effect.BLINDNESS) ||
+                            (this.isSneaking() && !authPacket.getInputData().contains(AuthInputAction.STOP_SNEAKING))) {
                         playerToggleSprintEvent.setCancelled(true);
                     }
                     this.server.getPluginManager().callEvent(playerToggleSprintEvent);
@@ -3136,6 +3138,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 if (authPacket.getInputData().contains(AuthInputAction.START_SNEAKING)) {
                     PlayerToggleSneakEvent playerToggleSneakEvent = new PlayerToggleSneakEvent(this, true);
+                    if (this.riding != null || this.sleeping != null) {
+                        playerToggleSneakEvent.setCancelled(true);
+                    }
                     this.server.getPluginManager().callEvent(playerToggleSneakEvent);
                     if (playerToggleSneakEvent.isCancelled()) {
                         this.needSendData = true;
@@ -3156,6 +3161,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 if (authPacket.getInputData().contains(AuthInputAction.START_CRAWLING)) {
                     PlayerToggleCrawlEvent playerToggleCrawlEvent = new PlayerToggleCrawlEvent(this, true);
+                    if (this.riding != null || this.sleeping != null) {
+                        playerToggleCrawlEvent.setCancelled(true);
+                    }
                     this.server.getPluginManager().callEvent(playerToggleCrawlEvent);
                     if (playerToggleCrawlEvent.isCancelled()) {
                         this.needSendData = true;
@@ -3189,7 +3197,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         return;
                     }
                     PlayerToggleGlideEvent playerToggleGlideEvent = new PlayerToggleGlideEvent(this, true);
-                    if (withoutElytra) {
+                    if (this.riding != null || this.sleeping != null || withoutElytra) {
                         playerToggleGlideEvent.setCancelled(true);
                     }
                     this.server.getPluginManager().callEvent(playerToggleGlideEvent);
@@ -3212,7 +3220,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 if (authPacket.getInputData().contains(AuthInputAction.START_SWIMMING)) {
                     PlayerToggleSwimEvent ptse = new PlayerToggleSwimEvent(this, true);
-                    if (!this.isInsideOfWater()) {
+                    if (this.riding != null || this.sleeping != null || !this.isInsideOfWater()) {
                         ptse.setCancelled(true);
                     }
                     this.server.getPluginManager().callEvent(ptse);
@@ -3298,27 +3306,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 MobEquipmentPacket mobEquipmentPacket = (MobEquipmentPacket) packet;
 
-                Inventory inv = this.getWindowById(mobEquipmentPacket.windowId);
-
-                if (inv == null) {
-                    this.server.getLogger().debug("Player " + this.getName() + " has no open container with window ID " + mobEquipmentPacket.windowId);
+                if (mobEquipmentPacket.windowId != ContainerIds.INVENTORY) {
                     return;
                 }
 
-                /*Item item = inv.getItem(mobEquipmentPacket.hotbarSlot);
-
-                if (!item.equals(mobEquipmentPacket.item)) {
-                    if (Nukkit.DEBUG > 1) {
-                        this.server.getLogger().debug("Tried to equip " + mobEquipmentPacket.item + " but have " + item + " in target slot");
-                    }
-                    inv.sendSlot(mobEquipmentPacket.hotbarSlot, this);
+                if (this.inventory == null) {
                     return;
-                }*/
-
-                if (inv instanceof PlayerInventory) {
-                    ((PlayerInventory) inv).equipItem(mobEquipmentPacket.hotbarSlot);
                 }
 
+                this.inventory.equipItem(mobEquipmentPacket.hotbarSlot);
                 this.setUsingItem(false);
                 return;
             case ProtocolInfo.PLAYER_ACTION_PACKET:
@@ -3377,7 +3373,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         return;
                     case PlayerActionPacket.ACTION_START_SPIN_ATTACK:
                         if (this.inventory == null) {
-                            this.getServer().getLogger().debug(username + ": got ACTION_START_SPIN_ATTACK but inventory was null");
                             break stopItemHold;
                         }
 
@@ -3543,7 +3538,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 if (this.inventory == null) {
-                    this.getServer().getLogger().debug(username + ": got block pick request but inventory was null");
                     return;
                 }
 
@@ -3627,10 +3621,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 AnimatePacket animatePacket = (AnimatePacket) packet;
 
-                if (animatePacket.action == null // Illegal action ID
-                        || animatePacket.action == AnimatePacket.Action.WAKE_UP // These actions are server to client only
-                        || animatePacket.action == AnimatePacket.Action.CRITICAL_HIT
-                        || animatePacket.action == AnimatePacket.Action.MAGIC_CRITICAL_HIT) {
+                if (animatePacket.action != AnimatePacket.Action.SWING_ARM &&
+                        !(this.riding != null && (animatePacket.action == AnimatePacket.Action.ROW_LEFT || animatePacket.action == AnimatePacket.Action.ROW_RIGHT))) {
                     return;
                 }
 
@@ -3818,7 +3810,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 return;
             case ProtocolInfo.MAP_INFO_REQUEST_PACKET:
                 if (this.inventory == null) {
-                    this.getServer().getLogger().debug(username + ": got map info request but inventory was null");
                     return;
                 }
 
@@ -3914,6 +3905,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 InventoryTransactionPacket transactionPacket = (InventoryTransactionPacket) packet;
 
+                Inventory inv;
                 if ((transactionPacket.transactionType == InventoryTransactionPacket.TYPE_MISMATCH ||
                         (transactionPacket.transactionType == InventoryTransactionPacket.TYPE_NORMAL && this.isCreative() && Arrays.stream(transactionPacket.actions).anyMatch(action -> action.sourceType == NetworkInventoryAction.SOURCE_TODO)))
                         && (inv = getWindowById(SMITHING_WINDOW_ID)) instanceof SmithingInventory) {
@@ -4417,6 +4409,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                 this.setUsingItem(false);
 
+                                if (this.sleeping != null) {
+                                    this.getServer().getLogger().debug(username + ": USE_ITEM_ON_ENTITY_ACTION_ATTACK while sleeping");
+                                    return;
+                                }
+
+                                if (this.inventoryOpen) {
+                                    this.getServer().getLogger().debug(username + ": USE_ITEM_ON_ENTITY_ACTION_ATTACK while viewing inventory");
+                                    return;
+                                }
+
                                 this.setShieldBlockingDelay(5);
 
                                 if (server.attackStopSprint) {
@@ -4512,14 +4514,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
                 return;
             case ProtocolInfo.PLAYER_HOTBAR_PACKET:
-                if (this.inventory == null) {
-                    this.getServer().getLogger().debug(username + ": got PlayerHotbarPacket but inventory was null");
+                if (!this.spawned || !this.isAlive()) {
                     return;
                 }
 
                 PlayerHotbarPacket hotbarPacket = (PlayerHotbarPacket) packet;
 
                 if (hotbarPacket.windowId != ContainerIds.INVENTORY) {
+                    return;
+                }
+
+                if (this.inventory == null) {
                     return;
                 }
 
@@ -4566,7 +4571,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 if (this.inventory == null) {
-                    this.getServer().getLogger().debug(username + ": got BookEditPacket but inventory was null");
                     return;
                 }
 
@@ -6840,7 +6844,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 Item item = ((EntityThrownTrident) entity).getItem();
 
-                if (item.hasEnchantment(Enchantment.ID_TRIDENT_LOYALTY) && !this.equals(((EntityProjectile) entity).shootingEntity)) {
+                if (((EntityProjectile) entity).shootingEntity != null && item.hasEnchantment(Enchantment.ID_TRIDENT_LOYALTY) && !this.equals(((EntityProjectile) entity).shootingEntity)) {
                     return false;
                 }
 

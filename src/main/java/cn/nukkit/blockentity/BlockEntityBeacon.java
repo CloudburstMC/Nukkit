@@ -3,6 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -271,6 +272,14 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
             return false;
         }
 
+        Inventory inv = player.getWindowById(Player.BEACON_WINDOW_ID);
+        if (inv != null) {
+            inv.setItem(0, Item.get(Item.AIR));
+        } else {
+            Server.getInstance().getLogger().debug(player.getName() + " tried to set effect but beacon inventory is null");
+            return false;
+        }
+
         int primary = nbt.getInt("primary");
         if (ALLOWED_EFFECTS.contains(primary)) {
             this.setPrimaryPower(primary);
@@ -286,8 +295,6 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         }
 
         this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_POWER);
-
-        player.getWindowById(Player.BEACON_WINDOW_ID).setItem(0, Item.get(Item.AIR));
         return true;
     }
 }

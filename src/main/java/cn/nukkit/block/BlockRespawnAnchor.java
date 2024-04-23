@@ -113,7 +113,7 @@ public class BlockRespawnAnchor extends BlockSolidMeta {
                 explosion.explodeA();
                 explosion.explodeB();
             }
-            return false;
+            return true;
         }
 
         if (player != null && chargeLevel > 0 && this.level.getDimension() == Level.DIMENSION_NETHER) {
@@ -130,7 +130,7 @@ public class BlockRespawnAnchor extends BlockSolidMeta {
             }
         }
 
-        return true;
+        return item.getId() == GLOWSTONE;
     }
 
     @Override

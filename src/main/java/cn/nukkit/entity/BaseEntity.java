@@ -63,24 +63,25 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
                 return false;
             }
 
-            if (this.age % 10 == 0) {
-                this.blocksAround = null;
-                this.collisionBlocks = null;
-                if (this.onGround) {
-                    if (level.getBlock(chunk, getFloorX(), getFloorY() - 1, getFloorZ(), false).canPassThrough()) {
-                        this.onGround = false;
+            if (!this.isImmobile()) {
+                if (this.age % 10 == 0) {
+                    if (this.onGround) {
+                        if (level.getBlock(chunk, getFloorX(), getFloorY() - 1, getFloorZ(), false).canPassThrough()) {
+                            this.onGround = false;
+                        }
                     }
                 }
+
+                if (!this.onGround || Math.abs(this.motionX) > 0.1 || Math.abs(this.motionY) > 0.1 || Math.abs(this.motionZ) > 0.1) {
+                    this.motionY -= 0.08f;
+                    this.move(this.motionX, this.motionY, this.motionZ);
+                }
+
+                this.motionX *= 0.9;
+                this.motionY *= 0.9;
+                this.motionZ *= 0.9;
             }
 
-            if (!this.onGround || Math.abs(this.motionX) > 0.1 || Math.abs(this.motionY) > 0.1 || Math.abs(this.motionZ) > 0.1) {
-                this.motionY -= 0.08f;
-                this.move(this.motionX, this.motionY, this.motionZ);
-            }
-
-            this.motionX *= 0.9;
-            this.motionY *= 0.9;
-            this.motionZ *= 0.9;
             super.entityBaseTick(tickDiff); // updateMovement is called at the end of onUpdate after entityBaseTick is called
             return true;
         }

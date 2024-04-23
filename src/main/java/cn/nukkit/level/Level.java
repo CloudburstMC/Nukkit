@@ -2687,7 +2687,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         }
 
         FullChunk chunk = this.getChunk(x >> 4, z >> 4, true);
-        chunk.setBlockId(x & 0x0f, y, z & 0x0f, layer, id & 0xfff);
+        chunk.setBlockId(x & 0x0f, y, z & 0x0f, layer, id);
         addBlockChange(x, y, z);
 
         if (this.useChunkLoaderApi) {
@@ -2719,7 +2719,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         }
 
         BaseFullChunk chunk = this.getChunk(x >> 4, z >> 4, true);
-        boolean changed = chunk.setBlockAtLayer(x & 0x0f, y, z & 0x0f, layer, id & 0xfff, data & Block.DATA_MASK);
+        boolean changed = chunk.setBlockAtLayer(x & 0x0f, y, z & 0x0f, layer, id, data & Block.DATA_MASK);
         if (!changed) {
             return false;
         }

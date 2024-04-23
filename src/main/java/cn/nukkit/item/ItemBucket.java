@@ -201,7 +201,7 @@ public class ItemBucket extends Item {
             } else {
                 ev.setCancelled(!canBeFlowedInto);
             }
-            if (!block.canBeFlowedInto()) {
+            if (!block.canBeFlowedInto() && !(block instanceof BlockTrapdoor)) {
                 ev.setCancelled(true);
             }
 

@@ -42,6 +42,7 @@ public class ResourcePackStackPacket extends DataPacket {
         }
         this.putString(ProtocolInfo.MINECRAFT_VERSION_NETWORK);
         this.putExperiments(this.experiments);
+        this.putBoolean(false); // Has editor packs
     }
 
     @Override

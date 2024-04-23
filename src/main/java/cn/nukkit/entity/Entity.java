@@ -801,7 +801,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean hasControllingPassenger() {
-        return !this.passengers.isEmpty() && isControlling(this.passengers.get(0));
+        return !this.passengers.isEmpty() && this.passengers.get(0) != null;
     }
 
     public Entity getRiding() {

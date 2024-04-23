@@ -226,7 +226,7 @@ public class EntityFishingHook extends EntityProjectile {
 	private static final int[] rodEnchantments = {Enchantment.ID_LURE, Enchantment.ID_FORTUNE_FISHING, Enchantment.ID_DURABILITY, Enchantment.ID_MENDING, Enchantment.ID_VANISHING_CURSE};
 
 	public void reelLine() {
-		if (this.shootingEntity instanceof Player) {
+		if (this.shootingEntity instanceof Player && !this.closed) {
 			if (this.caught) {
 				Player player = (Player) this.shootingEntity;
 				Item item = Fishing.getFishingResult(this.rod);

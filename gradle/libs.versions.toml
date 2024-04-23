@@ -5,8 +5,8 @@ jline = "3.22.0"
 fastutilmaps = "8.5.13-SNAPSHOT"
 
 [libraries]
-network = { group = "org.cloudburstmc.netty", name = "netty-transport-raknet", version = "1.0.0.CR1-20240330.101522-15" }
-epoll = { group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.101.Final" }
+network = { group = "org.cloudburstmc.netty", name = "netty-transport-raknet", version = "1.0.0.CR3-SNAPSHOT" }
+epoll = { group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.100.Final" }
 natives = { group = "com.nukkitx", name = "natives", version = "1.0.3" }
 fastutil = { group = "com.nukkitx", name = "fastutil-lite", version = "8.1.1" }
 fastutil-int-short-maps = { group = "org.cloudburstmc.fastutil.maps", name = "int-short-maps", version.ref = "fastutilmaps" }
