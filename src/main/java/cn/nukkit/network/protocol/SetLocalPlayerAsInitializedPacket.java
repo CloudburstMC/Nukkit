@@ -21,6 +21,7 @@ public class SetLocalPlayerAsInitializedPacket extends DataPacket {
 
     @Override
     public void encode() {
+        this.reset();
         this.putUnsignedVarLong(eid);
     }
 }

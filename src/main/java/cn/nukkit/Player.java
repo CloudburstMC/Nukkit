@@ -3794,20 +3794,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Command.broadcastCommandMessage(this, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(this.gamemode)));
                 }
                 return;
-            case ProtocolInfo.ITEM_FRAME_DROP_ITEM_PACKET:
-                if (!this.spawned) {
-                    return;
-                }
-
-                ItemFrameDropItemPacket itemFrameDropItemPacket = (ItemFrameDropItemPacket) packet;
-                Vector3 frame = this.temporalVector.setComponents(itemFrameDropItemPacket.x, itemFrameDropItemPacket.y, itemFrameDropItemPacket.z);
-                if (frame.distanceSquared(this) < 1000) {
-                    BlockEntity itemFrame = this.level.getBlockEntityIfLoaded(this.chunk, frame);
-                    if (itemFrame instanceof BlockEntityItemFrame) {
-                        ((BlockEntityItemFrame) itemFrame).dropItem(this);
-                    }
-                }
-                return;
             case ProtocolInfo.MAP_INFO_REQUEST_PACKET:
                 if (this.inventory == null) {
                     return;
@@ -4621,21 +4607,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         this.inventory.setItem(bookEditPacket.inventorySlot, editBookEvent.getNewBook());
                     }
                 }
-                return;
-            case ProtocolInfo.FILTER_TEXT_PACKET:
-                if (!this.spawned) {
-                    return;
-                }
-
-                FilterTextPacket filterTextPacket = (FilterTextPacket) packet;
-                if (filterTextPacket.text == null || filterTextPacket.text.length() > 64) {
-                    this.getServer().getLogger().debug(username + ": FilterTextPacket with too long text");
-                    return;
-                }
-                FilterTextPacket textResponsePacket = new FilterTextPacket();
-                textResponsePacket.text = filterTextPacket.text;
-                textResponsePacket.fromServer = true;
-                this.dataPacket(textResponsePacket);
                 return;
             case ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET:
                 PacketViolationWarningPacket PVWpk = (PacketViolationWarningPacket) packet;

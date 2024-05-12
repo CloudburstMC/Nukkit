@@ -30,14 +30,7 @@ public class MoveEntityDeltaPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.getEntityRuntimeId();
-        this.flags = this.getByte();
-        this.x = getCoordinate(FLAG_HAS_X);
-        this.y = getCoordinate(FLAG_HAS_Y);
-        this.z = getCoordinate(FLAG_HAS_Z);
-        this.yawDelta = getRotation(FLAG_HAS_YAW);
-        this.headYawDelta = getRotation(FLAG_HAS_HEAD_YAW);
-        this.pitchDelta = getRotation(FLAG_HAS_PITCH);
+        this.decodeUnsupported();
     }
 
     @Override
@@ -51,20 +44,6 @@ public class MoveEntityDeltaPacket extends DataPacket {
         putRotation(FLAG_HAS_YAW, this.yawDelta);
         putRotation(FLAG_HAS_HEAD_YAW, this.headYawDelta);
         putRotation(FLAG_HAS_PITCH, this.pitchDelta);
-    }
-
-    private float getCoordinate(int flag) {
-        if ((flags & flag) != 0) {
-            return this.getLFloat();
-        }
-        return 0;
-    }
-
-    private double getRotation(int flag) {
-        if ((flags & flag) != 0) {
-            return this.getByte() * 1.40625;
-        }
-        return 0d;
     }
 
     private void putCoordinate(int flag, float value) {

@@ -11,7 +11,7 @@ public class DimensionDataPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.DIMENSION_DATA_PACKET;
 
-    private static final List<DimensionDefinition> DEFAULT_DEFINITIONS = new ObjectArrayList() {
+    private static final List<DimensionDefinition> DEFAULT_DEFINITIONS = new ObjectArrayList<DimensionDefinition>() {
         {
             add(new DimensionDefinition("minecraft:overworld", 319, -64, 1));
         }

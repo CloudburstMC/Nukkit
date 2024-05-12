@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * @author Nukkit Project Team
  */
+@Deprecated
 @ToString
 public class CraftingEventPacket extends DataPacket {
 

@@ -6,6 +6,7 @@ import lombok.ToString;
 /**
  * Created by Pub4Game on 03.07.2016.
  */
+@Deprecated
 @ToString
 public class ItemFrameDropItemPacket extends DataPacket {
 
