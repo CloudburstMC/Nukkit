@@ -9,9 +9,9 @@ import cn.nukkit.plugin.Plugin;
  */
 public class PluginCommand<T extends Plugin> extends Command implements PluginIdentifiableCommand {
 
-    private final T owningPlugin;
+    protected final T owningPlugin;
 
-    private CommandExecutor executor;
+    protected CommandExecutor executor;
 
     public PluginCommand(String name, T owner) {
         super(name);
