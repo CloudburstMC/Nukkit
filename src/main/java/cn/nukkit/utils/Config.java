@@ -351,6 +351,18 @@ public class Config {
     public boolean isList(String key) {
         return config.isList(key);
     }
+       
+    public Map getMap(String key) {
+        return this.getMap(key, null);
+    }
+
+    public Map getMap(String key, List defaultList) {
+        return this.correct ? this.config.getMap(key, defaultList) : defaultList;
+    }
+
+    public boolean isMap(String key) {
+        return config.isMap(key);
+    }
 
     public List<String> getStringList(String key) {
         return config.getStringList(key);
