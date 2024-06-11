@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector2;
+import cn.nukkit.math.Vector2f;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.network.protocol.types.*;
 import lombok.Getter;
@@ -31,6 +32,8 @@ public class PlayerAuthInputPacket extends DataPacket {
     // private ItemStackRequest itemStackRequest;
     private Map<PlayerActionType, PlayerBlockActionData> blockActionData = new EnumMap<>(PlayerActionType.class);
     private Vector2 analogMoveVector;
+    private long predictedVehicle;
+    private Vector2f vehicleRotation;
 
     @Override
     public byte pid() {
@@ -84,6 +87,11 @@ public class PlayerAuthInputPacket extends DataPacket {
                         this.blockActionData.put(type, new PlayerBlockActionData(type, null, -1));
                 }
             }
+        }
+
+        if (this.inputData.contains(AuthInputAction.IN_CLIENT_PREDICTED_IN_VEHICLE)) {
+            this.vehicleRotation = new Vector2f(this.getLFloat(), this.getLFloat());
+            this.predictedVehicle = this.getVarLong();
         }
 
         this.analogMoveVector = new Vector2(this.getLFloat(), this.getLFloat());

@@ -2,7 +2,6 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.Server;
 import cn.nukkit.network.Network;
-import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.BinaryStream;
 import com.nukkitx.network.raknet.RakNetReliability;
 
@@ -33,7 +32,14 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     @Override
     public DataPacket reset() {
         super.reset();
-        this.putUnsignedVarInt(this.pid() & 0xff);
+
+        byte packetId = this.pid();
+        if (packetId < 0 && packetId >= -56) { // Hack: (byte) 200+ --> (int) 300+
+            this.putUnsignedVarInt(packetId + 356);
+        } else {
+            this.putUnsignedVarInt(packetId & 0xff);
+        }
+
         return this;
     }
 
@@ -70,16 +76,16 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     }
 
     public BatchPacket compress(int level) {
-        BatchPacket batch = new BatchPacket();
-        byte[][] batchPayload = new byte[2][];
-        byte[] buf = getBuffer();
-        batchPayload[0] = Binary.writeUnsignedVarInt(buf.length);
-        batchPayload[1] = buf;
+        BinaryStream stream = new BinaryStream();
+        byte[] buf = this.getBuffer();
+        stream.putUnsignedVarInt(buf.length);
+        stream.put(buf);
         try {
-            batch.payload = Network.deflateRaw(batchPayload, level);
+            BatchPacket batched = new BatchPacket();
+            batched.payload = Network.deflateRaw(stream.getBuffer(), level);
+            return batched;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return batch;
     }
 }

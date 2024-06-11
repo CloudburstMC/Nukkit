@@ -31,7 +31,8 @@ public enum GameRule {
     SHOW_DEATH_MESSAGES("showDeathMessages"),
     SPAWN_RADIUS("spawnRadius"),
     TNT_EXPLODES("tntExplodes"),
-    SHOW_TAGS("showTags");
+    SHOW_TAGS("showTags"),
+    PLAYERS_SLEEPING_PERCENTAGE("playersSleepingPercentage");
 
     private final String name;
 

@@ -52,8 +52,11 @@ public interface ItemID {
     int WHEAT = 296;
     int BREAD = 297;
     int LEATHER_CAP = 298;
+    int LEATHER_HELMET = 298;
     int LEATHER_TUNIC = 299;
+    int LEATHER_CHESTPLATE = 299;
     int LEATHER_PANTS = 300;
+    int LEATHER_LEGGINGS = 300;
     int LEATHER_BOOTS = 301;
     int CHAIN_HELMET = 302;
     int CHAIN_CHESTPLATE = 303;
@@ -68,9 +71,13 @@ public interface ItemID {
     int DIAMOND_LEGGINGS = 312;
     int DIAMOND_BOOTS = 313;
     int GOLD_HELMET = 314;
+    int GOLDEN_HELMET = 314;
     int GOLD_CHESTPLATE = 315;
+    int GOLDEN_CHESTPLATE = 315;
     int GOLD_LEGGINGS = 316;
+    int GOLDEN_LEGGINGS = 316;
     int GOLD_BOOTS = 317;
+    int GOLDEN_BOOTS = 317;
     int FLINT = 318;
     int RAW_PORKCHOP = 319;
     int COOKED_PORKCHOP = 320;
@@ -79,7 +86,6 @@ public interface ItemID {
     int SIGN = 323;
     int WOODEN_DOOR = 324;
     int BUCKET = 325;
-
     int MINECART = 328;
     int SADDLE = 329;
     int IRON_DOOR = 330;
@@ -91,15 +97,16 @@ public interface ItemID {
     int KELP = 335;
     int BRICK = 336;
     int CLAY = 337;
+    int CLAY_BALL = 337;
     int SUGARCANE = 338;
     int SUGAR_CANE = 338;
     int SUGAR_CANES = 338;
     int PAPER = 339;
     int BOOK = 340;
     int SLIMEBALL = 341;
+    int SLIME_BALL = 341;
     int CHEST_MINECART = 342;
     int MINECART_WITH_CHEST = 342;
-
     int EGG = 344;
     int COMPASS = 345;
     int FISHING_ROD = 346;
@@ -120,10 +127,12 @@ public interface ItemID {
     int MELON_SLICE = 360;
     int PUMPKIN_SEEDS = 361;
     int MELON_SEEDS = 362;
+    int BEEF = 363;
     int RAW_BEEF = 363;
     int STEAK = 364;
     int COOKED_BEEF = 364;
     int RAW_CHICKEN = 365;
+    int CHICKEN = 365;
     int COOKED_CHICKEN = 366;
     int ROTTEN_FLESH = 367;
     int ENDER_PEARL = 368;
@@ -144,6 +153,7 @@ public interface ItemID {
     int CAULDRON = 380;
     int ENDER_EYE = 381;
     int GLISTERING_MELON = 382;
+    int GLISTERING_MELON_SLICE = 382;
     int SPAWN_EGG = 383;
     int EXPERIENCE_BOTTLE = 384;
     int FIRE_CHARGE = 385;
@@ -151,6 +161,7 @@ public interface ItemID {
     int WRITTEN_BOOK = 387;
     int EMERALD = 388;
     int ITEM_FRAME = 389;
+    int FRAME = 389;
     int FLOWER_POT = 390;
     int CARROT = 391;
     int CARROTS = 391;
@@ -160,8 +171,10 @@ public interface ItemID {
     int BAKED_POTATOES = 393;
     int POISONOUS_POTATO = 394;
     int EMPTY_MAP = 395;
+    int EMPTYMAP = 395;
     int GOLDEN_CARROT = 396;
     int SKULL = 397;
+    int CARROTONASTICK = 398;
     int CARROT_ON_A_STICK = 398;
     int NETHER_STAR = 399;
     int PUMPKIN_PIE = 400;
@@ -180,6 +193,7 @@ public interface ItemID {
     int PRISMARINE_SHARD = 409;
     int HOPPER = 410;
     int RAW_RABBIT = 411;
+    int RABBIT = 411;
     int COOKED_RABBIT = 412;
     int RABBIT_STEW = 413;
     int RABBIT_FOOT = 414;
@@ -187,11 +201,14 @@ public interface ItemID {
     int LEATHER_HORSE_ARMOR = 416;
     int IRON_HORSE_ARMOR = 417;
     int GOLD_HORSE_ARMOR = 418;
+    int GOLDEN_HORSE_ARMOR = 418;
     int DIAMOND_HORSE_ARMOR = 419;
     int LEAD = 420;
     int NAME_TAG = 421;
+    int NAMETAG = 421;
     int PRISMARINE_CRYSTALS = 422;
     int RAW_MUTTON = 423;
+    int MUTTONRAW = 423;
     int COOKED_MUTTON = 424;
     int ARMOR_STAND = 425;
     int END_CRYSTAL = 426;
@@ -203,21 +220,16 @@ public interface ItemID {
     int CHORUS_FRUIT = 432;
     int POPPED_CHORUS_FRUIT = 433;
     int BANNER_PATTERN = 434;
-
     int DRAGON_BREATH = 437;
     int SPLASH_POTION = 438;
-
     int LINGERING_POTION = 441;
-
     int COMMAND_BLOCK_MINECART = 443;
     int ELYTRA = 444;
     int SHULKER_SHELL = 445;
     int BANNER = 446;
     int TOTEM = 450;
     int IRON_NUGGET = 452;
-
     int TRIDENT = 455;
-
     int BEETROOT = 457;
     int BEETROOT_SEEDS = 458;
     int BEETROOT_SEED = 458;
@@ -229,14 +241,16 @@ public interface ItemID {
     int DRIED_KELP = 464;
     int NAUTILUS_SHELL = 465;
     int GOLDEN_APPLE_ENCHANTED = 466;
+    int ENCHANTED_GOLDEN_APPLE = 466;
+    int APPLEENCHANTED = 466;
     int HEART_OF_THE_SEA = 467;
     int SCUTE = 468;
+    int TURTLE_SCUTE = 468;
     int TURTLE_SHELL = 469;
+    int TURTLE_HELMET = 469;
     int PHANTOM_MEMBRANE = 470;
     int CROSSBOW = 471;
-
     int SWEET_BERRIES = 477;
-
     int RECORD_13 = 500;
     int RECORD_CAT = 501;
     int RECORD_BLOCKS = 502;
@@ -249,15 +263,14 @@ public interface ItemID {
     int RECORD_WARD = 509;
     int RECORD_11 = 510;
     int RECORD_WAIT = 511;
-
     int SHIELD = 513;
-
+    int RECORD_5 = 643;
+    int RECORD_RELIC = 701;
     int SUSPICIOUS_STEW = 734;
-
     int HONEYCOMB = 736;
     int HONEY_BOTTLE = 737;
-
     int LODESTONECOMPASS = 741;
+    int LODESTONE_COMPASS = 741;
     int NETHERITE_INGOT = 742;
     int NETHERITE_SWORD = 743;
     int NETHERITE_SHOVEL = 744;
@@ -269,11 +282,8 @@ public interface ItemID {
     int NETHERITE_LEGGINGS = 750;
     int NETHERITE_BOOTS = 751;
     int NETHERITE_SCRAP = 752;
-
     int WARPED_FUNGUS_ON_A_STICK = 757;
-
     int RECORD_PIGSTEP = 759;
-
     int SPYGLASS = 772;
     int RECORD_OTHERSIDE = 773;
 }

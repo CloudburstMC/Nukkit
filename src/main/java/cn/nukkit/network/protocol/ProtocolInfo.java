@@ -14,13 +14,14 @@ public interface ProtocolInfo {
      * Actual Minecraft: PE protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("575"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("671"); // DO NOT REMOVE BOXING
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION_NETWORK = "1.19.70";
+    String MINECRAFT_VERSION_NETWORK = "1.20.80";
     String MINECRAFT_VERSION = 'v' + MINECRAFT_VERSION_NETWORK;
 
+    byte BATCH_PACKET = (byte) 0xff;
     byte LOGIN_PACKET = 0x01;
     byte PLAY_STATUS_PACKET = 0x02;
     byte SERVER_TO_CLIENT_HANDSHAKE_PACKET = 0x03;
@@ -203,7 +204,16 @@ public interface ProtocolInfo {
     byte TOAST_REQUEST_PACKET = (byte) 0xba;
     byte UPDATE_ABILITIES_PACKET = (byte) 0xbb;
     byte UPDATE_ADVENTURE_SETTINGS_PACKET = (byte) 0xbc;
+    byte DEATH_INFO_PACKET = (byte) 0xbd;
     byte REQUEST_NETWORK_SETTINGS_PACKET = (byte) 0xc1;
-
-    byte BATCH_PACKET = (byte) 0xff;
+    byte GAME_TEST_REQUEST_PACKET = (byte) 0xc2;
+    byte GAME_TEST_RESULTS_PACKET = (byte) 0xc3;
+    byte UPDATE_CLIENT_INPUT_LOCKS_PACKET = (byte) 0xc4;
+    byte CLIENT_CHEAT_ABILITY_PACKET = (byte) 0xc5;
+    byte CAMERA_PRESETS_PACKET = (byte) 0xc6;
+    byte UNLOCKED_RECIPES_PACKET = (byte) 0xc7;
+    // MC packet IDs continue from 300 (0x12c)
+    // Hack: 100 is added to the IDs below on encode
+    // TODO: New pid() function (int) while trying not to break too many plugins
+    byte __INTERNAL__OPEN_SIGN_PACKET = (byte) 203; // 303
 }

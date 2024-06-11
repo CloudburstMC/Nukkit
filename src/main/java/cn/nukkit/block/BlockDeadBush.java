@@ -7,7 +7,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -42,7 +42,7 @@ public class BlockDeadBush extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         int id = down.getId();
-        if (id == SAND || id == TERRACOTTA || id == STAINED_TERRACOTTA || id == DIRT  || id == PODZOL || id == MYCELIUM) {
+        if (id == SAND || id == TERRACOTTA || id == STAINED_TERRACOTTA || id == DIRT  || id == PODZOL || id == MYCELIUM || id == GRASS) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
@@ -70,7 +70,7 @@ public class BlockDeadBush extends BlockFlowable {
             };
         } else {
             return new Item[]{
-                    new ItemStick(0, new Random().nextInt(3))
+                    new ItemStick(0, ThreadLocalRandom.current().nextInt(3))
             };
         }
     }

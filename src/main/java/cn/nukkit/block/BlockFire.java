@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.item.EntityPotion;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.event.block.BlockBurnEvent;
 import cn.nukkit.event.block.BlockFadeEvent;
@@ -17,6 +18,7 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
+import cn.nukkit.potion.Potion;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.Random;
@@ -68,6 +70,17 @@ public class BlockFire extends BlockFlowable {
 
     @Override
     public void onEntityCollide(Entity entity) {
+        if (entity instanceof EntityPotion) {
+            if (((EntityPotion) entity).potionId == Potion.WATER) {
+                BlockFadeEvent event = new BlockFadeEvent(this, Block.get(AIR));
+                this.level.getServer().getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
+                    this.level.setBlock(this, event.getNewState(), true);
+                }
+                return;
+            }
+        }
+
         if (!entity.hasEffect(Effect.FIRE_RESISTANCE)) {
             entity.attack(new EntityDamageByBlockEvent(this, entity, DamageCause.FIRE, 1));
         }

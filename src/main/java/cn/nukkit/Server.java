@@ -129,8 +129,6 @@ public class Server {
 
     private PluginManager pluginManager;
 
-    private int profilingTickrate = 20;
-
     private ServerScheduler scheduler;
 
     private int tickCounter;
@@ -144,10 +142,6 @@ public class Server {
     private float maxTick = 20;
 
     private float maxUse = 0;
-
-    private int sendUsageTicker = 0;
-
-    private boolean dispatchSignals = false;
 
     private final NukkitConsole console;
     private final ConsoleThread consoleThread;
@@ -174,14 +168,16 @@ public class Server {
 
     private Network network;
 
-    private boolean networkCompressionAsync = true;
-    public int networkCompressionLevel = 7;
-    private int networkZlibProvider = 0;
+    private boolean networkCompressionAsync;
+    public int networkCompressionLevel;
+    private int networkZlibProvider;
+    public int networkCompressionThreshold;
+    public boolean encryptionEnabled;
 
-    private boolean autoTickRate = true;
-    private int autoTickRateLimit = 20;
-    private boolean alwaysTickPlayers = false;
-    private int baseTickRate = 1;
+    private boolean autoTickRate;
+    private int autoTickRateLimit;
+    private boolean alwaysTickPlayers;
+    private int baseTickRate;
     private Boolean getAllowFlight = null;
     private int difficulty = Integer.MAX_VALUE;
     private int defaultGamemode = Integer.MAX_VALUE;
@@ -191,15 +187,13 @@ public class Server {
 
     private BaseLang baseLang;
 
-    private boolean forceLanguage = false;
+    private boolean forceLanguage;
 
     private UUID serverID;
 
     private final String filePath;
     private final String dataPath;
     private final String pluginPath;
-
-    private final Set<UUID> uniquePlayers = new HashSet<>();
 
     private QueryHandler queryHandler;
 
@@ -405,6 +399,12 @@ public class Server {
 
         this.networkCompressionLevel = this.getConfig("network.compression-level", 7);
         this.networkCompressionAsync = this.getConfig("network.async-compression", true);
+        this.networkCompressionThreshold = this.getConfig("network.batch-threshold", 256);
+        this.encryptionEnabled = this.getConfig("network.encryption", false);
+
+        if (!this.encryptionEnabled) {
+            this.getLogger().warning("Encryption is not enabled. For better security, it's recommended to enable it (network.encryption=true in nukkit.yml) if you don't use a proxy software.");
+        }
 
         this.autoTickRate = this.getConfig("level-settings.auto-tick-rate", true);
         this.autoTickRateLimit = this.getConfig("level-settings.auto-tick-rate-limit", 20);
@@ -978,9 +978,7 @@ public class Server {
     }
 
     public void onPlayerLogin(Player player) {
-        if (this.sendUsageTicker > 0) {
-            this.uniquePlayers.add(player.getUniqueId());
-        }
+
     }
 
     public void addPlayer(InetSocketAddress socketAddress, Player player) {
@@ -1201,11 +1199,6 @@ public class Server {
         if (this.autoSave && ++this.autoSaveTicker >= this.autoSaveTicks) {
             this.autoSaveTicker = 0;
             this.doAutoSave();
-        }
-
-        if (this.sendUsageTicker > 0 && --this.sendUsageTicker == 0) {
-            this.sendUsageTicker = 6000;
-            //todo sendUsage
         }
 
         if (this.tickCounter % 100 == 0) {

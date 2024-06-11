@@ -126,7 +126,7 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         }
         String[] lines = new String[4];
         Arrays.fill(lines, "");
-        String[] splitLines = nbt.getString("Text").split("\n", 4);
+        String[] splitLines = nbt.getCompound("FrontText").getString("Text").split("\n", 4);
         System.arraycopy(splitLines, 0, lines, 0, splitLines.length);
 
         sanitizeText(lines);

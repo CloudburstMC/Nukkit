@@ -301,6 +301,11 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_SONIC_BOOM = 107;
     public static final int DATA_FLAG_HAS_DASH_COOLDOWN = 108;
     public static final int DATA_FLAG_PUSH_TOWARDS_CLOSEST_SPACE = 109;
+    public static final int DATA_FLAG_SCENTING = 110;
+    public static final int DATA_FLAG_RISING = 111;
+    public static final int DATA_FLAG_FEELING_HAPPY = 112;
+    public static final int DATA_FLAG_SEARCHING = 113;
+    public static final int DATA_FLAG_CRAWLING = 114;
 
     public static long entityCount = 1;
 
@@ -1134,11 +1139,11 @@ public abstract class Entity extends Location implements Metadatable {
             if (source.getCause() != DamageCause.VOID && source.getCause() != DamageCause.SUICIDE) {
                 Player p = (Player) this;
                 boolean totem = false;
+                boolean isOffhand = false;
                 if (p.getOffhandInventory().getItem(0).getId() == ItemID.TOTEM) {
-                    p.getOffhandInventory().clear(0);
                     totem = true;
+                    isOffhand = true;
                 } else if (p.getInventory().getItemInHand().getId() == ItemID.TOTEM) {
-                    p.getInventory().clear(p.getInventory().getHeldItemIndex());
                     totem = true;
                 }
                 if (totem) {
@@ -1156,6 +1161,12 @@ public abstract class Entity extends Location implements Metadatable {
                     pk.eid = this.getId();
                     pk.event = EntityEventPacket.CONSUME_TOTEM;
                     p.dataPacket(pk);
+
+                    if (isOffhand) {
+                        p.getOffhandInventory().clear(0);
+                    } else {
+                        p.getInventory().clear(p.getInventory().getHeldItemIndex());
+                    }
 
                     source.setCancelled(true);
                     return false;
@@ -2513,5 +2524,12 @@ public abstract class Entity extends Location implements Metadatable {
         int hash = 7;
         hash = (int) (29 * hash + this.getId());
         return hash;
+    }
+
+    public void playAnimation(String animation) {
+        AnimateEntityPacket animateEntityPacket = new AnimateEntityPacket();
+        animateEntityPacket.animation = animation;
+        animateEntityPacket.runtimeEntityIds.add(this.id);
+        Server.broadcastPacket(this.hasSpawned.values(), animateEntityPacket);
     }
 }

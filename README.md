@@ -2,7 +2,6 @@
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
 [![Build Status](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master/badge/icon)](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master/)
-![Tests](https://img.shields.io/jenkins/t/https/ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master.svg)
 [![Discord](https://img.shields.io/discord/393465748535640064.svg)](https://discord.gg/5PzMkyK)
 
 Introduction
@@ -61,7 +60,7 @@ docker build -t nukkit .
 Run once to generate the `nukkit-data` volume, default settings, and choose language,
 
 ```
-docker run -it -p 19132:19132 -v nukkit-data:/data nukkit
+docker run -it -p 19132:19132/udp -v nukkit-data:/data nukkit
 ```
 Docker Compose
 -------------

@@ -1,7 +1,11 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.resourcepacks.ResourcePack;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.ToString;
+import lombok.Value;
+
+import java.util.List;
 
 @ToString
 public class ResourcePacksInfoPacket extends DataPacket {
@@ -11,8 +15,10 @@ public class ResourcePacksInfoPacket extends DataPacket {
     public boolean mustAccept;
     public boolean scripting;
     public boolean forceServerPacks;
+    public boolean hasAddonPacks;
     public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
     public ResourcePack[] resourcePackEntries = new ResourcePack[0];
+    public List<CDNEntry> CDNEntries = new ObjectArrayList<>();
 
     @Override
     public void decode() {
@@ -23,10 +29,17 @@ public class ResourcePacksInfoPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putBoolean(this.mustAccept);
+        this.putBoolean(this.hasAddonPacks);
         this.putBoolean(this.scripting);
         this.putBoolean(this.forceServerPacks);
         this.encodeBehaviourPacks(this.behaviourPackEntries);
         this.encodeResourcePacks(this.resourcePackEntries);
+
+        this.putUnsignedVarInt(this.CDNEntries.size());
+        this.CDNEntries.forEach((entry) -> {
+            this.putString(entry.getPackId());
+            this.putString(entry.getRemoteUrl());
+        });
     }
 
     private void encodeBehaviourPacks(ResourcePack[] packs) {
@@ -59,5 +72,11 @@ public class ResourcePacksInfoPacket extends DataPacket {
     @Override
     public byte pid() {
         return NETWORK_ID;
+    }
+
+    @Value
+    public static class CDNEntry {
+        String packId;
+        String remoteUrl;
     }
 }

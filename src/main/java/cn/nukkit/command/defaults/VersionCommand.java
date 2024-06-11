@@ -77,7 +77,7 @@ public class VersionCommand extends VanillaCommand {
                 if (authors.size() == 1) {
                     sender.sendMessage("Author: " + authorsString[0]);
                 } else if (authors.size() >= 2) {
-                    sender.sendMessage("Authors: " + authorsString[0]);
+                    sender.sendMessage("Authors: " + String.join(", ", authors));
                 }
             } else {
                 sender.sendMessage(new TranslationContainer("nukkit.command.version.noSuchPlugin"));

@@ -552,10 +552,8 @@ public class Level implements ChunkManager, Metadatable {
             }
         } else {
             if (packets != null) {
-                if (packets.length == 1) {
-                    Server.broadcastPacket(players, packets[0]);
-                } else {
-                    this.server.batchPackets(players, packets, false);
+                for (DataPacket packet : packets) {
+                    Server.broadcastPacket(players, packet);
                 }
             }
         }
@@ -976,15 +974,16 @@ public class Level implements ChunkManager, Metadatable {
             return;
         }
 
-        boolean resetTime = true;
+        int playerCount = 0;
+        int sleepingPlayerCount = 0;
         for (Player p : this.getPlayers().values()) {
-            if (!p.isSleeping()) {
-                resetTime = false;
-                break;
+            playerCount++;
+            if (p.isSleeping()) {
+                sleepingPlayerCount++;
             }
         }
 
-        if (resetTime) {
+        if (playerCount > 0 && sleepingPlayerCount / playerCount * 100 >= this.gameRules.getInteger(GameRule.PLAYERS_SLEEPING_PERCENTAGE)) {
             int time = this.getTime() % Level.TIME_FULL;
 
             if (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE) {
@@ -1033,12 +1032,6 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void sendBlocks(Player[] target, Vector3[] blocks, int flags, int dataLayer, boolean optimizeRebuilds) {
-        int size = 0;
-        for (Vector3 block : blocks) {
-            if (block != null) size++;
-        }
-        int packetIndex = 0;
-        UpdateBlockPacket[] packets = new UpdateBlockPacket[size];
         LongSet chunks = null;
         if (optimizeRebuilds) {
             chunks = new LongOpenHashSet();
@@ -1075,9 +1068,9 @@ public class Level implements ChunkManager, Metadatable {
                 throw new IllegalStateException("Unable to create BlockUpdatePacket at (" +
                         b.x + ", " + b.y + ", " + b.z + ") in " + getName(), e);
             }
-            packets[packetIndex++] = updateBlockPacket;
+
+            Server.broadcastPacket(target, updateBlockPacket);
         }
-        this.server.batchPackets(target, packets);
     }
 
     private void tickChunks() {
@@ -3080,14 +3073,14 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     public void regenerateChunk(int x, int z) {
-        this.unloadChunk(x, z, false);
+        this.unloadChunk(x, z, false, false);
 
         this.cancelUnloadChunkRequest(x, z);
 
         BaseFullChunk chunk = provider.getEmptyChunk(x, z);
         provider.setChunk(x, z, chunk);
 
-        this.generateChunk(x, z);
+        this.generateChunk(x, z, true);
     }
 
     public void doChunkGarbageCollection() {
@@ -3283,12 +3276,12 @@ public class Level implements ChunkManager, Metadatable {
     public void addEntityMovement(Entity entity, double x, double y, double z, double yaw, double pitch, double headYaw) {
         MoveEntityAbsolutePacket pk = new MoveEntityAbsolutePacket();
         pk.eid = entity.getId();
-        pk.x = (float) x;
-        pk.y = (float) y;
-        pk.z = (float) z;
-        pk.yaw = (float) yaw;
-        pk.headYaw = (float) headYaw;
-        pk.pitch = (float) pitch;
+        pk.x = x;
+        pk.y = y;
+        pk.z = z;
+        pk.yaw = yaw;
+        pk.headYaw = headYaw;
+        pk.pitch = pitch;
         pk.onGround = entity.onGround;
 
         Server.broadcastPacket(entity.getViewers().values(), pk);

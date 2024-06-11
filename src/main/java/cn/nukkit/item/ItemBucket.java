@@ -178,27 +178,27 @@ public class ItemBucket extends Item {
                 if (ev.isMobSpawningAllowed()) {
                     switch (this.getDamage()) {
                         case 2:
-                            Entity e2 = Entity.createEntity("Cod", block);
+                            Entity e2 = Entity.createEntity("Cod", block.add(0.5, 0, 0.5));
                             if (e2 != null) e2.spawnToAll();
                             break;
                         case 3:
-                            Entity e3 = Entity.createEntity("Salmon", block);
+                            Entity e3 = Entity.createEntity("Salmon", block.add(0.5, 0, 0.5));
                             if (e3 != null) e3.spawnToAll();
                             break;
                         case 4:
-                            Entity e4 = Entity.createEntity("TropicalFish", block);
+                            Entity e4 = Entity.createEntity("TropicalFish", block.add(0.5, 0, 0.5));
                             if (e4 != null) e4.spawnToAll();
                             break;
                         case 5:
-                            Entity e5 = Entity.createEntity("Pufferfish", block);
+                            Entity e5 = Entity.createEntity("Pufferfish", block.add(0.5, 0, 0.5));
                             if (e5 != null) e5.spawnToAll();
                             break;
                         case 12:
-                            Entity e12 = Entity.createEntity("Axolotl", block);
+                            Entity e12 = Entity.createEntity("Axolotl", block.add(0.5, 0, 0.5));
                             if (e12 != null) e12.spawnToAll();
                             break;
                         case 13:
-                            Entity e13 = Entity.createEntity("Tadpole", block);
+                            Entity e13 = Entity.createEntity("Tadpole", block.add(0.5, 0, 0.5));
                             if (e13 != null) e13.spawnToAll();
                             break;
                     }

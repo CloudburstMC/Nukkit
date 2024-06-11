@@ -8,6 +8,7 @@ public class UpdatePlayerGameTypePacket extends DataPacket {
 
     public GameType gameType;
     public long entityId;
+    public int tick;
 
     @Override
     public byte pid() {
@@ -24,7 +25,8 @@ public class UpdatePlayerGameTypePacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putVarInt(this.gameType.ordinal());
-        this.putVarLong(entityId);
+        this.putVarLong(this.entityId);
+        this.putUnsignedVarInt(this.tick);
     }
 
     public enum GameType {

@@ -23,6 +23,7 @@ repositories {
 
 dependencies {
     api(libs.network)
+    api(libs.natives)
     api(libs.fastutil)
     api(libs.guava)
     api(libs.gson)

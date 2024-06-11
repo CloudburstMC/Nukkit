@@ -37,7 +37,7 @@ public class BanCommand extends VanillaCommand {
             return false;
         }
 
-        String name = args[0];
+        String name = args[0].replace("@s", sender.getName());
         StringBuilder reason = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
             reason.append(args[i]).append(" ");

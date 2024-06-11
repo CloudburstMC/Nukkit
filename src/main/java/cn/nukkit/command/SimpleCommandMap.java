@@ -53,6 +53,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new SaveOffCommand("save-off"));
         this.register("nukkit", new SaveCommand("save-all"));
         this.register("nukkit", new GiveCommand("give"));
+        this.register("nukkit", new ClearCommand("clear"));
         this.register("nukkit", new EffectCommand("effect"));
         this.register("nukkit", new EnchantCommand("enchant"));
         this.register("nukkit", new ParticleCommand("particle"));
@@ -72,7 +73,7 @@ public class SimpleCommandMap implements CommandMap {
         this.register("nukkit", new StatusCommand("status"));
         this.register("nukkit", new GarbageCollectorCommand("gc"));
         this.register("nukkit", new TimingsCommand("timings"));
-        this.register("nukkit", new DebugPasteCommand("debugpaste"));
+        //this.register("nukkit", new DebugPasteCommand("debugpaste")); // No more unauthenticated API access, TODO: find a replacement for hastebin.com
         //this.register("nukkit", new DumpMemoryCommand("dumpmemory"));
 //        }
     }

@@ -41,6 +41,7 @@ public class ResourcePackStackPacket extends DataPacket {
         this.putString(this.gameVersion);
         this.putLInt(0); // Experiments length
         this.putBoolean(false); // Were experiments previously toggled
+        this.putBoolean(false); // Has editor packs
     }
 
     @Override

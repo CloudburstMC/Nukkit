@@ -15,6 +15,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTurtleShell;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -284,9 +285,11 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
             }
         }
 
-        // Used to check collisions with magma blocks
-        Block block = this.level.getBlock((int) x, (int) y - 1, (int) z);
-        if (block instanceof BlockMagma) block.onEntityCollide(this);
+        // Check collision with magma blocks because Nukkit doesn't do collisions to full blocks below
+        if (this.isPlayer || this.age % 2 == 0) {
+            Block block = this.level.getBlock(getFloorX(), NukkitMath.floorDouble(this.y + 0.53) - 1, getFloorZ());
+            if (block instanceof BlockMagma) block.onEntityCollide(this);
+        }
 
         Timings.livingEntityBaseTickTimer.stopTiming();
 

@@ -69,7 +69,7 @@ public class CraftingManager {
         }
         this.rebuildPacket();
 
-        MainLogger.getLogger().info("Loaded " + this.recipes.size() + " recipes.");
+        MainLogger.getLogger().info("Loaded " + this.recipes.size() + " recipes");
     }
 
     @SuppressWarnings("unchecked")
@@ -77,6 +77,7 @@ public class CraftingManager {
         List<Map> recipes = config.getMapList("recipes");
         MainLogger.getLogger().info("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
+            top:
             try {
                 switch (Utils.toInt(recipe.get("type"))) {
                     case 0:
@@ -98,12 +99,9 @@ public class CraftingManager {
                         // Bake sorted list
                         sorted.sort(recipeComparator);
 
-                        String recipeId = (String) recipe.get("id");
-                        int priority = Utils.toInt(recipe.get("priority"));
-
-                        ShapelessRecipe result = new ShapelessRecipe(recipeId, priority, Item.fromJson(first), sorted);
-
-                        this.registerRecipe(result);
+                        Item resultItem = Item.fromJson(first, true);
+                        if (resultItem == null) continue; // TODO: remove when new blocks are supported
+                        this.registerRecipe(new ShapelessRecipe(null, Utils.toInt(recipe.get("priority")), resultItem, sorted)); // null recipeId will be replaced with recipe uuid
                         break;
                     case 1:
                         craftingBlock = (String) recipe.get("block");
@@ -123,6 +121,12 @@ public class CraftingManager {
                             char ingredientChar = ingredientEntry.getKey().charAt(0);
                             Item ingredient = Item.fromJson(ingredientEntry.getValue());
 
+                            // TODO: update recipes
+                            if (ingredient.getId() == Item.PLANKS && Utils.toInt(ingredientEntry.getValue().getOrDefault("damage", 0)) == -1) {
+                                createLegacyPlanksRecipe(recipe, first);
+                                break top;
+                            }
+
                             ingredients.put(ingredientChar, ingredient);
                         }
 
@@ -130,10 +134,9 @@ public class CraftingManager {
                             extraResults.add(Item.fromJson(data));
                         }
 
-                        recipeId = (String) recipe.get("id");
-                        priority = Utils.toInt(recipe.get("priority"));
-
-                        this.registerRecipe(new ShapedRecipe(recipeId, priority, Item.fromJson(first), shape, ingredients, extraResults));
+                        resultItem = Item.fromJson(first, true);
+                        if (resultItem == null) continue; // TODO: remove when new blocks are supported
+                        this.registerRecipe(new ShapedRecipe(null, Utils.toInt(recipe.get("priority")), resultItem, shape, ingredients, extraResults));
                         break;
                     case 2:
                     case 3:
@@ -143,7 +146,8 @@ public class CraftingManager {
                             continue;
                         }
                         Map<String, Object> resultMap = (Map) recipe.get("output");
-                        Item resultItem = Item.fromJson(resultMap);
+                        resultItem = Item.fromJson(resultMap, true);
+                        if (resultItem == null) continue; // TODO: remove when new blocks are supported
                         Item inputItem;
                         try {
                             Map<String, Object> inputMap = (Map) recipe.get("input");
@@ -186,6 +190,30 @@ public class CraftingManager {
             int toItemId = ((Number) containerMix.get("outputId")).intValue();
 
             registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
+        }
+    }
+
+    private void createLegacyPlanksRecipe(Map<String, Object> recipe, Map<String, Object> first) {
+        List<Map> outputs = (List<Map>) recipe.get("output");
+        String[] shape = ((List<String>) recipe.get("shape")).toArray(new String[0]);
+        List<Item> extraResults = new ArrayList<>();
+        for (Map<String, Object> data : outputs) {
+            extraResults.add(Item.fromJson(data));
+        }
+        for (int planksMeta = 0; planksMeta <= 5; planksMeta++) {
+            Map<Character, Item> ingredients = new CharObjectHashMap<>();
+            Map<String, Map<String, Object>> input = (Map) recipe.get("input");
+            for (Map.Entry<String, Map<String, Object>> ingredientEntry : input.entrySet()) {
+                char ingredientChar = ingredientEntry.getKey().charAt(0);
+                ingredientEntry.getValue().put("damage", 0);
+                Item ingredient = Item.fromJson(ingredientEntry.getValue());
+                if (ingredient.getId() == Item.PLANKS) {
+                    ingredient.setDamage(planksMeta);
+                }
+                ingredients.put(ingredientChar, ingredient);
+            }
+            this.registerRecipe(
+                    new ShapedRecipe(null, Utils.toInt(recipe.get("priority")), Item.fromJson(first), shape, ingredients, extraResults));
         }
     }
 
