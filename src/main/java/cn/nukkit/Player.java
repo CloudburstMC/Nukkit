@@ -5523,4 +5523,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.server.getScheduler().scheduleAsyncTask(this.preLoginEventTask);
         this.processLogin();
     }
+
+    /**
+     * Show or hide hud elements for the player
+     * @param visible whether the listed elements will be visible
+     * @param elements elements
+     */
+    public void setHudElementVisibility(boolean visible, HudElement... elements) {
+        SetHudPacket pk = new SetHudPacket();
+        pk.elements.addAll(Arrays.asList(elements));
+        pk.visible = visible;
+        this.dataPacket(pk);
+    }
 }

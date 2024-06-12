@@ -220,5 +220,14 @@ public interface ProtocolInfo {
     // MC packet IDs continue from 300 (0x12c)
     // Hack: 100 is added to the IDs below on encode
     // TODO: New pid() function (int) while trying not to break too many plugins
-    byte __INTERNAL__OPEN_SIGN_PACKET = (byte) 203; // 303
+    int __INTERNAL__CAMERA_INSTRUCTION_PACKET = (byte) 200;
+    int __INTERNAL__COMPRESSED_BIOME_DEFINITIONS_LIST_PACKET = (byte) 201;
+    int __INTERNAL__TRIM_DATA_PACKET = (byte) 202;
+    int __INTERNAL__OPEN_SIGN_PACKET = (byte) 203;
+    int __INTERNAL__AGENT_ANIMATION_PACKET = (byte) 204;
+    int __INTERNAL__REFRESH_ENTITLEMENTS_PACKET = (byte) 205;
+    int __INTERNAL__TOGGLE_CRAFTER_SLOT_REQUEST_PACKET = (byte) 206;
+    int __INTERNAL__SET_PLAYER_INVENTORY_OPTIONS_PACKET = (byte) 207;
+    int __INTERNAL__SET_HUD_PACKET = (byte) 208;
+    int __INTERNAL__AWARD_ACHIEVEMENT_PACKET = (byte) 209;
 }
