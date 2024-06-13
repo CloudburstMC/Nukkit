@@ -82,9 +82,19 @@ public class GameruleCommand extends VanillaCommand {
 
         switch (args.length) {
             case 0:
-                StringJoiner rulesJoiner = new StringJoiner(", ");
+                int splitCounter = 0;
+                StringJoiner rulesJoiner = new StringJoiner("\n");
                 for (GameRule rule: rules.getRules()) {
-                    rulesJoiner.add(rule.getName().toLowerCase());
+                    rulesJoiner.add(rule.getName().toLowerCase() + " = " + rules.getString(rule));
+
+                    // 1.21 disconnects on too long message
+                    // TODO: do this the same way as on vanilla
+                    if (splitCounter++ > 15) {
+                        rulesJoiner.add("");
+                        sender.sendMessage(rulesJoiner.toString());
+                        splitCounter = 0;
+                        rulesJoiner = new StringJoiner("\n");
+                    }
                 }
                 sender.sendMessage(rulesJoiner.toString());
                 return true;

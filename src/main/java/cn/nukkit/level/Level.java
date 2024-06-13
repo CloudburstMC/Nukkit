@@ -3671,12 +3671,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             int unloaded = 0;
             LongList toRemove = null;
             for (Long2LongMap.Entry entry : unloadQueue.long2LongEntrySet()) {
-                long index = entry.getLongKey();
-
-                if (isChunkInUse(index)) {
-                    continue;
-                }
-
                 if (!force) {
                     long time = entry.getLongValue();
                     if (unloaded > maxUnload) {
@@ -3684,11 +3678,16 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                     } else if (time > (now - 30000)) {
                         continue;
                     }
-                    unloaded++;
+                }
+
+                long index = entry.getLongKey();
+                if (isChunkInUse(index)) {
+                    continue;
                 }
 
                 if (toRemove == null) toRemove = new LongArrayList();
                 toRemove.add(index);
+                unloaded++;
             }
 
             if (toRemove != null) {
@@ -3735,17 +3734,16 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                 }
                 Long2LongMap.Entry entry = iter.next();
 
-                long index = entry.getLongKey();
-
-                if (isChunkInUse(index)) {
-                    continue;
-                }
-
                 if (!force) {
                     long time = entry.getLongValue();
-                    if (time > (now - 20000)) {
+                    if (time > (now - 30000)) {
                         continue;
                     }
+                }
+
+                long index = entry.getLongKey();
+                if (isChunkInUse(index)) {
+                    continue;
                 }
 
                 if (toUnload == null) toUnload = new LongArrayList();

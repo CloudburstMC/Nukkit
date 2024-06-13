@@ -2,8 +2,8 @@ package cn.nukkit.level.generator.populator.impl;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.generator.populator.helper.EnsureBelow;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
+import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.Utils;
@@ -13,7 +13,7 @@ public class PopulatorBamboo extends PopulatorSurfaceBlock {
     @Override
     protected boolean canStay(int x, int y, int z, FullChunk chunk) {
         if (chunk instanceof cn.nukkit.level.format.anvil.Chunk) return false;
-        return EnsureCover.ensureCover(x, y, z, chunk) && EnsureBelow.ensureBelow(x, y, z, GRASS, chunk);
+        return EnsureCover.ensureCover(x, y, z, chunk) && EnsureGrassBelow.ensureGrassBelow(x, y, z, chunk);
     }
 
     @Override

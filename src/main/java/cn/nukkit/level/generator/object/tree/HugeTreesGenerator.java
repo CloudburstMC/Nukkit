@@ -51,7 +51,7 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
         boolean flag = true;
 
         int maxY = worldIn instanceof Level ? ((Level) worldIn).getMaxBlockY() + 1 : 256;
-        int minBlockY = worldIn instanceof Level ? ((Level) worldIn).getMaxBlockY() : 0;
+        int minBlockY = worldIn instanceof Level ? ((Level) worldIn).getMinBlockY() : 0;
 
         if (leavesPos.getY() > minBlockY && leavesPos.getY() + height + 1 <= maxY) {
             for (int i = 0; i <= 1 + height; ++i) {

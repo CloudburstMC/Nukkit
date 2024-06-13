@@ -142,6 +142,10 @@ public abstract class EntityMinecartAbstract extends EntityVehicle implements En
         if (isAlive()) {
             super.onUpdate(currentTick);
 
+            if (this.closed) {
+                return false;
+            }
+
             // The damage token
             if (getHealth() < 20) {
                 setHealth(getHealth() + 1);
@@ -445,11 +449,13 @@ public abstract class EntityMinecartAbstract extends EntityVehicle implements En
         }
     }
 
+    private final Vector3 tempMoveVec = new Vector3(0, 0, 0);
+
     private void processMovement(int dx, int dy, int dz, BlockRail block) {
         fallDistance = 0.0F;
         Vector3 vector = getNextRail(x, y, z);
 
-        y = dy;
+        int y = dy;
         boolean isPowered = false;
         boolean isSlowed = false;
 
@@ -544,10 +550,10 @@ public abstract class EntityMinecartAbstract extends EntityVehicle implements En
         double motZ;
 
         if (facing1 == 0) {
-            x = (double) dx + 0.5D;
+            //x = (double) dx + 0.5D;
             expectedSpeed = z - (double) dz;
         } else if (facing2 == 0) {
-            z = (double) dz + 0.5D;
+            //z = (double) dz + 0.5D;
             expectedSpeed = x - (double) dx;
         } else {
             motX = x - playerYawNeg;
@@ -557,7 +563,8 @@ public abstract class EntityMinecartAbstract extends EntityVehicle implements En
 
         x = playerYawNeg + facing1 * expectedSpeed;
         z = playerYawPos + facing2 * expectedSpeed;
-        setPosition(new Vector3(x, y, z));
+        this.y = y; // Idk why we set these before setPosition
+        setPosition(tempMoveVec.setComponents(x, y, z));
 
         motX = motionX;
         motZ = motionZ;
@@ -570,9 +577,9 @@ public abstract class EntityMinecartAbstract extends EntityVehicle implements En
 
         move(motX, 0, motZ);
         if (facing[0][1] != 0 && MathHelper.floor(x) - dx == facing[0][0] && MathHelper.floor(z) - dz == facing[0][2]) {
-            setPosition(new Vector3(x, y + (double) facing[0][1], z));
+            setPosition(tempMoveVec.setComponents(x, y + (double) facing[0][1], z));
         } else if (facing[1][1] != 0 && MathHelper.floor(x) - dx == facing[1][0] && MathHelper.floor(z) - dz == facing[1][2]) {
-            setPosition(new Vector3(x, y + (double) facing[1][1], z));
+            setPosition(tempMoveVec.setComponents(x, y + (double) facing[1][1], z));
         }
 
         applyDrag();
@@ -587,7 +594,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle implements En
                 motionZ = motionZ / squareOfFame * (squareOfFame + d14);
             }
 
-            setPosition(new Vector3(x, vector1.y, z));
+            setPosition(tempMoveVec.setComponents(x, vector1.y, z));
         }
 
         int floorX = MathHelper.floor(x);

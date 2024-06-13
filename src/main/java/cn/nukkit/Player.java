@@ -275,6 +275,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private boolean needSendData;
     private boolean needSendAdventureSettings;
     private boolean needSendFoodLevel;
+    @Setter
     private boolean needSendInventory;
     private boolean needSendHeldItem;
     private boolean needSendRotation;

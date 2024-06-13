@@ -53,7 +53,7 @@ public class NewJungleTree extends TreeGenerator {
         boolean flag = true;
 
         int maxY = worldIn instanceof Level ? ((Level) worldIn).getMaxBlockY() + 1 : 256;
-        int minBlockY = worldIn instanceof Level ? ((Level) worldIn).getMaxBlockY() : 0;
+        int minBlockY = worldIn instanceof Level ? ((Level) worldIn).getMinBlockY() : 0;
 
         if (position.getY() > minBlockY && position.getY() + i + 1 <= maxY) {
             for (int j = position.getY(); j <= position.getY() + 1 + i; ++j) {

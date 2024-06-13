@@ -49,9 +49,6 @@ public class EventPacket extends DataPacket {
 
     @Override
     public void encode() {
-        this.reset();
-        this.putVarLong(this.eid);
-        this.putVarInt(this.eventData);
-        this.putByte(this.eventType);
+        this.encodeUnsupported();
     }
 }

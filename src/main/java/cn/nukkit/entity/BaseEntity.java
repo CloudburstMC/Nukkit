@@ -73,7 +73,7 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
                 }
 
                 if (!this.onGround || Math.abs(this.motionX) > 0.1 || Math.abs(this.motionY) > 0.1 || Math.abs(this.motionZ) > 0.1) {
-                    this.motionY -= 0.08f;
+                    this.motionY -= 0.08;
                     this.move(this.motionX, this.motionY, this.motionZ);
                 }
 

@@ -74,7 +74,19 @@ public enum AuthInputAction {
     /**
      * @since v649
      */
-    IN_CLIENT_PREDICTED_IN_VEHICLE;
+    IN_CLIENT_PREDICTED_IN_VEHICLE,
+    /**
+     * @since v662
+     */
+    PADDLE_LEFT,
+    /**
+     * @since v662
+     */
+    PADDLE_RIGHT,
+    /**
+     * @since v685
+     */
+    BLOCK_BREAKING_DELAY_ENABLED;
 
     private static final AuthInputAction[] VALUES = values();
 

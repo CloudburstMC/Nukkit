@@ -12,11 +12,11 @@ public abstract class BasicGenerator {
     public abstract boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position);
 
     protected void setBlockAndNotifyAdequately(ChunkManager level, BlockVector3 pos, Block state) {
-        setBlock(level, new Vector3(pos.x, pos.y, pos.z), state);
+        level.setBlockAt(pos.x, pos.y, pos.z, state.getId(), state.getDamage());
     }
 
     protected void setBlockAndNotifyAdequately(ChunkManager level, Vector3 pos, Block state) {
-        setBlock(level, pos, state);
+        level.setBlockAt((int) pos.x, (int) pos.y, (int) pos.z, state.getId(), state.getDamage());
     }
 
     //what autism is this? why are we using floating-point vectors for setting block IDs?

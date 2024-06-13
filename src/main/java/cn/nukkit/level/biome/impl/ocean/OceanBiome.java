@@ -36,7 +36,7 @@ public class OceanBiome extends WateryBiome {
 
         PopulatorSeagrass populatorSeagrass = new PopulatorSeagrass();
         populatorSeagrass.setBaseAmount(24);
-        populatorSeagrass.setBaseAmount(24);
+        populatorSeagrass.setRandomAmount(24);
         this.addPopulator(populatorSeagrass);
 
         this.setBaseHeight(-1.0f);

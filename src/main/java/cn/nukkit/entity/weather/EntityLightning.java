@@ -42,7 +42,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         this.liveTime = Utils.random.nextInt(3) + 1;
 
         if (isEffect && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK) && (this.server.getDifficulty() >= 2)) {
-            Block block = this.getLevelBlock();
+            Block block = this.level.getBlock(this.chunk, this.getFloorX(), this.getFloorY(), this.getFloorZ(), true);
             if (block.getId() == 0 || block.getId() == Block.TALL_GRASS) {
                 BlockFire fire = (BlockFire) Block.get(BlockID.FIRE);
                 fire.x = block.x;
@@ -110,7 +110,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
                 this.state = 1;
 
                 if (this.isEffect && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
-                    Block block = this.getLevelBlock();
+                    Block block = this.level.getBlock(this.chunk, this.getFloorX(), this.getFloorY(), this.getFloorZ(), true);
 
                     if (block.getId() == Block.AIR || block.getId() == Block.TALL_GRASS) {
                         BlockIgniteEvent e = new BlockIgniteEvent(block, null, this, BlockIgniteEvent.BlockIgniteCause.LIGHTNING);
@@ -138,5 +138,10 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         }
 
         return true;
+    }
+
+    @Override
+    public boolean canSaveToStorage() {
+        return false;
     }
 }

@@ -31,10 +31,11 @@ public class PopulatorWarpedForestGround extends Populator {
             IntArrayList ys = getHighestWorkableBlocks(level, x, z);
             for (int y : ys) {
                 if (y <= 1) continue;
-                if (random.nextBoundedInt(4) == 0) continue;
 
                 int blockID;
-                if (random.nextBoundedInt(6) == 0) {
+                if (random.nextBoundedInt(4) == 0) {
+                    blockID = NETHER_SPROUTS_BLOCK;
+                } else if (random.nextBoundedInt(6) == 0) {
                     blockID = WARPED_FUNGUS;
                 } else {
                     blockID = WARPED_ROOTS;

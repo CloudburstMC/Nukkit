@@ -12,8 +12,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
-import java.util.List;
-
 public class EntityEnderPearl extends EntityProjectile {
 
     public static final int NETWORK_ID = 87;
@@ -71,10 +69,8 @@ public class EntityEnderPearl extends EntityProjectile {
         }
 
         if (this.isCollided && this.shootingEntity instanceof Player) {
-            List<Block> b = this.getCollisionBlocks();
-
             boolean portal = false;
-            for (Block collided : b) {
+            for (Block collided : this.getCollisionBlocks()) {
                 if (collided.getId() == Block.NETHER_PORTAL) {
                     portal = true;
                     break;

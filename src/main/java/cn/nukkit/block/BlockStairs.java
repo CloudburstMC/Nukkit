@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
@@ -55,9 +56,7 @@ public abstract class BlockStairs extends BlockSolidMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        Item item = super.toItem();
-        item.setDamage(0);
-        return item;
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override

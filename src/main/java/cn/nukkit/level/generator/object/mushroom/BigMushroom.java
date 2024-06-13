@@ -55,7 +55,7 @@ public class BigMushroom extends BasicGenerator {
         boolean flag = true;
 
         int maxY = level instanceof Level ? ((Level) level).getMaxBlockY() + 1 : 256;
-        int minBlockY = level instanceof Level ? ((Level) level).getMaxBlockY() : 0;
+        int minBlockY = level instanceof Level ? ((Level) level).getMinBlockY() : 0;
 
         if (position.getY() > minBlockY && position.getY() + i + 1 < maxY) {
             for (int j = position.getFloorY(); j <= position.getY() + 1 + i; ++j) {

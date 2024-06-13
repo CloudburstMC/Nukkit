@@ -1,9 +1,10 @@
 package cn.nukkit.level.generator.populator.impl;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.level.generator.populator.helper.EnsureBelow;
 import cn.nukkit.level.generator.populator.helper.EnsureCover;
+import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
 import cn.nukkit.math.NukkitRandom;
 
@@ -11,12 +12,12 @@ public class PopulatorForestRock extends PopulatorSurfaceBlock {
 
     @Override
     protected boolean canStay(int x, int y, int z, FullChunk chunk) {
-        return EnsureCover.ensureCover(x, y, z, chunk) && EnsureBelow.ensureBelow(x, y, z, PODZOL, chunk);
+        return EnsureCover.ensureCover(x, y, z, chunk) && EnsureGrassBelow.ensureGrassBelow(x, y, z, chunk);
     }
 
     @Override
     protected int getBlockId(int x, int z, NukkitRandom random, FullChunk chunk) {
-        return MOSSY_STONE << 4;
+        return MOSSY_STONE << Block.DATA_BITS;
     }
 
     @Override
@@ -41,7 +42,7 @@ public class PopulatorForestRock extends PopulatorSurfaceBlock {
             if (block == 0) {
                 continue;
             }
-            if (block == PODZOL || block == DIRT || block == STONE) {
+            if (block == PODZOL || block == GRASS || block == DIRT || block == STONE) {
                 groundReached = true;
                 sourceY++;
                 break;
@@ -61,8 +62,8 @@ public class PopulatorForestRock extends PopulatorSurfaceBlock {
                         continue;
                     }
                     int bid = level.getBlockIdAt(sourceX + x, sourceY + y, sourceZ + z);
-                    if (bid == AIR || bid == PODZOL || bid == DIRT || bid == STONE) {
-                        level.setBlockFullIdAt(sourceX + x, sourceY + y, sourceZ + z, MOSSY_STONE << 4);
+                    if (bid == AIR || bid == PODZOL || bid == GRASS || bid == DIRT || bid == STONE) {
+                        level.setBlockFullIdAt(sourceX + x, sourceY + y, sourceZ + z, MOSSY_STONE << Block.DATA_BITS);
                     }
                 }
             }

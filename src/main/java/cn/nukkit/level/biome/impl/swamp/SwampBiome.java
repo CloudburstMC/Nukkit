@@ -23,7 +23,7 @@ public class SwampBiome extends GrassyBiome {
 
         PopulatorSeagrass populatorSeagrass = new PopulatorSeagrass();
         populatorSeagrass.setBaseAmount(24);
-        populatorSeagrass.setBaseAmount(24);
+        populatorSeagrass.setRandomAmount(24);
         addPopulator(populatorSeagrass);
 
         PopulatorLilyPad lilypad = new PopulatorLilyPad();

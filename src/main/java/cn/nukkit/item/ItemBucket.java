@@ -7,6 +7,7 @@ import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.particle.ExplodeParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockFace.Plane;
@@ -71,8 +72,26 @@ public class ItemBucket extends Item {
             case 13:
                 return WATER;
             case 10:
+            case 11: // still lava
                 return LAVA;
-            case 11: // was still lava, now powder snow
+            default:
+                return AIR;
+        }
+    }
+
+    public static int getBlockByDamage(int target) {
+        switch (target) {
+            case 2:
+            case 3:
+            case 4:
+            case 5:
+            case 8:
+            case 12:
+            case 13:
+                return WATER;
+            case 10:
+                return LAVA;
+            case 11:
                 return POWDER_SNOW;
             default:
                 return AIR;
@@ -121,9 +140,9 @@ public class ItemBucket extends Item {
                 level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_FILL_POWDER_SNOW);
                 return true;
             } else {
-                player.getInventory().sendContents(player);
+                player.setNeedSendInventory(true);
             }
-        } else if ((targetBlock = Block.get(getDamageByTarget(this.meta))) instanceof BlockAir) {
+        } else if ((targetBlock = Block.get(getBlockByDamage(this.meta))) instanceof BlockAir) {
             if (!(target instanceof BlockLiquid) || target.getDamage() != 0) {
                 target = target.getLevelBlock(BlockLayer.WATERLOGGED);
             }
@@ -174,7 +193,7 @@ public class ItemBucket extends Item {
 
                     return true;
                 } else {
-                    player.getInventory().sendContents(player);
+                    player.setNeedSendInventory(true);
                 }
             }
         } else if (targetBlock instanceof BlockLiquid) {
@@ -275,9 +294,13 @@ public class ItemBucket extends Item {
                 player.getLevel().addParticle(new ExplodeParticle(target.add(0.5, 1, 0.5)));
             } else {
                 player.getLevel().sendBlocks(new Player[] {player}, new Block[] {block.getLevelBlock(Block.LAYER_WATERLOGGED)}, UpdateBlockPacket.FLAG_ALL_PRIORITY, BlockLayer.WATERLOGGED);
-                player.getInventory().sendContents(player);
+                player.setNeedSendInventory(true);
             }
         } else if (targetBlock instanceof BlockPowderSnow) {
+            if (player.getLevel().getProvider() instanceof Anvil) {
+                return false;
+            }
+
             PlayerBucketEmptyEvent ev = new PlayerBucketEmptyEvent(player, block, face, this, Item.get(BUCKET, 0, 1), true);
             player.getServer().getPluginManager().callEvent(ev);
 
@@ -301,7 +324,7 @@ public class ItemBucket extends Item {
                 level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_BUCKET_EMPTY_POWDER_SNOW);
                 return true;
             } else {
-                player.getInventory().sendContents(player);
+                player.setNeedSendInventory(true);
             }
         }
 
@@ -323,7 +346,7 @@ public class ItemBucket extends Item {
 
         player.getServer().getPluginManager().callEvent(consumeEvent);
         if (consumeEvent.isCancelled()) {
-            player.getInventory().sendContents(player);
+            player.setNeedSendInventory(true);
             return false;
         }
 

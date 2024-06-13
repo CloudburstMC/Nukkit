@@ -30,7 +30,7 @@ public class RiverBiome extends WateryBiome {
 
         PopulatorSeagrass populatorSeagrass = new PopulatorSeagrass();
         populatorSeagrass.setBaseAmount(24);
-        populatorSeagrass.setBaseAmount(24);
+        populatorSeagrass.setRandomAmount(24);
         addPopulator(populatorSeagrass);
 
         PopulatorSugarcane sugarcane = new PopulatorSugarcane();

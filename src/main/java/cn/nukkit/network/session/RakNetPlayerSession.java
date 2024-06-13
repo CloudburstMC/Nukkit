@@ -312,7 +312,10 @@ public class RakNetPlayerSession extends SimpleChannelInboundHandler<RakMessage>
     public long getPing() {
         if (this.channel instanceof RakChannel) {
             RakChannel rakChannel = (RakChannel) this.channel;
-            return rakChannel.rakPipeline().get(RakSessionCodec.class).getPing();
+            RakSessionCodec session = rakChannel.rakPipeline().get(RakSessionCodec.class);
+            if (session != null) {
+                return session.getPing();
+            }
         }
         return -1;
     }

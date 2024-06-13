@@ -3,6 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
@@ -274,6 +275,10 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
 
         Inventory inv = player.getWindowById(Player.BEACON_WINDOW_ID);
         if (inv != null) {
+            if (!BeaconInventory.ITEMS.contains(inv.getItemFast(0).getId())) {
+                Server.getInstance().getLogger().debug(player.getName() + " tried to set effect but there's no payment in beacon inventory");
+                return false;
+            }
             inv.setItem(0, Item.get(Item.AIR));
         } else {
             Server.getInstance().getLogger().debug(player.getName() + " tried to set effect but beacon inventory is null");

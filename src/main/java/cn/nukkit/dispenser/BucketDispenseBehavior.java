@@ -21,7 +21,7 @@ public class BucketDispenseBehavior extends DefaultDispenseBehavior {
 
         if (item.getDamage() > 0) {
             if (target.canBeFlowedInto()) {
-                Block replace = Block.get(ItemBucket.getDamageByTarget(item.getDamage()));
+                Block replace = Block.get(ItemBucket.getBlockByDamage(item.getDamage()));
 
                 if (replace instanceof BlockLiquid) {
                     if (block.level.getDimension() == Level.DIMENSION_NETHER) {
@@ -34,7 +34,7 @@ public class BucketDispenseBehavior extends DefaultDispenseBehavior {
             }
         } else if (target instanceof BlockLiquid && target.getDamage() == 0) {
             target.level.setBlock(target, Block.get(BlockID.AIR));
-            return new ItemBucket(ItemBucket.getDamageByTarget(target.getId()));
+            return Item.get(Item.BUCKET, ItemBucket.getDamageByTarget(target.getId()));
         }
 
         return super.dispense(block, face, item);

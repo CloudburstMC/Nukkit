@@ -102,8 +102,11 @@ public class BlockLantern extends BlockFlowable {
             case CHAIN_BLOCK:
                 return true;
             default:
-                if (support instanceof BlockFence) {
+                if (support instanceof BlockFence || support instanceof BlockGlass || support instanceof BlockGlassPane) {
                     return true;
+                }
+                if (support instanceof BlockTrapdoor) {
+                    return !((BlockTrapdoor) support).isTop() && !((BlockTrapdoor) support).isOpen();
                 }
                 if (support instanceof BlockSlab && (support.getDamage() & 0x08) == 0x00) {
                     return true;

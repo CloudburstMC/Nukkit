@@ -16,7 +16,7 @@ public class BeaconInventory extends FakeBlockUIComponent {
     /**
      * Items that can be put into beacon inventory
      */
-    private static final IntSet ITEMS = new IntOpenHashSet(new int[]{Item.AIR, ItemID.NETHERITE_INGOT, ItemID.EMERALD, ItemID.DIAMOND, ItemID.GOLD_INGOT, ItemID. IRON_INGOT});
+    public static final IntSet ITEMS = new IntOpenHashSet(new int[]{Item.AIR, ItemID.NETHERITE_INGOT, ItemID.EMERALD, ItemID.DIAMOND, ItemID.GOLD_INGOT, ItemID. IRON_INGOT});
 
     public BeaconInventory(PlayerUIInventory playerUI, Position position) {
         super(playerUI, InventoryType.BEACON, 27, position);

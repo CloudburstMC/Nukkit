@@ -24,6 +24,6 @@ public interface NetworkPlayerSession {
     }
 
     default long getPing() {
-        return 0;
+        return -1;
     }
 }
