@@ -82,11 +82,12 @@ public class CraftingDataPacket extends DataPacket {
                     for (Item ingredient : ingredients) {
                         this.putRecipeIngredient(ingredient);
                     }
-                    this.putUnsignedVarInt(1);
+                    this.putUnsignedVarInt(1); // Results length
                     this.putSlot(shapeless.getResult(), true);
                     this.putUUID(shapeless.getId());
                     this.putString(CRAFTING_TAG_CRAFTING_TABLE);
                     this.putVarInt(shapeless.getPriority());
+                    this.putByte((byte) 1); // Requirement ordinal, 1 = ALWAYS_UNLOCKED
                     this.putUnsignedVarInt(recipeNetworkId++);
                     break;
                 case SHAPED:
@@ -111,6 +112,7 @@ public class CraftingDataPacket extends DataPacket {
                     this.putString(CRAFTING_TAG_CRAFTING_TABLE);
                     this.putVarInt(shaped.getPriority());
                     this.putBoolean(true); // Assume symmetry
+                    this.putByte((byte) 1); // Requirement ordinal, 1 = ALWAYS_UNLOCKED
                     this.putUnsignedVarInt(recipeNetworkId++);
                     break;
                 case FURNACE:

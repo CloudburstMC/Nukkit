@@ -16,11 +16,13 @@ public class ContainerClosePacket extends DataPacket {
     }
 
     public int windowId;
+    public int type;
     public boolean wasServerInitiated = true;
 
     @Override
     public void decode() {
         this.windowId = (byte) this.getByte();
+        this.type = (byte) this.getByte();
         this.wasServerInitiated = this.getBoolean();
     }
 
@@ -28,6 +30,7 @@ public class ContainerClosePacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte((byte) this.windowId);
+        this.putByte((byte) this.type);
         this.putBoolean(this.wasServerInitiated);
     }
 }
