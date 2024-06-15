@@ -35,6 +35,7 @@ public class TextPacket extends DataPacket {
     public boolean isLocalized = false;
     public String xboxUserId = "";
     public String platformChatId = "";
+    public String filteredMessage = "";
 
     @Override
     public void decode() {
@@ -61,6 +62,7 @@ public class TextPacket extends DataPacket {
         }
         this.xboxUserId = this.getString();
         this.platformChatId = this.getString();
+        this.filteredMessage = this.getString();
     }
 
     @Override
@@ -92,5 +94,6 @@ public class TextPacket extends DataPacket {
         }
         this.putString(this.xboxUserId);
         this.putString(this.platformChatId);
+        this.putString(this.filteredMessage);
     }
 }

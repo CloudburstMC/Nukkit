@@ -1,5 +1,6 @@
-<!--- Please do not ask questions or create discussion in the bug tracker. Use https://nukkitx.com -->
+<!--- Please do not ask questions or create discussion in the bug tracker. Use cloudburstmc.org forum or Discord for that. -->
 <!--- ONLY POST ISSUES WITH A CLEAN SERVER ON THE LATEST VERSION -->
+
 ## Generated Bug Report
 
 <!--- DO NOT OPEN A ISSUE IF THIS IS A PLUGIN ERROR -->

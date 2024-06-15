@@ -14,11 +14,11 @@ public interface ProtocolInfo {
      * Actual Minecraft: PE protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("649"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("685"); // DO NOT REMOVE BOXING
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION_NETWORK = "1.20.60";
+    String MINECRAFT_VERSION_NETWORK = "1.21.0";
     String MINECRAFT_VERSION = 'v' + MINECRAFT_VERSION_NETWORK;
 
     byte BATCH_PACKET = (byte) 0xff;
@@ -126,6 +126,11 @@ public interface ProtocolInfo {
     byte SERVER_SETTINGS_RESPONSE_PACKET = 0x67;
     byte SHOW_PROFILE_PACKET = 0x68;
     byte SET_DEFAULT_GAME_TYPE_PACKET = 0x69;
+    byte REMOVE_OBJECTIVE_PACKET = 0x6a;
+    byte SET_DISPLAY_OBJECTIVE_PACKET = 0x6b;
+    byte SET_SCORE_PACKET = 0x6c;
+    byte LAB_TABLE_PACKET = 0x6d;
+    byte UPDATE_BLOCK_SYNCED_PACKET = 0x6e;
     byte MOVE_ENTITY_DELTA_PACKET = 0x6f;
     byte SET_SCOREBOARD_IDENTITY_PACKET = 0x70;
     byte SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET = 0x71;

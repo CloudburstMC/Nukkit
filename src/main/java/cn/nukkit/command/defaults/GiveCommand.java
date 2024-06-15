@@ -12,7 +12,6 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**

@@ -11,7 +11,6 @@ public class LecternUpdatePacket extends DataPacket {
     public int page;
     public int totalPages;
     public BlockVector3 blockPosition;
-    public boolean dropBook;
 
     @Override
     public byte pid() {
@@ -23,7 +22,6 @@ public class LecternUpdatePacket extends DataPacket {
         this.page = this.getByte();
         this.totalPages = this.getByte();
         this.blockPosition = this.getBlockVector3();
-        this.dropBook = this.getBoolean();
     }
 
     @Override

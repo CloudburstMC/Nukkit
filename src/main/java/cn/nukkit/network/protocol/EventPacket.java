@@ -21,9 +21,6 @@ public class EventPacket extends DataPacket {
 
     @Override
     public void encode() {
-        this.reset();
-        this.putVarLong(this.eid);
-        this.putVarInt(this.unknown1);
-        this.putByte(this.unknown2);
+
     }
 }
