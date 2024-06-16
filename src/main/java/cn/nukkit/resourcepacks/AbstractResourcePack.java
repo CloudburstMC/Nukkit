@@ -7,20 +7,7 @@ import java.util.UUID;
 
 public abstract class AbstractResourcePack implements ResourcePack {
     protected JsonObject manifest;
-    private UUID id = null;
-
-    protected boolean verifyManifest() {
-        if (this.manifest.has("format_version") && this.manifest.has("header") && this.manifest.has("modules")) {
-            JsonObject header = this.manifest.getAsJsonObject("header");
-            return header.has("description") &&
-                    header.has("name") &&
-                    header.has("uuid") &&
-                    header.has("version") &&
-                    header.getAsJsonArray("version").size() == 3;
-        } else {
-            return false;
-        }
-    }
+    protected UUID id = null;
 
     @Override
     public String getPackName() {
@@ -46,8 +33,28 @@ public abstract class AbstractResourcePack implements ResourcePack {
                 version.get(2).getAsString());
     }
 
+    protected boolean verifyManifest() {
+        if (this.manifest.has("format_version") && this.manifest.has("header") && this.manifest.has("modules")) {
+            JsonObject header = this.manifest.getAsJsonObject("header");
+            return header.has("description") &&
+                    header.has("name") &&
+                    header.has("uuid") &&
+                    header.has("version") &&
+                    header.getAsJsonArray("version").size() == 3;
+        } else {
+            return false;
+        }
+    }
+
     @Override
-    public String getEncryptionKey() {
-        return "";
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof ResourcePack)) return false;
+        ResourcePack anotherPack = (ResourcePack) obj;
+        return this.id.equals(anotherPack.getPackId());
     }
 }

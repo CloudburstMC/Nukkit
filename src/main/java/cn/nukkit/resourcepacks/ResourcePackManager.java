@@ -1,62 +1,65 @@
 package cn.nukkit.resourcepacks;
 
 import cn.nukkit.Server;
-import com.google.common.io.Files;
+import cn.nukkit.resourcepacks.loader.ResourcePackLoader;
+import cn.nukkit.resourcepacks.loader.ZippedResourcePackLoader;
+import com.google.common.collect.Sets;
 
 import java.io.File;
 import java.util.*;
 
 public class ResourcePackManager {
+
+    private int maxChunkSize = 1024 * 32;// 32kb is default
+    
     private final Map<UUID, ResourcePack> resourcePacksById = new HashMap<>();
-    private ResourcePack[] resourcePacks;
+    private final Set<ResourcePack> resourcePacks = new HashSet<>();
+    private final Set<ResourcePackLoader> loaders;
 
-    public ResourcePackManager(File path) {
-        if (!path.exists()) {
-            path.mkdirs();
-        } else if (!path.isDirectory()) {
-            throw new IllegalArgumentException(Server.getInstance().getLanguage()
-                    .translateString("nukkit.resources.invalid-path", path.getName()));
-        }
 
-        List<ResourcePack> loadedResourcePacks = new ArrayList<>();
-        for (File pack : path.listFiles()) {
-            try {
-                ResourcePack resourcePack = null;
+    public ResourcePackManager(Set<ResourcePackLoader> loaders) {
+        this.loaders = loaders;
+        reloadPacks();
+    }
 
-                String fileExt = Files.getFileExtension(pack.getName());
-                if (!pack.isDirectory() && !fileExt.equals("key")) { //directory resource packs temporarily unsupported
-                    switch (fileExt) {
-                        case "zip":
-                        case "mcpack":
-                            resourcePack = new ZippedResourcePack(pack);
-                            break;
-                        default:
-                            Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
-                                    .translateString("nukkit.resources.unknown-format", pack.getName()));
-                            break;
-                    }
-                }
+    public ResourcePackManager(ResourcePackLoader... loaders) {
+        this(Sets.newHashSet(loaders));
+    }
 
-                if (resourcePack != null) {
-                    loadedResourcePacks.add(resourcePack);
-                    this.resourcePacksById.put(resourcePack.getPackId(), resourcePack);
-                }
-            } catch (IllegalArgumentException e) {
-                Server.getInstance().getLogger().warning(Server.getInstance().getLanguage()
-                        .translateString("nukkit.resources.fail", pack.getName(), e.getMessage()));
-            }
-        }
-
-        this.resourcePacks = loadedResourcePacks.toArray(new ResourcePack[0]);
-        Server.getInstance().getLogger().info(Server.getInstance().getLanguage()
-                .translateString("nukkit.resources.success", String.valueOf(this.resourcePacks.length)));
+    public ResourcePackManager(File resourcePacksDir) {
+        this(new ZippedResourcePackLoader(resourcePacksDir));
     }
 
     public ResourcePack[] getResourceStack() {
-        return this.resourcePacks;
+        return this.resourcePacks.toArray(ResourcePack.EMPTY_ARRAY);
     }
 
     public ResourcePack getPackById(UUID id) {
         return this.resourcePacksById.get(id);
+    }
+
+    public int getMaxChunkSize() {
+        return this.maxChunkSize;
+    }
+
+    public void setMaxChunkSize(int size) {
+        this.maxChunkSize = size;
+    }
+
+    public void registerPackLoader(ResourcePackLoader loader) {
+        this.loaders.add(loader);
+    }
+
+    public void reloadPacks() {
+        this.resourcePacksById.clear();
+        this.resourcePacks.clear();
+        this.loaders.forEach(loader -> {
+            List<ResourcePack> loadedPacks = loader.loadPacks();
+            loadedPacks.forEach(pack -> resourcePacksById.put(pack.getPackId(), pack));
+            this.resourcePacks.addAll(loadedPacks);
+        });
+
+        Server.getInstance().getLogger().info(Server.getInstance().getLanguage()
+                .translateString("nukkit.resources.success", String.valueOf(this.resourcePacks.size())));
     }
 }
