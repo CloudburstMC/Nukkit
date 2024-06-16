@@ -155,7 +155,7 @@ public class JarPluginResourcePack extends AbstractResourcePack {
             }
             data = buffer.toByteArray();
         } catch (IOException e) {
-            Server.getInstance().getLogger().error("An error occurred while reading the data: " + e);
+            Server.getInstance().getLogger().error("An error occurred while reading the data", e);
         }
         return data;
     }
