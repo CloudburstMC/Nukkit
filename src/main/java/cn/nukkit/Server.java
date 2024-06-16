@@ -75,6 +75,8 @@ import cn.nukkit.plugin.service.ServiceManager;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.resourcepacks.ResourcePackManager;
+import cn.nukkit.resourcepacks.loader.JarPluginResourcePackLoader;
+import cn.nukkit.resourcepacks.loader.ZippedResourcePackLoader;
 import cn.nukkit.scheduler.ServerScheduler;
 import cn.nukkit.scheduler.Task;
 import cn.nukkit.utils.*;
@@ -491,7 +493,10 @@ public class Server {
         convertLegacyPlayerData();
 
         this.craftingManager = new CraftingManager();
-        this.resourcePackManager = new ResourcePackManager(new File(Nukkit.DATA_PATH, "resource_packs"));
+        this.resourcePackManager = new ResourcePackManager(
+                new ZippedResourcePackLoader(new File(Nukkit.DATA_PATH, "resource_packs")),
+                new JarPluginResourcePackLoader(new File(this.pluginPath))
+        );
 
         this.pluginManager = new PluginManager(this, this.commandMap);
         this.pluginManager.subscribeToPermission(Server.BROADCAST_CHANNEL_ADMINISTRATIVE, this.consoleSender);
