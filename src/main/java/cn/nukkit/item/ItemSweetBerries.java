@@ -1,5 +1,7 @@
 package cn.nukkit.item;
 
+import cn.nukkit.block.Block;
+
 public class ItemSweetBerries extends ItemEdible {
 
     public ItemSweetBerries() {
@@ -12,5 +14,6 @@ public class ItemSweetBerries extends ItemEdible {
 
     public ItemSweetBerries(Integer meta, int count) {
         super(SWEET_BERRIES, meta, count, "Sweet Berries");
+        this.block = Block.get(SWEET_BERRY_BUSH);
     }
 }

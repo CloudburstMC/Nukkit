@@ -1,14 +1,17 @@
 package cn.nukkit.entity.projectile;
 
 import cn.nukkit.entity.Entity;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.particle.ItemBreakParticle;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EntitySnowball extends EntityProjectile {
+
     public static final int NETWORK_ID = 81;
 
     @Override
@@ -55,17 +58,17 @@ public class EntitySnowball extends EntityProjectile {
             return false;
         }
 
-        this.timing.startTiming();
-
-        boolean hasUpdate = super.onUpdate(currentTick);
-
-        if (this.age > 1200 || this.isCollided) {
-            this.kill();
-            hasUpdate = true;
+        if (this.age > 1200 || this.isCollided || this.hadCollision) {
+            this.close();
+            return false;
         }
 
-        this.timing.stopTiming();
+        super.onUpdate(currentTick);
+        return !this.closed;
+    }
 
-        return hasUpdate;
+    @Override
+    public void onHit() {
+        level.addParticle(new ItemBreakParticle(this, Item.get(Item.SNOWBALL)), null, 5);
     }
 }

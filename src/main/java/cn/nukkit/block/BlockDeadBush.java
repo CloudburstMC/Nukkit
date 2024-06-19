@@ -2,24 +2,22 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemStick;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.utils.Utils;
 
 /**
  * Created on 2015/12/2 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockDeadBush extends BlockFlowable {
+
     public BlockDeadBush() {
         this(0);
     }
 
     public BlockDeadBush(int meta) {
-        // Dead bushes can't have meta. Also stops the server from throwing an exception with the block palette.
         super(0);
     }
 
@@ -70,12 +68,22 @@ public class BlockDeadBush extends BlockFlowable {
             };
         } else {
             return new Item[]{
-                    new ItemStick(0, ThreadLocalRandom.current().nextInt(3))
+                    Item.get(Item.STICK, 0, Utils.random.nextInt(3))
             };
         }
     }
 
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

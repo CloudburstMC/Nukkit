@@ -5,18 +5,9 @@ import cn.nukkit.item.ItemTool;
 
 public class BlockStonecutter extends BlockSolid {
 
-    public BlockStonecutter() {
-
-    }
-
     @Override
     public int getId() {
         return STONECUTTER;
-    }
-
-    @Override
-    public String getName() {
-        return "Stonecutter";
     }
 
     @Override
@@ -35,10 +26,15 @@ public class BlockStonecutter extends BlockSolid {
     }
 
     @Override
+    public String getName() {
+        return "Stonecutter";
+    }
+
+    @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
-                    this.toItem()
+                    toItem()
             };
         } else {
             return new Item[0];
@@ -48,5 +44,10 @@ public class BlockStonecutter extends BlockSolid {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

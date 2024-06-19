@@ -28,7 +28,7 @@ public class ItemGlassBottle extends Item {
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (target.getId() == WATER || target.getId() == STILL_WATER) {
-            Item potion = new ItemPotion();
+            Item potion = Item.get(Item.POTION);
 
             if (this.count == 1) {
                 player.getInventory().setItemInHand(potion);

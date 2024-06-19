@@ -1,8 +1,10 @@
 package cn.nukkit.utils;
 
 /**
+ * Block color
+ *
  * Created by Snake1999 on 2016/1/10.
- * Package cn.nukkit.utils in project nukkit
+ * Package cn.nukkit.utils in project Nukkit
  */
 public class BlockColor  {
 
@@ -70,6 +72,16 @@ public class BlockColor  {
     public static final BlockColor RED_TERRACOTA_BLOCK_COLOR = new BlockColor(0x8e, 0x3c, 0x2e);
     public static final BlockColor BLACK_TERRACOTA_BLOCK_COLOR = new BlockColor(0x25, 0x16, 0x10);
 
+    public static final BlockColor CRIMSON_NYLIUM_BLOCK_COLOR = new BlockColor(0xBD, 0x30, 0x31);
+    public static final BlockColor CRIMSON_STEM_BLOCK_COLOR = new BlockColor(0x94, 0x3F, 0x61);
+    public static final BlockColor CRIMSON_HYPHAE_BLOCK_COLOR = new BlockColor(0x5C, 0x19, 0x1D);
+    public static final BlockColor WARPED_NYLIUM_BLOCK_COLOR = new BlockColor(0x16, 0x7E, 0x86);
+    public static final BlockColor WARPED_STEM_BLOCK_COLOR = new BlockColor(0x3A, 0x8E, 0x8C);
+    public static final BlockColor WARPED_HYPHAE_BLOCK_COLOR = new BlockColor(0x56, 0x2C, 0x3E);
+    public static final BlockColor WARPED_WART_BLOCK_COLOR = new BlockColor(0x14, 0xB4, 0x85);
+
+    public static final BlockColor DEEPSLATE_GRAY = new BlockColor(0x64, 0x64, 0x64);
+
     private final int red;
     private final int green;
     private final int blue;
@@ -97,6 +109,13 @@ public class BlockColor  {
         this.alpha = hasAlpha ? (rgb >> 24) & 0xff : 0xff;
     }
 
+    public BlockColor(String colorStr) {
+        this.red = Integer.valueOf(colorStr.substring(1, 3), 16);
+        this.green = Integer.valueOf(colorStr.substring(3, 5), 16);
+        this.blue = Integer.valueOf(colorStr.substring(5, 7), 16);
+        this.alpha = 0xff;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof BlockColor)) {
@@ -109,7 +128,7 @@ public class BlockColor  {
 
     @Override
     public String toString() {
-        return "BlockColor[r=" + this.red + ",g=" + this.green + ",b=" + this.blue + ",a=" + this.alpha + "]";
+        return "BlockColor[r=" + this.red + ",g=" + this.green + ",b=" + this.blue + ",a=" + this.alpha + ']';
     }
 
     public int getRed() {
@@ -136,7 +155,12 @@ public class BlockColor  {
         return this.alpha << 24 | this.red << 16 | this.green << 8 | this.blue;
     }
 
-    @Deprecated
+    /**
+     * Get BlockColor by dye item meta value
+     *
+     * @param dyeColorMeta dye item meta value
+     * @return BlockColor
+     */
     public static BlockColor getDyeColor(int dyeColorMeta) {
         return DyeColor.getByDyeData(dyeColorMeta).getColor();
     }

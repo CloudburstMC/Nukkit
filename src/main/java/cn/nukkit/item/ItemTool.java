@@ -5,14 +5,14 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.Tag;
-
-import java.util.Random;
+import cn.nukkit.utils.Utils;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class ItemTool extends Item implements ItemDurable {
+
     public static final int TIER_WOODEN = 1;
     public static final int TIER_GOLD = 2;
     public static final int TIER_STONE = 3;
@@ -28,6 +28,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int TYPE_SHEARS = 5;
     public static final int TYPE_HOE = 6;
 
+    // Using vanilla durability + 1 here
     public static final int DURABILITY_WOODEN = 60;
     public static final int DURABILITY_GOLD = 33;
     public static final int DURABILITY_STONE = 132;
@@ -37,10 +38,10 @@ public abstract class ItemTool extends Item implements ItemDurable {
     public static final int DURABILITY_FLINT_STEEL = 65;
     public static final int DURABILITY_SHEARS = 239;
     public static final int DURABILITY_BOW = 385;
-    public static final int DURABILITY_TRIDENT = 251;
-    public static final int DURABILITY_FISHING_ROD = 65;
     public static final int DURABILITY_CROSSBOW = 465;
-    public static final int DURABILITY_CARROT_ON_A_STICK = 25;
+    public static final int DURABILITY_TRIDENT = 251;
+    public static final int DURABILITY_FISHING_ROD = 385;
+    public static final int DURABILITY_CARROT_ON_A_STICK = 26;
     public static final int DURABILITY_WARPED_FUNGUS_ON_A_STICK = 100;
 
     public ItemTool(int id) {
@@ -78,7 +79,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
                 block.getToolType() == ItemTool.TYPE_SHEARS && this.isShears()
                 ) {
             this.meta++;
-        } else if (!this.isShears() && block.getBreakTime(this) > 0) {
+        } else if (this.isSword() && block.getHardness() > 0) {
             this.meta += 2;
         } else if (this.isHoe()) {
             if (block.getId() == GRASS || block.getId() == DIRT) {
@@ -106,48 +107,14 @@ public abstract class ItemTool extends Item implements ItemDurable {
     }
 
     private boolean isDurable() {
-        if (!hasEnchantments()) {
-            return false;
-        }
-
         Enchantment durability = getEnchantment(Enchantment.ID_DURABILITY);
-        return durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= new Random().nextInt(100);
+        return durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= Utils.random.nextInt(100);
     }
 
     @Override
     public boolean isUnbreakable() {
         Tag tag = this.getNamedTagEntry("Unbreakable");
         return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
-    }
-
-    @Override
-    public boolean isPickaxe() {
-        return false;
-    }
-
-    @Override
-    public boolean isAxe() {
-        return false;
-    }
-
-    @Override
-    public boolean isSword() {
-        return false;
-    }
-
-    @Override
-    public boolean isShovel() {
-        return false;
-    }
-
-    @Override
-    public boolean isHoe() {
-        return false;
-    }
-
-    @Override
-    public boolean isShears() {
-        return (this.id == SHEARS);
     }
 
     @Override
@@ -168,6 +135,8 @@ public abstract class ItemTool extends Item implements ItemDurable {
                 return 22;
             case TIER_IRON:
                 return 14;
+            case TIER_NETHERITE:
+                return 10; //TODO
         }
 
         return 0;

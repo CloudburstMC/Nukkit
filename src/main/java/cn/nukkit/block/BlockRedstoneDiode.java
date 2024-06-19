@@ -26,18 +26,18 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
 
     @Override
     public boolean onBreak(Item item) {
-        Vector3 pos = getLocation();
         this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
 
         for (BlockFace face : BlockFace.values()) {
-            this.level.updateAroundRedstone(pos.getSide(face), null);
+            this.level.updateAroundRedstone(this.getSideVec(face), null);
         }
+
         return true;
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (block.getSide(BlockFace.DOWN).isTransparent()) {
+        if (!canStayOnFullSolid(this.down())) {
             return false;
         }
 
@@ -54,19 +54,17 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (!this.isLocked()) {
-                Vector3 pos = getLocation();
                 boolean shouldBePowered = this.shouldBePowered();
 
                 if (this.isPowered && !shouldBePowered) {
-                    this.level.setBlock(pos, this.getUnpowered(), true, true);
+                    this.level.setBlock(this, this.getUnpowered(), true, true);
 
-                    this.level.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
+                    this.level.updateAroundRedstone(this.getSideVec(getFacing().getOpposite()), null);
                 } else if (!this.isPowered) {
-                    this.level.setBlock(pos, this.getPowered(), true, true);
-                    this.level.updateAroundRedstone(this.getLocation().getSide(getFacing().getOpposite()), null);
+                    this.level.setBlock(this, this.getPowered(), true, true);
+                    this.level.updateAroundRedstone(this.getSideVec(getFacing().getOpposite()), null);
 
                     if (!shouldBePowered) {
-//                        System.out.println("schedule update 2");
                         level.scheduleUpdate(getPowered(), this, this.getDelay());
                     }
                 }
@@ -78,13 +76,12 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
             if (ev.isCancelled()) {
                 return 0;
             }
-            if (type == Level.BLOCK_UPDATE_NORMAL && this.getSide(BlockFace.DOWN).isTransparent()) {
+            if (type == Level.BLOCK_UPDATE_NORMAL && !canStayOnFullSolid(this.down())) {
                 this.level.useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
             } else {
                 this.updateState();
-                return Level.BLOCK_UPDATE_NORMAL;
             }
+            return Level.BLOCK_UPDATE_NORMAL;
         }
         return 0;
     }
@@ -113,7 +110,7 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
 
     protected int calculateInputStrength() {
         BlockFace face = getFacing();
-        Vector3 pos = this.getLocation().getSide(face);
+        Vector3 pos = this.getSideVec(face);
         int power = this.level.getRedstonePower(pos, face);
 
         if (power >= 15) {
@@ -125,12 +122,10 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
     }
 
     protected int getPowerOnSides() {
-        Vector3 pos = getLocation();
-
         BlockFace face = getFacing();
         BlockFace face1 = face.rotateY();
         BlockFace face2 = face.rotateYCCW();
-        return Math.max(this.getPowerOnSide(pos.getSide(face1), face1), this.getPowerOnSide(pos.getSide(face2), face2));
+        return Math.max(this.getPowerOnSide(this.getSideVec(face1), face1), this.getPowerOnSide(this.getSideVec(face2), face2));
     }
 
     protected int getPowerOnSide(Vector3 pos, BlockFace side) {
@@ -202,11 +197,26 @@ public abstract class BlockRedstoneDiode extends BlockFlowable implements Faceab
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.FLOW_INTO_BLOCK;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

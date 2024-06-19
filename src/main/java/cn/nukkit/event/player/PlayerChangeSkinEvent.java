@@ -6,7 +6,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 /**
- * author: KCodeYT
+ * @author KCodeYT
  * Nukkit Project
  */
 public class PlayerChangeSkinEvent extends PlayerEvent implements Cancellable {
@@ -27,5 +27,4 @@ public class PlayerChangeSkinEvent extends PlayerEvent implements Cancellable {
     public Skin getSkin() {
         return this.skin;
     }
-
 }

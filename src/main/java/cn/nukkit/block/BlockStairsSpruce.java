@@ -30,5 +30,4 @@ public class BlockStairsSpruce extends BlockStairsWood {
     public BlockColor getColor() {
         return BlockColor.SPRUCE_BLOCK_COLOR;
     }
-
 }

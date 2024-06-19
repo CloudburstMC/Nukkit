@@ -2,16 +2,12 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.DoubleTag;
-import cn.nukkit.nbt.tag.FloatTag;
-import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.nbt.tag.*;
 import cn.nukkit.utils.DyeColor;
 
 import java.util.ArrayList;
@@ -81,17 +77,21 @@ public class ItemFirework extends Item {
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        if (player.getInventory().getChestplate() instanceof ItemElytra && player.isGliding()) {
+        if (player.isGliding() && player.getInventory().getChestplateFast() instanceof ItemElytra) {
             this.spawnFirework(player.getLevel(), player);
-
-            player.setMotion(new Vector3(
-                    -Math.sin(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * 2,
-                    -Math.sin(Math.toRadians(player.pitch)) * 2,
-                    Math.cos(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * 2));
 
             if (!player.isCreative()) {
                 this.count--;
             }
+
+            player.onFireworkBoost();
+
+            int level = this.getFlight();
+            double multiplier = 1 + 0.25 * (level < 1 ? 0.25 : level);
+            player.setMotion(new Vector3(
+                    -Math.sin(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * multiplier,
+                    -Math.sin(Math.toRadians(player.pitch)) * multiplier,
+                    Math.cos(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * multiplier));
 
             return true;
         }
@@ -146,16 +146,32 @@ public class ItemFirework extends Item {
                         .add(new FloatTag("", 0)))
                 .putCompound("FireworkItem", NBTIO.putItemHelper(this));
 
-        EntityFirework entity = (EntityFirework) Entity.createEntity("Firework", level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
-        if (entity != null) {
-            entity.spawnToAll();
+        EntityFirework entity = new EntityFirework(level.getChunk(pos.getChunkX(), pos.getChunkZ()), nbt);
+        entity.spawnToAll();
+    }
+
+    public int getFlight() {
+        int level = 0;
+        Tag nbt = this.getNamedTag();
+        if (nbt != null) {
+            nbt = ((CompoundTag) nbt).get("Fireworks");
+            if (nbt instanceof CompoundTag) {
+                level = ((CompoundTag) nbt).getByte("Flight");
+            }
         }
+        return level;
+    }
+
+    public void setFlight(int flight) {
+        CompoundTag tag = this.getNamedTag();
+        tag.putCompound("Fireworks", tag.getCompound("Fireworks").putByte("Flight", flight));
+        this.setNamedTag(tag);
     }
 
     public static class FireworkExplosion {
 
-        private List<DyeColor> colors = new ArrayList<>();
-        private List<DyeColor> fades = new ArrayList<>();
+        private final List<DyeColor> colors = new ArrayList<>();
+        private final List<DyeColor> fades = new ArrayList<>();
         private boolean flicker = false;
         private boolean trail = false;
         private ExplosionType type = ExplosionType.CREEPER_SHAPED;

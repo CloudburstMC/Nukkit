@@ -1,7 +1,10 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -9,9 +12,6 @@ import cn.nukkit.utils.BlockColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockDaylightDetector extends BlockTransparent {
-
-    public BlockDaylightDetector() {
-    }
 
     @Override
     public int getId() {
@@ -34,8 +34,34 @@ public class BlockDaylightDetector extends BlockTransparent {
     }
 
     @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        this.getLevel().setBlock(this, Block.get(DAYLIGHT_DETECTOR_INVERTED));
+        return true;
+    }
+
+    @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
+    }
+    
+    @Override
+    public boolean isPowerSource() {
+        return true;
+    }
+    
+    @Override
+    public int getWeakPower(BlockFace face) {
+        return this.level.isAnimalSpawningAllowedByTime() ? 15 : 0;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false;
     }
 
     @Override
@@ -48,11 +74,30 @@ public class BlockDaylightDetector extends BlockTransparent {
         return this.y + 0.625;
     }
 
-    //This function is a suggestion that can be renamed or deleted
-    protected boolean invertDetect() {
-        return false;
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_SCHEDULED) {
+            if (type == Level.BLOCK_UPDATE_SCHEDULED) {
+                this.level.updateAroundRedstone(this, null);
+            }
+            this.level.scheduleUpdate(this, 40);
+        }
+        return 0;
     }
 
-    //todo redstone
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
 
+    @Override
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (this.getLevel().setBlock(this, this, true, true)) {
+            this.level.scheduleUpdate(this, 40);
+
+
+            return true;
+        }
+        return false;
+    }
 }

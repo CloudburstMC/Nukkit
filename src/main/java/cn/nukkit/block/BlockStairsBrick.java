@@ -8,6 +8,7 @@ import cn.nukkit.utils.BlockColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockStairsBrick extends BlockStairs {
+
     public BlockStairsBrick() {
         this(0);
     }
@@ -42,12 +43,12 @@ public class BlockStairsBrick extends BlockStairs {
     }
 
     @Override
-    public BlockColor getColor() {
-        return BlockColor.RED_BLOCK_COLOR;
+    public boolean canHarvestWithHand() {
+        return false;
     }
 
     @Override
-    public boolean canHarvestWithHand() {
-        return false;
+    public BlockColor getColor() {
+        return BlockColor.RED_BLOCK_COLOR;
     }
 }

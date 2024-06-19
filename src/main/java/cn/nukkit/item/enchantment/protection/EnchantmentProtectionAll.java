@@ -5,7 +5,7 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.enchantment.Enchantment;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentProtectionAll extends EnchantmentProtection {
@@ -33,7 +33,7 @@ public class EnchantmentProtectionAll extends EnchantmentProtection {
     public float getProtectionFactor(EntityDamageEvent e) {
         DamageCause cause = e.getCause();
 
-        if (level <= 0 || cause == DamageCause.VOID || cause == DamageCause.CUSTOM || cause == DamageCause.MAGIC || cause == DamageCause.HUNGER) {
+        if (level <= 0 || cause == DamageCause.VOID || cause == DamageCause.SUICIDE || cause == DamageCause.CUSTOM || cause == DamageCause.HUNGER) { // Apparently protection reduces potion damage now
             return 0;
         }
 

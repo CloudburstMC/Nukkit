@@ -5,7 +5,7 @@ import cn.nukkit.item.Item;
 import java.util.*;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ShapelessRecipe implements CraftingRecipe {
@@ -14,18 +14,24 @@ public class ShapelessRecipe implements CraftingRecipe {
 
     private final Item output;
 
-    private long least,most;
+    private long least, most;
 
     private final List<Item> ingredients;
     private final List<Item> ingredientsAggregate;
 
     private final int priority;
 
+    private final int networkId;
+
     public ShapelessRecipe(Item result, Collection<Item> ingredients) {
         this(null, 10, result, ingredients);
     }
 
     public ShapelessRecipe(String recipeId, int priority, Item result, Collection<Item> ingredients) {
+        this(recipeId, priority, result, ingredients, null);
+    }
+
+    public ShapelessRecipe(String recipeId, int priority, Item result, Collection<Item> ingredients, Integer networkId) {
         this.recipeId = recipeId;
         this.priority = priority;
         this.output = result.clone();
@@ -38,7 +44,7 @@ public class ShapelessRecipe implements CraftingRecipe {
 
         for (Item item : ingredients) {
             if (item.getCount() < 1) {
-                throw new IllegalArgumentException("Recipe '" + recipeId + "' Ingredient amount was not 1 (value: " + item.getCount() + ")");
+                throw new IllegalArgumentException("Recipe '" + recipeId + "' Ingredient amount was not 1 (value: " + item.getCount() + ')');
             }
             boolean found = false;
             for (Item existingIngredient : this.ingredientsAggregate) {
@@ -48,12 +54,14 @@ public class ShapelessRecipe implements CraftingRecipe {
                     break;
                 }
             }
-            if (!found)
+            if (!found) {
                 this.ingredientsAggregate.add(item.clone());
+            }
             this.ingredients.add(item.clone());
         }
 
         this.ingredientsAggregate.sort(CraftingManager.recipeComparator);
+        this.networkId = networkId != null ? networkId : ++CraftingManager.NEXT_NETWORK_ID;
     }
 
     @Override
@@ -132,7 +140,7 @@ public class ShapelessRecipe implements CraftingRecipe {
             haveInputs.add(item.clone());
         }
         List<Item> needInputs = new ArrayList<>();
-        if(multiplier != 1){
+        if (multiplier != 1) {
             for (Item item : ingredientsAggregate) {
                 if (item.isNull())
                     continue;
@@ -160,7 +168,7 @@ public class ShapelessRecipe implements CraftingRecipe {
         }
         haveOutputs.sort(CraftingManager.recipeComparator);
         List<Item> needOutputs = new ArrayList<>();
-        if(multiplier != 1){
+        if (multiplier != 1) {
             for (Item item : getExtraResults()) {
                 if (item.isNull())
                     continue;
@@ -177,7 +185,7 @@ public class ShapelessRecipe implements CraftingRecipe {
         }
         needOutputs.sort(CraftingManager.recipeComparator);
 
-        return this.matchItemList(haveOutputs, needOutputs);
+        return matchItemList(haveOutputs, needOutputs);
     }
 
     /**
@@ -193,7 +201,7 @@ public class ShapelessRecipe implements CraftingRecipe {
         return matchItems(inputList, extraOutputList, 1);
     }
 
-    private boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
+    private static boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
         for (Item needItem : new ArrayList<>(needItems)) {
             for (Item haveItem : new ArrayList<>(haveItems)) {
                 if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag())) {
@@ -216,5 +224,9 @@ public class ShapelessRecipe implements CraftingRecipe {
     @Override
     public List<Item> getIngredientsAggregate() {
         return ingredientsAggregate;
+    }
+
+    public int getNetworkId() {
+        return this.networkId;
     }
 }

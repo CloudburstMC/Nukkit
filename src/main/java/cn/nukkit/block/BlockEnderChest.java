@@ -6,6 +6,7 @@ import cn.nukkit.blockentity.BlockEntityEnderChest;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.StringTag;
@@ -19,7 +20,7 @@ import java.util.Set;
 
 public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
 
-    private Set<Player> viewers = new HashSet<>();
+    private final Set<Player> viewers = new HashSet<>();
 
     public BlockEnderChest() {
         this(0);
@@ -91,10 +92,10 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setDamage(Block.FACES2534[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(this, this, true, true);
+
         CompoundTag nbt = new CompoundTag("")
                 .putString("id", BlockEntity.ENDER_CHEST)
                 .putInt("x", (int) this.x)
@@ -112,34 +113,24 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
             }
         }
 
-        BlockEntityEnderChest ender = (BlockEntityEnderChest) BlockEntity.createBlockEntity(BlockEntity.ENDER_CHEST, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-        return ender != null;
+        BlockEntity.createBlockEntity(BlockEntity.ENDER_CHEST, this.getChunk(), nbt);
+        return true;
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
             Block top = this.up();
-            if (!top.isTransparent()) {
+            if (!top.isTransparent() && !(top instanceof BlockSlab && (top.getDamage() & 0x07) <= 0)) { // avoid issues with the slab hack
                 return true;
             }
 
             BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityEnderChest chest;
-            if (t instanceof BlockEntityEnderChest) {
-                chest = (BlockEntityEnderChest) t;
-            } else {
-                CompoundTag nbt = new CompoundTag("")
-                        .putString("id", BlockEntity.ENDER_CHEST)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                chest = (BlockEntityEnderChest) BlockEntity.createBlockEntity(BlockEntity.ENDER_CHEST, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-                if (chest == null) {
-                    return false;
-                }
+            if (!(t instanceof BlockEntityEnderChest)) {
+                return false;
             }
 
+            BlockEntityEnderChest chest = (BlockEntityEnderChest) t;
             if (chest.namedTag.contains("Lock") && chest.namedTag.get("Lock") instanceof StringTag) {
                 if (!chest.namedTag.getString("Lock").equals(item.getCustomName())) {
                     return true;
@@ -155,7 +146,10 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
+            if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
+                return new Item[]{this.toItem()};
+            }
             return new Item[]{
                     Item.get(Item.OBSIDIAN, 0, 8)
             };
@@ -190,11 +184,16 @@ public class BlockEnderChest extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

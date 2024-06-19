@@ -1,0 +1,104 @@
+# Расширенные настройки сервера Nukkit
+# Некоторые из этих параметров безопасны, иные могут нарушить работу вашего сервера, если вы неправильно их измените
+# Новые параметры и настройки не будут добавляться автоматически при обновлении этого файла
+#
+# Если Вы нашли ошибку, приглашаем помочь с переводом:
+# https://github.com/Nukkit/Languages
+#
+# Перевод осуществлён Pub4Game и fromgate (сообщество Nukkit.ru)
+
+settings:
+ #Выбор языка.
+ #Доступные языки: eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, cze
+ language: "rus"
+ #true для отправки переведённых строк на сервер, или false - возложить перевод на устройство
+ force-language: false
+ shutdown-message: "Сервер выключен"
+ #Передавать список плагинов в ответ на запросы Query
+ query-plugins: true
+ #Показывать сообщение в консоли, когда плагин использует устаревшие методы API
+ deprecated-verbose: true
+ #Количество рабочих потоков AsyncTask
+ #При значении auto будет рассчитано исходя из числа ядер процессора (но не меньше 4)
+ async-workers: auto
+
+network:
+ #Предельное значение объема серии пакетов (в байтах), при достижении которого они будут сжаты. Сжиматься будут только эти пакеты.
+ #Укажите 0 - чтобы сжимать всё, -1 - чтобы отключить сжатие
+ batch-threshold: 256
+ #Уровень сжатия используется Zlib при отправке сжатых пакетов
+ #Чем больше - тем больше нагрузка на процессор, но меньше нагрузка на сеть
+ compression-level: 4
+ #Enable network encryption
+ encryption: true
+
+debug:
+ #При значении > 1 будет отображать дополнительную отладочную информацию в консоли
+ level: 1
+
+level-settings:
+ #Формат мира, который будет использоваться (по умолчанию) при создании миров
+ default-format: leveldb
+ #Автоматически изменять уровень частоты тика, чтобы соответствовать 20 тиков в секунду
+ auto-tick-rate: true
+ auto-tick-rate-limit: 20
+ #Базовая частота тика (1 = 20 тиков в секунду, 2 = 10 тиков в секунду и т.п.)
+ base-tick-rate: 1
+ #Просчитывать игроков каждый тик, даже если другие настройки это запрещают
+ always-tick-players: false
+
+chunk-sending:
+ #Количество чанков отправляемое игроку за тик
+ per-tick: 4
+ #Количество чанков, которое должно быть отправлено перед спавном игрока
+ spawn-threshold: 56
+ #Кэшировать чанки в памяти, для обеспечения быстрой отправки
+ #Полезно в основном статических мирах, где много игроков присоединятся одновременно
+ cache-chunks: false
+
+chunk-ticking:
+ #Максимальное количестов чанков, обрабатываемых за один тик
+ per-tick: 40
+ #Радиус (в чанках) вокруг игрока, в пределах которого будут обрабатываться чанки
+ tick-radius: 3
+ clear-tick-list: false
+
+chunk-generation:
+ #Максимальное количество чанков в очереди ожидания генерации
+ queue-size: 8
+ #Максимальное количество чанков в очереди ожидания "популяции"
+ population-queue-size: 8
+
+leveldb:
+ #Use native LevelDB implementation for better performance
+ use-native: false
+ #Set LevelDB memory cache size
+ cache-size-mb: 80
+
+ticks-per:
+ autosave: 6000
+
+player:
+ #Если выбрано true,то данные игрока будут храниться в файле players/playername.dat
+ #Если выбрано false, Nukkit не будет хранить данные игрока в "dat" файлах, для того чтобы плагины с ними что-то делали.
+ save-player-data: true
+ #The time between skin change action in seconds, set to 0 if you dont want the cooldown
+ skin-change-cooldown: 15
+ 
+aliases:
+ #Псевдонимы (алиасы) для команд
+ #Например:
+ #showtheversion: version
+ #savestop: [save-all, stop]
+
+worlds:
+ #Worlds that the server will use. Options are specific to the chosen generator, and may result in broken generation or
+ #be ignored completely.
+ world:
+  #seed: 404
+  generator: normal
+  options:
+ nether:
+  #seed: my_cool_nether_seed
+  generator: nether
+  options:

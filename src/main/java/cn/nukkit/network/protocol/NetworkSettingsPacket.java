@@ -6,6 +6,8 @@ import lombok.ToString;
 @ToString
 public class NetworkSettingsPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.NETWORK_SETTINGS_PACKET;
+
     public int compressionThreshold;
     public PacketCompressionAlgorithm compressionAlgorithm;
     public boolean clientThrottleEnabled;
@@ -14,7 +16,7 @@ public class NetworkSettingsPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.NETWORK_SETTINGS_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
@@ -29,6 +31,6 @@ public class NetworkSettingsPacket extends DataPacket {
 
     @Override
     public void decode() {
-        throw new UnsupportedOperationException();
+        this.decodeUnsupported();
     }
 }

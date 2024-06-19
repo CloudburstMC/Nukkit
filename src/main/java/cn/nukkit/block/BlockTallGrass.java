@@ -2,17 +2,16 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsWheat;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.utils.Utils;
 
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
 public class BlockTallGrass extends BlockFlowable {
@@ -32,7 +31,7 @@ public class BlockTallGrass extends BlockFlowable {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
+        String[] names = {
                 "Grass",
                 "Grass",
                 "Fern",
@@ -85,7 +84,7 @@ public class BlockTallGrass extends BlockFlowable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0f) {
+        if (item.getId() == Item.DYE && item.getDamage() == ItemDye.BONE_MEAL) {
             Block up = this.up();
 
             if (up.getId() == AIR) {
@@ -105,7 +104,7 @@ public class BlockTallGrass extends BlockFlowable {
                 }
 
                 if (meta != -1) {
-                    if (player != null && (player.gamemode & 0x01) == 0) {
+                    if (player != null && !player.isCreative()) {
                         item.count--;
                     }
 
@@ -121,26 +120,18 @@ public class BlockTallGrass extends BlockFlowable {
         return false;
     }
 
+
     @Override
     public Item[] getDrops(Item item) {
-        boolean dropSeeds = ThreadLocalRandom.current().nextInt(10) == 0;
         if (item.isShears()) {
-            //todo enchantment
-            if (dropSeeds) {
-                return new Item[]{
-                        new ItemSeedsWheat(),
-                        Item.get(Item.TALL_GRASS, this.getDamage(), 1)
-                };
-            } else {
-                return new Item[]{
-                        Item.get(Item.TALL_GRASS, this.getDamage(), 1)
-                };
-            }
+            return new Item[]{
+                    Item.get(Item.TALL_GRASS, this.getDamage(), 1)
+            };
         }
 
-        if (dropSeeds) {
+        if (Utils.random.nextInt(10) == 0) {
             return new Item[]{
-                    new ItemSeedsWheat()
+                    Item.get(Item.WHEAT_SEEDS)
             };
         } else {
             return new Item[0];
@@ -155,5 +146,10 @@ public class BlockTallGrass extends BlockFlowable {
     @Override
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

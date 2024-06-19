@@ -5,6 +5,7 @@ package cn.nukkit.block;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockDandelion extends BlockFlower {
+
     public BlockDandelion() {
         this(0);
     }

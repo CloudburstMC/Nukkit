@@ -1,25 +1,35 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Position;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 /**
- * author: Rover656
+ * @author Rover656
  */
 public class BeaconInventory extends FakeBlockUIComponent {
+
+
+    /**
+     * Items that can be put into beacon inventory
+     */
+    public static final IntSet ITEMS = new IntOpenHashSet(new int[]{Item.AIR, ItemID.NETHERITE_INGOT, ItemID.EMERALD, ItemID.DIAMOND, ItemID.GOLD_INGOT, ItemID. IRON_INGOT});
 
     public BeaconInventory(PlayerUIInventory playerUI, Position position) {
         super(playerUI, InventoryType.BEACON, 27, position);
     }
 
     @Override
-    public void onClose(Player who) {
-        super.onClose(who);
+    public void onOpen(Player who) {
+        super.onOpen(who);
+        who.craftingType = Player.CRAFTING_BEACON;
+    }
 
-        // Drop item in slot if client doesn't automatically move it to player's inventory
-        if (!who.isConnected()) {
-            this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(0));
-        }
-        this.clear(0);
+    @Override
+    public boolean allowedToAdd(int itemId) {
+        return ITEMS.contains(itemId);
     }
 }

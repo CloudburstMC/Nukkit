@@ -5,7 +5,6 @@ import cn.nukkit.network.protocol.LoginPacket;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
-import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.crypto.ECDSAVerifier;
 
@@ -20,18 +19,20 @@ import java.util.*;
 
 /**
  * ClientChainData is a container of chain data sent from clients.
- * <p>
+ *
  * Device information such as client UUID, xuid and serverAddress, can be
  * read from instances of this object.
- * <p>
+ *
  * To get chain data, you can use player.getLoginChainData() or read(loginPacket)
- * <p>
+ *
  * ===============
- * author: boybook
+ * @author boybook
  * Nukkit Project
  * ===============
  */
 public final class ClientChainData implements LoginChainData {
+
+    private static final Gson GSON = new Gson();
 
     public static ClientChainData of(byte[] buffer) {
         return new ClientChainData(buffer);
@@ -127,6 +128,11 @@ public final class ClientChainData implements LoginChainData {
     }
 
     @Override
+    public String getTitleId() {
+        return titleId;
+    }
+
+    @Override
     public JsonObject getRawData() {
         return rawData;
     }
@@ -169,14 +175,13 @@ public final class ClientChainData implements LoginChainData {
     private String languageCode;
     private int currentInputMode;
     private int defaultInputMode;
-
     private int UIProfile;
-
     private String capeData;
+    private String titleId;
 
     private JsonObject rawData;
 
-    private BinaryStream bs = new BinaryStream();
+    private final BinaryStream bs = new BinaryStream();
 
     private ClientChainData(byte[] buffer) {
         bs.setBuffer(buffer, 0);
@@ -190,8 +195,13 @@ public final class ClientChainData implements LoginChainData {
     }
 
     private void decodeSkinData() {
-        JsonObject skinToken = decodeToken(new String(bs.get(bs.getLInt())));
-        if (skinToken == null) return;
+        int size = bs.getLInt();
+        if (size > 10485760) {
+            throw new TooBigSkinException("The skin data is too big: " + size);
+        }
+
+        JsonObject skinToken = decodeToken(new String(bs.get(size), StandardCharsets.UTF_8));
+        if (skinToken == null) throw new RuntimeException("Invalid null skin token");
         if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
         if (skinToken.has("ServerAddress")) this.serverAddress = skinToken.get("ServerAddress").getAsString();
         if (skinToken.has("DeviceModel")) this.deviceModel = skinToken.get("DeviceModel").getAsString();
@@ -204,22 +214,22 @@ public final class ClientChainData implements LoginChainData {
         if (skinToken.has("DefaultInputMode")) this.defaultInputMode = skinToken.get("DefaultInputMode").getAsInt();
         if (skinToken.has("UIProfile")) this.UIProfile = skinToken.get("UIProfile").getAsInt();
         if (skinToken.has("CapeData")) this.capeData = skinToken.get("CapeData").getAsString();
-
         this.rawData = skinToken;
     }
 
-    private JsonObject decodeToken(String token) {
+    public static JsonObject decodeToken(String token) {
         String[] base = token.split("\\.");
         if (base.length < 2) return null;
-        String json = new String(Base64.getDecoder().decode(base[1]), StandardCharsets.UTF_8);
-        //Server.getInstance().getLogger().debug(json);
-        return new Gson().fromJson(json, JsonObject.class);
+        return GSON.fromJson(new String(Base64.getDecoder().decode(base[1]), StandardCharsets.UTF_8), JsonObject.class);
     }
 
     private void decodeChainData() {
-        Map<String, List<String>> map = new Gson().fromJson(new String(bs.get(bs.getLInt()), StandardCharsets.UTF_8),
-                new TypeToken<Map<String, List<String>>>() {
-                }.getType());
+        int size = bs.getLInt();
+        if (size > 3145728) {
+            throw new IllegalArgumentException("The chain data is too big: " + size);
+        }
+
+        Map<String, List<String>> map = GSON.fromJson(new String(bs.get(size), StandardCharsets.UTF_8), new MapTypeToken().getType());
         if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
         List<String> chains = map.get("chain");
 
@@ -233,14 +243,18 @@ public final class ClientChainData implements LoginChainData {
         for (String c : chains) {
             JsonObject chainMap = decodeToken(c);
             if (chainMap == null) continue;
+
             if (chainMap.has("extraData")) {
                 JsonObject extra = chainMap.get("extraData").getAsJsonObject();
                 if (extra.has("displayName")) this.username = extra.get("displayName").getAsString();
                 if (extra.has("identity")) this.clientUUID = UUID.fromString(extra.get("identity").getAsString());
                 if (extra.has("XUID")) this.xuid = extra.get("XUID").getAsString();
+                if (extra.has("titleId")) this.titleId = extra.get("titleId").getAsString();
             }
-            if (chainMap.has("identityPublicKey"))
+
+            if (chainMap.has("identityPublicKey")) {
                 this.identityPublicKey = chainMap.get("identityPublicKey").getAsString();
+            }
         }
 
         if (!xboxAuthed) {
@@ -248,7 +262,7 @@ public final class ClientChainData implements LoginChainData {
         }
     }
 
-    private boolean verifyChain(List<String> chains) throws Exception {
+    private static boolean verifyChain(List<String> chains) throws Exception {
         ECPublicKey lastKey = null;
         boolean mojangKeyVerified = false;
         Iterator<String> iterator = chains.iterator();
@@ -268,7 +282,7 @@ public final class ClientChainData implements LoginChainData {
                 return false;
             }
 
-            if (!verify(lastKey, jws)) {
+            if (!jws.verify(new ECDSAVerifier(lastKey))) {
                 return false;
             }
 
@@ -280,8 +294,7 @@ public final class ClientChainData implements LoginChainData {
                 mojangKeyVerified = true;
             }
 
-            Map<String, Object> payload = jws.getPayload().toJSONObject();
-            Object base64key = payload.get("identityPublicKey");
+            Object base64key = jws.getPayload().toJSONObject().get("identityPublicKey");
             if (!(base64key instanceof String)) {
                 throw new RuntimeException("No key found");
             }
@@ -290,7 +303,13 @@ public final class ClientChainData implements LoginChainData {
         return mojangKeyVerified;
     }
 
-    private boolean verify(ECPublicKey key, JWSObject object) throws JOSEException {
-        return object.verify(new ECDSAVerifier(key));
+    private static class MapTypeToken extends TypeToken<Map<String, List<String>>> {
+    }
+
+    public static class TooBigSkinException extends RuntimeException {
+
+        public TooBigSkinException(String s) {
+            super(s);
+        }
     }
 }

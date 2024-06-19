@@ -1,6 +1,7 @@
 package cn.nukkit.nbt;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
@@ -43,26 +44,25 @@ public class NBTIO {
         return tag;
     }
 
+    public static CompoundTag putNetworkItemHelper(Item item) {
+        CompoundTag tag = new CompoundTag(null)
+                .putString("Name", RuntimeItems.getMapping().toRuntime(item.getId(), item.getDamage()).getIdentifier())
+                .putByte("Count", item.getCount())
+                .putShort("Damage", item.getDamage());
+
+        if (item.hasCompoundTag()) {
+            tag.putCompound("tag", item.getNamedTag());
+        }
+
+        return tag;
+    }
+
     public static Item getItemHelper(CompoundTag tag) {
         if (!tag.contains("id") || !tag.contains("Count")) {
             return Item.get(0);
         }
 
-        Item item;
-        try {
-            item = Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"));
-        } catch (Exception e) {
-            item = Item.fromString(tag.getString("id"));
-            item.setDamage(!tag.contains("Damage") ? 0 : tag.getShort("Damage"));
-            item.setCount(tag.getByte("Count"));
-        }
-
-        Tag tagTag = tag.get("tag");
-        if (tagTag instanceof CompoundTag) {
-            item.setNamedTag((CompoundTag) tagTag);
-        }
-
-        return item;
+        return Item.getSaved(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"), tag.get("tag"));
     }
 
     public static CompoundTag read(File file) throws IOException {
@@ -71,7 +71,7 @@ public class NBTIO {
 
     public static CompoundTag read(File file, ByteOrder endianness) throws IOException {
         if (!file.exists()) return null;
-        return read(new FileInputStream(file), endianness);
+        return read(Files.newInputStream(file.toPath()), endianness);
     }
 
     public static CompoundTag read(InputStream inputStream) throws IOException {
@@ -89,6 +89,12 @@ public class NBTIO {
                 return (CompoundTag) tag;
             }
             throw new IOException("Root tag must be a named compound tag");
+        }
+    }
+
+    public static Tag readNetwork(InputStream inputStream) throws IOException {
+        try (NBTInputStream stream = new NBTInputStream(inputStream, ByteOrder.LITTLE_ENDIAN, true)) {
+            return Tag.readNamedTag(stream);
         }
     }
 
@@ -185,7 +191,7 @@ public class NBTIO {
     }
 
     public static void write(CompoundTag tag, File file, ByteOrder endianness) throws IOException {
-        write(tag, new FileOutputStream(file), endianness);
+        write(tag, Files.newOutputStream(file.toPath()), endianness);
     }
 
     public static void write(CompoundTag tag, OutputStream outputStream) throws IOException {

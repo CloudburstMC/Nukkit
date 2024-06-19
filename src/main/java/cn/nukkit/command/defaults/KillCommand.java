@@ -23,11 +23,10 @@ public class KillCommand extends VanillaCommand {
 
     public KillCommand(String name) {
         super(name, "%nukkit.command.kill.description", "%nukkit.command.kill.usage", new String[]{"suicide"});
-        this.setPermission("nukkit.command.kill.self;"
-                + "nukkit.command.kill.other");
+        this.setPermission("nukkit.command.kill.self;nukkit.command.kill.other");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newType("player", true, CommandParamType.TARGET)
+                new CommandParameter("player", CommandParamType.TARGET, true)
         });
     }
 
@@ -45,20 +44,15 @@ public class KillCommand extends VanillaCommand {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                 return true;
             }
-            Player player = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
+            Player player = sender.getServer().getPlayerExact(args[0]);
             if (player != null) {
                 if (player.isCreative() || player.isSpectator()) {
                     sender.sendMessage(TextFormat.RED + "No targets matched selector");
                     return true;
                 }
-                EntityDamageEvent ev = new EntityDamageEvent(player, DamageCause.SUICIDE, 1000);
-                sender.getServer().getPluginManager().callEvent(ev);
-                if (ev.isCancelled()) {
-                    return true;
+                if (resetHealth(player)) {
+                    Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
                 }
-                player.setLastDamageCause(ev);
-                player.setHealth(0);
-                Command.broadcastCommandMessage(sender, new TranslationContainer("commands.kill.successful", player.getName()));
             } else if (args[0].equals("@e")) {
                 StringJoiner joiner = new StringJoiner(", ");
                 for (Level level : Server.getInstance().getLevels().values()) {
@@ -91,33 +85,22 @@ public class KillCommand extends VanillaCommand {
                     sender.sendMessage(TextFormat.RED + "No targets matched selector");
                     return true;
                 }
-                EntityDamageEvent ev = new EntityDamageEvent(p, DamageCause.SUICIDE, 1000);
-                sender.getServer().getPluginManager().callEvent(ev);
-                if (ev.isCancelled()) {
-                    return true;
+                if (resetHealth(p)) {
+                    sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
                 }
-                p.setLastDamageCause(ev);
-                p.setHealth(0);
-                sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
             } else if (args[0].equals("@a")) {
                 if (!sender.hasPermission("nukkit.command.kill.other")) {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                     return true;
                 }
                 for (Level level : Server.getInstance().getLevels().values()) {
-                    for (Entity entity : level.getEntities()) {
+                    for (Entity entity : level.entities.values()) {
                         if (entity instanceof Player) {
                             Player p = (Player) entity;
                             if (p.isCreative() || p.isSpectator()) {
                                 continue;
                             }
-                            EntityDamageEvent ev = new EntityDamageEvent(entity, DamageCause.SUICIDE, 1000);
-                            sender.getServer().getPluginManager().callEvent(ev);
-                            if (ev.isCancelled()) {
-                                continue;
-                            }
-                            entity.setLastDamageCause(ev);
-                            entity.setHealth(0);
+                            resetHealth(p);
                         }
                     }
                 }
@@ -126,8 +109,7 @@ public class KillCommand extends VanillaCommand {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             }
             return true;
-        }
-        if (sender instanceof Player) {
+        } else if (sender instanceof Player) {
             if (!sender.hasPermission("nukkit.command.kill.self")) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                 return true;
@@ -137,18 +119,24 @@ public class KillCommand extends VanillaCommand {
                 sender.sendMessage(TextFormat.RED + "No targets matched selector");
                 return true;
             }
-            EntityDamageEvent ev = new EntityDamageEvent(player, DamageCause.SUICIDE, 1000);
-            sender.getServer().getPluginManager().callEvent(ev);
-            if (ev.isCancelled()) {
-                return true;
+            if (resetHealth(player)) {
+                sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
             }
-            player.setLastDamageCause(ev);
-            player.setHealth(0);
-            sender.sendMessage(new TranslationContainer("commands.kill.successful", sender.getName()));
         } else {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
+        }
+        return true;
+    }
+
+    private boolean resetHealth(Entity entity) {
+        EntityDamageEvent ev = new EntityDamageEvent(entity, DamageCause.SUICIDE, 1000);
+        entity.getServer().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
             return false;
         }
+        entity.setLastDamageCause(ev);
+        entity.removeAllEffects(); // Fix issue with absorption
+        entity.setHealth(0);
         return true;
     }
 }

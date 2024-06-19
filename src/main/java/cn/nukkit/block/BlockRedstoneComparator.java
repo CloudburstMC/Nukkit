@@ -4,12 +4,11 @@ import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityComparator;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemRedstoneComparator;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -41,12 +40,12 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     protected BlockRedstoneComparator getUnpowered() {
-        return (BlockRedstoneComparator) Block.get(BlockID.UNPOWERED_COMPARATOR, this.getDamage());
+        return (BlockRedstoneComparator) Block.get(UNPOWERED_COMPARATOR, this.getDamage());
     }
 
     @Override
     protected BlockRedstoneComparator getPowered() {
-        return (BlockRedstoneComparator) Block.get(BlockID.POWERED_COMPARATOR, this.getDamage());
+        return (BlockRedstoneComparator) Block.get(POWERED_COMPARATOR, this.getDamage());
     }
 
     @Override
@@ -64,13 +63,12 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
             int power = blockEntity instanceof BlockEntityComparator ? ((BlockEntityComparator) blockEntity).getOutputSignal() : 0;
 
             if (output != power || this.isPowered() != this.shouldBePowered()) {
-                /*if(isFacingTowardsRepeater()) {
+                /*if (isFacingTowardsRepeater()) {
                     this.level.scheduleUpdate(this, this, 2, -1);
                 } else {
                     this.level.scheduleUpdate(this, this, 2, 0);
                 }*/
 
-                //System.out.println("schedule update 0");
                 this.level.scheduleUpdate(this, this, 2);
             }
         }
@@ -119,9 +117,12 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
             this.setDamage(this.getDamage() + 4);
         }
 
-        this.level.addLevelEvent(this.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_BUTTON_CLICK, this.getMode() == Mode.SUBTRACT ? 500 : 550);
+        if (this.getMode() == Mode.SUBTRACT) {
+            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_ON);
+        } else {
+            this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_OFF);
+        }
         this.level.setBlock(this, this, true, false);
-        //bug?
 
         this.onChange();
         return true;
@@ -158,7 +159,10 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                 this.level.setBlock(this, getPowered(), true, false);
             }
 
-            this.level.updateAroundRedstone(this, null);
+            this.level.updateAroundRedstone(this, null); //TODO: remove
+            //Block side = this.getSide(getFacing().getOpposite());
+            //side.onUpdate(Level.BLOCK_UPDATE_REDSTONE);
+            //this.level.updateAroundRedstone(side, null);
         }
     }
 
@@ -171,10 +175,8 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
                     .putInt("x", (int) this.x)
                     .putInt("y", (int) this.y)
                     .putInt("z", (int) this.z);
-            BlockEntityComparator comparator = (BlockEntityComparator) BlockEntity.createBlockEntity(BlockEntity.COMPARATOR, this.level.getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-            if (comparator == null) {
-                return false;
-            }
+            BlockEntity.createBlockEntity(BlockEntity.COMPARATOR, this.getChunk(), nbt);
+
             onUpdate(Level.BLOCK_UPDATE_REDSTONE);
             return true;
         }
@@ -189,7 +191,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
 
     @Override
     public Item toItem() {
-        return new ItemRedstoneComparator();
+        return Item.get(Item.COMPARATOR);
     }
 
     public enum Mode {
@@ -200,5 +202,10 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
     @Override
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false; // prevent item loss issue with pistons until a working implementation
     }
 }

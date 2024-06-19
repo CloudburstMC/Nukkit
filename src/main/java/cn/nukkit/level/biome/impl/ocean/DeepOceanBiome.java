@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.impl.ocean;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  */
 public class DeepOceanBiome extends OceanBiome {

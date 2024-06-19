@@ -8,24 +8,31 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Location;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.*;
+import cn.nukkit.utils.Binary;
 import cn.nukkit.utils.SerializedImage;
+import cn.nukkit.utils.Utils;
 import com.google.common.base.Strings;
 
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/11/21 by xtypr.
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class FloatingTextParticle extends Particle {
+
     private static final Skin EMPTY_SKIN = new Skin();
     private static final SerializedImage SKIN_DATA = SerializedImage.fromLegacy(new byte[8192]);
+    private static final UUID SKIN_UUID = UUID.nameUUIDFromBytes(Binary.appendBytes(Skin.GEOMETRY_CUSTOM.getBytes(StandardCharsets.UTF_8), SKIN_DATA.data));
 
     static {
         EMPTY_SKIN.setSkinData(SKIN_DATA);
-        EMPTY_SKIN.generateSkinId("FloatingText");
+        EMPTY_SKIN.setSkinResourcePatch(Skin.GEOMETRY_CUSTOM);
+        EMPTY_SKIN.setSkinId(SKIN_UUID + ".FloatingText");
+        EMPTY_SKIN.setCapeData(SerializedImage.EMPTY);
+        EMPTY_SKIN.setCapeId("");
     }
 
     protected UUID uuid = UUID.randomUUID();
@@ -54,12 +61,9 @@ public class FloatingTextParticle extends Particle {
         super(pos.x, pos.y, pos.z);
         this.level = level;
 
-        long flags = (
-                1L << Entity.DATA_FLAG_NO_AI
-        );
-        metadata.putLong(Entity.DATA_FLAGS, flags)
+        metadata.putLong(Entity.DATA_FLAGS, 65536L)
                 .putLong(Entity.DATA_LEAD_HOLDER_EID,-1)
-                .putFloat(Entity.DATA_SCALE, 0.01f) //zero causes problems on debug builds?
+                .putFloat(Entity.DATA_SCALE, 0.01f)
                 .putFloat(Entity.DATA_BOUNDING_BOX_HEIGHT, 0.01f)
                 .putFloat(Entity.DATA_BOUNDING_BOX_WIDTH, 0.01f);
         if (!Strings.isNullOrEmpty(title)) {
@@ -108,21 +112,20 @@ public class FloatingTextParticle extends Particle {
     public void setInvisible() {
         this.setInvisible(true);
     }
-    
+
     public long getEntityId() {
-        return entityId;   
+        return entityId;
     }
 
     @Override
     public DataPacket[] encode() {
         ArrayList<DataPacket> packets = new ArrayList<>();
-
         if (this.entityId == -1) {
-            this.entityId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
+            this.entityId = 1095216660480L + Utils.random.nextLong(0, 0x7fffffffL);
         } else {
             RemoveEntityPacket pk = new RemoveEntityPacket();
             pk.eid = this.entityId;
-
+            pk.tryEncode();
             packets.add(pk);
         }
 
@@ -132,6 +135,7 @@ public class FloatingTextParticle extends Particle {
             PlayerListPacket playerAdd = new PlayerListPacket();
             playerAdd.entries = entry;
             playerAdd.type = PlayerListPacket.TYPE_ADD;
+            playerAdd.tryEncode();
             packets.add(playerAdd);
 
             AddPlayerPacket pk = new AddPlayerPacket();
@@ -149,14 +153,15 @@ public class FloatingTextParticle extends Particle {
             pk.pitch = 0;
             pk.metadata = this.metadata;
             pk.item = Item.get(Item.AIR);
+            pk.tryEncode();
             packets.add(pk);
 
             PlayerListPacket playerRemove = new PlayerListPacket();
             playerRemove.entries = entry;
             playerRemove.type = PlayerListPacket.TYPE_REMOVE;
+            playerRemove.tryEncode();
             packets.add(playerRemove);
         }
-
         return packets.toArray(new DataPacket[0]);
     }
 }

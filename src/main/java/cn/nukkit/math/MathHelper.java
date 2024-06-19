@@ -3,6 +3,7 @@ package cn.nukkit.math;
 import java.util.Random;
 
 public class MathHelper {
+
     private static final float[] a = new float[65536];
 
     static {
@@ -89,7 +90,7 @@ public class MathHelper {
     }
 
     public static int clamp(int check, int min, int max) {
-        return check > max ? max : (check < min ? min : check);
+        return check > max ? max : (Math.max(check, min));
     }
 
     public static double denormalizeClamp(double lowerBnd, double upperBnd, double slide) {

@@ -10,6 +10,7 @@ import cn.nukkit.level.biome.type.CoveredBiome;
  * Nearly ertical cliffs, but no overhangs. Height difference is 2-7 near ocean, and pretty much flat everywhere else
  */
 public class StoneBeachBiome extends CoveredBiome {
+
     public StoneBeachBiome() {
         this.setBaseHeight(0.1f);
         this.setHeightVariation(0.8f);

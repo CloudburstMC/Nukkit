@@ -5,6 +5,9 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
+/**
+ * Event for Block fire (ignite).
+ */
 public class BlockIgniteEvent extends BlockEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -17,6 +20,13 @@ public class BlockIgniteEvent extends BlockEvent implements Cancellable {
     private final Entity entity;
     private final BlockIgniteCause cause;
 
+    /**
+     * Block ignite event is called when a block is ignited (lit on fire).
+     * @param block Block that has been ignited.
+     * @param source Block source of ignition.
+     * @param entity Entity source of ignition.
+     * @param cause Cause of the ignition.
+     */
     public BlockIgniteEvent(Block block, Block source, Entity entity, BlockIgniteCause cause) {
         super(block);
         this.source = source;

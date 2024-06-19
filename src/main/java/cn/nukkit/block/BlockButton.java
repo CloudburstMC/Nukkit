@@ -3,10 +3,9 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.event.block.BlockRedstoneEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.level.GlobalBlockPalette;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
 
@@ -40,7 +39,11 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         }
 
         this.setDamage(face.getIndex());
-        this.level.setBlock(block, this, true, true);
+        if (this.getSide(getFacing().getOpposite()).isTransparent()) {
+            return false;
+        }
+
+        this.getLevel().setBlock(this, this, true, true);
         return true;
     }
 
@@ -58,12 +61,11 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         this.setDamage(this.getDamage() ^ 0x08);
         this.level.setBlock(this, this, true, false);
-        this.level.addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_POWER_ON, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
+        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_ON);
         this.level.scheduleUpdate(this, 30);
-        Vector3 pos = getLocation();
 
-        level.updateAroundRedstone(pos, null);
-        level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+        level.updateAroundRedstone(this, null);
+        level.updateAroundRedstone(getSideVec(getFacing().getOpposite()), null);
         return true;
     }
 
@@ -80,11 +82,10 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
 
                 this.setDamage(this.getDamage() ^ 0x08);
                 this.level.setBlock(this, this, true, false);
-                this.level.addLevelSoundEvent(this.add(0.5, 0.5, 0.5), LevelSoundEventPacket.SOUND_POWER_OFF, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
+                this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_OFF);
 
-                Vector3 pos = getLocation();
-                level.updateAroundRedstone(pos, null);
-                level.updateAroundRedstone(pos.getSide(getFacing().getOpposite()), null);
+                level.updateAroundRedstone(this, null);
+                level.updateAroundRedstone(getSideVec(getFacing().getOpposite()), null);
             }
 
             return Level.BLOCK_UPDATE_SCHEDULED;
@@ -126,11 +127,26 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
 
     @Override
     public Item toItem() {
-        return Item.get(this.getId(), 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

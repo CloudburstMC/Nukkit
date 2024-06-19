@@ -17,8 +17,6 @@ public class PlayerSettingsRespondedEvent extends PlayerEvent implements Cancell
     protected int formID;
     protected FormWindow window;
 
-    protected boolean closed = false;
-
     public PlayerSettingsRespondedEvent(Player player, int formID, FormWindow window) {
         this.player = player;
         this.formID = formID;
@@ -35,8 +33,6 @@ public class PlayerSettingsRespondedEvent extends PlayerEvent implements Cancell
 
     /**
      * Can be null if player closed the window instead of submitting it
-     *
-     * @return response
      */
     public FormResponse getResponse() {
         return window.getResponse();
@@ -44,16 +40,8 @@ public class PlayerSettingsRespondedEvent extends PlayerEvent implements Cancell
 
     /**
      * Defines if player closed the window or submitted it
-     *
-     * @return form closed
      */
     public boolean wasClosed() {
         return window.wasClosed();
     }
-
-    @Override
-    public void setCancelled() {
-        super.setCancelled();
-    }
-
 }

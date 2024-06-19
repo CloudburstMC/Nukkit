@@ -9,6 +9,7 @@ import cn.nukkit.event.HandlerList;
  * @author Tee7even
  */
 public class RemoteServerCommandEvent extends ServerCommandEvent {
+
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {

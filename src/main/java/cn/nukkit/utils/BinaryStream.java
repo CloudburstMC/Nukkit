@@ -19,10 +19,13 @@ import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.LittleEndianByteBufInputStream;
 import cn.nukkit.network.LittleEndianByteBufOutputStream;
 import cn.nukkit.network.protocol.types.EntityLink;
-import io.netty.buffer.AbstractByteBufAllocator;
+import cn.nukkit.network.protocol.types.ExperimentData;
+import org.cloudburstmc.nbt.NBTOutputStream;
+import org.cloudburstmc.nbt.NbtUtils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.nio.ByteOrder;
@@ -32,7 +35,9 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 /**
- * author: MagicDroidX
+ * BinaryStream
+ *
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BinaryStream {
@@ -87,6 +92,10 @@ public class BinaryStream {
         return Arrays.copyOf(buffer, count);
     }
 
+    public byte[] getRawBuffer() {
+        return buffer;
+    }
+
     public int getCount() {
         return count;
     }
@@ -100,15 +109,15 @@ public class BinaryStream {
             this.offset = this.count - 1;
             return new byte[0];
         }
-        len = Math.min(len, this.getCount() - this.offset);
+        len = Math.min(len, this.count - this.offset);
         this.offset += len;
         return Arrays.copyOfRange(this.buffer, this.offset - len, this.offset);
     }
 
     public void put(byte[] bytes) {
-        if (bytes == null) {
+        /*if (bytes == null) {
             return;
-        }
+        }*/
 
         this.ensureCapacity(this.count + bytes.length);
 
@@ -238,7 +247,7 @@ public class BinaryStream {
                 attr.setMaxValue(this.getLFloat());
                 list.add(attr);
             } else {
-                throw new Exception("Unknown attribute type \"" + name + "\"");
+                throw new Exception("Unknown attribute type \"" + name + '"');
             }
         }
 
@@ -268,6 +277,7 @@ public class BinaryStream {
 
     public void putSkin(Skin skin) {
         this.putString(skin.getSkinId());
+
         this.putString(skin.getPlayFabId());
         this.putString(skin.getSkinResourcePatch());
         this.putImage(skin.getSkinData());
@@ -289,6 +299,7 @@ public class BinaryStream {
         this.putString(skin.getFullSkinId());
         this.putString(skin.getArmSize());
         this.putString(skin.getSkinColor());
+
         List<PersonaPiece> pieces = skin.getPersonaPieces();
         this.putLInt(pieces.size());
         for (PersonaPiece piece : pieces) {
@@ -315,6 +326,19 @@ public class BinaryStream {
         this.putBoolean(skin.isCapeOnClassic());
         this.putBoolean(skin.isPrimaryUser());
         this.putBoolean(skin.isOverridingPlayerAppearance());
+    }
+
+    public void putImage(SerializedImage image) {
+        this.putLInt(image.width);
+        this.putLInt(image.height);
+        this.putByteArray(image.data);
+    }
+
+    public SerializedImage getImage() {
+        int width = this.getLInt();
+        int height = this.getLInt();
+        byte[] data = this.getByteArray();
+        return new SerializedImage(width, height, data);
     }
 
     public Skin getSkin() {
@@ -371,19 +395,6 @@ public class BinaryStream {
         return skin;
     }
 
-    public void putImage(SerializedImage image) {
-        this.putLInt(image.width);
-        this.putLInt(image.height);
-        this.putByteArray(image.data);
-    }
-
-    public SerializedImage getImage() {
-        int width = this.getLInt();
-        int height = this.getLInt();
-        byte[] data = this.getByteArray();
-        return new SerializedImage(width, height, data);
-    }
-
     public Item getSlot() {
         int runtimeId = this.getVarInt();
         if (runtimeId == 0) {
@@ -414,7 +425,7 @@ public class BinaryStream {
         }
 
         byte[] bytes = this.getByteArray();
-        ByteBuf buf = AbstractByteBufAllocator.DEFAULT.ioBuffer(bytes.length);
+        ByteBuf buf = ByteBufAllocator.DEFAULT.ioBuffer(bytes.length);
         buf.writeBytes(bytes);
 
         byte[] nbt = new byte[0];
@@ -433,8 +444,8 @@ public class BinaryStream {
                 compoundTag = NBTIO.read(stream, ByteOrder.LITTLE_ENDIAN);
             }
 
-            if (compoundTag != null && compoundTag.getAllTags().size() > 0) {
-                if (compoundTag.contains("Damage") && !legacyEntry.isHasDamage()) {
+            if (compoundTag != null && !compoundTag.getAllTags().isEmpty()) {
+                if (!legacyEntry.isHasDamage() && compoundTag.contains("Damage")) {
                     damage = compoundTag.getInt("Damage");
                     compoundTag.remove("Damage");
                 }
@@ -446,12 +457,22 @@ public class BinaryStream {
                 }
             }
 
-            canPlace = new String[stream.readInt()];
+            int canPlaceCount = stream.readInt();
+            if (canPlaceCount > 4096) {
+                throw new RuntimeException("Too many CanPlaceOn blocks: " + canPlaceCount);
+            }
+
+            canPlace = new String[canPlaceCount];
             for (int i = 0; i < canPlace.length; i++) {
                 canPlace[i] = stream.readUTF();
             }
 
-            canBreak = new String[stream.readInt()];
+            int canBreakCount = stream.readInt();
+            if (canBreakCount > 4096) {
+                throw new RuntimeException("Too many CanDestroy blocks: " + canBreakCount);
+            }
+
+            canBreak = new String[canBreakCount];
             for (int i = 0; i < canBreak.length; i++) {
                 canBreak[i] = stream.readUTF();
             }
@@ -521,7 +542,7 @@ public class BinaryStream {
 
         if (!instanceItem) {
             this.putBoolean(true);
-            this.putVarInt(1);
+            this.putVarInt(1); // Item is present
         }
 
         Block block = isBlock ? item.getBlockUnsafe() : null;
@@ -585,16 +606,17 @@ public class BinaryStream {
             return Item.get(Item.AIR, 0, 0);
         }
 
+        int damage = this.getVarInt();
+        if (damage == 0x7fff) {
+            damage = -1;
+        }
+
+        int id;
         RuntimeItemMapping mapping = RuntimeItems.getMapping();
         LegacyEntry legacyEntry = mapping.fromRuntime(runtimeId);
-
-        int id = legacyEntry.getLegacyId();
-        int damage = this.getVarInt();
-
+        id = legacyEntry.getLegacyId();
         if (legacyEntry.isHasDamage()) {
             damage = legacyEntry.getDamage();
-        } else if (damage == 0x7fff) {
-            damage = -1;
         }
 
         int count = this.getVarInt();
@@ -610,9 +632,10 @@ public class BinaryStream {
 
         this.putBoolean(true); // isValid? - true
 
-        RuntimeItemMapping mapping = RuntimeItems.getMapping();
-        int runtimeId, damage;
+        int runtimeId;
+        int damage = item.hasMeta() ? item.getDamage() : 0x7fff;
 
+        RuntimeItemMapping mapping = RuntimeItems.getMapping();
         if (!item.hasMeta()) {
             RuntimeEntry runtimeEntry = mapping.toRuntime(item.getId(), 0);
             runtimeId = runtimeEntry.getRuntimeId();
@@ -622,12 +645,13 @@ public class BinaryStream {
             runtimeId = runtimeEntry.getRuntimeId();
             damage = runtimeEntry.isHasDamage() ? 0 : item.getDamage();
         }
+
         this.putLShort(runtimeId);
         this.putLShort(damage);
         this.putVarInt(item.getCount());
     }
 
-    private List<String> extractStringList(Item item, String tagName) {
+    private static List<String> extractStringList(Item item, String tagName) {
         CompoundTag namedTag = item.getNamedTag();
         if (namedTag == null) {
             return Collections.emptyList();
@@ -720,7 +744,7 @@ public class BinaryStream {
 
     public void putBlockVector3(int x, int y, int z) {
         this.putVarInt(x);
-        this.putUnsignedVarInt(y);
+        this.putUnsignedVarInt(Integer.toUnsignedLong(y)); // we have even negative coordinates
         this.putVarInt(z);
     }
 
@@ -739,10 +763,26 @@ public class BinaryStream {
     }
 
     public void putGameRules(GameRules gameRules) {
-        Map<GameRule, GameRules.Value> rules = gameRules.getGameRules();
-        this.putUnsignedVarInt(rules.size());
-        rules.forEach((gameRule, value) -> {
-            this.putString(gameRule.getName().toLowerCase());
+        Map<GameRule, GameRules.Value> rulesToSend = new HashMap<>(gameRules.getGameRules());
+        this.putUnsignedVarInt(rulesToSend.size());
+        rulesToSend.forEach((gameRule, value) -> {
+            putString(gameRule.getName().toLowerCase());
+            value.write(this);
+        });
+    }
+
+    public void putGameRulesMap(Map<GameRule, GameRules.Value> allGameRules) {
+        Map<GameRule, GameRules.Value> rulesToSend = new HashMap<>();
+        allGameRules.forEach((gameRule, value) -> {
+            if (gameRule == GameRule.NATURAL_REGENERATION) {
+                rulesToSend.put(gameRule, new GameRules.Value<>(GameRules.Type.BOOLEAN, false)); // Fix client-side desync?
+            } else {
+                rulesToSend.put(gameRule, value);
+            }
+        });
+        this.putUnsignedVarInt(rulesToSend.size());
+        rulesToSend.forEach((gameRule, value) -> {
+            putString(gameRule.getName().toLowerCase());
             value.write(this);
         });
     }
@@ -853,5 +893,24 @@ public class BinaryStream {
         return (minCapacity > MAX_ARRAY_SIZE) ?
                 Integer.MAX_VALUE :
                 MAX_ARRAY_SIZE;
+    }
+
+    public <T> void putNbtTag(T tag) {
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        try (NBTOutputStream writer = NbtUtils.createNetworkWriter(stream)) {
+            writer.writeTag(tag);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        this.put(stream.toByteArray());
+    }
+
+    public void putExperiments(Collection<ExperimentData> experiments) {
+        this.putLInt(experiments.size());
+        for (ExperimentData experimentData : experiments) {
+            this.putString(experimentData.getName());
+            this.putBoolean(experimentData.isEnabled());
+        }
+        this.putBoolean(!experiments.isEmpty());
     }
 }

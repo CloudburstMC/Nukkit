@@ -13,10 +13,10 @@ public class BatchPacketsEvent extends ServerEvent implements Cancellable {
         return handlers;
     }
 
-    private Player[] players;
-    private DataPacket[] packets;
+    private final Player[] players;
+    private final DataPacket[] packets;
 
-    private boolean forceSync;
+    private final boolean forceSync;
 
     public BatchPacketsEvent(Player[] players, DataPacket[] packets, boolean forceSync) {
         this.players = players;
@@ -32,6 +32,7 @@ public class BatchPacketsEvent extends ServerEvent implements Cancellable {
         return packets;
     }
 
+    @Deprecated
     public boolean isForceSync() {
         return forceSync;
     }

@@ -3,23 +3,23 @@ package cn.nukkit.scheduler;
 import cn.nukkit.block.Block;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
-import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockUpdateEntry;
-import com.google.common.collect.Maps;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BlockUpdateScheduler {
+
     private final Level level;
     private long lastTick;
-    private Map<Long, LinkedHashSet<BlockUpdateEntry>> queuedUpdates;
+    private final Map<Long, LinkedHashSet<BlockUpdateEntry>> queuedUpdates = new ConcurrentHashMap<>();
 
     private Set<BlockUpdateEntry> pendingUpdates;
 
     public BlockUpdateScheduler(Level level, long currentTick) {
-        queuedUpdates = Maps.newHashMap(); // Change to ConcurrentHashMap if this needs to be concurrent
-        lastTick = currentTick;
+        this.lastTick = currentTick;
         this.level = level;
     }
 
@@ -49,9 +49,8 @@ public class BlockUpdateScheduler {
             Set<BlockUpdateEntry> updates = pendingUpdates = queuedUpdates.remove(tick);
             if (updates != null) {
                 for (BlockUpdateEntry entry : updates) {
-                    Vector3 pos = entry.pos;
-                    if (level.isChunkLoaded(NukkitMath.floorDouble(pos.x) >> 4, NukkitMath.floorDouble(pos.z) >> 4)) {
-                        Block block = level.getBlock(entry.pos);
+                    if (level.isAreaLoaded(new SimpleAxisAlignedBB(entry.pos, entry.pos))) {
+                        Block block = level.getBlock(entry.pos, entry.block.getLayer(), true);
 
                         if (Block.equals(block, entry.block, false)) {
                             block.onUpdate(Level.BLOCK_UPDATE_SCHEDULED);
@@ -127,7 +126,7 @@ public class BlockUpdateScheduler {
 
     public boolean remove(Vector3 pos) {
         for (Map.Entry<Long, LinkedHashSet<BlockUpdateEntry>> tickUpdateSet : queuedUpdates.entrySet()) {
-            if (tickUpdateSet.getValue().remove(pos)) {
+            if (tickUpdateSet.getValue().remove(new BlockUpdateEntry(pos, null))) {
                 return true;
             }
         }

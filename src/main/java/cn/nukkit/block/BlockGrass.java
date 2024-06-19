@@ -4,14 +4,18 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockSpreadEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.level.generator.object.ObjectTallGrass;
 import cn.nukkit.level.particle.BoneMealParticle;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Utils;
 
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
 public class BlockGrass extends BlockDirt {
@@ -21,7 +25,6 @@ public class BlockGrass extends BlockDirt {
     }
 
     public BlockGrass(int meta) {
-        // Grass can't have meta.
         super(0);
     }
 
@@ -47,8 +50,8 @@ public class BlockGrass extends BlockDirt {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE && item.getDamage() == 0x0F) {
-            ObjectTallGrass.growGrass(this.getLevel(), this, new NukkitRandom());
+        if (item.getId() == Item.DYE && item.getDamage() == ItemDye.BONE_MEAL) {
+            ObjectTallGrass.growGrass(this.getLevel(), this);
             this.level.addParticle(new BoneMealParticle(this));
             if (player != null) {
                 if (!player.isCreative()) {
@@ -61,6 +64,9 @@ public class BlockGrass extends BlockDirt {
             if (up instanceof BlockAir || up instanceof BlockFlowable) {
                 item.useOn(this);
                 this.getLevel().setBlock(this, Block.get(FARMLAND));
+                if (player != null) {
+                    player.getLevel().addSound(player, Sound.STEP_GRASS);
+                }
                 return true;
             }
         } else if (item.isShovel()) {
@@ -68,6 +74,9 @@ public class BlockGrass extends BlockDirt {
             if (up instanceof BlockAir || up instanceof BlockFlowable) {
                 item.useOn(this);
                 this.getLevel().setBlock(this, Block.get(GRASS_PATH));
+                if (player != null) {
+                    player.getLevel().addSound(player, Sound.STEP_GRASS);
+                }
                 return true;
             }
         }
@@ -88,10 +97,9 @@ public class BlockGrass extends BlockDirt {
                 return 0;
             }
 
-            NukkitRandom random = new NukkitRandom();
-            int xx = random.nextRange((int) x - 1, (int) x + 1);
-            int yy = random.nextRange((int) y - 2, (int) y + 2);
-            int zz = random.nextRange((int) z - 1, (int) z + 1);
+            int xx = Utils.rand((int) x - 1, (int) x + 1);
+            int yy = Utils.rand((int) y - 2, (int) y + 2);
+            int zz = Utils.rand((int) z - 1, (int) z + 1);
             Block block = this.getLevel().getBlock(xx, yy, zz);
             if (block.getId() == Block.DIRT && block.getDamage() == 0) {
                 up = block.up();
@@ -119,11 +127,18 @@ public class BlockGrass extends BlockDirt {
 
     @Override
     public int getFullId() {
-        return this.getId() << 4;
+        return this.getId() << Block.DATA_BITS;
     }
 
     @Override
     public void setDamage(int meta) {
+    }
 
+    @Override
+    public Item[] getDrops(Item item) {
+        if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
+            return new Item[]{this.toItem()};
+        }
+        return new Item[]{new ItemBlock(Block.get(BlockID.DIRT))};
     }
 }

@@ -1,10 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
-import cn.nukkit.event.level.StructureGrowEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.ListChunkManager;
 import cn.nukkit.level.generator.object.mushroom.BigMushroom;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
@@ -38,6 +37,10 @@ public abstract class BlockMushroom extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (block instanceof BlockWater) {
+            return false;
+        }
+
         if (canStay()) {
             getLevel().setBlock(block, this, true, true);
             return true;
@@ -53,7 +56,7 @@ public abstract class BlockMushroom extends BlockFlowable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE && item.getDamage() == DyeColor.WHITE.getDyeData()) {
-            if (player != null && (player.gamemode & 0x01) == 0) {
+            if (player != null && !player.isCreative()) {
                 item.count--;
             }
 
@@ -72,16 +75,7 @@ public abstract class BlockMushroom extends BlockFlowable {
 
         BigMushroom generator = new BigMushroom(getType());
 
-        ListChunkManager chunkManager = new ListChunkManager(this.level);
-        if (generator.generate(chunkManager, new NukkitRandom(), this)) {
-            StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
-            this.level.getServer().getPluginManager().callEvent(ev);
-            if (ev.isCancelled()) {
-                return false;
-            }
-            for(Block block : ev.getBlockList()) {
-                this.level.setBlockAt(block.getFloorX(), block.getFloorY(), block.getFloorZ(), block.getId(), block.getDamage());
-            }
+        if (generator.generate(this.level, new NukkitRandom(), this)) {
             return true;
         } else {
             this.level.setBlock(this, this, true, false);
@@ -91,7 +85,7 @@ public abstract class BlockMushroom extends BlockFlowable {
 
     public boolean canStay() {
         Block block = this.down();
-        return block.getId() == MYCELIUM || block.getId() == PODZOL || (!block.isTransparent() && this.level.getFullLight(this) < 13);
+        return block.getId() == MYCELIUM || block.getId() == PODZOL || (!block.isTransparent() && this.level.getBlockLightAt((int) this.x, (int) this.y, (int) this.z) < 13); // TODO: sky/full light
     }
 
     @Override
@@ -105,4 +99,14 @@ public abstract class BlockMushroom extends BlockFlowable {
     }
 
     protected abstract int getType();
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
+    }
 }

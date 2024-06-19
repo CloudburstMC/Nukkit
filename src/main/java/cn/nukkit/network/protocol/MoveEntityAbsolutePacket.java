@@ -4,11 +4,12 @@ import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
 public class MoveEntityAbsolutePacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.MOVE_ENTITY_ABSOLUTE_PACKET;
 
     public long eid;

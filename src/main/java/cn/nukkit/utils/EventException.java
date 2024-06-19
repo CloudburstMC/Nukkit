@@ -1,10 +1,13 @@
 package cn.nukkit.utils;
 
 /**
- * author: MagicDroidX
+ * EventException
+ *
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EventException extends RuntimeException {
+
     private final Throwable cause;
 
     /**

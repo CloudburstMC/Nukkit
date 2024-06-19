@@ -1,13 +1,16 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHanging;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
-import cn.nukkit.item.ItemPainting;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.level.particle.DestroyBlockParticle;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddPaintingPacket;
 import cn.nukkit.network.protocol.DataPacket;
@@ -16,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EntityPainting extends EntityHanging {
@@ -24,7 +27,9 @@ public class EntityPainting extends EntityHanging {
     public static final int NETWORK_ID = 83;
 
     public final static Motive[] motives = Motive.values();
+
     private Motive motive;
+    private SimpleAxisAlignedBB cachedBoundingBox;
 
     public EntityPainting(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -63,10 +68,11 @@ public class EntityPainting extends EntityHanging {
         if (super.attack(source)) {
             if (source instanceof EntityDamageByEntityEvent) {
                 Entity damager = ((EntityDamageByEntityEvent) source).getDamager();
-                if (damager instanceof Player && (((Player) damager).isAdventure() || ((Player) damager).isSurvival()) && this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-                    this.level.dropItem(this, new ItemPainting());
+                if (damager instanceof Player && ((Player) damager).isSurvival()) {
+                    this.dropItem();
                 }
             }
+            this.level.addParticle(new DestroyBlockParticle(this, Block.get(Block.WOODEN_PLANKS)));
             this.close();
             return true;
         } else {
@@ -132,6 +138,21 @@ public class EntityPainting extends EntityHanging {
             this.title = title;
             this.width = width;
             this.height = height;
+        }
+    }
+
+    @Override
+    protected boolean isSurfaceValid() {
+        if (this.cachedBoundingBox == null) {
+            this.cachedBoundingBox = new SimpleAxisAlignedBB(this.x - 0.1, this.y, this.z - 0.1, this.x + 0.1, this.y + 0.1, this.z + 0.1);
+        }
+        return this.level.hasCollisionBlocks(this, this.cachedBoundingBox);
+    }
+
+    @Override
+    protected void dropItem() {
+        if (this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
+            this.level.dropItem(this, Item.get(Item.PAINTING));
         }
     }
 }

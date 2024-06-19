@@ -1,15 +1,11 @@
 package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
-import cn.nukkit.api.API;
-import cn.nukkit.api.API.Definition;
-import cn.nukkit.api.API.Usage;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockRail;
-import cn.nukkit.block.BlockRailActivator;
-import cn.nukkit.block.BlockRailPowered;
+import cn.nukkit.block.*;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityHopper;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityHuman;
+import cn.nukkit.entity.EntityControllable;
 import cn.nukkit.entity.EntityLiving;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.entity.data.IntEntityData;
@@ -17,19 +13,18 @@ import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.vehicle.VehicleMoveEvent;
 import cn.nukkit.event.vehicle.VehicleUpdateEvent;
+import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemMinecart;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Location;
 import cn.nukkit.level.format.FullChunk;
-import cn.nukkit.math.MathHelper;
-import cn.nukkit.math.NukkitMath;
-import cn.nukkit.math.Vector3;
+import cn.nukkit.math.*;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.MinecartType;
 import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Objects;
 
@@ -40,9 +35,10 @@ import java.util.Objects;
  * Minecart and Riding Project,
  * Package cn.nukkit.entity.item in project Nukkit.
  */
-public abstract class EntityMinecartAbstract extends EntityVehicle {
+public abstract class EntityMinecartAbstract extends EntityVehicle implements EntityControllable {
 
-    private static final int[][][] matrix = new int[][][]{
+    private String entityName;
+    private static final int[][][] matrix = {
             {{0, 0, -1}, {0, 0, 1}},
             {{-1, 0, 0}, {1, 0, 0}},
             {{-1, -1, 0}, {1, 0, 0}},
@@ -65,7 +61,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     private double flyingY = 0.95;
     private double flyingZ = 0.95;
     private double maxSpeed = 0.4D;
-    private final boolean devs = false; // Avoid maintained features into production
 
     public abstract MinecartType getType();
 
@@ -73,9 +68,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     public EntityMinecartAbstract(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
-
-        setMaxHealth(40);
-        setHealth(40);
     }
 
     @Override
@@ -93,21 +85,37 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         return 0.1F;
     }
 
+    public void setName(String name) {
+        entityName = name;
+    }
+
+    @Override
+    public String getName() {
+        return entityName;
+    }
+
     @Override
     public float getBaseOffset() {
         return 0.35F;
     }
 
     @Override
+    public boolean hasCustomName() {
+        return entityName != null;
+    }
+
+    @Override
     public boolean canDoInteraction() {
-        return passengers.isEmpty() && this.getDisplayBlock() == null;
+        return passengers.isEmpty() && this.blockInside == null;
     }
 
     @Override
     public void initEntity() {
+        this.setMaxHealth(40);
         super.initEntity();
 
-        prepareDataProperty();
+        this.setHealth(40);
+        //this.prepareDataProperty(); // TODO: DATA_DISPLAY_ITEM NBTEntityData
     }
 
     @Override
@@ -117,24 +125,26 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         }
 
         if (!this.isAlive()) {
-            ++this.deadTicks;
-            if (this.deadTicks >= 10) {
-                this.despawnFromAll();
-                this.close();
-            }
-            return this.deadTicks < 10;
-        }
-
-        int tickDiff = currentTick - this.lastUpdate;
-
-        if (tickDiff <= 0) {
+            this.despawnFromAll();
+            this.close();
             return false;
         }
 
-        this.lastUpdate = currentTick;
+        int tickDiff = currentTick - this.lastUpdate;
+        if (tickDiff <= 0 && !this.justCreated) {
+            return true;
+        }
+
+        boolean firstTick = this.justCreated;
+
+        this.minimalEntityTick(currentTick, tickDiff);
 
         if (isAlive()) {
             super.onUpdate(currentTick);
+
+            if (this.closed) {
+                return false;
+            }
 
             // The damage token
             if (getHealth() < 20) {
@@ -145,7 +155,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             lastX = x;
             lastY = y;
             lastZ = z;
-            motionY -= 0.03999999910593033D;
+            motionY -= 0.04;
             int dx = MathHelper.floor(x);
             int dy = MathHelper.floor(y);
             int dz = MathHelper.floor(z);
@@ -155,7 +165,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 --dy;
             }
 
-            Block block = level.getBlock(new Vector3(dx, dy, dz));
+            Block block = level.getBlock(chunk, dx, dy, dz, true);
 
             // Ensure that the block is a rail
             if (Rail.isRailBlock(block)) {
@@ -196,9 +206,11 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             }
 
             // Collisions
-            for (cn.nukkit.entity.Entity entity : level.getNearbyEntities(boundingBox.grow(0.2D, 0, 0.2D), this)) {
-                if (!passengers.contains(entity) && entity instanceof EntityMinecartAbstract) {
-                    entity.applyEntityCollision(this);
+            if (this instanceof InventoryHolder) {
+                for (cn.nukkit.entity.Entity entity : level.getNearbyEntities(boundingBox.grow(0.2D, 0, 0.2D), this)) {
+                    if (entity instanceof EntityMinecartAbstract && !passengers.contains(entity)) {
+                        entity.applyEntityCollision(this);
+                    }
                 }
             }
 
@@ -216,8 +228,39 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 }
             }
 
-            // No need to onGround or Motion diff! This always have an update
-            return true;
+            if (this instanceof InventoryHolder) {
+                AxisAlignedBB pickupArea = new SimpleAxisAlignedBB(this.x, this.y - 1, this.z, this.x + 1, this.y, this.z + 1);
+                Block[] hopperPickupArray = this.level.getCollisionBlocks(this, pickupArea, false);
+                if (hopperPickupArray.length >= 1) {
+                    Block hopper = hopperPickupArray[0];
+                    if (hopper instanceof BlockHopper) {
+                        BlockEntity hopperBE = hopper.getLevel().getBlockEntityIfLoaded(hopper);
+                        if (hopperBE instanceof BlockEntityHopper) {
+                            ((BlockEntityHopper) hopperBE).setMinecartPickupInventory((InventoryHolder) this);
+                        }
+                    }
+                    return true;
+                }
+
+                if (!(this instanceof EntityMinecartHopper)) {
+                    AxisAlignedBB pushArea = new SimpleAxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 2, this.z + 1);
+                    Block[] hopperPushArray = this.level.getCollisionBlocks(this, pushArea, false);
+                    if (hopperPushArray.length >= 1) {
+                        Block hopper = hopperPushArray[0];
+                        if (hopper instanceof BlockHopper) {
+                            BlockEntity hopperBE = hopper.getLevel().getBlockEntityIfLoaded(hopper);
+                            if (hopperBE instanceof BlockEntityHopper) {
+                                ((BlockEntityHopper) hopperBE).setMinecartPushInventory((InventoryHolder) this);
+                            }
+                        }
+                        return true;
+                    }
+                }
+            }
+
+            this.updateMovement();
+
+            return firstTick || this.getRollingAmplitude() > 0 || !this.passengers.isEmpty() || !(this.motionX == 0 && this.motionY == 0 && this.motionZ == 0);
         }
 
         return false;
@@ -247,15 +290,19 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 return;
             }
         }
-        level.dropItem(this, new ItemMinecart());
+        this.level.dropItem(this, Item.get(Item.MINECART));
     }
 
     @Override
     public void kill() {
+        if (!this.isAlive()) {
+            return;
+        }
+
         super.kill();
 
         if (level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS)) {
-            dropItem();
+            this.dropItem();
         }
     }
 
@@ -263,16 +310,18 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     public void close() {
         super.close();
 
-        for (cn.nukkit.entity.Entity entity : passengers) {
-            if (entity instanceof Player) {
-                entity.riding = null;
-            }
+        for (Entity passenger : new ArrayList<>(this.passengers)) {
+            dismountEntity(passenger);
         }
     }
 
     @Override
     public boolean onInteract(Player p, Item item, Vector3 clickedPos) {
-        if (!passengers.isEmpty() && isRideable()) {
+        if (!isRideable()) {
+            return false;
+        }
+
+        if (!passengers.isEmpty()) {
             return false;
         }
 
@@ -285,18 +334,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     @Override
     public void applyEntityCollision(cn.nukkit.entity.Entity entity) {
-        if (entity != riding && !(entity instanceof Player && ((Player) entity).isSpectator())) {
-            if (entity instanceof EntityLiving
-                    && !(entity instanceof EntityHuman)
-                    && motionX * motionX + motionZ * motionZ > 0.01D
-                    && passengers.isEmpty()
-                    && entity.riding == null
-                    && blockInside == null) {
-                if (riding == null && devs) {
-                    mountEntity(entity);// TODO: rewrite (weird riding)
-                }
-            }
-
+        if (entity != riding && !(entity instanceof Player && ((Player) entity).getGamemode() == Player.SPECTATOR)) {
             double motiveX = entity.x - x;
             double motiveZ = entity.z - z;
             double square = motiveX * motiveX + motiveZ * motiveZ;
@@ -385,8 +423,8 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
     private boolean hasUpdated = false;
 
     private void setFalling() {
-        motionX = NukkitMath.clamp(motionX, -getMaxSpeed(), getMaxSpeed());
-        motionZ = NukkitMath.clamp(motionZ, -getMaxSpeed(), getMaxSpeed());
+        motionX = NukkitMath.clamp(motionX, -maxSpeed, maxSpeed);
+        motionZ = NukkitMath.clamp(motionZ, -maxSpeed, maxSpeed);
 
         if (!hasUpdated) {
             for (cn.nukkit.entity.Entity linked : passengers) {
@@ -411,11 +449,13 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         }
     }
 
+    private final Vector3 tempMoveVec = new Vector3(0, 0, 0);
+
     private void processMovement(int dx, int dy, int dz, BlockRail block) {
         fallDistance = 0.0F;
         Vector3 vector = getNextRail(x, y, z);
 
-        y = dy;
+        int y = dy;
         boolean isPowered = false;
         boolean isSlowed = false;
 
@@ -510,10 +550,10 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         double motZ;
 
         if (facing1 == 0) {
-            x = (double) dx + 0.5D;
+            //x = (double) dx + 0.5D;
             expectedSpeed = z - (double) dz;
         } else if (facing2 == 0) {
-            z = (double) dz + 0.5D;
+            //z = (double) dz + 0.5D;
             expectedSpeed = x - (double) dx;
         } else {
             motX = x - playerYawNeg;
@@ -523,7 +563,8 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
         x = playerYawNeg + facing1 * expectedSpeed;
         z = playerYawPos + facing2 * expectedSpeed;
-        setPosition(new Vector3(x, y, z)); // Hehe, my minstake :3
+        this.y = y; // Idk why we set these before setPosition
+        setPosition(tempMoveVec.setComponents(x, y, z));
 
         motX = motionX;
         motZ = motionZ;
@@ -531,14 +572,14 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             motX *= 0.75D;
             motZ *= 0.75D;
         }
-        motX = NukkitMath.clamp(motX, -getMaxSpeed(), getMaxSpeed());
-        motZ = NukkitMath.clamp(motZ, -getMaxSpeed(), getMaxSpeed());
+        motX = NukkitMath.clamp(motX, -maxSpeed, maxSpeed);
+        motZ = NukkitMath.clamp(motZ, -maxSpeed, maxSpeed);
 
         move(motX, 0, motZ);
         if (facing[0][1] != 0 && MathHelper.floor(x) - dx == facing[0][0] && MathHelper.floor(z) - dz == facing[0][2]) {
-            setPosition(new Vector3(x, y + (double) facing[0][1], z));
+            setPosition(tempMoveVec.setComponents(x, y + (double) facing[0][1], z));
         } else if (facing[1][1] != 0 && MathHelper.floor(x) - dx == facing[1][0] && MathHelper.floor(z) - dz == facing[1][2]) {
-            setPosition(new Vector3(x, y + (double) facing[1][1], z));
+            setPosition(tempMoveVec.setComponents(x, y + (double) facing[1][1], z));
         }
 
         applyDrag();
@@ -553,7 +594,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 motionZ = motionZ / squareOfFame * (squareOfFame + d14);
             }
 
-            setPosition(new Vector3(x, vector1.y, z));
+            setPosition(tempMoveVec.setComponents(x, vector1.y, z));
         }
 
         int floorX = MathHelper.floor(x);
@@ -574,20 +615,19 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
                 motionX += motionX / newMovie * nextMovie;
                 motionZ += motionZ / newMovie * nextMovie;
             } else if (block.getOrientation() == Orientation.STRAIGHT_NORTH_SOUTH) {
-                if (level.getBlock(new Vector3(dx - 1, dy, dz)).isNormalBlock()) {
+                if (level.getBlock(chunk, dx - 1, dy, dz, true).isNormalBlock()) {
                     motionX = 0.02D;
-                } else if (level.getBlock(new Vector3(dx + 1, dy, dz)).isNormalBlock()) {
-                    motionX = -0.02D;
+                } else if (level.getBlock(chunk, dx + 1, dy, dz, true).isNormalBlock()) {
+                    motionX = -0.02;
                 }
             } else if (block.getOrientation() == Orientation.STRAIGHT_EAST_WEST) {
-                if (level.getBlock(new Vector3(dx, dy, dz - 1)).isNormalBlock()) {
+                if (level.getBlock(chunk, dx, dy, dz - 1, true).isNormalBlock()) {
                     motionZ = 0.02D;
-                } else if (level.getBlock(new Vector3(dx, dy, dz + 1)).isNormalBlock()) {
-                    motionZ = -0.02D;
+                } else if (level.getBlock(chunk, dx, dy, dz + 1, true).isNormalBlock()) {
+                    motionZ = -0.02;
                 }
             }
         }
-
     }
 
     private void applyDrag() {
@@ -611,7 +651,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             --checkY;
         }
 
-        Block block = level.getBlock(new Vector3(checkX, checkY, checkZ));
+        Block block = level.getBlock(chunk, checkX, checkY, checkZ, true);
 
         if (Rail.isRailBlock(block)) {
             int[][] facing = matrix[((BlockRail) block).getRealMeta()];
@@ -655,16 +695,21 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
         }
     }
 
+    @Override
+    public void onPlayerInput(Player player, double strafe, double forward) {
+        this.setCurrentSpeed(forward);
+    }
+
     /**
      * Used to multiply the minecart current speed
      *
      * @param speed The speed of the minecart that will be calculated
      */
     public void setCurrentSpeed(double speed) {
-        currentSpeed = speed;
+        this.currentSpeed = speed;
     }
 
-    private void prepareDataProperty() {
+    /*private void prepareDataProperty() {
         setRollingAmplitude(0);
         setRollingDirection(1);
         if (namedTag.contains("CustomDisplayTile")) {
@@ -687,17 +732,15 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             setDataProperty(new IntEntityData(DATA_DISPLAY_ITEM, display));
             setDataProperty(new IntEntityData(DATA_DISPLAY_OFFSET, 6));
         }
-    }
+    }*/
 
     private void saveEntityData() {
-        boolean hasDisplay = super.getDataPropertyByte(DATA_HAS_DISPLAY) == 1
-                || blockInside != null;
+        boolean hasDisplay = super.getDataPropertyByte(DATA_HAS_DISPLAY) == 1 || blockInside != null;
         int display;
         int offSet;
         namedTag.putBoolean("CustomDisplayTile", hasDisplay);
         if (hasDisplay) {
-            display = blockInside.getId()
-                    | blockInside.getDamage() << 16;
+            display = blockInside.getId() | blockInside.getDamage() << 16;
             offSet = getDataPropertyInt(DATA_DISPLAY_OFFSET);
             namedTag.putInt("DisplayTile", display);
             namedTag.putInt("DisplayOffset", offSet);
@@ -710,7 +753,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
      * @param block The block that will changed. Set {@code null} for BlockAir
      * @return {@code true} if the block is normal block
      */
-    public boolean setDisplayBlock(Block block){
+    public boolean setDisplayBlock(Block block) {
         return setDisplayBlock(block, true);
     }
 
@@ -721,9 +764,8 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
      * @param update Do update for the block. (This state changes if you want to show the block)
      * @return {@code true} if the block is normal block
      */
-    @API(usage = Usage.MAINTAINED, definition = Definition.UNIVERSAL)
     public boolean setDisplayBlock(Block block, boolean update) {
-        if(!update){
+        if (!update) {
             if (block.isNormalBlock()) {
                 blockInside = block;
             } else {
@@ -731,6 +773,7 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
             }
             return true;
         }
+        //TODO: DATA_DISPLAY_ITEM NBTEntityData
         if (block != null) {
             if (block.isNormalBlock()) {
                 blockInside = block;
@@ -755,7 +798,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
      *
      * @return Block of minecart display block
      */
-    @API(usage = Usage.STABLE, definition = Definition.UNIVERSAL)
     public Block getDisplayBlock() {
         return blockInside;
     }
@@ -765,7 +807,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
      *
      * @param offset The offset
      */
-    @API(usage = Usage.EXPERIMENTAL, definition = Definition.PLATFORM_NATIVE)
     public void setDisplayBlockOffset(int offset) {
         setDataProperty(new IntEntityData(DATA_DISPLAY_OFFSET, offset));
     }
@@ -775,7 +816,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
      *
      * @return integer
      */
-    @API(usage = Usage.EXPERIMENTAL, definition = Definition.UNIVERSAL)
     public int getDisplayBlockOffset() {
         return super.getDataPropertyInt(DATA_DISPLAY_OFFSET);
     }
@@ -785,7 +825,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
      *
      * @return boolean
      */
-    @API(usage = Usage.EXPERIMENTAL, definition = Definition.UNIVERSAL)
     public boolean isSlowWhenEmpty() {
         return slowWhenEmpty;
     }
@@ -795,7 +834,6 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
      *
      * @param slow The slowdown flag
      */
-    @API(usage = Usage.EXPERIMENTAL, definition = Definition.UNIVERSAL)
     public void setSlowWhenEmpty(boolean slow) {
         slowWhenEmpty = slow;
     }
@@ -824,5 +862,10 @@ public abstract class EntityMinecartAbstract extends EntityVehicle {
 
     public void setMaximumSpeed(double speed) {
         maxSpeed = speed;
+    }
+
+    @Override
+    public String getInteractButtonText() {
+        return "";
     }
 }

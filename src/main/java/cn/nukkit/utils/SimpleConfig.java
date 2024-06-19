@@ -15,8 +15,9 @@ import java.lang.reflect.Type;
 import java.util.List;
 
 /**
- * SimpleConfig for Nukkit
- * added 11/02/2016 by fromgate
+ * Simple config for Nukkit
+ *
+ * Added 11/02/2016 by fromgate
  */
 public abstract class SimpleConfig {
 
@@ -35,10 +36,21 @@ public abstract class SimpleConfig {
         configFile.getParentFile().mkdirs();
     }
 
+    /**
+     * Save the config to disk
+     *
+     * @return saved
+     */
     public boolean save() {
         return save(false);
     }
 
+    /**
+     * Save the config to disk
+     *
+     * @param async async
+     * @return saved
+     */
     public boolean save(boolean async) {
         if (configFile.exists()) try {
             configFile.createNewFile();
@@ -59,12 +71,17 @@ public abstract class SimpleConfig {
         return true;
     }
 
+    /**
+     * Load
+     *
+     * @return loaded
+     */
     public boolean load() {
         if (!this.configFile.exists()) return false;
         Config cfg = new Config(configFile, Config.YAML);
         for (Field field : this.getClass().getDeclaredFields()) {
             if (field.getName().equals("configFile")) continue;
-            if (skipSave(field)) continue;
+            if (skipLoad(field)) continue;
             String path = getPath(field);
             if (path == null) continue;
             if (path.isEmpty()) continue;
@@ -106,7 +123,7 @@ public abstract class SimpleConfig {
         return true;
     }
 
-    private String getPath(Field field) {
+    private static String getPath(Field field) {
         String path = null;
         if (field.isAnnotationPresent(Path.class)) {
             Path pathDefine = field.getAnnotation(Path.class);
@@ -118,7 +135,7 @@ public abstract class SimpleConfig {
         return path;
     }
 
-    private boolean skipSave(Field field) {
+    private static boolean skipSave(Field field) {
         if (!field.isAnnotationPresent(Skip.class)) return false;
         return field.getAnnotation(Skip.class).skipSave();
     }

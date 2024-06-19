@@ -1,10 +1,11 @@
 package cn.nukkit.item.enchantment;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentLure extends Enchantment {
+
     protected EnchantmentLure() {
         super(ID_LURE, "fishingSpeed", Rarity.RARE, EnchantmentType.FISHING_ROD);
     }

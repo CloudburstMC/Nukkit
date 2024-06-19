@@ -1,7 +1,7 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
-import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockSignPost;
 import cn.nukkit.event.block.SignChangeEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.ByteTag;
@@ -15,7 +15,7 @@ import java.util.Arrays;
 import java.util.Objects;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockEntitySign extends BlockEntitySpawnable {
@@ -31,26 +31,28 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         text = new String[4];
 
         if (!namedTag.contains("Text")) {
+            if (namedTag.contains("FrontText")) { // Bedrock vanilla
+                this.setText(((CompoundTag) namedTag.removeAndGet("FrontText")).getString("Text").split("\n", 4));
+            } else {
+                for (int i = 1; i <= 4; i++) {
+                    String key = "Text" + i;
 
-            for (int i = 1; i <= 4; i++) {
-                String key = "Text" + i;
-
-                if (namedTag.contains(key)) {
-                    String line = namedTag.getString(key);
-
-                    this.text[i - 1] = line;
-
-                    this.namedTag.remove(key);
+                    if (namedTag.contains(key)) {
+                        String line = namedTag.getString(key);
+                        this.text[i - 1] = line;
+                        this.namedTag.remove(key);
+                    }
                 }
             }
         } else {
             String[] lines = namedTag.getString("Text").split("\n", 4);
 
             for (int i = 0; i < text.length; i++) {
-                if (i < lines.length)
+                if (i < lines.length) {
                     text[i] = lines[i];
-                else
+                } else {
                     text[i] = "";
+                }
             }
         }
 
@@ -59,10 +61,10 @@ public class BlockEntitySign extends BlockEntitySpawnable {
             sanitizeText(text);
         }
 
-        if (!this.namedTag.contains("SignTextColor") || !(this.namedTag.get("SignTextColor") instanceof IntTag)) {
+        if (!(this.namedTag.get("SignTextColor") instanceof IntTag)) {
             this.setColor(DyeColor.BLACK.getSignColor());
         }
-        if (!this.namedTag.contains("IgnoreLighting") || !(this.namedTag.get("IgnoreLighting") instanceof ByteTag)) {
+        if (!(this.namedTag.get("IgnoreLighting") instanceof ByteTag)) {
             this.setGlowing(false);
         }
 
@@ -77,8 +79,7 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        int blockID = getBlock().getId();
-        return blockID == Block.SIGN_POST || blockID == Block.WALL_SIGN;
+        return getLevelBlock() instanceof BlockSignPost;
     }
 
     public boolean setText(String... lines) {
@@ -90,12 +91,9 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         }
 
         this.namedTag.putString("Text", String.join("\n", text));
+        setDirty();
+
         this.spawnToAll();
-
-        if (this.chunk != null) {
-            setDirty();
-        }
-
         return true;
     }
 
@@ -109,6 +107,7 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     public void setColor(BlockColor color) {
         this.namedTag.putInt("SignTextColor", color.getARGB());
+        setDirty();
     }
 
     public boolean isGlowing() {
@@ -117,6 +116,7 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     public void setGlowing(boolean glowing) {
         this.namedTag.putBoolean("IgnoreLighting", glowing);
+        setDirty();
     }
 
     @Override
@@ -126,7 +126,8 @@ public class BlockEntitySign extends BlockEntitySpawnable {
         }
         String[] lines = new String[4];
         Arrays.fill(lines, "");
-        String[] splitLines = nbt.getCompound("FrontText").getString("Text").split("\n", 4);
+        String receivedText = nbt.getCompound("FrontText").getString("Text");
+        String[] splitLines = receivedText.split("\n", 4);
         System.arraycopy(splitLines, 0, lines, 0, splitLines.length);
 
         sanitizeText(lines);
@@ -168,9 +169,9 @@ public class BlockEntitySign extends BlockEntitySpawnable {
 
     private static void sanitizeText(String[] lines) {
         for (int i = 0; i < lines.length; i++) {
-            // Don't allow excessive text per line.
+            // Don't allow excessive text per line
             if (lines[i] != null) {
-                lines[i] = lines[i].substring(0, Math.min(255, lines[i].length()));
+                lines[i] = lines[i].substring(0, Math.min(200, lines[i].length()));
             }
         }
     }

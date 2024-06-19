@@ -8,27 +8,24 @@ import java.util.List;
 import java.util.UUID;
 
 /**
- * 描述一个不在线的玩家的类。<br>
- * Describes an offline player.
+ * Describes an offline player
  *
  * @author MagicDroidX(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
  * @see cn.nukkit.Player
- * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 public class OfflinePlayer implements IPlayer {
+
     private final Server server;
     private final CompoundTag namedTag;
 
     /**
-     * 初始化这个{@code OfflinePlayer}对象。<br>
      * Initializes the object {@code OfflinePlayer}.
      *
      * @param server 这个玩家所在服务器的{@code Server}对象。<br>
      *               The server this player is in, as a {@code Server} object.
      * @param uuid   这个玩家的UUID。<br>
      *               UUID of this player.
-     * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     public OfflinePlayer(Server server, UUID uuid) {
         this(server, uuid, null);
@@ -49,6 +46,7 @@ public class OfflinePlayer implements IPlayer {
         } else {
             throw new IllegalArgumentException("Name and UUID cannot both be null");
         }
+
         if (nbt == null) {
             nbt = new CompoundTag();
         }
@@ -57,7 +55,9 @@ public class OfflinePlayer implements IPlayer {
         if (uuid != null) {
             this.namedTag.putLong("UUIDMost", uuid.getMostSignificantBits());
             this.namedTag.putLong("UUIDLeast", uuid.getLeastSignificantBits());
-        } else {
+        }
+
+        if (name != null && (uuid == null || !this.namedTag.contains("NameTag"))) {
             this.namedTag.putString("NameTag", name);
         }
     }
@@ -173,5 +173,4 @@ public class OfflinePlayer implements IPlayer {
     public void removeMetadata(String metadataKey, Plugin owningPlugin) {
         this.server.getPlayerMetadata().removeMetadata(this, metadataKey, owningPlugin);
     }
-
 }

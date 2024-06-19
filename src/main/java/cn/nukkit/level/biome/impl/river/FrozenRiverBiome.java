@@ -1,17 +1,14 @@
 package cn.nukkit.level.biome.impl.river;
 
-import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
+import cn.nukkit.block.Block;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  */
 public class FrozenRiverBiome extends RiverBiome {
     public FrozenRiverBiome() {
         super();
-
-        WaterIcePopulator ice = new WaterIcePopulator();
-        this.addPopulator(ice);
     }
 
     @Override
@@ -27,5 +24,10 @@ public class FrozenRiverBiome extends RiverBiome {
     @Override
     public boolean canRain() {
         return false;
+    }
+
+    @Override
+    public int getCoverId(int x, int z) {
+        return SNOW_LAYER << Block.DATA_BITS;
     }
 }

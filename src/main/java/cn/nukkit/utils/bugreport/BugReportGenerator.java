@@ -18,15 +18,21 @@ import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-/**
- * Project nukkit
- */
 public class BugReportGenerator extends Thread {
 
-    private Throwable throwable;
+    private final Throwable throwable;
 
     BugReportGenerator(Throwable throwable) {
         this.throwable = throwable;
+    }
+
+    //Code section from SOF
+    private static String getCount(long bytes) {
+        int unit = 1000;
+        if (bytes < unit) return bytes + " B";
+        int exp = (int) (Math.log(bytes) / Math.log(unit));
+        String pre = ("kMGTPE").charAt(exp - 1) + ("");
+        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
     }
 
     @Override
@@ -58,12 +64,9 @@ public class BugReportGenerator extends Thread {
         for (Path root : FileSystems.getDefault().getRootDirectories()) {
             try {
                 FileStore store = Files.getFileStore(root);
-                model.append("Disk ").append(diskNum++).append(":(avail=").append(getCount(store.getUsableSpace(), true))
-                        .append(", total=").append(getCount(store.getTotalSpace(), true))
-                        .append(") ");
+                model.append("Disk ").append(diskNum++).append(":(avail=").append(getCount(store.getUsableSpace())).append(", total=").append(getCount(store.getTotalSpace())).append(") ");
                 totalDiskSpace += store.getTotalSpace();
-            } catch (IOException e) {
-                //
+            } catch (IOException ignore) {
             }
         }
 
@@ -76,7 +79,6 @@ public class BugReportGenerator extends Thread {
             pluginError = !throwable.getStackTrace()[0].getClassName().startsWith("cn.nukkit");
         }
 
-
         File mdReport = new File(reports, date + "_" + throwable.getClass().getSimpleName() + ".md");
         mdReport.createNewFile();
         String content = Utils.readFile(this.getClass().getClassLoader().getResourceAsStream("report_template.md"));
@@ -86,8 +88,8 @@ public class BugReportGenerator extends Thread {
         content = content.replace("${NUKKIT_VERSION}", Nukkit.VERSION);
         content = content.replace("${JAVA_VERSION}", System.getProperty("java.vm.name") + " (" + System.getProperty("java.runtime.version") + ")");
         content = content.replace("${HOSTOS}", osMXBean.getName() + "-" + osMXBean.getArch() + " [" + osMXBean.getVersion() + "]");
-        content = content.replace("${MEMORY}", getCount(osMXBean.getTotalPhysicalMemorySize(), true));
-        content = content.replace("${STORAGE_SIZE}", getCount(totalDiskSpace, true));
+        content = content.replace("${MEMORY}", getCount(osMXBean.getTotalPhysicalMemorySize()));
+        content = content.replace("${STORAGE_SIZE}", getCount(totalDiskSpace));
         content = content.replace("${CPU_TYPE}", cpuType == null ? "UNKNOWN" : cpuType);
         content = content.replace("${AVAILABLE_CORE}", String.valueOf(osMXBean.getAvailableProcessors()));
         content = content.replace("${STACKTRACE}", stringWriter.toString());
@@ -98,14 +100,4 @@ public class BugReportGenerator extends Thread {
 
         return mdReport.getAbsolutePath();
     }
-
-    //Code section from SOF
-    public static String getCount(long bytes, boolean si) {
-        int unit = si ? 1000 : 1024;
-        if (bytes < unit) return bytes + " B";
-        int exp = (int) (Math.log(bytes) / Math.log(unit));
-        String pre = (si ? "kMGTPE" : "KMGTPE").charAt(exp - 1) + (si ? "" : "i");
-        return String.format("%.1f %sB", bytes / Math.pow(unit, exp), pre);
-    }
-
 }

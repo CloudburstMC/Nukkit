@@ -3,6 +3,7 @@ package cn.nukkit.level.particle;
 import cn.nukkit.math.Vector3;
 
 public class BlockForceFieldParticle extends GenericParticle {
+
     public BlockForceFieldParticle(Vector3 pos) {
         this(pos, 0);
     }

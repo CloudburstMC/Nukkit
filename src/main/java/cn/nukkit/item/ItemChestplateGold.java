@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemChestplateGold extends ItemArmor {
@@ -15,7 +15,7 @@ public class ItemChestplateGold extends ItemArmor {
     }
 
     public ItemChestplateGold(Integer meta, int count) {
-        super(GOLD_CHESTPLATE, meta, count, "Gold Chestplate");
+        super(GOLD_CHESTPLATE, meta, count, "Golden Chestplate");
     }
 
     @Override

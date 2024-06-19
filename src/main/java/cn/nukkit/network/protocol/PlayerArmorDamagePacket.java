@@ -7,6 +7,7 @@ import java.util.Set;
 
 @ToString
 public class PlayerArmorDamagePacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ARMOR_DAMAGE_PACKET;
 
     public final Set<PlayerArmorDamageFlag> flags = EnumSet.noneOf(PlayerArmorDamageFlag.class);
@@ -19,13 +20,7 @@ public class PlayerArmorDamagePacket extends DataPacket {
 
     @Override
     public void decode() {
-        int flagsval = this.getByte();
-        for (int i = 0; i < 4; i++) {
-            if ((flagsval & (1 << i)) != 0) {
-                this.flags.add(PlayerArmorDamageFlag.values()[i]);
-                this.damage[i] = this.getVarInt();
-            }
-        }
+        this.decodeUnsupported();
     }
 
     @Override

@@ -1,6 +1,7 @@
 package cn.nukkit.item.enchantment;
 
 public class EnchantmentFrostWalker extends Enchantment {
+
     protected EnchantmentFrostWalker() {
         super(ID_FROST_WALKER, "frostwalker", Rarity.RARE, EnchantmentType.ARMOR_FEET);
     }
@@ -13,5 +14,15 @@ public class EnchantmentFrostWalker extends Enchantment {
     @Override
     public int getMaxLevel() {
         return 2;
+    }
+
+    @Override
+    public boolean isTreasure() {
+        return true;
+    }
+
+    @Override
+    public boolean checkCompatibility(Enchantment enchantment) {
+        return super.checkCompatibility(enchantment) && enchantment.id != ID_WATER_WALKER;
     }
 }

@@ -9,21 +9,19 @@ import cn.nukkit.network.protocol.LevelEventPacket;
  */
 public class BoneMealParticle extends Particle {
 
-    private Vector3 position;
-
     public BoneMealParticle(Vector3 pos) {
         super(pos.x, pos.y, pos.z);
     }
 
     @Override
     public DataPacket[] encode() {
-        LevelEventPacket pk = new LevelEventPacket();
-        pk.evid = LevelEventPacket.EVENT_PARTICLE_BONEMEAL;
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.data = 0;
-
-        return new DataPacket[]{pk};
+        LevelEventPacket packet = new LevelEventPacket();
+        packet.evid = LevelEventPacket.EVENT_PARTICLE_BONEMEAL;
+        packet.x = (float) this.x;
+        packet.y = (float) this.y;
+        packet.z = (float) this.z;
+        packet.data = 0;
+        packet.tryEncode();
+        return new DataPacket[]{packet};
     }
 }

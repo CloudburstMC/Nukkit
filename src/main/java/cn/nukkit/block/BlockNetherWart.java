@@ -4,12 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.block.BlockGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemNetherWart;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.Random;
+import cn.nukkit.utils.Utils;
 
 /**
  * Created by Leonidius20 on 22.03.17.
@@ -42,7 +40,7 @@ public class BlockNetherWart extends BlockFlowable {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (new Random().nextInt(10) == 1) {
+            if (Utils.random.nextInt(10) == 1) {
                 if (this.getDamage() < 0x03) {
                     BlockNetherWart block = (BlockNetherWart) this.clone();
                     block.setDamage(block.getDamage() + 1);
@@ -65,7 +63,7 @@ public class BlockNetherWart extends BlockFlowable {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.RED_BLOCK_COLOR;
+        return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
 
     @Override
@@ -82,19 +80,22 @@ public class BlockNetherWart extends BlockFlowable {
     public Item[] getDrops(Item item) {
         if (this.getDamage() == 0x03) {
             return new Item[]{
-                    new ItemNetherWart(0, 2 + (int) (Math.random() * ((4 - 2) + 1)))
+                    Item.get(Item.NETHER_WART, 0, 2 + (int) (Math.random() * (3)))
             };
         } else {
             return new Item[]{
-                    new ItemNetherWart()
+                    Item.get(Item.NETHER_WART)
             };
         }
     }
 
     @Override
     public Item toItem() {
-        return new ItemNetherWart();
+        return Item.get(Item.NETHER_WART);
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }
-
-

@@ -3,7 +3,6 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 
-
 public class BrewingRecipe extends MixRecipe {
 
     public BrewingRecipe(Item input, Item ingredient, Item output) {

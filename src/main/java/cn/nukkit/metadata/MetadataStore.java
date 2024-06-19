@@ -7,7 +7,7 @@ import cn.nukkit.utils.ServerException;
 import java.util.*;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class MetadataStore {

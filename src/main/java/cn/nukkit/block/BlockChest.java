@@ -18,7 +18,7 @@ import cn.nukkit.utils.Faceable;
 import java.util.Map;
 
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
 public class BlockChest extends BlockTransparentMeta implements Faceable {
@@ -67,11 +67,6 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public double getMinY() {
-        return this.y;
-    }
-
-    @Override
     public double getMinZ() {
         return this.z + 0.0625;
     }
@@ -91,12 +86,10 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
         return this.z + 0.9375;
     }
 
-
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         BlockEntityChest chest = null;
-        int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setDamage(Block.FACES2534[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
         for (int side = 2; side <= 5; ++side) {
             if ((this.getDamage() == 4 || this.getDamage() == 5) && (side == 4 || side == 5)) {
@@ -114,7 +107,8 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
             }
         }
 
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(this, this, true, true);
+
         CompoundTag nbt = new CompoundTag("")
                 .putList(new ListTag<>("Items"))
                 .putString("id", BlockEntity.CHEST)
@@ -133,11 +127,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
             }
         }
 
-        BlockEntityChest blockEntity = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-
-        if (blockEntity == null) {
-            return false;
-        }
+        BlockEntityChest blockEntity = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getChunk(), nbt);
 
         if (chest != null) {
             chest.pairWith(blockEntity);
@@ -161,28 +151,17 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
-            Block top = up();
-            if (!top.isTransparent()) {
+            Block top = this.up();
+            if ((!(top instanceof BlockSlab) && !top.isTransparent()) || (top instanceof BlockSlab && top.isTransparent())) { // avoid issues with the slab hack
                 return true;
             }
 
             BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityChest chest;
-            if (t instanceof BlockEntityChest) {
-                chest = (BlockEntityChest) t;
-            } else {
-                CompoundTag nbt = new CompoundTag("")
-                        .putList(new ListTag<>("Items"))
-                        .putString("id", BlockEntity.CHEST)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                chest = (BlockEntityChest) BlockEntity.createBlockEntity(BlockEntity.CHEST, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-                if (chest == null) {
-                    return false;
-                }
+            if (!(t instanceof BlockEntityChest)) {
+                return false;
             }
 
+            BlockEntityChest chest = (BlockEntityChest) t;
             if (chest.namedTag.contains("Lock") && chest.namedTag.get("Lock") instanceof StringTag) {
                 if (!chest.namedTag.getString("Lock").equals(item.getCustomName())) {
                     return true;
@@ -216,11 +195,21 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false; // prevent item loss issue with pistons until a working implementation
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

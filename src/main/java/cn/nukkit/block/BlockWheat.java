@@ -1,8 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsWheat;
-import cn.nukkit.item.ItemWheat;
+import cn.nukkit.utils.Utils;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -30,20 +29,25 @@ public class BlockWheat extends BlockCrops {
 
     @Override
     public Item toItem() {
-        return new ItemSeedsWheat();
+        return Item.get(Item.WHEAT_SEEDS);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         if (this.getDamage() >= 0x07) {
             return new Item[]{
-                    new ItemWheat(),
-                    new ItemSeedsWheat(0, (int) (4d * Math.random()))
+                    Item.get(Item.WHEAT),
+                    Item.get(Item.WHEAT_SEEDS, 0, Utils.random.nextInt(0, 4))
             };
         } else {
             return new Item[]{
-                    new ItemSeedsWheat()
+                    Item.get(Item.WHEAT_SEEDS)
             };
         }
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

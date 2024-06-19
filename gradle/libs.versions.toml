@@ -2,17 +2,27 @@
 junit = "5.9.2"
 log4j = "2.20.0"
 jline = "3.22.0"
+fastutilmaps = "8.5.13-SNAPSHOT"
 
 [libraries]
-network = { group = "com.nukkitx.network", name = "raknet", version = "1.6.28-SNAPSHOT" }
+network = { group = "org.cloudburstmc.netty", name = "netty-transport-raknet", version = "1.0.0.CR3-SNAPSHOT" }
+epoll = { group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.100.Final" }
 natives = { group = "com.nukkitx", name = "natives", version = "1.0.3" }
 fastutil = { group = "com.nukkitx", name = "fastutil-lite", version = "8.1.1" }
-guava = { group = "com.google.guava", name = "guava", version = "30.1.1-jre" }
+fastutil-int-short-maps = { group = "org.cloudburstmc.fastutil.maps", name = "int-short-maps", version.ref = "fastutilmaps" }
+fastutil-object-int-maps = { group = "org.cloudburstmc.fastutil.maps", name = "object-int-maps", version.ref = "fastutilmaps" }
+fastutil-object-object-maps = { group = "org.cloudburstmc.fastutil.maps", name = "object-object-maps", version.ref = "fastutilmaps" }
+guava = { group = "com.google.guava", name = "guava", version = "33.1.0-jre" }
 gson = { group = "com.google.code.gson", name = "gson", version = "2.10.1" }
 snakeyaml = { group = "org.yaml", name = "snakeyaml", version = "1.33" }
 leveldb = { group = "org.iq80.leveldb", name = "leveldb", version = "0.11-SNAPSHOT" }
+leveldbjni = { group = "net.daporkchop", name = "leveldb-mcpe-jni", version = "0.0.10-SNAPSHOT" }
+snappy = { group = "org.xerial.snappy", name = "snappy-java", version = "1.1.10.5" }
 jwt = { group = "com.nimbusds", name = "nimbus-jose-jwt", version = "9.13" }
 jopt-simple = { group = "net.sf.jopt-simple", name = "jopt-simple", version = "5.0.4" }
+blockstateupdater = { group = "org.cloudburstmc", name = "block-state-updater", version = "1.20.10-SNAPSHOT" }
+lmbda = { group = "org.lanternpowered", name = "lmbda", version = "2.0.0" }
+noise = { group = "net.daporkchop.lib", name = "noise", version = "0.5.6-SNAPSHOT" }
 lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.26" }
 
 # Logging dependencies
@@ -33,6 +43,7 @@ junit-jupiter-engine = { group = "org.junit.jupiter", name = "junit-jupiter-engi
 log4j = [ "log4j-api", "log4j-core" ]
 terminal = [ "jline-terminal", "jline-terminal-jna", "jline-reader", "terminal-console" ]
 junit = [ "junit-jupiter-api", "junit-jupiter-engine" ]
+fastutilmaps = [ "fastutil-int-short-maps", "fastutil-object-int-maps", "fastutil-object-object-maps" ]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.0.0" }

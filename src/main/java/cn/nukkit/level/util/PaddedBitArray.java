@@ -36,8 +36,10 @@ public class PaddedBitArray implements BitArray {
     @Override
     public void set(int index, int value) {
         Preconditions.checkElementIndex(index, this.size);
-        Preconditions.checkArgument(value >= 0 && value <= this.version.maxEntryValue,
-                "Max value: %s. Received value", this.version.maxEntryValue, value);
+        if (value < 0 || value > this.version.maxEntryValue) {
+            throw new IllegalArgumentException(String.format("Max value: %s. Received value %s", this.version.maxEntryValue, value));
+        }
+
         int arrayIndex = index / this.version.entriesPerWord;
         int offset = (index % this.version.entriesPerWord) * this.version.bits;
 

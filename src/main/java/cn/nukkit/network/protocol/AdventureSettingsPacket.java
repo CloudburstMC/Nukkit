@@ -6,8 +6,8 @@ import lombok.ToString;
 /**
  * @author Nukkit Project Team
  */
-@ToString
 @Deprecated
+@ToString
 public class AdventureSettingsPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.ADVENTURE_SETTINGS_PACKET;
@@ -35,7 +35,6 @@ public class AdventureSettingsPacket extends DataPacket {
     public static final int WORLD_BUILDER = 0x100;
     public static final int FLYING = 0x200;
     public static final int MUTED = 0x400;
-
     public static final int MINE = 0x01 | BITFLAG_SECOND_SET;
     public static final int DOORS_AND_SWITCHES = 0x02 | BITFLAG_SECOND_SET;
     public static final int OPEN_CONTAINERS = 0x04 | BITFLAG_SECOND_SET;
@@ -47,17 +46,15 @@ public class AdventureSettingsPacket extends DataPacket {
     public static final int DEFAULT_LEVEL_PERMISSIONS = 0x200 | BITFLAG_SECOND_SET;
 
     public long flags = 0;
+    public long flags2 = 0;
+    public long customFlags;
 
     public long commandPermission = PERMISSION_NORMAL;
-
-    public long flags2 = 0;
-
     public long playerPermission = Player.PERMISSION_MEMBER;
-
-    public long customFlags; //...
 
     public long entityUniqueId; //This is a little-endian long, NOT a var-long. (WTF Mojang)
 
+    @Override
     public void decode() {
         this.flags = getUnsignedVarInt();
         this.commandPermission = getUnsignedVarInt();
@@ -67,6 +64,7 @@ public class AdventureSettingsPacket extends DataPacket {
         this.entityUniqueId = getLLong();
     }
 
+    @Override
     public void encode() {
         this.reset();
         this.putUnsignedVarInt(this.flags);

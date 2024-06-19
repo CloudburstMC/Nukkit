@@ -19,6 +19,10 @@ public class CreatureSpawnEvent extends Event implements Cancellable {
     private final Position position;
     private final CompoundTag compoundTag;
 
+    public CreatureSpawnEvent(int networkId, Position position, SpawnReason reason) {
+        this(networkId, position, new CompoundTag(), reason);
+    }
+
     public CreatureSpawnEvent(int networkId, Position position, CompoundTag nbt, SpawnReason reason) {
         this.reason = reason;
         this.entityNetworkId = networkId;
@@ -65,7 +69,7 @@ public class CreatureSpawnEvent extends Event implements Cancellable {
          */
         EGG,
         /**
-         * When a creature spawns from a Spawner Egg
+         * When a creature spawns from a spawn egg
          */
         SPAWN_EGG,
         /**
@@ -159,7 +163,7 @@ public class CreatureSpawnEvent extends Event implements Cancellable {
          */
         CUSTOM,
         /**
-         * When an entity is missing a SpawnReason
+         * When SpawnReason is missing
          */
         DEFAULT
     }

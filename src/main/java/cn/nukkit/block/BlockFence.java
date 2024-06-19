@@ -50,7 +50,7 @@ public class BlockFence extends BlockTransparentMeta {
 
     @Override
     public String getName() {
-        String[] names = new String[]{
+        String[] names = {
                 "Oak Fence",
                 "Spruce Fence",
                 "Birch Fence",
@@ -63,7 +63,6 @@ public class BlockFence extends BlockTransparentMeta {
         return names[this.getDamage() & 0x07];
     }
 
-    @Override
     protected AxisAlignedBB recalculateBoundingBox() {
         boolean north = this.canConnect(this.north());
         boolean south = this.canConnect(this.south());
@@ -99,19 +98,19 @@ public class BlockFence extends BlockTransparentMeta {
 
     @Override
     public BlockColor getColor() {
-        switch(this.getDamage() & 0x07){
+        switch (this.getDamage() & 0x07) {
             default:
-            case BlockFence.FENCE_OAK: //OAK
+            case FENCE_OAK: //OAK
                 return BlockColor.WOOD_BLOCK_COLOR;
-            case BlockFence.FENCE_SPRUCE: //SPRUCE
+            case FENCE_SPRUCE: //SPRUCE
                 return BlockColor.SPRUCE_BLOCK_COLOR;
-            case BlockFence.FENCE_BIRCH: //BIRCH
+            case FENCE_BIRCH: //BIRCH
                 return BlockColor.SAND_BLOCK_COLOR;
-            case BlockFence.FENCE_JUNGLE: //JUNGLE
+            case FENCE_JUNGLE: //JUNGLE
                 return BlockColor.DIRT_BLOCK_COLOR;
-            case BlockFence.FENCE_ACACIA: //ACACIA
+            case FENCE_ACACIA: //ACACIA
                 return BlockColor.ORANGE_BLOCK_COLOR;
-            case BlockFence.FENCE_DARK_OAK: //DARK OAK
+            case FENCE_DARK_OAK: //DARK OAK
                 return BlockColor.BROWN_BLOCK_COLOR;
         }
     }
@@ -119,5 +118,10 @@ public class BlockFence extends BlockTransparentMeta {
     @Override
     public Item toItem() {
         return new ItemBlock(this, this.getDamage());
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

@@ -6,7 +6,6 @@ package cn.nukkit.blockentity;
  *
  * @author MagicDroidX(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
- * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 public interface BlockEntityNameable {
 
@@ -15,7 +14,6 @@ public interface BlockEntityNameable {
      * Gets the name of this object.
      *
      * @return 这个事物的名字。<br>The name of this object.
-     * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     String getName();
 
@@ -24,7 +22,6 @@ public interface BlockEntityNameable {
      * Changes the name of this object, or names it.
      *
      * @param name 这个事物的新名字。<br>The new name of this object.
-     * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     void setName(String name);
 
@@ -33,7 +30,6 @@ public interface BlockEntityNameable {
      * Whether this object has a name.
      *
      * @return 如果有名字，返回 {@code true}。<br>{@code true} for this object has a name.
-     * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     boolean hasName();
 }

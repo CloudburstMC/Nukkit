@@ -1,20 +1,43 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.Player;
+import cn.nukkit.Server;
+import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.Tag;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
+import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.SplittableRandom;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.zip.GZIPInputStream;
 
 /**
- * author: MagicDroidX
+ * This class contains miscellaneous stuff used in other parts of the program.
+ *
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class Utils {
+
+    /**
+     * A SplittableRandom you can use without having to create a new object every time.
+     */
+    public static final SplittableRandom random = new SplittableRandom();
+    /**
+     * A NukkitRandom you can use without having to create a new object every time.
+     */
+    public static final NukkitRandom nukkitRandom = new NukkitRandom();
 
     public static void writeFile(String fileName, String content) throws IOException {
         writeFile(fileName, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
@@ -49,7 +72,7 @@ public class Utils {
         if (!file.exists() || file.isDirectory()) {
             throw new FileNotFoundException();
         }
-        return readFile(new FileInputStream(file));
+        return readFile(Files.newInputStream(file.toPath()));
     }
 
     public static String readFile(String filename) throws IOException {
@@ -57,7 +80,7 @@ public class Utils {
         if (!file.exists() || file.isDirectory()) {
             throw new FileNotFoundException();
         }
-        return readFile(new FileInputStream(file));
+        return readFile(Files.newInputStream(file.toPath()));
     }
 
     public static String readFile(InputStream inputStream) throws IOException {
@@ -71,7 +94,7 @@ public class Utils {
             temp = br.readLine();
             while (temp != null) {
                 if (stringBuilder.length() != 0) {
-                    stringBuilder.append("\n");
+                    stringBuilder.append('\n');
                 }
                 stringBuilder.append(temp);
                 temp = br.readLine();
@@ -209,7 +232,7 @@ public class Utils {
         }
 
         for (int left = 0, right = data.length - 1; left < right; left++, right--) {
-            // swap the values at the left and right indices
+            // Swap the values at the left and right indices
             T temp = data[left];
             data[left] = data[right];
             data[right] = temp;
@@ -268,28 +291,137 @@ public class Utils {
     public static byte[] parseHexBinary(String s) {
         final int len = s.length();
 
-        // "111" is not a valid hex encoding.
-        if(len % 2 != 0)
+        // "111" is not a valid hex encoding
+        if (len % 2 != 0)
             throw new IllegalArgumentException("hexBinary needs to be even-length: " + s);
 
-        byte[] out = new byte[len / 2];
+        byte[] out = new byte[(len >> 1)];
 
-        for(int i = 0; i < len; i += 2) {
+        for (int i = 0; i < len; i += 2) {
             int h = hexToBin(s.charAt(i));
             int l = hexToBin(s.charAt(i + 1));
-            if(h == -1 || l == -1)
+            if (h == -1 || l == -1)
                 throw new IllegalArgumentException("contains illegal character for hexBinary: " + s);
 
-            out[i / 2] = (byte)(h * 16 + l);
+            out[(i >> 1)] = (byte)((h << 4) + l);
         }
 
         return out;
     }
 
     private static int hexToBin( char ch ) {
-        if('0' <= ch && ch <= '9')    return ch - '0';
-        if('A' <= ch && ch <= 'F')    return ch - 'A' + 10;
-        if('a' <= ch && ch <= 'f')    return ch - 'a' + 10;
+        if ('0' <= ch && ch <= '9')    return ch - '0';
+        if ('A' <= ch && ch <= 'F')    return ch - 'A' + 10;
+        if ('a' <= ch && ch <= 'f')    return ch - 'a' + 10;
         return -1;
+    }
+
+    /**
+     * Get a random int
+     *
+     * @param min minimum value
+     * @param max maximum value
+     * @return random int between min and max
+     */
+    public static int rand(int min, int max) {
+        if (min == max) {
+            return max;
+        }
+        return random.nextInt(max + 1 - min) + min;
+    }
+
+    /**
+     * Get a random double
+     *
+     * @param min minimum value
+     * @param max maximum value
+     * @return random double between min and max
+     */
+    public static double rand(double min, double max) {
+        if (min == max) {
+            return max;
+        }
+        return min + random.nextDouble() * (max-min);
+    }
+
+    /**
+     * Get a random boolean
+     *
+     * @return random boolean
+     */
+    public static boolean rand() {
+        return random.nextBoolean();
+    }
+
+    /**
+     * Get player's operating system/device name from login chain data.
+     * NOTICE: It's possible to spoof this.
+     *
+     * @param player player
+     * @return operating system/device name
+     */
+    public static String getOS(Player player) {
+        switch (player.getLoginChainData().getDeviceOS()) {
+            case 1:
+                return "Android";
+            case 2:
+                return "iOS";
+            case 3:
+                return "macOS";
+            case 4:
+                return "Fire OS";
+            case 5:
+                return "Gear VR";
+            case 6:
+                return "HoloLens";
+            case 7:
+                return "Windows 10";
+            case 8:
+                return "Windows";
+            case 9:
+                return "Dedicated";
+            case 10:
+                return "tvOS";
+            case 11:
+                return "PlayStation";
+            case 12:
+                return "Switch";
+            case 13:
+                return "Xbox";
+            case 14:
+                return "Windows Phone";
+            case 15:
+                return "Linux";
+            default:
+                return "Unknown";
+        }
+    }
+
+    public static JsonElement loadJsonResource(String file) {
+        try {
+            InputStream stream = Server.class.getClassLoader().getResourceAsStream(file);
+            if (stream == null) {
+                throw new AssertionError("Unable to load " + file);
+            }
+
+            JsonElement element = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
+            stream.close();
+            return element;
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to load " + file, e);
+        }
+    }
+
+    public static Tag loadTagResource(String file) {
+        try {
+            InputStream stream = Server.class.getClassLoader().getResourceAsStream(file);
+            if (stream == null) {
+                throw new AssertionError("Unable to load " + file);
+            }
+
+            return NBTIO.readTag(new BufferedInputStream(new GZIPInputStream(stream)), ByteOrder.BIG_ENDIAN, false);
+        } catch (Exception e) {
+            throw new RuntimeException("Unable to load " + file, e);
+        }
     }
 }

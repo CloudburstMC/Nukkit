@@ -15,6 +15,7 @@ public class BlockEntityMusic extends BlockEntity {
         if (!this.namedTag.contains("note")) {
             this.namedTag.putByte("note", 0);
         }
+
         if (!this.namedTag.contains("powered")) {
             this.namedTag.putBoolean("powered", false);
         }
@@ -24,11 +25,12 @@ public class BlockEntityMusic extends BlockEntity {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.getBlock().getId() == Block.NOTEBLOCK;
+        return level.getBlockIdAt(chunk, (int) x, (int) y, (int) z) == Block.NOTEBLOCK;
     }
 
     public void changePitch() {
         this.namedTag.putByte("note", (this.namedTag.getByte("note") + 1) % 25);
+        setDirty();
     }
 
     public int getPitch() {
@@ -37,6 +39,7 @@ public class BlockEntityMusic extends BlockEntity {
 
     public void setPowered(boolean powered) {
         this.namedTag.putBoolean("powered", powered);
+        setDirty();
     }
 
     public boolean isPowered() {

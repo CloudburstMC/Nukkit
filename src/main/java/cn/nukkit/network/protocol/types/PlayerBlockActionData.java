@@ -7,6 +7,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class PlayerBlockActionData {
+
     private PlayerActionType action;
     private BlockVector3 position;
     private int facing;

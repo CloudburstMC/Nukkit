@@ -1,5 +1,6 @@
 package cn.nukkit.network.encryption;
 
+import com.google.common.base.Preconditions;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -14,7 +15,6 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import com.nukkitx.natives.aes.AesFactory;
 import com.nukkitx.natives.util.Natives;
-import com.nukkitx.network.util.Preconditions;
 import lombok.experimental.UtilityClass;
 
 import javax.crypto.Cipher;
@@ -156,7 +156,7 @@ public class EncryptionUtils {
                 return !iterator.hasNext();
             }
 
-            if (lastKey.equals(EncryptionUtils.getMojangPublicKey())) {
+            if (lastKey.equals(EncryptionUtils.MOJANG_PUBLIC_KEY)) {
                 validChain = true;
             }
 

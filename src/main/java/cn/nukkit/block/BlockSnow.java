@@ -2,14 +2,11 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSnowball;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.BlockColor;
 
 public class BlockSnow extends BlockSolid {
-
-    public BlockSnow() {
-    }
 
     @Override
     public String getName() {
@@ -27,11 +24,6 @@ public class BlockSnow extends BlockSolid {
     }
 
     @Override
-    public double getResistance() {
-        return 1;
-    }
-
-    @Override
     public int getToolType() {
         return ItemTool.TYPE_SHOVEL;
     }
@@ -39,8 +31,11 @@ public class BlockSnow extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         if (item.isShovel() && item.getTier() >= ItemTool.TIER_WOODEN) {
+            if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
+                return new Item[]{this.toItem()};
+            }
             return new Item[]{
-                    new ItemSnowball(0, 4)
+                    Item.get(Item.SNOWBALL, 0, 4)
             };
         } else {
             return new Item[0];
@@ -57,7 +52,7 @@ public class BlockSnow extends BlockSolid {
     public boolean canHarvestWithHand() {
         return false;
     }
-
+    
     @Override
     public boolean canSilkTouch() {
         return true;
@@ -70,11 +65,16 @@ public class BlockSnow extends BlockSolid {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.isShovel()) {
+        if (item.isShovel() && (player == null || (player.gamemode & 0x2) == 0)) {
             item.useOn(this);
             this.level.useBreakOn(this, item.clone().clearNamedTag(), null, true);
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

@@ -1,5 +1,6 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.block.BlockSlab;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.data.IntEntityData;
@@ -10,7 +11,7 @@ import cn.nukkit.level.Explosion;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.LevelEventPacket;
 
 /**
  * @author MagicDroidX
@@ -49,11 +50,6 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         return 0.49f;
     }
 
-    @Override
-    public boolean canCollide() {
-        return false;
-    }
-
     protected int fuse;
 
     protected Entity source;
@@ -77,6 +73,7 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         return source.getCause() == DamageCause.VOID && super.attack(source);
     }
 
+    @Override
     protected void initEntity() {
         super.initEntity();
 
@@ -89,26 +86,26 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_IGNITED, true);
         this.setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
 
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_FIZZ);
+        this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TNT);
     }
 
-
+    @Override
     public boolean canCollideWith(Entity entity) {
         return false;
     }
 
+    @Override
     public void saveNBT() {
         super.saveNBT();
         namedTag.putByte("Fuse", fuse);
     }
 
+    @Override
     public boolean onUpdate(int currentTick) {
 
         if (closed) {
             return false;
         }
-
-        this.timing.startTiming();
 
         int tickDiff = currentTick - lastUpdate;
 
@@ -126,7 +123,9 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
 
         if (isAlive()) {
 
-            motionY -= getGravity();
+            if (!isOnGround()) {
+                motionY -= getGravity();
+            }
 
             move(motionX, motionY, motionZ);
 
@@ -147,14 +146,13 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
             fuse -= tickDiff;
 
             if (fuse <= 0) {
-                if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES))
-                    explode();
-                kill();
+                if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
+                    this.explode();
+                }
+                this.close();
+                return false;
             }
-
         }
-
-        this.timing.stopTiming();
 
         return hasUpdate || fuse >= 0 || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
     }
@@ -165,7 +163,7 @@ public class EntityPrimedTNT extends Entity implements EntityExplosive {
         if (event.isCancelled()) {
             return;
         }
-        Explosion explosion = new Explosion(this, event.getForce(), this);
+        Explosion explosion = new Explosion(level.getBlock(this) instanceof BlockSlab ? this.add(0, 0.1, 0) : this, event.getForce(), this);
         if (event.isBlockBreaking()) {
             explosion.explodeA();
         }

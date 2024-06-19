@@ -7,7 +7,6 @@ package cn.nukkit.permission;
  * @author MagicDroidX(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
  * @see cn.nukkit.permission.Permissible
- * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 public interface ServerOperator {
 
@@ -16,7 +15,6 @@ public interface ServerOperator {
      * Returns if this object is an operator.
      *
      * @return 这个对象是不是服务器管理员。<br>if this object is an operator.
-     * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     boolean isOp();
 
@@ -26,7 +24,6 @@ public interface ServerOperator {
      *
      * @param value {@code true}为授予管理员，{@code false}为取消管理员。<br>
      *              {@code true} for giving this operator or {@code false} for cancelling.
-     * @since Nukkit 1.0 | Nukkit API 1.0.0
      */
     void setOp(boolean value);
 }

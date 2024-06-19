@@ -12,25 +12,23 @@ import java.util.Optional;
 
 import static cn.nukkit.level.GameRule.*;
 
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings("unchecked")
 public class GameRules {
+
     private final EnumMap<GameRule, Value> gameRules = new EnumMap<>(GameRule.class);
     private boolean stale;
-
-    private GameRules() {
-    }
-
 
     public static GameRules getDefault() {
         GameRules gameRules = new GameRules();
 
-        gameRules.gameRules.put(COMMAND_BLOCKS_ENABLED, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(COMMAND_BLOCKS_ENABLED, new Value<>(Type.BOOLEAN, false)); // Vanilla: default true
         gameRules.gameRules.put(COMMAND_BLOCK_OUTPUT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_DAYLIGHT_CYCLE, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_ENTITY_DROPS, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_FIRE_TICK, new Value(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_INSOMNIA, new Value(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_IMMEDIATE_RESPAWN, new Value(Type.BOOLEAN, false));
+        gameRules.gameRules.put(DO_FIRE_TICK, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_INSOMNIA, new Value<>(Type.BOOLEAN, false)); // Vanilla: default true
+        gameRules.gameRules.put(DO_IMMEDIATE_RESPAWN, new Value<>(Type.BOOLEAN, false));
+        gameRules.gameRules.put(DO_LIMITED_CRAFTING, new Value<>(Type.BOOLEAN, false));
         gameRules.gameRules.put(DO_MOB_LOOT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_MOB_SPAWNING, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_TILE_DROPS, new Value<>(Type.BOOLEAN, true));
@@ -44,15 +42,22 @@ public class GameRules {
         gameRules.gameRules.put(MAX_COMMAND_CHAIN_LENGTH, new Value<>(Type.INTEGER, 65536));
         gameRules.gameRules.put(MOB_GRIEFING, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(NATURAL_REGENERATION, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(PLAYERS_SLEEPING_PERCENTAGE, new Value<>(Type.INTEGER, 100));
+        gameRules.gameRules.put(PROJECTILES_CAN_BREAK_BLOCKS, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(PVP, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(RANDOM_TICK_SPEED, new Value<>(Type.INTEGER, 3));
+        gameRules.gameRules.put(RANDOM_TICK_SPEED, new Value<>(Type.INTEGER, 3)); // Vanilla: default 1
+        gameRules.gameRules.put(RECIPES_UNLOCK, new Value<>(Type.BOOLEAN, false)); // Vanilla: default true
+        gameRules.gameRules.put(RESPAWN_BLOCKS_EXPLODE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(SHOW_BORDER_EFFECT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(SEND_COMMAND_FEEDBACK, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(SHOW_COORDINATES, new Value<>(Type.BOOLEAN, false));
+        gameRules.gameRules.put(SHOW_DAYS_PLAYED, new Value<>(Type.BOOLEAN, false));
         gameRules.gameRules.put(SHOW_DEATH_MESSAGES, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(SPAWN_RADIUS, new Value<>(Type.INTEGER, 5));
-        gameRules.gameRules.put(TNT_EXPLODES, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(SHOW_RECIPE_MESSAGES, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(SHOW_TAGS, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(PLAYERS_SLEEPING_PERCENTAGE, new Value<>(Type.INTEGER, 100));
+        gameRules.gameRules.put(SPAWN_RADIUS, new Value<>(Type.INTEGER, 10));
+        gameRules.gameRules.put(TNT_EXPLODES, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(TNT_EXPLOSION_DROP_DECAY, new Value<>(Type.BOOLEAN, false));
 
         return gameRules;
     }
@@ -99,9 +104,9 @@ public class GameRules {
 
         switch (getGameRuleType(gameRule)) {
             case BOOLEAN:
-                if (value.equalsIgnoreCase("true")) {
+                if (value.equalsIgnoreCase("true") || value.equals("1")) {
                     setGameRule(gameRule, true);
-                } else if (value.equalsIgnoreCase("false")) {
+                } else if (value.equalsIgnoreCase("false") || value.equals("0")) {
                     setGameRule(gameRule, false);
                 } else {
                     throw new IllegalArgumentException("Was not a boolean");
@@ -120,22 +125,18 @@ public class GameRules {
     }
 
     public int getInteger(GameRule gameRule) {
-        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).getValueAsInteger();
     }
 
     public float getFloat(GameRule gameRule) {
-        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).getValueAsFloat();
     }
 
     public String getString(GameRule gameRule) {
-        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).value.toString();
     }
 
     public Type getGameRuleType(GameRule gameRule) {
-        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).getType();
     }
 
@@ -147,7 +148,6 @@ public class GameRules {
         return gameRules.keySet().toArray(new GameRule[0]);
     }
 
-    // TODO: This needs to be moved out since there is not a separate compound tag in the LevelDB format for Game Rules.
     public CompoundTag writeNBT() {
         CompoundTag nbt = new CompoundTag();
 
@@ -159,7 +159,7 @@ public class GameRules {
     }
 
     public void readNBT(CompoundTag nbt) {
-        Preconditions.checkNotNull(nbt);
+        Preconditions.checkNotNull(nbt, "nbt");
         for (String key : nbt.getTags().keySet()) {
             Optional<GameRule> gameRule = GameRule.parseString(key);
             if (!gameRule.isPresent()) {
@@ -248,10 +248,10 @@ public class GameRules {
             return (Float) value;
         }
 
-        public void write(BinaryStream stream) {
-            stream.putBoolean(this.canBeChanged);
-            stream.putUnsignedVarInt(type.ordinal());
-            type.write(stream, this);
+        public void write(BinaryStream pk) {
+            pk.putBoolean(this.canBeChanged);
+            pk.putUnsignedVarInt(type.ordinal());
+            type.write(pk, this);
         }
     }
 }

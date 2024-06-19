@@ -21,5 +21,4 @@ public class PlayerToggleSneakEvent extends PlayerEvent implements Cancellable {
     public boolean isSneaking() {
         return this.isSneaking;
     }
-
 }

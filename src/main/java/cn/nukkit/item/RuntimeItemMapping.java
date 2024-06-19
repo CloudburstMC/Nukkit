@@ -1,19 +1,20 @@
 package cn.nukkit.item;
 
+import cn.nukkit.Nukkit;
+import cn.nukkit.block.Block;
 import cn.nukkit.item.RuntimeItems.MappingEntry;
-import cn.nukkit.Server;
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,11 +28,10 @@ public class RuntimeItemMapping {
     private byte[] itemPalette;
 
     public RuntimeItemMapping(Map<String, MappingEntry> mappings) {
-        InputStream stream = Server.class.getClassLoader().getResourceAsStream("runtime_item_states.json");
-        if (stream == null) {
-            throw new AssertionError("Unable to load runtime_item_states.json");
+        JsonArray json = Utils.loadJsonResource("runtime_item_states.json").getAsJsonArray();
+        if (json.isEmpty()) {
+            throw new IllegalStateException("Empty array");
         }
-        JsonArray json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonArray();
 
         for (JsonElement element : json) {
             if (!element.isJsonObject()) {
@@ -49,7 +49,7 @@ public class RuntimeItemMapping {
                 MappingEntry mapping = mappings.get(identifier);
                 legacyId = RuntimeItems.getLegacyIdFromLegacyString(mapping.getLegacyName());
                 if (legacyId == -1) {
-                    throw new IllegalStateException("Unable to match  " + mapping + " with legacyId");
+                    throw new IllegalStateException("Unable to match " + mapping + " with legacyId");
                 }
                 damage = mapping.getDamage();
                 hasDamage = true;
@@ -61,22 +61,36 @@ public class RuntimeItemMapping {
                 }
             }
 
-            int fullId = this.getFullId(legacyId, damage);
-            LegacyEntry legacyEntry = new LegacyEntry(legacyId, hasDamage, damage);
-
-            this.runtime2Legacy.put(runtimeId, legacyEntry);
-            this.identifier2Legacy.put(identifier, legacyEntry);
-            if (!hasDamage && this.legacy2Runtime.containsKey(fullId)) {
-                Server.getInstance().getLogger().debug("RuntimeItemMapping contains duplicated legacy item state runtimeId=" + runtimeId + " identifier=" + identifier);
-            } else {
-                this.legacy2Runtime.put(fullId, new RuntimeEntry(identifier, runtimeId, hasDamage));
-            }
+            this.registerItem(identifier, runtimeId, legacyId, damage, hasDamage);
         }
 
         this.generatePalette();
     }
 
-    private void generatePalette() {
+    public void registerItem(String identifier, int runtimeId, int legacyId, int damage) {
+        this.registerItem(identifier, runtimeId, legacyId, damage, false);
+    }
+
+    public void registerItem(String identifier, int runtimeId, int legacyId, int damage, boolean hasDamage) {
+        int fullId = this.getFullId(legacyId, damage);
+        LegacyEntry legacyEntry = new LegacyEntry(legacyId, hasDamage, damage);
+
+        if (Nukkit.DEBUG > 1) {
+            if (this.runtime2Legacy.containsKey(runtimeId)) {
+                log.warn("RuntimeItemMapping: Registering " + identifier + " but runtime id " + runtimeId + " is already used");
+            }
+        }
+
+        this.runtime2Legacy.put(runtimeId, legacyEntry);
+        this.identifier2Legacy.put(identifier, legacyEntry);
+        if (!hasDamage && this.legacy2Runtime.containsKey(fullId)) {
+            log.debug("RuntimeItemMapping contains duplicated legacy item state runtimeId=" + runtimeId + " identifier=" + identifier);
+        } else {
+            this.legacy2Runtime.put(fullId, new RuntimeEntry(identifier, runtimeId, hasDamage));
+        }
+    }
+
+    public void generatePalette() {
         BinaryStream paletteBuffer = new BinaryStream();
         paletteBuffer.putUnsignedVarInt(this.legacy2Runtime.size());
         for (RuntimeEntry entry : this.legacy2Runtime.values()) {
@@ -90,7 +104,9 @@ public class RuntimeItemMapping {
     public LegacyEntry fromRuntime(int runtimeId) {
         LegacyEntry legacyEntry = this.runtime2Legacy.get(runtimeId);
         if (legacyEntry == null) {
-            throw new IllegalArgumentException("Unknown runtime2Legacy mapping: " + runtimeId);
+            //throw new IllegalArgumentException("Unknown runtime2Legacy mapping: " + runtimeId);
+            log.warn("Unknown runtime2Legacy mapping: " + runtimeId);
+            return new LegacyEntry(0, false, 0);
         }
         return legacyEntry;
     }
@@ -102,10 +118,58 @@ public class RuntimeItemMapping {
         }
 
         if (runtimeEntry == null) {
-            throw new IllegalArgumentException("Unknown legacy2Runtime mapping: id=" + id + " meta=" + meta);
+            log.warn("Unknown legacy2Runtime mapping: id=" + id + " meta=" + meta);
+            runtimeEntry = this.legacy2Runtime.get(this.getFullId(Item.INFO_UPDATE, 0));
+            if (runtimeEntry == null) throw new RuntimeException("Runtime ID for Item.INFO_UPDATE must exist!");
+            //throw new IllegalArgumentException("Unknown legacy2Runtime mapping: id=" + id + " meta=" + meta);
         }
         return runtimeEntry;
     }
+
+    public Item parseCreativeItem(JsonObject json, boolean ignoreUnknown) {
+        String identifier = json.get("id").getAsString();
+        LegacyEntry legacyEntry = this.fromIdentifier(identifier);
+        if (legacyEntry == null) {
+            log.trace("Can not find legacyEntry for " + identifier);
+            if (!ignoreUnknown) {
+                throw new IllegalStateException("Can not find legacyEntry for " + identifier);
+            }
+            return null;
+        }
+
+        byte[] nbtBytes;
+        if (json.has("nbt_b64")) {
+            nbtBytes = Base64.getDecoder().decode(json.get("nbt_b64").getAsString());
+        } else if (json.has("nbt_hex")) {
+            nbtBytes = Utils.parseHexBinary(json.get("nbt_hex").getAsString());
+        } else {
+            nbtBytes = new byte[0];
+        }
+
+        int legacyId = legacyEntry.getLegacyId();
+        int damage = 0;
+        if (json.has("damage")) {
+            damage = json.get("damage").getAsInt();
+        } else if (legacyEntry.isHasDamage()) {
+            damage = legacyEntry.getDamage();
+        } else if (json.has("blockRuntimeId")) {
+            int runtimeId = json.get("blockRuntimeId").getAsInt();
+            int fullId = GlobalBlockPalette.getLegacyFullId(runtimeId);
+            if (fullId == -1) {
+                if (ignoreUnknown) {
+                    return null;
+                } else {
+                    throw new IllegalStateException("Can not find blockRuntimeId for " + identifier + " (" + runtimeId + ")");
+                }
+            }
+
+            damage = fullId & Block.DATA_MASK;
+        }
+
+        int count = json.has("count") ? json.get("count").getAsInt() : 1;
+        return Item.get(legacyId, damage, count, nbtBytes);
+    }
+
 
     public LegacyEntry fromIdentifier(String identifier) {
         return this.identifier2Legacy.get(identifier);

@@ -4,9 +4,6 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
-/**
- * Created on 15-10-27.
- */
 public class EntityExplosionPrimeEvent extends EntityEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
@@ -39,5 +36,4 @@ public class EntityExplosionPrimeEvent extends EntityEvent implements Cancellabl
     public void setBlockBreaking(boolean blockBreaking) {
         this.blockBreaking = blockBreaking;
     }
-
 }

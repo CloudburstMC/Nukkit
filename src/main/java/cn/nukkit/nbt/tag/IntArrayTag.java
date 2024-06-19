@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class IntArrayTag extends Tag {
+
     public int[] data;
 
     public IntArrayTag(String name) {
@@ -19,7 +20,7 @@ public class IntArrayTag extends Tag {
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
+    public void write(NBTOutputStream dos) throws IOException {
         dos.writeInt(data.length);
         for (int aData : data) {
             dos.writeInt(aData);
@@ -27,7 +28,7 @@ public class IntArrayTag extends Tag {
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis) throws IOException {
         int length = dis.readInt();
         data = new int[length];
         for (int i = 0; i < length; i++) {

@@ -4,6 +4,9 @@ import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 
 import java.util.BitSet;
 
+/**
+ * Thread cache
+ */
 public class ThreadCache {
 
     @Deprecated

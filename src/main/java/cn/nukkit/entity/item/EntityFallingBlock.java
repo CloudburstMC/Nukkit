@@ -1,5 +1,6 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockLiquid;
@@ -13,9 +14,12 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GlobalBlockPalette;
+import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
 /**
@@ -90,13 +94,35 @@ public class EntityFallingBlock extends Entity {
         }
 
         this.fireProof = true;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_FIRE_IMMUNE, true);
+    }
 
-        setDataProperty(new IntEntityData(DATA_VARIANT, GlobalBlockPalette.getOrCreateRuntimeId(this.getBlock(), this.getDamage())));
+    @Override
+    public void spawnTo(Player player) {
+        if (!this.hasSpawned.containsKey(player.getLoaderId())) {
+            Boolean hasChunk = player.usedChunks.get(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()));
+            if (hasChunk != null && hasChunk) {
+                AddEntityPacket addEntity = new AddEntityPacket();
+                addEntity.type = this.getNetworkId();
+                addEntity.entityUniqueId = this.id;
+                addEntity.entityRuntimeId = this.id;
+                addEntity.yaw = (float) this.yaw;
+                addEntity.headYaw = (float) this.yaw;
+                addEntity.pitch = (float) this.pitch;
+                addEntity.x = (float) this.x;
+                addEntity.y = (float) this.y;
+                addEntity.z = (float) this.z;
+                addEntity.speedX = (float) this.motionX;
+                addEntity.speedY = (float) this.motionY;
+                addEntity.speedZ = (float) this.motionZ;
+                addEntity.metadata = this.dataProperties.clone().put(new IntEntityData(DATA_VARIANT, GlobalBlockPalette.getOrCreateRuntimeId(this.blockId, this.damage)));
+                player.dataPacket(addEntity);
+                this.hasSpawned.put(player.getLoaderId(), player);
+            }
+        }
     }
 
     public boolean canCollideWith(Entity entity) {
-        return blockId == BlockID.ANVIL;
+        return blockId == BlockID.ANVIL || blockId == BlockID.POINTED_DRIPSTONE;
     }
 
     @Override
@@ -106,12 +132,9 @@ public class EntityFallingBlock extends Entity {
 
     @Override
     public boolean onUpdate(int currentTick) {
-
         if (closed) {
             return false;
         }
-
-        this.timing.startTiming();
 
         int tickDiff = currentTick - lastUpdate;
         if (tickDiff <= 0 && !justCreated) {
@@ -133,26 +156,24 @@ public class EntityFallingBlock extends Entity {
             motionY *= 1 - getDrag();
             motionZ *= friction;
 
-            Vector3 pos = (new Vector3(x - 0.5, y, z - 0.5)).round();
+            Vector3 pos = new Vector3(x - 0.5, y, z - 0.5).round();
 
             if (onGround) {
                 close();
                 Block block = level.getBlock(pos);
-
-                Vector3 floorPos = (new Vector3(x - 0.5, y, z - 0.5)).floor();
-                Block floorBlock = this.level.getBlock(floorPos);
+                Block floorBlock = this.level.getBlock(pos);
                 if (this.getBlock() == Block.SNOW_LAYER && floorBlock.getId() == Block.SNOW_LAYER && (floorBlock.getDamage() & 0x7) != 0x7) {
                     int mergedHeight = (floorBlock.getDamage() & 0x7) + 1 + (this.getDamage() & 0x7) + 1;
                     if (mergedHeight > 8) {
                         EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, floorBlock, Block.get(Block.SNOW_LAYER, 0x7));
                         this.server.getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
-                            this.level.setBlock(floorPos, event.getTo(), true);
+                            this.level.setBlock(pos, event.getTo(), true);
 
-                            Vector3 abovePos = floorPos.up();
+                            Vector3 abovePos = pos.getSideVec(BlockFace.UP);
                             Block aboveBlock = this.level.getBlock(abovePos);
                             if (aboveBlock.getId() == Block.AIR) {
-                                EntityBlockChangeEvent event2 = new EntityBlockChangeEvent(this, aboveBlock, Block.get(Block.SNOW_LAYER, mergedHeight - 8 - 1));
+                                EntityBlockChangeEvent event2 = new EntityBlockChangeEvent(this, aboveBlock, Block.get(Block.SNOW_LAYER, mergedHeight - 9)); // -8-1
                                 this.server.getPluginManager().callEvent(event2);
                                 if (!event2.isCancelled()) {
                                     this.level.setBlock(abovePos, event2.getTo(), true);
@@ -163,21 +184,29 @@ public class EntityFallingBlock extends Entity {
                         EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, floorBlock, Block.get(Block.SNOW_LAYER, mergedHeight - 1));
                         this.server.getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
-                            this.level.setBlock(floorPos, event.getTo(), true);
+                            this.level.setBlock(pos, event.getTo(), true);
                         }
                     }
-                } else if (block.getId() > 0 && block.isTransparent() && !block.canBeReplaced() || this.getBlock() == Block.SNOW_LAYER && block instanceof BlockLiquid) {
+                } else if ((block.isTransparent() && !block.canBeReplaced() || this.getBlock() == Block.SNOW_LAYER && block instanceof BlockLiquid)) {
                     if (this.getBlock() != Block.SNOW_LAYER ? this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS) : this.level.getGameRules().getBoolean(GameRule.DO_TILE_DROPS)) {
-                        getLevel().dropItem(this, Block.get(this.getBlock(), this.getDamage()).toItem());
+                        getLevel().dropItem(this, Item.get(this.blockId, this.damage, 1));
                     }
                 } else {
-                    EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, Block.get(getBlock(), getDamage()));
+                    EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, Block.get(blockId, damage));
                     server.getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
-                        getLevel().setBlock(pos, event.getTo(), true);
+                        int blockId = event.getTo().getId();
+                        if (blockId != Item.POINTED_DRIPSTONE) {
+                            getLevel().setBlock(pos, event.getTo(), true, true);
+                            getLevel().scheduleUpdate(getLevel().getBlock(pos), 1);
+                        }
 
-                        if (event.getTo().getId() == Item.ANVIL) {
-                            getLevel().addLevelEvent(block, LevelEventPacket.EVENT_SOUND_ANVIL_FALL);
+                        if (blockId == Item.ANVIL || blockId == Item.POINTED_DRIPSTONE) {
+                            if (blockId == Item.ANVIL) {
+                                this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ANVIL_FALL);
+                            } else {
+                                this.getLevel().dropItem(this, Block.get(blockId, event.getTo().getDamage()).toItem());
+                            }
 
                             Entity[] e = level.getCollidingEntities(this.getBoundingBox(), this);
                             for (Entity entity : e) {
@@ -193,8 +222,6 @@ public class EntityFallingBlock extends Entity {
 
             updateMovement();
         }
-
-        this.timing.stopTiming();
 
         return hasUpdate || !onGround || Math.abs(motionX) > 0.00001 || Math.abs(motionY) > 0.00001 || Math.abs(motionZ) > 0.00001;
     }

@@ -8,24 +8,27 @@ import java.net.InetSocketAddress;
 
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public interface SourceInterface {
 
     @Deprecated
     default Integer putPacket(Player player, DataPacket packet) {
-        throw new UnsupportedOperationException("This method is deprecated");
+        player.getNetworkSession().sendPacket(packet);
+        return null;
     }
 
     @Deprecated
     default Integer putPacket(Player player, DataPacket packet, boolean needACK) {
-        throw new UnsupportedOperationException("This method is deprecated");
+        player.getNetworkSession().sendPacket(packet);
+        return null;
     }
 
     @Deprecated
     default Integer putPacket(Player player, DataPacket packet, boolean needACK, boolean immediate) {
-        throw new UnsupportedOperationException("This method is deprecated");
+        player.getNetworkSession().sendPacket(packet);
+        return null;
     }
 
     NetworkPlayerSession getSession(InetSocketAddress address);

@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.impl.forest;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  */
 public class ForestHillsBiome extends ForestBiome {

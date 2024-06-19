@@ -16,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 public class EnchantTransaction extends InventoryTransaction {
+
     private Item inputItem;
     private Item outputItem;
     private int cost = -1;
@@ -27,7 +28,9 @@ public class EnchantTransaction extends InventoryTransaction {
     @Override
     public boolean canExecute() {
         Inventory inv = getSource().getWindowById(Player.ENCHANT_WINDOW_ID);
-        if (inv == null) return false;
+        if (!(inv instanceof EnchantInventory)) {
+            return false;
+        }
         EnchantInventory eInv = (EnchantInventory) inv;
         if (!getSource().isCreative()) {
             if (cost == -1 || !eInv.getReagentSlot().equals(Item.get(Item.DYE, 4), true, false) || eInv.getReagentSlot().count < cost)
@@ -50,7 +53,6 @@ public class EnchantTransaction extends InventoryTransaction {
         if (ev.isCancelled()) {
             source.removeAllWindows(false);
             this.sendInventories();
-
             // Cancelled by plugin, means handled OK
             return true;
         }
@@ -88,9 +90,9 @@ public class EnchantTransaction extends InventoryTransaction {
                     break;
                 case NetworkInventoryAction.SOURCE_TYPE_ENCHANT_MATERIAL:
                     if (action.getTargetItem().equals(Item.get(Item.AIR), false, false)) {
-                        this.cost = action.getSourceItem().count;
+                        this.cost = action.getSourceItemUnsafe().count;
                     } else {
-                        this.cost = action.getSourceItem().count - action.getTargetItem().count;
+                        this.cost = action.getSourceItemUnsafe().count - action.getTargetItemUnsafe().count;
                     }
                     break;
             }

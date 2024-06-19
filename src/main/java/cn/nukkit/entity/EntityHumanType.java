@@ -1,18 +1,14 @@
 package cn.nukkit.entity;
 
-import cn.nukkit.Player;
-import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.event.entity.EntityDamageEvent.DamageModifier;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.PlayerEnderChestInventory;
 import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.PlayerOffhandInventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemSkull;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.format.FullChunk;
@@ -20,10 +16,10 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class EntityHumanType extends EntityCreature implements InventoryHolder {
 
@@ -57,8 +53,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             ListTag<CompoundTag> inventoryList = this.namedTag.getList("Inventory", CompoundTag.class);
             for (CompoundTag item : inventoryList.getAll()) {
                 int slot = item.getByte("Slot");
-                if (slot >= 0 && slot < 9) { //hotbar
-                    //Old hotbar saving stuff, remove it (useless now)
+                if (slot >= 0 && slot < 9) {
                     inventoryList.remove(item);
                 } else if (slot >= 100 && slot < 104) {
                     this.inventory.setItem(this.inventory.getSize() + slot - 100, NBTIO.getItemHelper(item));
@@ -101,7 +96,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                 );
             }
 
-            int slotCount = Player.SURVIVAL_SLOTS + 9;
+            int slotCount = 45;
             for (int slot = 9; slot < slotCount; ++slot) {
                 Item item = this.inventory.getItem(slot - 9);
                 inventoryTag.add(NBTIO.putItemHelper(item, slot));
@@ -149,51 +144,39 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
 
     @Override
     public boolean attack(EntityDamageEvent source) {
-        if (this.isClosed() || !this.isAlive()) {
+        if (closed || !this.isAlive()) {
             return false;
         }
 
-        if (source.getCause() != DamageCause.VOID && source.getCause() != DamageCause.CUSTOM && source.getCause() != DamageCause.MAGIC && source.getCause() != DamageCause.HUNGER) {
+        if (source.getCause() != DamageCause.VOID && source.getCause() != DamageCause.CUSTOM && source.getCause() != DamageCause.HUNGER) {
             int armorPoints = 0;
             int epf = 0;
-            //int toughness = 0;
 
             for (Item armor : inventory.getArmorContents()) {
                 armorPoints += armor.getArmorPoints();
                 epf += calculateEnchantmentProtectionFactor(armor, source);
-                //toughness += armor.getToughness();
             }
+
+            //float originalDamage = source.getDamage();
+            //float r = (source.getDamage(EntityDamageEvent.DamageModifier.ARMOR) - (originalDamage - originalDamage * (1 - Math.max(armorPoints / 5, armorPoints - originalDamage / 2) / 25)));
+            //originalDamage += r;
+            //epf = Math.min(20, epf);
+            //source.setDamage(r, EntityDamageEvent.DamageModifier.ARMOR);
+            //source.setDamage(source.getDamage(EntityDamageEvent.DamageModifier.ARMOR_ENCHANTMENTS) - (originalDamage - originalDamage * (1 - epf / 25f)), EntityDamageEvent.DamageModifier.ARMOR_ENCHANTMENTS);
 
             if (source.canBeReducedByArmor()) {
-                source.setDamage(-source.getFinalDamage() * armorPoints * 0.04f, DamageModifier.ARMOR);
+                source.setDamage(-source.getFinalDamage() * armorPoints * 0.04f, EntityDamageEvent.DamageModifier.ARMOR);
             }
 
-            source.setDamage(-source.getFinalDamage() * Math.min(NukkitMath.ceilFloat(Math.min(epf, 25) * ((float) ThreadLocalRandom.current().nextInt(50, 100) / 100)), 20) * 0.04f,
-                    DamageModifier.ARMOR_ENCHANTMENTS);
-        }
+            source.setDamage(-source.getFinalDamage() * Math.min(NukkitMath.ceilFloat(Math.min(epf, 25) * ((float) Utils.random.nextInt(50, 100) / 100)), 20) * 0.04f,
+                    EntityDamageEvent.DamageModifier.ARMOR_ENCHANTMENTS);
 
-        source.setDamage(-Math.min(this.getAbsorption(), source.getFinalDamage()), DamageModifier.ABSORPTION);
+            //source.setDamage(-Math.min(this.getAbsorption(), source.getFinalDamage()), EntityDamageEvent.DamageModifier.ABSORPTION);
 
-        if (super.attack(source)) {
-            Entity damager = null;
-
-            if (source instanceof EntityDamageByEntityEvent) {
-                damager = ((EntityDamageByEntityEvent) source).getDamager();
-            }
-
-            for (int slot = 0; slot < 4; slot++) {
-                Item armor = this.inventory.getArmorItem(slot);
-
-                if (armor.hasEnchantments()) {
-                    if (damager != null) {
-                        for (Enchantment enchantment : armor.getEnchantments()) {
-                            enchantment.doPostAttack(damager, this);
-                        }
-                    }
-
-                    Enchantment durability = armor.getEnchantment(Enchantment.ID_DURABILITY);
-                    if (durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= ThreadLocalRandom.current().nextInt(100))
-                        continue;
+            if (super.attack(source)) {
+                Entity damager = null;
+                if (source instanceof EntityDamageByEntityEvent) {
+                    damager = ((EntityDamageByEntityEvent) source).getDamager();
                 }
 
                 if (source.getCause() != DamageCause.VOID &&
@@ -205,38 +188,67 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                         source.getCause() != DamageCause.FIRE_TICK &&
                         source.getCause() != DamageCause.FALL) { // No armor damage
 
-                    if (armor.isUnbreakable() || armor instanceof ItemSkull) {
-                        continue;
+                    for (int slot = 0; slot < 4; slot++) {
+                        Item armor = damageArmor(this.inventory.getArmorItem(slot), damager, source.getDamage(), false, source.getCause());
+                        inventory.setArmorItem(slot, armor, armor.getId() != BlockID.AIR);
                     }
-
-                    armor.setDamage(armor.getDamage() + 1);
-
-                    if (armor.getDamage() >= armor.getMaxDurability()) {
-                        inventory.setArmorItem(slot, new ItemBlock(Block.get(BlockID.AIR)));
-                    } else {
-                        inventory.setArmorItem(slot, armor, true);
+                } else if (damager != null && source.getCause() != DamageCause.THORNS) { // Do post attack only
+                    for (int slot = 0; slot < 4; slot++) {
+                        Item armor = this.inventory.getArmorItem(slot);
+                        for (Enchantment enchantment : armor.getEnchantments()) {
+                            enchantment.doPostAttack(damager, this);
+                        }
                     }
                 }
+                return true;
+            } else {
+                return false;
             }
-
-            return true;
         } else {
-            return false;
+            return super.attack(source);
         }
     }
 
-    protected double calculateEnchantmentProtectionFactor(Item item, EntityDamageEvent source) {
-        if (!item.hasEnchantments()) {
-            return 0;
+    protected Item damageArmor(Item armor, Entity damager, float damage, boolean shield, DamageCause cause) {
+        if (armor.isUnbreakable() || armor instanceof ItemSkull || armor.getId() == (255 - BlockID.CARVED_PUMPKIN)) {
+            return armor;
         }
 
-        double epf = 0;
+        if (damager != null && cause != DamageCause.THORNS) {
+            for (Enchantment enchantment : armor.getEnchantments()) {
+                enchantment.doPostAttack(damager, this);
+            }
+        }
+
+        Enchantment durability = armor.getEnchantment(Enchantment.ID_DURABILITY);
+        if (durability != null
+                && durability.getLevel() > 0
+                && (100 / (durability.getLevel() + 1)) <= Utils.random.nextInt(100)) {
+            return armor;
+        }
+
+        if (shield) {
+            armor.setDamage(armor.getDamage() + (damage >= 4.0f ? ((int) damage) : 1));
+        } else {
+            armor.setDamage(armor.getDamage() + Math.max((int) (damage / 4), 1));
+        }
+
+        if (armor.getDamage() >= armor.getMaxDurability()) {
+            return Item.get(BlockID.AIR, 0, 0);
+        }
+
+        return armor;
+    }
+
+
+    protected double calculateEnchantmentProtectionFactor(Item item, EntityDamageEvent source) {
+        double epf  = 0;
 
         for (Enchantment ench : item.getEnchantments()) {
-            epf += ench.getProtectionFactor(source);
+            epf  += ench.getProtectionFactor(source);
         }
 
-        return epf;
+        return epf ;
     }
 
     @Override
@@ -254,10 +266,5 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         seconds = (int) (seconds * (1 - level * 0.15));
 
         super.setOnFire(seconds);
-    }
-
-    @Override
-    protected boolean applyNameTag(Player player, Item item) {
-        return false;
     }
 }

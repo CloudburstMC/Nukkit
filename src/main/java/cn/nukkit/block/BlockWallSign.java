@@ -9,6 +9,13 @@ import cn.nukkit.math.BlockFace;
  */
 public class BlockWallSign extends BlockSignPost {
 
+    private static final int[] FACES = {
+            3,
+            2,
+            5,
+            4,
+    };
+
     public BlockWallSign() {
         this(0);
     }
@@ -29,15 +36,9 @@ public class BlockWallSign extends BlockSignPost {
 
     @Override
     public int onUpdate(int type) {
-        int[] faces = {
-                3,
-                2,
-                5,
-                4,
-        };
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (this.getDamage() >= 2 && this.getDamage() <= 5) {
-                if (this.getSide(BlockFace.fromIndex(faces[this.getDamage() - 2])).getId() == Item.AIR) {
+                if (this.getSide(BlockFace.fromIndex(FACES[this.getDamage() - 2])).getId() == Item.AIR) {
                     this.getLevel().useBreakOn(this);
                 }
                 return Level.BLOCK_UPDATE_NORMAL;

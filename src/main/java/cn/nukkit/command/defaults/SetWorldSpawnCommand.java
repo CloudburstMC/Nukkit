@@ -16,12 +16,13 @@ import java.text.DecimalFormat;
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class SetWorldSpawnCommand extends VanillaCommand {
+
     public SetWorldSpawnCommand(String name) {
         super(name, "%nukkit.command.setworldspawn.description", "%commands.setworldspawn.usage");
         this.setPermission("nukkit.command.setworldspawn");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newType("spawnPoint", true, CommandParamType.POSITION)
+                new CommandParameter("blockPos", CommandParamType.POSITION, true)
         });
     }
 
@@ -54,9 +55,7 @@ public class SetWorldSpawnCommand extends VanillaCommand {
         }
         level.setSpawnLocation(pos);
         DecimalFormat round2 = new DecimalFormat("##0.00");
-        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success", round2.format(pos.x),
-                round2.format(pos.y),
-                round2.format(pos.z)));
+        Command.broadcastCommandMessage(sender, new TranslationContainer("commands.setworldspawn.success", round2.format(pos.x), round2.format(pos.y), round2.format(pos.z)));
         return true;
     }
 }

@@ -7,6 +7,7 @@ import cn.nukkit.item.ItemTool;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockStairsStoneBrick extends BlockStairs {
+
     public BlockStairsStoneBrick() {
         this(0);
     }

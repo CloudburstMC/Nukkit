@@ -4,7 +4,8 @@ import cn.nukkit.form.response.FormResponseModal;
 
 public class FormWindowModal extends FormWindow {
 
-    private final String type = "modal"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
+    @SuppressWarnings("unused")
+    private final String type = "modal";
     private String title = "";
     private String content = "";
     private String button1 = "";
@@ -63,5 +64,4 @@ public class FormWindowModal extends FormWindow {
         if (data.equals("true")) response = new FormResponseModal(0, button1);
         else response = new FormResponseModal(1, button2);
     }
-
 }

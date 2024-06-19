@@ -4,25 +4,17 @@ import cn.nukkit.entity.EntityArthropod;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-/**
- * @author PikyCZ
- */
-public class EntitySilverfish extends EntityMob implements EntityArthropod {
+public class EntitySilverfish extends EntityWalkingMob implements EntityArthropod {
 
     public static final int NETWORK_ID = 39;
-
-    @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
-    }
 
     public EntitySilverfish(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
     @Override
-    public String getName() {
-        return "Silverfish";
+    public int getNetworkId() {
+        return NETWORK_ID;
     }
 
     @Override
@@ -37,7 +29,12 @@ public class EntitySilverfish extends EntityMob implements EntityArthropod {
 
     @Override
     public void initEntity() {
-        super.initEntity();
         this.setMaxHealth(8);
+        super.initEntity();
+    }
+
+    @Override
+    public int getKillExperience() {
+        return 5;
     }
 }

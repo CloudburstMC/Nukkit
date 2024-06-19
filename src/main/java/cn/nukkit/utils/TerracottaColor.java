@@ -1,5 +1,8 @@
 package cn.nukkit.utils;
 
+/**
+ * Terracotta color enum
+ */
 public enum TerracottaColor {
 
     BLACK(0, 15, "Black", "Ink Sac", BlockColor.BLACK_TERRACOTA_BLOCK_COLOR),
@@ -20,11 +23,11 @@ public enum TerracottaColor {
     WHITE(15, 0, "White", "Bone Meal", BlockColor.WHITE_TERRACOTA_BLOCK_COLOR);
 
 
-    private int dyeColorMeta;
-    private int terracottaColorMeta;
-    private String colorName;
-    private String dyeName;
-    private BlockColor blockColor;
+    private final int dyeColorMeta;
+    private final int terracottaColorMeta;
+    private final String colorName;
+    private final String dyeName;
+    private final BlockColor blockColor;
 
 
     private final static TerracottaColor[] BY_TERRACOTA_DATA;
@@ -42,22 +45,47 @@ public enum TerracottaColor {
         this.dyeName = dyeName;
     }
 
+    /**
+     * Get as BlockColor
+     *
+     * @return BlockColor of the TerracottaColor
+     */
     public BlockColor getColor() {
         return this.blockColor;
     }
 
+    /**
+     * Get as dye item meta value
+     *
+     * @return dye item meta value of the TerracottaColor
+     */
     public int getDyeData() {
         return this.dyeColorMeta;
     }
 
+    /**
+     * Get as terracotta block meta value
+     *
+     * @return terracotta block meta value of the TerracottaColor
+     */
     public int getTerracottaData() {
         return this.terracottaColorMeta;
     }
 
+    /**
+     * Get color name
+     *
+     * @return color name
+     */
     public String getName() {
         return this.colorName;
     }
 
+    /**
+     * Get dye name
+     *
+     * @return dye name
+     */
     public String getDyeName() {
         return this.dyeName;
     }
@@ -72,10 +100,21 @@ public enum TerracottaColor {
         }
     }
 
+    /**
+     * Get TerracottaColor by dye item meta value
+     * @param dyeColorMeta dye item meta value
+     * @return TerracottaColor
+     */
     public static TerracottaColor getByDyeData(int dyeColorMeta) {
         return BY_DYE_DATA[dyeColorMeta & 0x0f];
     }
 
-    public static TerracottaColor getByTerracottaData(int terracottaColorMeta) { return BY_TERRACOTA_DATA[terracottaColorMeta & 0x0f]; }
-
+    /**
+     * Get TerracottaColor by terracotta block meta value
+     * @param terracottaColorMeta terracotta block meta value
+     * @return TerracottaColor
+     */
+    public static TerracottaColor getByTerracottaData(int terracottaColorMeta) {
+        return BY_TERRACOTA_DATA[terracottaColorMeta & 0x0f];
+    }
 }

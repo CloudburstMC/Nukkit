@@ -4,17 +4,18 @@ import cn.nukkit.Player;
 import cn.nukkit.block.*;
 import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
+import cn.nukkit.level.particle.ItemBreakParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-
-import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.utils.Utils;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemFlintSteel extends ItemTool {
-    
+
     public ItemFlintSteel() {
         this(0, 1);
     }
@@ -38,14 +39,16 @@ public class ItemFlintSteel extends ItemTool {
             return false;
         }
 
-        if (block.getId() == AIR && (target instanceof BlockSolid || target instanceof BlockSolidMeta)) {
+        // 1.18 vanilla allows flint & steel to be used even if fire exists
+        if ((block.getId() == AIR || block.getId() == FIRE || block.getId() == SOUL_FIRE) && (target instanceof BlockSolid || target instanceof BlockSolidMeta || target instanceof BlockLeaves)) {
             if (target.getId() == OBSIDIAN) {
-                if (level.createPortal(target)) {
+                if (level.createPortal(target, false)) {
                     return true;
                 }
             }
 
-            BlockFire fire = (BlockFire) Block.get(BlockID.FIRE);
+            int did;
+            BlockFire fire = (BlockFire) Block.get(((did = block.down().getId()) == SOUL_SAND || did == SOUL_SOIL) ? BlockID.SOUL_FIRE : BlockID.FIRE);
             fire.x = block.x;
             fire.y = block.y;
             fire.z = block.z;
@@ -57,18 +60,23 @@ public class ItemFlintSteel extends ItemTool {
 
                 if (!e.isCancelled()) {
                     level.setBlock(fire, fire, true);
+                    level.scheduleUpdate(fire, fire.tickRate() + Utils.random.nextInt(10));
                     level.addLevelSoundEvent(block, LevelSoundEventPacket.SOUND_IGNITE);
-                    level.scheduleUpdate(fire, fire.tickRate() + ThreadLocalRandom.current().nextInt(10));
 
-                    if ((player.gamemode & 0x01) == 0 && this.useOn(block)) {
-                        if (this.getDamage() >= this.getMaxDurability()) {
+                    if (!player.isCreative()) {
+                        this.useOn(block);
+                        if (this.getDamage() >= DURABILITY_FLINT_STEEL) {
                             this.count = 0;
+
+                            player.level.addSound(player, Sound.RANDOM_BREAK);
+                            player.level.addParticle(new ItemBreakParticle(player, this));
                         }
+
                         player.getInventory().setItemInHand(this);
                     }
                 }
-                return true;
             }
+            return true;
         }
         return false;
     }

@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol.types;
 
 public enum ClientPlayMode {
+
     NORMAL,
     TEASER,
     SCREEN,

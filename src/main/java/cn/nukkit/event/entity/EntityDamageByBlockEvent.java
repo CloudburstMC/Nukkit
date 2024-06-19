@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EntityDamageByBlockEvent extends EntityDamageEvent {
@@ -19,5 +19,4 @@ public class EntityDamageByBlockEvent extends EntityDamageEvent {
     public Block getDamager() {
         return damager;
     }
-
 }

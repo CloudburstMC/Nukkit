@@ -1,7 +1,6 @@
 package cn.nukkit.level.generator.populator.impl.tree;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.object.tree.ObjectBigSpruceTree;
@@ -18,14 +17,7 @@ public class SpruceMegaTreePopulator extends Populator {
     private int randomAmount;
     private int baseAmount;
 
-    private final int type;
-
     public SpruceMegaTreePopulator() {
-        this(BlockSapling.SPRUCE);
-    }
-
-    private SpruceMegaTreePopulator(int type) {
-        this.type = type;
     }
 
     public void setRandomAmount(int randomAmount) {
@@ -49,7 +41,7 @@ public class SpruceMegaTreePopulator extends Populator {
             if (y == -1) {
                 continue;
             }
-            new ObjectBigSpruceTree(1 / 4f, 5).placeObject(this.level, (int) (v.x = x), (int) (v.y = y), (int) (v.z = z), random);
+            new ObjectBigSpruceTree(0.25f, 5).placeObject(this.level, (int) (v.x = x), (int) (v.y = y), (int) (v.z = z), random);
         }
     }
 
@@ -57,7 +49,7 @@ public class SpruceMegaTreePopulator extends Populator {
         int y;
         for (y = 255; y > 0; --y) {
             int b = this.level.getBlockIdAt(x, y, z);
-            if (b == Block.DIRT || b == Block.GRASS) {
+            if (b == Block.DIRT || b == Block.GRASS || b == Block.PODZOL) {
                 break;
             } else if (b != Block.AIR && b != Block.SNOW_LAYER) {
                 return -1;

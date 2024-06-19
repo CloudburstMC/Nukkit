@@ -5,26 +5,22 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.populator.type.Populator;
 import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.utils.Utils;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class Biome implements BlockID {
 
-    public static final int MAX_BIOMES = 256;
-    public static final Biome[] biomes = new Biome[MAX_BIOMES];
+    public static final Biome[] biomes = new Biome[256];
     public static final List<Biome> unorderedBiomes = new ObjectArrayList<>();
     private static final Int2ObjectMap<String> runtimeId2Identifier = new Int2ObjectOpenHashMap<>();
 
@@ -34,14 +30,10 @@ public abstract class Biome implements BlockID {
     private float heightVariation = 0.3f;
 
     static {
-        try (InputStream stream = Biome.class.getClassLoader().getResourceAsStream("biome_id_map.json")) {
-            JsonObject json = JsonParser.parseReader(new InputStreamReader(stream)).getAsJsonObject();
-            for (String identifier : json.keySet()) {
-                int biomeId = json.get(identifier).getAsInt();
-                runtimeId2Identifier.put(biomeId, identifier);
-            }
-        } catch (NullPointerException | IOException e) {
-            throw new AssertionError("Unable to load biome mapping from biome_id_map.json", e);
+        JsonObject json = Utils.loadJsonResource("biome_id_map.json").getAsJsonObject();
+        for (String identifier : json.keySet()) {
+            int biomeId = json.get(identifier).getAsInt();
+            runtimeId2Identifier.put(biomeId, identifier);
         }
     }
 
@@ -129,7 +121,7 @@ public abstract class Biome implements BlockID {
 
     @Override
     public int hashCode() {
-        return getId();
+        return id;
     }
 
     @Override
@@ -137,7 +129,11 @@ public abstract class Biome implements BlockID {
         return hashCode() == obj.hashCode();
     }
 
-    //whether or not water should freeze into ice on generation
+    /**
+     * Whether or not water should freeze into ice on generation
+     *
+     * @return overhang
+     */
     public boolean isFreezing() {
         return false;
     }

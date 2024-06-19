@@ -2,6 +2,7 @@ package cn.nukkit.metrics;
 
 import cn.nukkit.Server;
 import cn.nukkit.utils.Config;
+import cn.nukkit.utils.Utils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,6 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NukkitMetrics {
+
     private static boolean metricsStarted = false;
 
     private final Server server;
@@ -31,8 +33,8 @@ public class NukkitMetrics {
 
         try {
             this.loadConfig();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException ex) {
+            server.getLogger().logException(ex);
         }
 
         if (enabled) {
@@ -48,7 +50,7 @@ public class NukkitMetrics {
                 Map<String, Integer> valueMap = new HashMap<>();
 
                 server.getOnlinePlayers().forEach((uuid, player) -> {
-                    String deviceOS = mapDeviceOSToString(player.getLoginChainData().getDeviceOS());
+                    String deviceOS = Utils.getOS(player);
                     if (!valueMap.containsKey(deviceOS)) {
                         valueMap.put(deviceOS, 1);
                     } else {
@@ -146,26 +148,5 @@ public class NukkitMetrics {
                 writer.newLine();
             }
         }
-    }
-
-    private String mapDeviceOSToString(int os) {
-        switch (os) {
-            case 1: return "Android";
-            case 2: return "iOS";
-            case 3: return "macOS";
-            case 4: return "Fire OS";
-            case 5: return "Gear VR";
-            case 6: return "HoloLens";
-            case 7: return "Windows 10";
-            case 8: return "Windows";
-            case 9: return "Dedicated";
-            case 10: return "tvOS";
-            case 11: return "PlayStation";
-            case 12: return "Switch";
-            case 13: return "Xbox";
-            case 14: return "Windows Phone";
-            case 15: return "Linux";
-        }
-        return "Unknown";
     }
 }

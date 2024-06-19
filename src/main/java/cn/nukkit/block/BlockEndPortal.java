@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
 public class BlockEndPortal extends BlockFlowable {
@@ -22,11 +23,6 @@ public class BlockEndPortal extends BlockFlowable {
     @Override
     public int getId() {
         return END_PORTAL;
-    }
-
-    @Override
-    public boolean canPassThrough() {
-        return true;
     }
 
     @Override
@@ -72,6 +68,11 @@ public class BlockEndPortal extends BlockFlowable {
     @Override
     public boolean canBeFlowedInto() {
         return false;
+    }
+
+    @Override
+    protected AxisAlignedBB recalculateBoundingBox() {
+        return this;
     }
 
     @Override
