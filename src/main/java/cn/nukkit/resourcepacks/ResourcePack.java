@@ -4,6 +4,8 @@ import java.util.UUID;
 
 public interface ResourcePack {
 
+    ResourcePack[] EMPTY_ARRAY = new ResourcePack[0];
+
     String getPackName();
 
     UUID getPackId();

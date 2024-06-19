@@ -5,7 +5,6 @@ import cn.nukkit.Server;
 import cn.nukkit.network.protocol.RemoveObjectivePacket;
 import cn.nukkit.network.protocol.SetDisplayObjectivePacket;
 import cn.nukkit.network.protocol.SetScorePacket;
-import com.google.common.collect.ImmutableMap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

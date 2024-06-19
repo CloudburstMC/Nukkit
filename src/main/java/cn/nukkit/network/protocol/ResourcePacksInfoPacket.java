@@ -16,8 +16,8 @@ public class ResourcePacksInfoPacket extends DataPacket {
     public boolean scripting;
     public boolean forceServerPacks;
     public boolean hasAddonPacks;
-    public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
-    public ResourcePack[] resourcePackEntries = new ResourcePack[0];
+    public ResourcePack[] behaviourPackEntries = ResourcePack.EMPTY_ARRAY;
+    public ResourcePack[] resourcePackEntries = ResourcePack.EMPTY_ARRAY;
     public List<CDNEntry> CDNEntries = new ObjectArrayList<>();
 
     @Override
@@ -64,7 +64,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
             this.putLLong(entry.getPackSize());
             this.putString(entry.getEncryptionKey()); // encryption key
             this.putString(""); // sub-pack name
-            this.putString(!entry.getEncryptionKey().equals("") ? entry.getPackId().toString() : ""); // content identity
+            this.putString(!entry.getEncryptionKey().isEmpty() ? entry.getPackId().toString() : ""); // content identity
             this.putBoolean(false); // scripting
             this.putBoolean(false); // raytracing capable
         }
