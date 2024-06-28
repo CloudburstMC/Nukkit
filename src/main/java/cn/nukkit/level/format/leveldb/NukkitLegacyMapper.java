@@ -16,10 +16,11 @@ public class NukkitLegacyMapper implements LegacyStateMapper {
         List<NbtMap> states = loadBlockPalette();
         for (int i = 0; i < states.size(); i++) {
             NbtMap state = states.get(i);
-            if (state.containsKey("name_hash") || state.containsKey("network_id")) {
+            if (state.containsKey("name_hash") || state.containsKey("network_id") || state.containsKey("block_id")) {
                 NbtMapBuilder builder = NbtMapBuilder.from(state);
                 builder.remove("name_hash");
                 builder.remove("network_id");
+                builder.remove("block_id");
                 state = builder.build();
             }
             state.hashCode(); // cache hashCode
@@ -28,10 +29,10 @@ public class NukkitLegacyMapper implements LegacyStateMapper {
     }
 
     public static List<NbtMap> loadBlockPalette() {
-        try (InputStream stream = NukkitLegacyMapper.class.getClassLoader().getResourceAsStream("leveldb_palette.nbt")) {
+        try (InputStream stream = NukkitLegacyMapper.class.getClassLoader().getResourceAsStream("block_palette_" + LevelDBConstants.PALETTE_VERSION + ".nbt")) {
             return ((NbtMap) NbtUtils.createGZIPReader(stream).readTag()).getList("blocks", NbtType.COMPOUND);
         } catch (Exception e) {
-            throw new AssertionError("Error loading block palette leveldb_palette.nbt", e);
+            throw new AssertionError("Error while loading leveldb block palette", e);
         }
     }
 

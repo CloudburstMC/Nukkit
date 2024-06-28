@@ -20,7 +20,7 @@ leveldbjni = { group = "net.daporkchop", name = "leveldb-mcpe-jni", version = "0
 snappy = { group = "org.xerial.snappy", name = "snappy-java", version = "1.1.10.5" }
 jwt = { group = "com.nimbusds", name = "nimbus-jose-jwt", version = "9.13" }
 jopt-simple = { group = "net.sf.jopt-simple", name = "jopt-simple", version = "5.0.4" }
-blockstateupdater = { group = "org.cloudburstmc", name = "block-state-updater", version = "1.20.10-SNAPSHOT" }
+blockstateupdater = { group = "org.cloudburstmc", name = "block-state-updater", version = "1.20.70-SNAPSHOT" }
 lmbda = { group = "org.lanternpowered", name = "lmbda", version = "2.0.0" }
 noise = { group = "net.daporkchop.lib", name = "noise", version = "0.5.6-SNAPSHOT" }
 lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.26" }

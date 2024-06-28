@@ -240,7 +240,7 @@ public class CustomBlockManager {
         try (InputStream stream = Files.newInputStream(path)) {
             return ((NbtMap) NbtUtils.createGZIPReader(stream).readTag()).getList("blocks", NbtType.COMPOUND);
         } catch (Exception e) {
-            throw new AssertionError("Error loading block palette leveldb_palette.nbt", e);
+            throw new AssertionError("Error while loading vanilla palette", e);
         }
     }
 

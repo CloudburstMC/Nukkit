@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.leveldb;
 
+import cn.nukkit.block.BlockID;
 import cn.nukkit.level.format.leveldb.structure.BlockStateSnapshot;
 import cn.nukkit.level.format.leveldb.updater.BlockStateUpdaterChunker;
 import cn.nukkit.level.format.leveldb.updater.BlockStateUpdaterVanilla;
@@ -28,7 +29,6 @@ import static cn.nukkit.level.format.leveldb.LevelDBConstants.PALETTE_VERSION;
 public class BlockStateMapping {
     private static final Logger log = LogManager.getLogger("LevelDB-Logger");
     private static final Logger serverLog = LogManager.getLogger(MainLogger.class);
-    private static final int UPDATE_BLOCK = 284;
 
     private static final CompoundTagUpdaterContext CONTEXT;
     private static final int LATEST_UPDATER_VERSION;
@@ -36,7 +36,7 @@ public class BlockStateMapping {
 
     private static final Cache<NbtMap, NbtMap> BLOCK_UPDATE_CACHE = CacheBuilder.newBuilder()
             .maximumSize(1024)
-            .expireAfterAccess(60, TimeUnit.SECONDS)
+            .expireAfterAccess(2, TimeUnit.MINUTES)
             .build();
 
     static {
@@ -62,6 +62,11 @@ public class BlockStateMapping {
         updaters.add(BlockStateUpdater_1_19_80.INSTANCE);
         updaters.add(BlockStateUpdater_1_20_0.INSTANCE);
         updaters.add(BlockStateUpdater_1_20_10.INSTANCE);
+        updaters.add(BlockStateUpdater_1_20_30.INSTANCE);
+        updaters.add(BlockStateUpdater_1_20_40.INSTANCE);
+        updaters.add(BlockStateUpdater_1_20_50.INSTANCE);
+        updaters.add(BlockStateUpdater_1_20_60.INSTANCE);
+        updaters.add(BlockStateUpdater_1_20_70.INSTANCE);
         updaters.add(BlockStateUpdaterVanilla.INSTANCE);
 
         boolean chunkerSupport = Boolean.parseBoolean(System.getProperty("leveldb-chunker"));
@@ -195,7 +200,8 @@ public class BlockStateMapping {
         if (data == -1) {
             log.warn("Can not find legacyId! No runtime2legacy mapping for " + runtimeId);
             data = this.legacyMapper.runtimeToLegacyData(this.getDefaultRuntimeId());
-            Preconditions.checkArgument(data != -1, "Can not find legacyData for default runtimeId: " + this.getDefaultRuntimeId());        }
+            Preconditions.checkArgument(data != -1, "Can not find legacyData for default runtimeId: " + this.getDefaultRuntimeId());
+        }
         return data;
     }
 
@@ -211,14 +217,14 @@ public class BlockStateMapping {
 
     public int getDefaultRuntimeId() {
         if (this.defaultRuntimeId == -1) {
-            this.setDefaultBlock(UPDATE_BLOCK, 0);
+            this.setDefaultBlock(BlockID.INFO_UPDATE, 0);
         }
         return this.defaultRuntimeId;
     }
 
     public BlockStateSnapshot getDefaultState() {
         if (this.defaultState == null) {
-            this.setDefaultBlock(UPDATE_BLOCK, 0);
+            this.setDefaultBlock(BlockID.INFO_UPDATE, 0);
         }
         return this.defaultState;
     }
