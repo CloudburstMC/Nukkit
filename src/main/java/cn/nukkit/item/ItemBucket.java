@@ -3,6 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.*;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.event.player.PlayerBucketEmptyEvent;
 import cn.nukkit.event.player.PlayerBucketFillEvent;
 import cn.nukkit.event.player.PlayerItemConsumeEvent;
@@ -244,7 +245,7 @@ public class ItemBucket extends Item {
             player.getInventory().setItemInHand(Item.get(Item.BUCKET));
         }
 
-        player.removeAllEffects();
+        player.removeAllEffects(EntityPotionEffectEvent.Cause.MILK);
         return true;
     }
 }

@@ -13,12 +13,9 @@ import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityThrownTrident;
-import cn.nukkit.event.entity.EntityDamageByBlockEvent;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
-import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageModifier;
-import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.event.inventory.InventoryCloseEvent;
 import cn.nukkit.event.inventory.InventoryPickupArrowEvent;
 import cn.nukkit.event.inventory.InventoryPickupItemEvent;
@@ -4340,7 +4337,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.deadTicks = 0;
         this.noDamageTicks = 60;
 
-        this.removeAllEffects();
+        this.removeAllEffects(EntityPotionEffectEvent.Cause.DEATH);
         this.setHealth(this.getMaxHealth());
         this.getFoodData().setLevel(20, 20);
 

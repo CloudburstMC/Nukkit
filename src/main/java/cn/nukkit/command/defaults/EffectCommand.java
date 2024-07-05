@@ -6,6 +6,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandEnum;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.InstantEffect;
@@ -62,9 +63,7 @@ public class EffectCommand extends Command {
             return true;
         }
         if (args[1].equalsIgnoreCase("clear")) {
-            for (Effect effect : player.getEffects().values()) {
-                player.removeEffect(effect.getId());
-            }
+            player.removeAllEffects(EntityPotionEffectEvent.Cause.COMMAND);
             sender.sendMessage(new TranslationContainer("commands.effect.success.removed.all", player.getDisplayName()));
             return true;
         }
@@ -117,11 +116,11 @@ public class EffectCommand extends Command {
                 }
                 return true;
             }
-            player.removeEffect(effect.getId());
+            player.removeEffect(effect.getId(), EntityPotionEffectEvent.Cause.COMMAND);
             sender.sendMessage(new TranslationContainer("commands.effect.success.removed", effect.getName(), player.getDisplayName()));
         } else {
             effect.setDuration(duration).setAmplifier(amplification);
-            player.addEffect(effect);
+            player.addEffect(effect, EntityPotionEffectEvent.Cause.COMMAND);
             Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.effect.success", effect.getName(), String.valueOf(effect.getAmplifier()), player.getDisplayName(), String.valueOf(effect.getDuration() / 20)));
         }
         return true;
