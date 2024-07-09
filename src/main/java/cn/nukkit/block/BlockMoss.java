@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.utils.BlockColor;
 
@@ -108,5 +109,10 @@ public class BlockMoss extends BlockDirt {
             return new Item[]{this.toItem()};
         }
         return new Item[0];
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_HOE;
     }
 }

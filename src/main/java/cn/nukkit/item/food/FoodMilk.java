@@ -1,6 +1,7 @@
 package cn.nukkit.item.food;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.item.Item;
 
 /**
@@ -13,7 +14,7 @@ public class FoodMilk extends Food {
     protected boolean onEatenBy(Player player) {
         super.onEatenBy(player);
         player.getInventory().addItem(Item.get(Item.BUCKET));
-        player.removeAllEffects();
+        player.removeAllEffects(EntityPotionEffectEvent.Cause.MILK);
         return true;
     }
 }

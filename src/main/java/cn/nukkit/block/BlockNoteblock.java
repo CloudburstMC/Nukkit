@@ -208,7 +208,9 @@ public class BlockNoteblock extends BlockSolid {
     }
 
     public void emitSound() {
-        if (!this.isBlockAboveAir()) return;
+        if (this.level.getBlockIdAt((int) this.x, (int) this.y + 1, (int) this.z) != AIR) {
+            return;
+        }
 
         Instrument instrument = this.getInstrument();
 

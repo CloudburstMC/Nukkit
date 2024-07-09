@@ -48,18 +48,19 @@ public class BlockFence extends BlockTransparentMeta {
         return ItemTool.TYPE_AXE;
     }
 
+    private static final String[] names = {
+            "Oak Fence",
+            "Spruce Fence",
+            "Birch Fence",
+            "Jungle Fence",
+            "Acacia Fence",
+            "Dark Oak Fence",
+            "",
+            ""
+    };
+
     @Override
     public String getName() {
-        String[] names = {
-                "Oak Fence",
-                "Spruce Fence",
-                "Birch Fence",
-                "Jungle Fence",
-                "Acacia Fence",
-                "Dark Oak Fence",
-                "",
-                ""
-        };
         return names[this.getDamage() & 0x07];
     }
 

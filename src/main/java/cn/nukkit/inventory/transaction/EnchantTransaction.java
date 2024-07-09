@@ -6,6 +6,7 @@ import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.EnchantingAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
+import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.Getter;
@@ -19,10 +20,21 @@ public class EnchantTransaction extends InventoryTransaction {
 
     private Item inputItem;
     private Item outputItem;
+    private Item outputItemCheck;
+
     private int cost = -1;
 
     public EnchantTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
+
+        for (InventoryAction action : actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                if (slotChangeAction.getInventory() instanceof EnchantInventory && slotChangeAction.getSlot() == 0) {
+                    this.outputItemCheck = slotChangeAction.getTargetItem();
+                }
+            }
+        }
     }
 
     @Override
@@ -36,7 +48,11 @@ public class EnchantTransaction extends InventoryTransaction {
             if (cost == -1 || !eInv.getReagentSlot().equals(Item.get(Item.DYE, 4), true, false) || eInv.getReagentSlot().count < cost)
                 return false;
         }
-        return (inputItem != null && outputItem != null && inputItem.equals(eInv.getInputSlot(), true, true));
+        return this.inputItem != null && this.outputItem != null
+                && this.inputItem.equals(eInv.getInputSlot(), true, true)
+                && (this.outputItemCheck == null || this.inputItem.getId() == this.outputItemCheck.getId() ||
+                (this.inputItem.getId() == Item.BOOK && this.outputItemCheck.getId() == Item.ENCHANTED_BOOK))
+                && (this.outputItemCheck == null || this.inputItem.getCount() == this.outputItemCheck.getCount());
     }
 
     @Override

@@ -19,18 +19,19 @@ public class BlockSlabWood extends BlockSlab {
         super(meta, DOUBLE_WOODEN_SLAB);
     }
 
+    private static final String[] names = {
+            "Oak",
+            "Spruce",
+            "Birch",
+            "Jungle",
+            "Acacia",
+            "Dark Oak",
+            "",
+            ""
+    };
+
     @Override
     public String getName() {
-        String[] names = {
-                "Oak",
-                "Spruce",
-                "Birch",
-                "Jungle",
-                "Acacia",
-                "Dark Oak",
-                "",
-                ""
-        };
         return (((this.getDamage() & 0x08) == 0x08) ? "Upper " : "") + names[this.getDamage() & 0x07] + " Wooden Slab";
     }
 

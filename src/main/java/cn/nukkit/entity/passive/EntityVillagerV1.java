@@ -143,7 +143,7 @@ public class EntityVillagerV1 extends EntityWalkingAnimal implements InventoryHo
 
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        if (recipes.size() > 0) {
+        if (!recipes.isEmpty()) {
             player.addWindow(this.getInventory());
             return true;
         }

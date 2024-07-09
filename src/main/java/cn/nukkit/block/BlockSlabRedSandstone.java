@@ -25,19 +25,19 @@ public class BlockSlabRedSandstone extends BlockSlab {
         return RED_SANDSTONE_SLAB;
     }
 
+    private static final String[] names = {
+            "Red Sandstone",
+            "Purpur",
+            "",
+            "",
+            "",
+            "",
+            "",
+            ""
+    };
+
     @Override
     public String getName() {
-        String[] names = {
-                "Red Sandstone",
-                "Purpur",
-                "",
-                "",
-                "",
-                "",
-                "",
-                ""
-        };
-
         return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
     }
 

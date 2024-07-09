@@ -29,14 +29,15 @@ public class BlockTallGrass extends BlockFlowable {
         return TALL_GRASS;
     }
 
+    private static final String[] names = {
+            "Grass",
+            "Grass",
+            "Fern",
+            "Fern"
+    };
+
     @Override
     public String getName() {
-        String[] names = {
-                "Grass",
-                "Grass",
-                "Fern",
-                "Fern"
-        };
         return names[this.getDamage() & 0x03];
     }
 
@@ -64,7 +65,7 @@ public class BlockTallGrass extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         int id = down.getId();
-        if (id == Block.GRASS || id == Block.DIRT || id == Block.PODZOL || id == FARMLAND || id == MYCELIUM) {
+        if (id == Block.GRASS || id == Block.DIRT || id == Block.PODZOL || id == FARMLAND || id == MYCELIUM || id == MOSS_BLOCK) {
             this.getLevel().setBlock(block, this, true);
             return true;
         }
@@ -125,7 +126,7 @@ public class BlockTallGrass extends BlockFlowable {
     public Item[] getDrops(Item item) {
         if (item.isShears()) {
             return new Item[]{
-                    Item.get(Item.TALL_GRASS, this.getDamage(), 1)
+                    Item.get(Item.TALL_GRASS, this.getDamage() & 2, 1)
             };
         }
 

@@ -117,7 +117,7 @@ public class LevelDBChunkSection implements ChunkSection {
             if (layer != Block.LAYER_WATERLOGGED && block.getId() == 0 && fullId != block.getFullId() && this.hasSecondLayer()) {
                 this.computeStorage(Block.LAYER_WATERLOGGED).setFullBlock(x, y, z, 0);
             }
-            return Block.getUnsafe(fullId).clone();
+            return Block.get(fullId, null, x, y, z, layer);
         }
     }
 

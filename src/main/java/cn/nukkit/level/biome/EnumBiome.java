@@ -12,6 +12,7 @@ import cn.nukkit.level.biome.impl.forest.FlowerForestBiome;
 import cn.nukkit.level.biome.impl.forest.ForestBiome;
 import cn.nukkit.level.biome.impl.forest.ForestHillsBiome;
 import cn.nukkit.level.biome.impl.iceplains.IcePlainsBiome;
+import cn.nukkit.level.biome.impl.iceplains.IcePlainsHillsBiome;
 import cn.nukkit.level.biome.impl.iceplains.IcePlainsSpikesBiome;
 import cn.nukkit.level.biome.impl.jungle.*;
 import cn.nukkit.level.biome.impl.mesa.*;
@@ -21,9 +22,7 @@ import cn.nukkit.level.biome.impl.nether.BasaltDeltasBiome;
 import cn.nukkit.level.biome.impl.nether.CrimsonForestBiome;
 import cn.nukkit.level.biome.impl.nether.SoulSandValleyBiome;
 import cn.nukkit.level.biome.impl.nether.WarpedForestBiome;
-import cn.nukkit.level.biome.impl.ocean.DeepOceanBiome;
-import cn.nukkit.level.biome.impl.ocean.FrozenOceanBiome;
-import cn.nukkit.level.biome.impl.ocean.OceanBiome;
+import cn.nukkit.level.biome.impl.ocean.*;
 import cn.nukkit.level.biome.impl.plains.PlainsBiome;
 import cn.nukkit.level.biome.impl.plains.SunflowerPlainsBiome;
 import cn.nukkit.level.biome.impl.river.FrozenRiverBiome;
@@ -60,6 +59,7 @@ public enum EnumBiome {
     FROZEN_OCEAN(10, new FrozenOceanBiome()),
     FROZEN_RIVER(11, new FrozenRiverBiome()),
     ICE_PLAINS(12, new IcePlainsBiome()),
+    ICE_MOUNTAINS(13, new IcePlainsHillsBiome()),
     MUSHROOM_ISLAND(14, new MushroomIslandBiome()),
     MUSHROOM_ISLAND_SHORE(15, new MushroomIslandShoreBiome()),
     BEACH(16, new BeachBiome()),
@@ -86,6 +86,16 @@ public enum EnumBiome {
     MESA(37, new MesaBiome()),
     MESA_PLATEAU_F(38, new MesaPlateauFBiome()),
     MESA_PLATEAU(39, new MesaPlateauBiome()),
+    WARM_OCEAN(40, new WarmOceanBiome()),
+    DEEP_WARM_OCEAN(41, new WarmDeepOceanBiome()),
+    LUKEWARM_OCEAN(42, new LukewarmOceanBiome()),
+    DEEP_LUKEWARM_OCEAN(43, new LukewarmDeepOceanBiome()),
+    COLD_OCEAN(44, new ColdOceanBiome()),
+    DEEP_COLD_OCEAN(45, new ColdDeepOceanBiome()),
+    NEW_FROZEN_OCEAN(46, new NewFrozenOceanBiome()),
+    DEEP_FROZEN_OCEAN(47, new FrozenDeepOceanBiome()),
+    BAMBOO_JUNGLE(48, new BambooJungleBiome()),
+    BAMBOO_JUNGLE_HILLS(49, new BambooJungleHillsBiome()),
     // All biomes below this comment are mutated variants of existing biomes
     SUNFLOWER_PLAINS(129, new SunflowerPlainsBiome()),
     DESERT_M(130, new DesertMBiome()),
@@ -102,6 +112,7 @@ public enum EnumBiome {
     ROOFED_FOREST_M(157, new RoofedForestMBiome()),
     COLD_TAIGA_M(158, new ColdTaigaMBiome()),
     MEGA_SPRUCE_TAIGA(160, new MegaSpruceTaigaBiome()),
+    MEGA_SPRUCE_TAIGA_HILLS(161, new MegaSpruceTaigaHillsBiome()),
     EXTREME_HILLS_PLUS_M(162, new ExtremeHillsPlusMBiome()),
     SAVANNA_M(163, new SavannaMBiome()),
     SAVANNA_PLATEAU_M(164, new SavannaPlateauMBiome()),

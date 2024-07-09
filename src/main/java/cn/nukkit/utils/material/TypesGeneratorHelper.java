@@ -40,6 +40,11 @@ public class TypesGeneratorHelper {
             field.setAccessible(true);
 
             String name = field.getName();
+
+            if (name.startsWith("N_")) {
+                continue;
+            }
+
             int legacyId = field.getInt(null);
 
             types.computeIfAbsent(field.getInt(null), id -> new ArrayList<>())
@@ -119,5 +124,4 @@ public class TypesGeneratorHelper {
         }
         return identifier;
     }
-
 }

@@ -9,9 +9,9 @@ import lombok.Data;
 
 
 public class ItemTypes {
+
     private static final Int2ObjectMap<ItemType> types = new Int2ObjectOpenHashMap<>();
     private static final Object2ObjectMap<String, ItemType> identifiers = new Object2ObjectOpenHashMap<>();
-
 
     public static final ItemType IRON_SHOVEL = register("minecraft:iron_shovel", ItemID.IRON_SHOVEL);
     public static final ItemType IRON_PICKAXE = register("minecraft:iron_pickaxe", ItemID.IRON_PICKAXE);
@@ -71,9 +71,13 @@ public class ItemTypes {
     public static final ItemType LEATHER_LEGGINGS = register("minecraft:leather_leggings", ItemID.LEATHER_LEGGINGS);
     public static final ItemType LEATHER_BOOTS = register("minecraft:leather_boots", ItemID.LEATHER_BOOTS);
     public static final ItemType CHAIN_HELMET = register("minecraft:chainmail_helmet", ItemID.CHAIN_HELMET);
+    public static final ItemType CHAINMAIL_HELMET = register("minecraft:chainmail_helmet", ItemID.CHAINMAIL_HELMET);
     public static final ItemType CHAIN_CHESTPLATE = register("minecraft:chainmail_chestplate", ItemID.CHAIN_CHESTPLATE);
+    public static final ItemType CHAINMAIL_CHESTPLATE = register("minecraft:chainmail_chestplate", ItemID.CHAINMAIL_CHESTPLATE);
     public static final ItemType CHAIN_LEGGINGS = register("minecraft:chainmail_leggings", ItemID.CHAIN_LEGGINGS);
+    public static final ItemType CHAINMAIL_LEGGINGS = register("minecraft:chainmail_leggings", ItemID.CHAINMAIL_LEGGINGS);
     public static final ItemType CHAIN_BOOTS = register("minecraft:chainmail_boots", ItemID.CHAIN_BOOTS);
+    public static final ItemType CHAINMAIL_BOOTS = register("minecraft:chainmail_boots", ItemID.CHAINMAIL_BOOTS);
     public static final ItemType IRON_HELMET = register("minecraft:iron_helmet", ItemID.IRON_HELMET);
     public static final ItemType IRON_CHESTPLATE = register("minecraft:iron_chestplate", ItemID.IRON_CHESTPLATE);
     public static final ItemType IRON_LEGGINGS = register("minecraft:iron_leggings", ItemID.IRON_LEGGINGS);
@@ -262,7 +266,8 @@ public class ItemTypes {
     public static final ItemType ENCHANTED_GOLDEN_APPLE = register("minecraft:enchanted_golden_apple", ItemID.ENCHANTED_GOLDEN_APPLE);
     public static final ItemType APPLEENCHANTED = register("minecraft:enchanted_golden_apple", ItemID.APPLEENCHANTED);
     public static final ItemType HEART_OF_THE_SEA = register("minecraft:heart_of_the_sea", ItemID.HEART_OF_THE_SEA);
-    public static final ItemType SCUTE = register("minecraft:scute", ItemID.SCUTE);
+    public static final ItemType SCUTE = register("minecraft:turtle_scute", ItemID.SCUTE);
+    public static final ItemType TURTLE_SCUTE = register("minecraft:turtle_scute", ItemID.TURTLE_SCUTE);
     public static final ItemType TURTLE_SHELL = register("minecraft:turtle_helmet", ItemID.TURTLE_SHELL);
     public static final ItemType TURTLE_HELMET = register("minecraft:turtle_helmet", ItemID.TURTLE_HELMET);
     public static final ItemType PHANTOM_MEMBRANE = register("minecraft:phantom_membrane", ItemID.PHANTOM_MEMBRANE);
@@ -288,6 +293,7 @@ public class ItemTypes {
     public static final ItemType RECORD_11 = register("minecraft:music_disc_11", ItemID.RECORD_11);
     public static final ItemType RECORD_WAIT = register("minecraft:music_disc_wait", ItemID.RECORD_WAIT);
     public static final ItemType SHIELD = register("minecraft:shield", ItemID.SHIELD);
+    public static final ItemType COPPER_INGOT = register("minecraft:copper_ingot", ItemID.COPPER_INGOT);
     public static final ItemType RAW_IRON = register("minecraft:raw_iron", ItemID.RAW_IRON);
     public static final ItemType RAW_GOLD = register("minecraft:raw_gold", ItemID.RAW_GOLD);
     public static final ItemType RAW_COPPER = register("minecraft:raw_copper", ItemID.RAW_COPPER);
@@ -301,6 +307,7 @@ public class ItemTypes {
     public static final ItemType DARK_OAK_CHEST_BOAT = register("minecraft:dark_oak_chest_boat", ItemID.DARK_OAK_CHEST_BOAT);
     public static final ItemType MANGROVE_CHEST_BOAT = register("minecraft:mangrove_chest_boat", ItemID.MANGROVE_CHEST_BOAT);
     public static final ItemType ECHO_SHARD = register("minecraft:echo_shard", ItemID.ECHO_SHARD);
+    public static final ItemType RECOVERY_COMPASS = register("minecraft:recovery_compass", ItemID.RECOVERY_COMPASS);
     public static final ItemType GLOW_BERRIES = register("minecraft:glow_berries", ItemID.GLOW_BERRIES);
     public static final ItemType RECORD_RELIC = register("minecraft:music_disc_relic", ItemID.RECORD_RELIC);
     public static final ItemType CAMPFIRE = register("minecraft:campfire", ItemID.CAMPFIRE);
@@ -333,7 +340,7 @@ public class ItemTypes {
     public static final ItemType SPYGLASS = register("minecraft:spyglass", ItemID.SPYGLASS);
     public static final ItemType RECORD_OTHERSIDE = register("minecraft:music_disc_otherside", ItemID.RECORD_OTHERSIDE);
     public static final ItemType SOUL_CAMPFIRE = register("minecraft:soul_campfire", ItemID.SOUL_CAMPFIRE);
-
+    public static final ItemType GLOW_ITEM_FRAME = register("minecraft:glow_frame", ItemID.GLOW_ITEM_FRAME);
 
     private static ItemType register(String identifier, int legacyId) {
         return register(new ItemTypeImpl(identifier, legacyId));

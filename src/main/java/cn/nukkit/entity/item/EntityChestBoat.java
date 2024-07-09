@@ -40,7 +40,7 @@ public class EntityChestBoat extends EntityBoat implements InventoryHolder {
 
     @Override
     public boolean isFull() {
-        return this.passengers.size() >= 1;
+        return !this.passengers.isEmpty();
     }
 
     @Override

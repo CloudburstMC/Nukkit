@@ -50,15 +50,15 @@ public class BlockQuartz extends BlockSolidMeta {
         return 4;
     }
 
+    private static final String[] names = {
+            "Quartz Block",
+            "Chiseled Quartz Block",
+            "Quartz Pillar",
+            "Quartz Pillar"
+    };
+
     @Override
     public String getName() {
-        String[] names = {
-                "Quartz Block",
-                "Chiseled Quartz Block",
-                "Quartz Pillar",
-                "Quartz Pillar"
-        };
-
         return names[this.getDamage() & 0x03];
     }
 

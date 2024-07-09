@@ -46,18 +46,19 @@ public class BlockSapling extends BlockFlowable {
         return SAPLING;
     }
 
+    private static final String[] names = {
+            "Oak Sapling",
+            "Spruce Sapling",
+            "Birch Sapling",
+            "Jungle Sapling",
+            "Acacia Sapling",
+            "Dark Oak Sapling",
+            "",
+            ""
+    };
+
     @Override
     public String getName() {
-        String[] names = {
-                "Oak Sapling",
-                "Spruce Sapling",
-                "Birch Sapling",
-                "Jungle Sapling",
-                "Acacia Sapling",
-                "Dark Oak Sapling",
-                "",
-                ""
-        };
         return names[this.getDamage() & 0x07];
     }
 
@@ -65,7 +66,7 @@ public class BlockSapling extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         int id = down.getId();
-        if (id == Block.GRASS || id == Block.DIRT || id == Block.FARMLAND || id == Block.PODZOL || id == MYCELIUM) {
+        if (id == Block.GRASS || id == Block.DIRT || id == Block.FARMLAND || id == Block.PODZOL || id == MYCELIUM || id == MOSS_BLOCK) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }

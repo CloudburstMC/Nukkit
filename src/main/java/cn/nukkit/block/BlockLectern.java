@@ -140,9 +140,8 @@ public class BlockLectern extends BlockSolidMeta implements Faceable {
             if (currentBook.getId() == BlockID.AIR) {
                 if (item.getId() == ItemID.WRITTEN_BOOK || item.getId() == ItemID.BOOK_AND_QUILL) {
                     Item newBook = item.clone();
-                    if (player.isSurvival()) {
-                        newBook.setCount(newBook.getCount() - 1);
-                        player.getInventory().setItemInHand(newBook);
+                    if (!player.isCreative()) {
+                        item.count--;
                     }
                     newBook.setCount(1);
                     lectern.setBook(newBook);

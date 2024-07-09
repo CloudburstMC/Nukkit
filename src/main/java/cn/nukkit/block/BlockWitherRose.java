@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityLiving;
+import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.potion.Effect;
 
@@ -33,7 +34,7 @@ public class BlockWitherRose extends BlockFlower {
                     && (!(living instanceof Player) || !((Player) living).isCreative() && !((Player) living).isSpectator())) {
                 Effect effect = Effect.getEffect(Effect.WITHER);
                 effect.setDuration(40);
-                living.addEffect(effect);
+                living.addEffect(effect, EntityPotionEffectEvent.Cause.WITHER_ROSE);
             }
         }
     }

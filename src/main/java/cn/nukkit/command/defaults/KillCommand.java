@@ -9,6 +9,7 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
+import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.TextFormat;
@@ -135,7 +136,7 @@ public class KillCommand extends VanillaCommand {
             return false;
         }
         entity.setLastDamageCause(ev);
-        entity.removeAllEffects(); // Fix issue with absorption
+        entity.removeAllEffects(EntityPotionEffectEvent.Cause.DEATH); // Fix issue with absorption
         entity.setHealth(0);
         return true;
     }

@@ -1,12 +1,11 @@
 package cn.nukkit.item.food;
 
 import cn.nukkit.Player;
+import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.potion.Effect;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,11 +35,13 @@ public class FoodEffective extends Food {
     @Override
     protected boolean onEatenBy(Player player) {
         super.onEatenBy(player);
-        List<Effect> toApply = new ObjectArrayList<>();
+
         effects.forEach((effect, chance) -> {
-            if (chance >= Math.random()) toApply.add(effect.clone());
+            if (chance >= Math.random()) {
+                player.addEffect(effect.clone(), EntityPotionEffectEvent.Cause.FOOD);
+            }
         });
-        toApply.forEach(player::addEffect);
+
         NodeIDMeta id = relativeIDs.get(0);
         if (id != null && id.id == Item.GOLDEN_APPLE_ENCHANTED) {
             player.awardAchievement("overpowered");

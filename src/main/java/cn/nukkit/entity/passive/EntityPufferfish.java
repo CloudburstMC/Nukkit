@@ -5,6 +5,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.data.ByteEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -61,7 +62,7 @@ public class EntityPufferfish extends EntityFish {
             if (damager instanceof Player) {
                 if (this.isPuffed()) return true;
                 this.puffed = 200;
-                damager.addEffect(Effect.getEffect(Effect.POISON).setDuration(200));
+                damager.addEffect(Effect.getEffect(Effect.POISON).setDuration(200), EntityPotionEffectEvent.Cause.ATTACK);
                 this.setDataProperty(new ByteEntityData(DATA_PUFFERFISH_SIZE, 2));
             }
         }

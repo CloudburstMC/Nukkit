@@ -1,8 +1,10 @@
 package cn.nukkit.blockentity;
 
+import cn.nukkit.Player;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.Chunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -11,6 +13,7 @@ import cn.nukkit.nbt.tag.IntTag;
 public class BlockEntityLectern extends BlockEntitySpawnable {
 
     private int totalPages;
+    private Item item_;
 
     public BlockEntityLectern(Chunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -39,7 +42,7 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
 
         Item book = getBook();
         if (book.getId() != BlockID.AIR) {
-            c.putCompound("book", NBTIO.putNetworkItemHelper(book));
+            c.putCompound("book", NBTIO.putItemHelper(book));
             c.putBoolean("hasBook", true);
             c.putInt("page", getRawPage());
             c.putInt("totalPages", totalPages);
@@ -57,31 +60,42 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
 
     @Override
     public void onBreak() {
-        Item book = getBook();
-        if (book.getId() != BlockID.AIR) {
-            level.dropItem(this, book);
+        Item item = null;
+
+        if (level.getGameRules().getBoolean(GameRule.DO_TILE_DROPS)) {
+            item = getBook();
         }
-        this.namedTag.remove("book");
+
+        this.namedTag.remove("Item");
+        item_ = null;
+
+        if (item != null && item.getId() != BlockID.AIR) {
+            level.dropItem(this, item);
+        }
     }
 
     public boolean hasBook() {
-        return this.namedTag.contains("book") && this.namedTag.get("book") instanceof CompoundTag;
+        return this.namedTag.get("book") instanceof CompoundTag;
     }
 
     public Item getBook() {
+        if (item_ != null) {
+            return item_;
+        }
         if (!hasBook()) {
             return Item.get(BlockID.AIR, 0, 0);
         } else {
-            return NBTIO.getItemHelper(this.namedTag.getCompound("book"));
+            return item_ = NBTIO.getItemHelper(this.namedTag.getCompound("book"));
         }
     }
 
     public void setBook(Item item) {
-        if (item.getId() == ItemID.WRITTEN_BOOK || item.getId() == ItemID.BOOK_AND_QUILL) {
-            this.namedTag.putCompound("book", NBTIO.putItemHelper(item));
+        if (item != null && (item.getId() == ItemID.WRITTEN_BOOK || item.getId() == ItemID.BOOK_AND_QUILL)) {
+            this.namedTag.putCompound("book", NBTIO.putItemHelper(item_ = item));
         } else {
             this.namedTag.remove("book");
             this.namedTag.remove("page");
+            item_ = null;
         }
 
         updateTotalPages(true);
@@ -97,7 +111,7 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
     }
 
     public void setLeftPage(int newLeftPage) {
-        setRawPage((newLeftPage - 1) /2);
+        setRawPage((newLeftPage - 1) >> 1);
     }
 
     public void setRightPage(int newRightPage) {
@@ -129,5 +143,21 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
         if (updateRedstone) {
             this.getLevel().updateAroundRedstone(this, null);
         }
+    }
+
+    public boolean dropBook(Player player) {
+        Item item = this.getBook();
+        if (item != null && item.getId() != Item.AIR) {
+            this.setBook(null);
+            this.level.dropItem(this.add(0.5, 1, 0.5), item);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void setDirty() {
+        super.setDirty();
+        this.spawnToAll();
     }
 }

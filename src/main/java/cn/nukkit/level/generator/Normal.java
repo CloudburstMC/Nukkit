@@ -43,6 +43,7 @@ public class Normal extends Generator {
         }
     }
 
+    private final int version;
     private List<Populator> populators = Collections.emptyList();
     private List<Populator> generationPopulators = Collections.emptyList();
     public static int seaHeight = 64; // should be 62
@@ -62,10 +63,11 @@ public class Normal extends Generator {
     private NoiseGeneratorOctavesF mainPerlinNoise;
 
     public Normal() {
-        //this(Collections.emptyMap());
+        this(Collections.emptyMap());
     }
 
     public Normal(Map<String, Object> options) {
+        this.version = (int) options.getOrDefault("__Version", 0);
     }
 
     @Override
@@ -89,7 +91,7 @@ public class Normal extends Generator {
     }
 
     public Biome pickBiome(int x, int z) {
-        return this.selector.pickBiome(x, z);
+        return this.selector.pickBiome(x, z, this.version);
     }
 
     @Override
@@ -243,7 +245,7 @@ public class Normal extends Generator {
 
         for (int x = 0; x < 16; x++) {
             for (int z = 0; z < 16; z++) {
-                chunk.setBiome(x, z, selector.pickBiome(baseX | x, baseZ | z));
+                chunk.setBiome(x, z, selector.pickBiome(baseX | x, baseZ | z, this.version));
             }
         }
 

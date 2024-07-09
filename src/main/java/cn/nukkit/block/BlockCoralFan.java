@@ -91,7 +91,7 @@ public class BlockCoralFan extends BlockCoral implements Faceable {
             }
             int axisBit = rotation >= 0 && rotation < 12 || (342 <= rotation && rotation < 360)? 0x0 : 0x8;
             this.setDamage(this.getDamage() & 0x7 | axisBit);
-            this.getLevel().setBlock(this, BlockLayer.WATERLOGGED, hasWater? new BlockCoralFan(this.getDamage()) : new BlockCoralFanDead(this.getDamage()), true, true);
+            this.getLevel().setBlock(this, BlockLayer.NORMAL, hasWater ? new BlockCoralFan(this.getDamage()) : new BlockCoralFanDead(this.getDamage()), true, true);
         } else {
             int type = this.getType();
             int typeBit = type % 2;
@@ -128,7 +128,7 @@ public class BlockCoralFan extends BlockCoral implements Faceable {
                     deadBlockId = CORAL_FAN_HANG3;
                     break;
             }
-            this.getLevel().setBlock(this, BlockLayer.WATERLOGGED, Block.get(deadBlockId, deadData), true, true);
+            this.getLevel().setBlock(this, BlockLayer.NORMAL, Block.get(deadBlockId, deadData), true, true);
         }
         return true;
     }

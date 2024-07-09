@@ -22,6 +22,7 @@ public abstract class InventoryAction {
         //this.creationTime = System.currentTimeMillis();
     }
 
+    @Deprecated
     public long getCreationTime() {
         return 0; //creationTime;
     }

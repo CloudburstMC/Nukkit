@@ -1,7 +1,9 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.EntityBoss;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
@@ -67,5 +69,10 @@ public class EntityEnderDragon extends EntityFlyingMob implements EntityBoss {
         addEntity.metadata = this.dataProperties.clone();
         addEntity.attributes = new Attribute[]{Attribute.getAttribute(Attribute.MAX_HEALTH).setMaxValue(200).setValue(200)};
         return addEntity;
+    }
+
+    @Override
+    protected boolean applyNameTag(Player player, Item nameTag) {
+        return false;
     }
 }

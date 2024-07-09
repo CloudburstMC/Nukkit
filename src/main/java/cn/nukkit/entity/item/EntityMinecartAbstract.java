@@ -310,8 +310,11 @@ public abstract class EntityMinecartAbstract extends EntityVehicle implements En
     public void close() {
         super.close();
 
-        for (Entity passenger : new ArrayList<>(this.passengers)) {
-            dismountEntity(passenger);
+        if (!passengers.isEmpty()) {
+            for (Entity passenger : new ArrayList<>(passengers)) {
+                dismountEntity(passenger);
+                passenger.riding = null; // Make sure it's really removed even if a plugin tries to cancel it
+            }
         }
     }
 

@@ -3,15 +3,15 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.level.particle.ExplodeParticle;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 
 import java.util.ArrayDeque;
+import java.util.Map;
 import java.util.Queue;
 
 /**
@@ -76,16 +76,8 @@ public class BlockSponge extends BlockSolidMeta {
         } else if (this.getDamage() == DRY && performWaterAbsorb(block)) {
             level.setBlock(block, Block.get(BlockID.SPONGE, WET), true, true);
 
-            for (int i = 0; i < 4; i++) {
-                LevelEventPacket packet = new LevelEventPacket();
-                packet.evid = LevelEventPacket.EVENT_PARTICLE_DESTROY;
-                packet.x = (float) block.getX() + 0.5f;
-                packet.y = (float) block.getY() + 1f;
-                packet.z = (float) block.getZ() + 0.5f;
-                packet.data = GlobalBlockPalette.getOrCreateRuntimeId(BlockID.WATER, 0);
-                level.addChunkPacket(getChunkX(), getChunkZ(), packet);
-            }
-
+            Map<Integer, Player> players = this.level.getChunkPlayers(block.getChunkX(), block.getChunkZ());
+            level.addParticle(new DestroyBlockParticle(block.add(0.5, 0.5, 0.5), Block.get(BlockID.WATER)), players.values().toArray(new Player[0]));
             return true;
         }
 

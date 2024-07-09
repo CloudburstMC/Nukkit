@@ -84,7 +84,7 @@ public class BlockDoublePlant extends BlockFlowable {
         Block up = up();
 
         int id = down.getId();
-        if (up.getId() == AIR && (id == GRASS || id == DIRT || id == PODZOL || id == FARMLAND || id == MYCELIUM)) {
+        if (up.getId() == AIR && (id == GRASS || id == DIRT || id == PODZOL || id == FARMLAND || id == MYCELIUM || id == MOSS_BLOCK)) {
             // Place top half first in order to call block updates on bottom part, but do not update to prevent breaking.
             this.getLevel().setBlock(up, Block.get(DOUBLE_PLANT, getDamage() ^ TOP_HALF_BITMASK), true, false);
             this.getLevel().setBlock(block, this, true, true);

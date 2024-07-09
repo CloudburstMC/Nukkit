@@ -2,7 +2,6 @@ package cn.nukkit.entity;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
-import cn.nukkit.entity.mob.EntityEnderDragon;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -19,16 +18,15 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
     public abstract int getKillExperience();
 
     @Override
-    protected boolean applyNameTag(Player player, Item item) {
-        if (item.getId() == Item.NAME_TAG) {
-            if (item.hasCustomName() && !(this instanceof EntityEnderDragon)) {
-                String name = item.getCustomName();
-                this.namedTag.putString("CustomName", name);
-                this.namedTag.putBoolean("CustomNameVisible", true);
-                this.setNameTag(name);
-                this.setNameTagVisible(true);
-                return true; // onInteract: true = decrease count
-            }
+    protected boolean applyNameTag(Player player, Item nameTag) {
+        String name = nameTag.getCustomName();
+
+        if (!name.isEmpty()) {
+            this.namedTag.putString("CustomName", name);
+            this.namedTag.putBoolean("CustomNameVisible", true);
+            this.setNameTag(name);
+            this.setNameTagVisible(true);
+            return true; // onInteract: true = decrease count
         }
 
         return false;

@@ -160,8 +160,7 @@ public class BlockCauldron extends BlockTransparentMeta {
                 }
 
                 if (player.isSurvival() || player.isAdventure()) {
-                    item.setCount(item.getCount() - 1);
-                    player.getInventory().setItemInHand(item);
+                    item.count--;
                 }
 
                 BlockColor color = new ItemDye(item.getDamage()).getDyeColor().getColor();
@@ -263,8 +262,7 @@ public class BlockCauldron extends BlockTransparentMeta {
                     player.getInventory().setItemInHand(potion);
                 } else if (item.getCount() > 1) {
                     if (consumeBottle) {
-                        item.setCount(item.getCount() - 1);
-                        player.getInventory().setItemInHand(item);
+                        item.count--;
                     }
 
                     if (player.getInventory().canAddItem(potion)) {
@@ -290,8 +288,7 @@ public class BlockCauldron extends BlockTransparentMeta {
                     newItem.setDamage(potion2arrow(cauldron.getPotionId()));
 
                     if (!player.isCreative()) {
-                        item.setCount(item.getCount() - 1);
-                        player.getInventory().setItemInHand(item);
+                        item.count--;
                     }
 
                     if (player.getInventory().canAddItem(newItem)) {
@@ -418,8 +415,7 @@ public class BlockCauldron extends BlockTransparentMeta {
             if (item.getCount() == 1) {
                 player.getInventory().setItemInHand(new ItemBlock(Block.get(AIR)));
             } else if (item.getCount() > 1) {
-                item.setCount(item.getCount() - 1);
-                player.getInventory().setItemInHand(item);
+                item.count--;
                 Item bottle = Item.get(Item.GLASS_BOTTLE);
                 if (player.getInventory().canAddItem(bottle)) {
                     player.getInventory().addItem(bottle);

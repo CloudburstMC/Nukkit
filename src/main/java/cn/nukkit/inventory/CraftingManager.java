@@ -621,22 +621,4 @@ public class CraftingManager {
         Item potion = recipe.getEquipment();
         this.smithingRecipes.put(getContainerHash(input.getId(), potion.getId()), recipe);
     }
-
-    public static class Entry {
-        final int resultItemId;
-        final int resultMeta;
-        final int ingredientItemId;
-        final int ingredientMeta;
-        final String recipeShape;
-        final int resultAmount;
-
-        public Entry(int resultItemId, int resultMeta, int ingredientItemId, int ingredientMeta, String recipeShape, int resultAmount) {
-            this.resultItemId = resultItemId;
-            this.resultMeta = resultMeta;
-            this.ingredientItemId = ingredientItemId;
-            this.ingredientMeta = ingredientMeta;
-            this.recipeShape = recipeShape;
-            this.resultAmount = resultAmount;
-        }
-    }
 }

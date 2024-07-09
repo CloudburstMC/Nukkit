@@ -49,14 +49,15 @@ public class BlockLeaves extends BlockTransparentMeta {
         return ItemTool.TYPE_HOE;
     }
 
+    private static final String[] names = {
+            "Oak Leaves",
+            "Spruce Leaves",
+            "Birch Leaves",
+            "Jungle Leaves"
+    };
+
     @Override
     public String getName() {
-        String[] names = {
-                "Oak Leaves",
-                "Spruce Leaves",
-                "Birch Leaves",
-                "Jungle Leaves"
-        };
         return names[this.getDamage() & 0x03];
     }
 

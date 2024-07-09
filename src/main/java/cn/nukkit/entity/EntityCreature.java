@@ -21,10 +21,17 @@ public abstract class EntityCreature extends EntityLiving {
         if (item.getId() == Item.NAME_TAG && !player.isAdventure()) {
             return applyNameTag(player, item);
         }
+
         return false;
     }
 
-    protected boolean applyNameTag(Player player, Item item) {
+    /**
+     * Called when player interacts the entity with a name tag item
+     * @param player player
+     * @param nameTag name tag item
+     * @return true to reduce name tag item count
+     */
+    protected boolean applyNameTag(Player player, Item nameTag) {
         return false; // Override in BaseEntity
     }
 }

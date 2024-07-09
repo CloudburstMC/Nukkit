@@ -7,6 +7,7 @@ import cn.nukkit.event.block.ItemFrameDropItemEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.RuntimeItems;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -78,7 +79,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
     }
 
     public void setItem(Item item, boolean setChanged) {
-        item_ = null;
+        item_ = item;
         this.namedTag.putCompound("Item", NBTIO.putItemHelper(item));
         if (setChanged) {
             this.setDirty();
@@ -110,7 +111,7 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         CompoundTag itemOriginal = namedTag.getCompound("Item");
 
         CompoundTag tag = new CompoundTag()
-                .putString("id", BlockEntity.ITEM_FRAME)
+                .putString("id", this instanceof BlockEntityItemFrameGlow ? BlockEntity.GLOW_ITEM_FRAME : BlockEntity.ITEM_FRAME)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z);
@@ -142,6 +143,18 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
 
                     if (oldTag.contains("ench")) {
                         newTag.putList(new ListTag<>("ench"));
+                    }
+
+                    if (oldTag.contains("Base")) {
+                        newTag.put("Base", oldTag.get("Base"));
+                    }
+
+                    if (oldTag.contains("Patterns")) {
+                        newTag.put("Patterns", oldTag.get("Patterns"));
+                    }
+
+                    if (oldTag.contains("customColor")) {
+                        newTag.put("customColor", oldTag.get("customColor"));
                     }
 
                     if (oldTag.contains("display") && oldTag.get("display") instanceof CompoundTag) {
@@ -182,5 +195,21 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void onBreak() {
+        Item item = null;
+
+        if (level.getGameRules().getBoolean(GameRule.DO_TILE_DROPS)) {
+            item = getItem();
+        }
+
+        this.namedTag.remove("Item");
+        item_ = null;
+
+        if (item != null && item.getId() != BlockID.AIR) {
+            level.dropItem(this, item);
+        }
     }
 }

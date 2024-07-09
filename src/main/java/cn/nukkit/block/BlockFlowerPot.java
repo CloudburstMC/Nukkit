@@ -60,6 +60,7 @@ public class BlockFlowerPot extends BlockFlowable {
             case WARPED_FUNGUS:
             case CRIMSON_ROOTS:
             case WARPED_ROOTS:
+            case WITHER_ROSE:
                 return true;
             default:
                 return false;
@@ -164,8 +165,7 @@ public class BlockFlowerPot extends BlockFlowable {
         ((BlockEntityFlowerPot) blockEntity).spawnToAll();
 
         if (!player.isCreative()) {
-            item.setCount(item.getCount() - 1);
-            player.getInventory().setItemInHand(item.getCount() > 0 ? item : Item.get(Item.AIR));
+            item.count--;
         }
         return true;
     }

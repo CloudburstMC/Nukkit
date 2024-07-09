@@ -30,7 +30,7 @@ public class ObjectSpruceTree extends ObjectTree {
         int topSize = this.treeHeight - (1 + random.nextBoundedInt(2));
         int lRadius = 2 + random.nextBoundedInt(2);
 
-        this.placeTrunk(level, x, y, z, random, this.treeHeight - random.nextBoundedInt(2));
+        this.placeTrunk(level, x, y, z, random, this.treeHeight);
 
         this.placeLeaves(level, topSize, lRadius, x, y, z, random);
     }

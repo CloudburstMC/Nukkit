@@ -9,6 +9,7 @@ import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityHuman;
+import cn.nukkit.entity.custom.EntityManager;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.*;
@@ -54,6 +55,7 @@ import cn.nukkit.network.BatchingHelper;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
+import cn.nukkit.network.protocol.BiomeDefinitionListPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.PlayerListPacket;
 import cn.nukkit.network.protocol.ProtocolInfo;
@@ -492,6 +494,8 @@ public class Server {
         Attribute.init();
         DispenseBehaviorRegister.init();
         CustomBlockManager.init(this);
+        EntityManager.get().getCachedPacket();
+        BiomeDefinitionListPacket.getCachedPacket();
 
         // Convert legacy data before plugins get the chance to mess with it
         try {
@@ -1646,7 +1650,7 @@ public class Server {
         }
 
         if (uuidBytes.length != 16) {
-            log.warn("Invalid uuid in name lookup database detected! Removing...");
+            log.warn("Invalid uuid in name lookup database, removing: " + name);
             nameLookup.delete(nameBytes);
             return Optional.empty();
         }
@@ -1720,8 +1724,7 @@ public class Server {
                 return NBTIO.readCompressed(dataStream.get());
             }
         } catch (IOException e) {
-            log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name));
-            log.throwing(e);
+            log.warn(this.getLanguage().translateString("nukkit.data.playerCorrupted", name), e);
         } finally {
             if (dataStream.isPresent()) {
                 try {
@@ -1736,7 +1739,7 @@ public class Server {
             if (this.shouldSavePlayerData()) {
                 log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
             }
-            Position spawn = this.getDefaultLevel().getSafeSpawn();
+            Position spawn = this.getDefaultLevel().getSpawnLocation();
             long time = System.currentTimeMillis();
             nbt = new CompoundTag()
                     .putLong("firstPlayed", time / 1000)
@@ -2748,6 +2751,7 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.FLOWER_POT, BlockEntityFlowerPot.class);
         BlockEntity.registerBlockEntity(BlockEntity.BREWING_STAND, BlockEntityBrewingStand.class);
         BlockEntity.registerBlockEntity(BlockEntity.ITEM_FRAME, BlockEntityItemFrame.class);
+        BlockEntity.registerBlockEntity(BlockEntity.GLOW_ITEM_FRAME, BlockEntityItemFrameGlow.class);
         BlockEntity.registerBlockEntity(BlockEntity.CAULDRON, BlockEntityCauldron.class);
         BlockEntity.registerBlockEntity(BlockEntity.ENDER_CHEST, BlockEntityEnderChest.class);
         BlockEntity.registerBlockEntity(BlockEntity.BEACON, BlockEntityBeacon.class);

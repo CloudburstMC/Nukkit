@@ -33,8 +33,8 @@ public class PlayerAuthInputPacket extends DataPacket {
     private Vector2 analogMoveVector;
     //private ItemStackRequest itemStackRequest;
     private final Map<PlayerActionType, PlayerBlockActionData> blockActionData = new EnumMap<>(PlayerActionType.class);
-    private long predictedVehicle; // 1.20.60+
-    private Vector2f vehicleRotation; // 1.20.70+
+    private long predictedVehicle;
+    private Vector2f vehicleRotation;
 
     @Override
     public byte pid() {

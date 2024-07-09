@@ -8,8 +8,10 @@ import cn.nukkit.event.inventory.RepairItemEvent;
 import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.inventory.FakeBlockMenu;
 import cn.nukkit.inventory.Inventory;
+import cn.nukkit.inventory.PlayerInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.RepairItemAction;
+import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.network.protocol.LevelEventPacket;
@@ -25,11 +27,21 @@ public class RepairItemTransaction extends InventoryTransaction {
     private Item inputItem;
     private Item materialItem;
     private Item outputItem;
+    private Item outputItemCheck;
 
     private int cost;
 
     public RepairItemTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
+
+        for (InventoryAction action : actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                if (slotChangeAction.getInventory() instanceof PlayerInventory) {
+                    this.outputItemCheck = slotChangeAction.getTargetItem();
+                }
+            }
+        }
     }
 
     @Override
@@ -41,6 +53,8 @@ public class RepairItemTransaction extends InventoryTransaction {
         AnvilInventory anvilInventory = (AnvilInventory) inventory;
         return this.inputItem != null && this.outputItem != null && this.inputItem.equals(anvilInventory.getInputSlot(), true, true)
                 && (!this.hasMaterial() || this.materialItem.equals(anvilInventory.getMaterialSlot(), true, true))
+                && (this.outputItemCheck == null || this.inputItem.getId() == this.outputItemCheck.getId())
+                && (this.outputItemCheck == null || this.inputItem.getCount() == this.outputItemCheck.getCount())
                 && this.checkRecipeValid();
     }
 

@@ -3,6 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
+import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
@@ -128,7 +129,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                     e.setVisible(false);
 
                     //Add the effect
-                    p.addEffect(e);
+                    p.addEffect(e, EntityPotionEffectEvent.Cause.BEACON);
                 }
 
                 //If we have a secondary power as regen, apply it
@@ -146,7 +147,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                     e.setVisible(false);
 
                     //Add effect
-                    p.addEffect(e);
+                    p.addEffect(e, EntityPotionEffectEvent.Cause.BEACON);
                 }
 
                 if (powerLevel >= POWER_LEVEL_MAX) {

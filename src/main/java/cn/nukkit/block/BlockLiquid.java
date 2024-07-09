@@ -184,7 +184,8 @@ public abstract class BlockLiquid extends BlockTransparentMeta {
                     !this.canFlowInto(this.level.getBlock(guessChunk, (int) this.x, (int) this.y + 1, (int) this.z + 1, true)) ||
                     !this.canFlowInto(this.level.getBlock(guessChunk, (int) this.x - 1, (int) this.y + 1, (int) this.z, true)) ||
                     !this.canFlowInto(this.level.getBlock(guessChunk, (int) this.x + 1, (int) this.y + 1, (int) this.z, true))) {
-                vector = vector.normalize().add(0, -6, 0);
+                vector = vector.normalize();
+                vector.y -= 6;
             }
         }
         return this.flowVector = vector.normalize();

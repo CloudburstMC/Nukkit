@@ -40,7 +40,7 @@ public class BlockDeadBush extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         int id = down.getId();
-        if (id == SAND || id == TERRACOTTA || id == STAINED_TERRACOTTA || id == DIRT  || id == PODZOL || id == MYCELIUM || id == GRASS) {
+        if (id == SAND || id == TERRACOTTA || id == STAINED_TERRACOTTA || id == DIRT  || id == PODZOL || id == MYCELIUM || id == GRASS || id == MOSS_BLOCK) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }

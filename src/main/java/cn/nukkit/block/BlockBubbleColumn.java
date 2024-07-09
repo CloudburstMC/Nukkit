@@ -140,7 +140,7 @@ public class BlockBubbleColumn extends BlockTransparentMeta {
     @Override
     public void onEntityCollide(Entity entity) {
         if (entity.canBeMovedByCurrents()) {
-            if (this.isBlockAboveAir()) {
+            if (this.level.getBlockIdAt((int) this.x, (int) this.y + 1, (int) this.z) == AIR) {
                 double motY = entity.motionY;
 
                 if (this.getDamage() == 1) {

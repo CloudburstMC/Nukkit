@@ -84,15 +84,7 @@ public class ItemFirework extends Item {
                 this.count--;
             }
 
-            player.onFireworkBoost();
-
-            int level = this.getFlight();
-            double multiplier = 1 + 0.25 * (level < 1 ? 0.25 : level);
-            player.setMotion(new Vector3(
-                    -Math.sin(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * multiplier,
-                    -Math.sin(Math.toRadians(player.pitch)) * multiplier,
-                    Math.cos(Math.toRadians(player.yaw)) * Math.cos(Math.toRadians(player.pitch)) * multiplier));
-
+            player.onFireworkBoost(this.getFlight());
             return true;
         }
 

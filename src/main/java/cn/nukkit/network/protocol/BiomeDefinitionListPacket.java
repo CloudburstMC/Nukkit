@@ -4,19 +4,30 @@ import cn.nukkit.Nukkit;
 import com.google.common.io.ByteStreams;
 import lombok.ToString;
 
-@ToString()
+import java.util.zip.Deflater;
+
+@ToString(exclude = "tag")
 public class BiomeDefinitionListPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.BIOME_DEFINITION_LIST_PACKET;
 
-    private static final byte[] TAG; // 554
+    private static final BatchPacket CACHED_PACKET;
+
+    private byte[] tag;
 
     static {
         try {
-            TAG = ByteStreams.toByteArray(Nukkit.class.getClassLoader().getResourceAsStream("biome_definitions.dat"));
+            BiomeDefinitionListPacket pk = new BiomeDefinitionListPacket();
+            pk.tag = ByteStreams.toByteArray(Nukkit.class.getClassLoader().getResourceAsStream("biome_definitions.dat"));
+            pk.tryEncode();
+            CACHED_PACKET = pk.compress(Deflater.BEST_COMPRESSION);
         } catch (Exception e) {
-            throw new AssertionError("Error whilst loading biome_definitions.dat", e);
+            throw new AssertionError("Error whilst loading biome definitions", e);
         }
+    }
+
+    public static BatchPacket getCachedPacket() {
+        return CACHED_PACKET;
     }
 
     @Override
@@ -31,7 +42,10 @@ public class BiomeDefinitionListPacket extends DataPacket {
 
     @Override
     public void encode() {
+        if (this.tag == null) {
+            throw new RuntimeException("tag == null");
+        }
         this.reset();
-        this.put(TAG);
+        this.put(this.tag);
     }
 }

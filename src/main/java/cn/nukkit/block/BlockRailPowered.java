@@ -152,12 +152,12 @@ public class BlockRailPowered extends BlockRail {
                 return false;
         }
         // Next check the if rail is on power state
-        return canPowered(new Vector3(dx, dy, dz), base, power, relative)
-                || onStraight && canPowered(new Vector3(dx, dy - 1, dz), base, power, relative);
+        return canPowered(dx, dy, dz, base, power, relative)
+                || onStraight && canPowered(dx, dy - 1, dz, base, power, relative);
     }
 
-    protected boolean canPowered(Vector3 pos, Rail.Orientation state, int power, boolean relative) {
-        Block block = level.getBlock(pos);
+    protected boolean canPowered(int x, int y, int z, Rail.Orientation state, int power, boolean relative) {
+        Block block = level.getBlock(x, y, z);
         // What! My block is air??!! Impossible! XD
         if (!(block instanceof BlockRailPowered)) {
             return false;
@@ -176,7 +176,7 @@ public class BlockRailPowered extends BlockRail {
                 || base != Rail.Orientation.STRAIGHT_EAST_WEST
                 && base != Rail.Orientation.ASCENDING_EAST
                 && base != Rail.Orientation.ASCENDING_WEST)
-                && (level.isBlockPowered(pos) || checkSurrounding(pos, relative, power + 1));
+                && (level.isBlockPowered(block) || checkSurrounding(block, relative, power + 1));
     }
 
     @Override

@@ -29,15 +29,15 @@ public class BlockPurpur extends BlockSolidMeta {
         super(meta);
     }
 
+    private static final String[] names = {
+            "Purpur Block",
+            "",
+            "Purpur Pillar",
+            ""
+    };
+
     @Override
     public String getName() {
-        String[] names = {
-                "Purpur Block",
-                "",
-                "Purpur Pillar",
-                ""
-        };
-
         return names[this.getDamage() & 0x03];
     }
 

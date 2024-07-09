@@ -2139,7 +2139,15 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
             Item[] eventDrops;
             if (!player.isSurvival()) {
-                eventDrops = new Item[0];
+                if (target instanceof BlockShulkerBox && this.gameRules.getBoolean(GameRule.DO_TILE_DROPS)) {
+                    eventDrops = target.getDrops(item);
+
+                    if (eventDrops.length != 0 && !eventDrops[0].hasCompoundTag()) {
+                        eventDrops = new Item[0];
+                    }
+                } else {
+                    eventDrops = new Item[0];
+                }
             } else if (isSilkTouch && target.canSilkTouch()) {
                 eventDrops = new Item[]{target.toItem()};
             } else {
@@ -2269,11 +2277,9 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                 }
             }
 
-            if (player == null || player.isSurvival() || player.isAdventure()) {
-                for (Item drop : drops) {
-                    if (drop.getCount() > 0) {
-                        this.dropItem(dropPosition.add(0.5, 0.5, 0.5), drop);
-                    }
+            for (Item drop : drops) {
+                if (drop.getCount() > 0) {
+                    this.dropItem(dropPosition.add(0.5, 0.5, 0.5), drop);
                 }
             }
         }
@@ -2400,6 +2406,11 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         }
 
         if (target.canBeReplaced()) {
+            Block b = item.getBlockUnsafe();
+            if (b != null && target.getId() == b.getId() && target.getDamage() == b.getDamage()) {
+                return item; // No need to sync item
+            }
+
             block = target;
             hand.position(block);
         }
@@ -3546,14 +3557,15 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         }
 
         BaseFullChunk chunk = this.getChunk(x, z, true);
-        boolean populate;
         if (!chunk.isPopulated()) {
-            populate = true;
+            boolean populate = true;
+
+            top:
             for (int xx = -1; xx <= 1; ++xx) {
                 for (int zz = -1; zz <= 1; ++zz) {
                     if (this.chunkPopulationLock.contains(Level.chunkHash(x + xx, z + zz))) {
                         populate = false;
-                        break;
+                        break top;
                     }
                 }
             }
@@ -3567,8 +3579,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                         }
                     }
 
-                    AsyncTask task = this.generatorTaskFactory.populateChunkTask(chunk, this);
-                    this.server.getScheduler().scheduleAsyncTask(task);
+                    this.server.getScheduler().scheduleAsyncTask(null, this.generatorTaskFactory.populateChunkTask(chunk, this));
                 }
             }
             return false;
@@ -3594,8 +3605,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         long index = Level.chunkHash(x, z);
         if (!this.chunkGenerationQueue.contains(index)) {
             this.chunkGenerationQueue.add(index);
-            AsyncTask task = this.generatorTaskFactory.generateChunkTask(this.getChunk(x, z, true), this);
-            this.server.getScheduler().scheduleAsyncTask(task);
+            this.server.getScheduler().scheduleAsyncTask(null, this.generatorTaskFactory.generateChunkTask(this.getChunk(x, z, true), this));
         }
     }
 

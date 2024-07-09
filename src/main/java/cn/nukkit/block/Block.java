@@ -253,13 +253,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return block;
     }
 
-    public static Block getUnsafe(int fullId) {
-        if ((fullId >> DATA_BITS ) >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            return CustomBlockManager.get().getBlock(fullId);
-        }
-        return fullList[fullId];
-    }
-
     public static int getBlockLight(int blockId) {
         if (blockId >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
             return light[0]; // TODO: just temporary
@@ -713,13 +706,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return this.getSide(layer, BlockFace.WEST, step);
     }
 
-    protected boolean isBlockAboveAir() {
-        if (this.level == null) {
-            return true;
-        }
-        return this.level.getBlockIdAt((int) this.x, (int) this.y + 1, (int) this.z) == AIR;
-    }
-
     @Override
     public String toString() {
         return "Block[" + this.getName() + '|' + this.layer + "] (" + this.getId() + ':' + this.getDamage() + ')';
@@ -957,8 +943,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 case ICE:
                 case GLASS:
                 case STAINED_GLASS:
-                case HARD_GLASS:
-                case HARD_STAINED_GLASS:
                 case SCAFFOLDING:
                 case BARRIER:
                 case GLOWSTONE:

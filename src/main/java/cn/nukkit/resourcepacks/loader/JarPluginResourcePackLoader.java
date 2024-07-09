@@ -1,7 +1,6 @@
 package cn.nukkit.resourcepacks.loader;
 
 import cn.nukkit.Server;
-import cn.nukkit.lang.BaseLang;
 import cn.nukkit.resourcepacks.JarPluginResourcePack;
 import cn.nukkit.resourcepacks.ResourcePack;
 import com.google.common.io.Files;

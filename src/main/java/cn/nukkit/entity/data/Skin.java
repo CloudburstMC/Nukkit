@@ -111,7 +111,7 @@ public class Skin {
 
     public void setSkinId(String skinId) {
         if (skinId == null || skinId.trim().isEmpty()) {
-            Server.getInstance().getLogger().debug("Skin ID cannot be empty! ", new Throwable());
+            Server.getInstance().getLogger().debug("Skin ID cannot be empty! ", new Throwable(""));
             return;
         }
         this.skinId = skinId;

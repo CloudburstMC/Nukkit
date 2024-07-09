@@ -10,6 +10,7 @@ import cn.nukkit.entity.data.LongEntityData;
 import cn.nukkit.entity.data.ShortEntityData;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -346,7 +347,7 @@ public class EntityAreaEffectCloud extends Entity {
                                 continue;
                             }
 
-                            collidingEntity.addEffect(effect);
+                            collidingEntity.addEffect(effect, EntityPotionEffectEvent.Cause.AREA_EFFECT_CLOUD);
                         }
                     }
                 }

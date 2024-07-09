@@ -8,7 +8,8 @@ public interface BlockID {
     int AIR = 0;
     int STONE = 1;
     int GRASS = 2;
-    int GRASS_BLOCK = 2;
+    @SuppressWarnings("unused")
+    int GRASS_BLOCK = GRASS;
     int DIRT = 3;
     int COBBLESTONE = 4;
     int COBBLE = 4;
@@ -235,7 +236,7 @@ public interface BlockID {
     int DARK_OAK_WOODEN_STAIRS = 164;
     int SLIME_BLOCK = 165;
     int SLIME = 165;
-    int GLOW_STICK = 166;
+    //int GLOW_STICK = 166;
     int IRON_TRAPDOOR = 167;
     int PRISMARINE = 168;
     int SEA_LANTERN = 169;
@@ -261,9 +262,9 @@ public interface BlockID {
     int FENCE_GATE_ACACIA = 187;
     int REPEATING_COMMAND_BLOCK = 188;
     int CHAIN_COMMAND_BLOCK = 189;
-    int HARD_GLASS_PANE = 190;
-    int HARD_STAINED_GLASS_PANE = 191;
-    int CHEMICAL_HEAT = 192;
+    //int HARD_GLASS_PANE = 190;
+    //int HARD_STAINED_GLASS_PANE = 191;
+    //int CHEMICAL_HEAT = 192;
     int SPRUCE_DOOR_BLOCK = 193;
     int BIRCH_DOOR_BLOCK = 194;
     int JUNGLE_DOOR_BLOCK = 195;
@@ -273,9 +274,9 @@ public interface BlockID {
     int ITEM_FRAME_BLOCK = 199;
     int CHORUS_FLOWER = 200;
     int PURPUR_BLOCK = 201;
-    int COLORED_TORCH_RG = 202;
+    //int COLORED_TORCH_RG = 202;
     int PURPUR_STAIRS = 203;
-    int COLORED_TORCH_BP = 204;
+    //int COLORED_TORCH_BP = 204;
     int UNDYED_SHULKER_BOX = 205;
     int END_BRICKS = 206;
     int FROSTED_ICE = 207;
@@ -289,7 +290,7 @@ public interface BlockID {
     int BLOCK_NETHER_WART_BLOCK = 214;
     int RED_NETHER_BRICK = 215;
     int BONE_BLOCK = 216;
-    // 217 not yet in Minecraft
+    //
     int SHULKER_BOX = 218;
     int PURPLE_GLAZED_TERRACOTTA = 219;
     int WHITE_GLAZED_TERRACOTTA = 220;
@@ -310,9 +311,8 @@ public interface BlockID {
     int BLACK_GLAZED_TERRACOTTA = 235;
     int CONCRETE = 236;
     int CONCRETE_POWDER = 237;
-    int CONCRETEPOWDER = 237;
-    int CHEMISTRY_TABLE = 238;
-    int UNDERWATER_TORCH = 239;
+    //int CHEMISTRY_TABLE = 238;
+    //int UNDERWATER_TORCH = 239;
     int CHORUS_PLANT = 240;
     int STAINED_GLASS = 241;
     int CAMERA_BLOCK = 242;
@@ -327,10 +327,10 @@ public interface BlockID {
     int MOVING_BLOCK = 250;
     int OBSERVER = 251;
     int STRUCTURE_BLOCK = 252;
-    int HARD_GLASS = 253;
-    int HARD_STAINED_GLASS = 254;
+    //int HARD_GLASS = 253;
+    //int HARD_STAINED_GLASS = 254;
     int RESERVED6 = 255;
-    // 256 not yet in Minecraft
+    //
     int PRISMARINE_STAIRS = 257;
     int DARK_PRISMARINE_STAIRS = 258;
     int PRISMARINE_BRICKS_STAIRS = 259;
@@ -370,7 +370,7 @@ public interface BlockID {
     int CARVED_PUMPKIN = 410;
     int SEA_PICKLE = 411;
     int CONDUIT = 412;
-    // 413 not yet in Minecraft
+    //
     int TURTLE_EGG = 414;
     int BUBBLE_COLUMN = 415;
     int BARRIER = 416;
@@ -460,7 +460,7 @@ public interface BlockID {
     int WARPED_DOOR_BLOCK = 500;
     int CRIMSON_TRAPDOOR = 501;
     int WARPED_TRAPDOOR = 502;
-
+    //
     int CRIMSON_STANDING_SIGN = 505;
     int WARPED_STANDING_SIGN = 506;
     int CRIMSON_WALL_SIGN = 507;
@@ -516,18 +516,14 @@ public interface BlockID {
     int CHISELED_NETHER_BRICKS = 557;
     int CRACKED_NETHER_BRICKS = 558;
     int QUARTZ_BRICKS = 559;
-
+    //
     int POWDER_SNOW = 561;
     int SCULK_SENSOR = 562;
     int POINTED_DRIPSTONE = 563;
-    // 564 (unused)
-    // 565 (unused)
+    //
     int COPPER_ORE = 566;
     int LIGHTNING_ROD = 567;
-    // 568 (unused)
-    // 569 (unused)
-    // 570 (unused)
-    // 571 (unused)
+    //
     int DRIPSTONE_BLOCK = 572;
     int ROOTED_DIRT = 573;
     int HANGING_ROOTS = 574;
@@ -640,7 +636,23 @@ public interface BlockID {
     int GREEN_CANDLE = 681;
     int RED_CANDLE = 682;
     int BLACK_CANDLE = 683;
-    //
+    int CANDLE_CAKE = 684;
+    int WHITE_CANDLE_CAKE = 685;
+    int ORANGE_CANDLE_CAKE = 686;
+    int MAGENTA_CANDLE_CAKE = 687;
+    int LIGHT_BLUE_CANDLE_CAKE = 688;
+    int YELLOW_CANDLE_CAKE = 689;
+    int LIME_CANDLE_CAKE = 690;
+    int PINK_CANDLE_CAKE = 691;
+    int GRAY_CANDLE_CAKE = 692;
+    int LIGHT_GRAY_CANDLE_CAKE = 693;
+    int CYAN_CANDLE_CAKE = 694;
+    int PURPLE_CANDLE_CAKE = 695;
+    int BLUE_CANDLE_CAKE = 696;
+    int BROWN_CANDLE_CAKE = 697;
+    int GREEN_CANDLE_CAKE = 698;
+    int RED_CANDLE_CAKE = 699;
+    int BLACK_CANDLE_CAKE = 700;
     int WAXED_OXIDIZED_COPPER = 701;
     int WAXED_OXIDIZED_CUT_COPPER = 702;
     int WAXED_OXIDIZED_CUT_COPPER_STAIRS = 703;
@@ -650,12 +662,43 @@ public interface BlockID {
     int RAW_COPPER_BLOCK = 707;
     int RAW_GOLD_BLOCK = 708;
     int INFESTED_DEEPSLATE = 709;
-
+    //
+    int SCULK = 713;
+    int SCULK_VEIN = 714;
+    int SCULK_CATALYST = 715;
+    int SCULK_SHRIEKER = 716;
+    //
+    int REINFORCED_DEEPSLATE = 721;
+    //
+    int FROG_SPAWN = 723;
+    int PEARLESCENT_FROGLIGHT = 724;
+    int VERDANT_FROGLIGHT = 725;
+    int OCHRE_FROGLIGHT = 726;
+    int MANGROVE_LEAVES = 727;
     int MUD = 728;
+    int MANGROVE_PROPAGULE = 729;
     int MUD_BRICKS = 730;
     int PACKED_MUD = 732;
     int MUD_BRICK_SLAB = 733;
     int MUD_BRICK_DOUBLE_SLAB = 734;
     int MUD_BRICK_STAIRS = 735;
     int MUD_BRICK_WALL = 736;
+    int MANGROVE_ROOTS = 737;
+    int MUDDY_MANGROVE_ROOTS = 738;
+    int MANGROVE_LOG = 739;
+    int STRIPPED_MANGROVE_LOG = 740;
+    int MANGROVE_PLANKS = 741;
+    int MANGROVE_BUTTON = 742;
+    int MANGROVE_STAIRS = 743;
+    int MANGROVE_SLAB = 744;
+    int MANGROVE_PRESSURE_PLATE = 745;
+    int MANGROVE_FENCE = 746;
+    int MANGROVE_FENCE_GATE = 747;
+    //
+    int MANGROVE_STANDING_SIGN = 749;
+    int MANGROVE_WALL_SIGN = 750;
+    int MANGROVE_TRAPDOOR = 751;
+    int MANGROVE_WOOD = 752;
+    int STRIPPED_MANGROVE_WOOD = 753;
+    int MANGROVE_DOUBLE_SLAB = 754;
 }

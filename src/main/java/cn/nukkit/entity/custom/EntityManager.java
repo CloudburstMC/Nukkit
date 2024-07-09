@@ -1,17 +1,22 @@
 package cn.nukkit.entity.custom;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.network.protocol.AvailableEntityIdentifiersPacket;
+import cn.nukkit.network.protocol.BatchPacket;
+import com.google.common.io.ByteStreams;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.Deflater;
 
 public class EntityManager {
 
@@ -25,14 +30,33 @@ public class EntityManager {
     private final Map<String, EntityDefinition> alternateNameDefinitions = new HashMap<>();
     private final Int2ObjectMap<EntityDefinition> runtimeDefinitions = new Int2ObjectOpenHashMap<>();
 
+    private final byte[] vanillaTag;
     private final Map<String, Integer> vanillaEntitiesMap = new HashMap<>();
 
-    private byte[] networkTagCached;
+    private BatchPacket cachedPacket;
 
     public EntityManager() {
+        try {
+            InputStream inputStream = Nukkit.class.getClassLoader().getResourceAsStream("entity_identifiers.dat");
+            if (inputStream == null) throw new AssertionError("Could not find entity_identifiers.dat");
+            this.vanillaTag = ByteStreams.toByteArray(inputStream);
+        } catch (Exception e) {
+            throw new AssertionError("Error whilst loading entity_identifiers.dat", e);
+        }
+
         AddEntityPacket.LEGACY_IDS.forEach((id, identifier) -> this.vanillaEntitiesMap.put(identifier, id));
     }
 
+    public BatchPacket getCachedPacket() {
+        if (this.cachedPacket == null) {
+            AvailableEntityIdentifiersPacket pk = new AvailableEntityIdentifiersPacket();
+            pk.tryEncode();
+            this.cachedPacket = pk.compress(Deflater.BEST_COMPRESSION);
+        }
+        return this.cachedPacket;
+    }
+
+    @SuppressWarnings("unused")
     public void registerDefinition(EntityDefinition definition) {
         if (this.entityDefinitions.containsKey(definition.getIdentifier())) {
             throw new IllegalArgumentException("Custom entity " + definition.getIdentifier() + " was already registered");
@@ -43,6 +67,8 @@ public class EntityManager {
         if (definition.getAlternateName() != null) {
             this.alternateNameDefinitions.put(definition.getAlternateName(), definition);
         }
+
+        this.cachedPacket = null;
     }
 
     public EntityDefinition getDefinition(String identifier) {
@@ -65,32 +91,26 @@ public class EntityManager {
         return definition.getRuntimeId();
     }
 
-    private void createNetworkTag() {
+    public byte[] createNetworkTag() {
         try {
-            CompoundTag networkTag = (CompoundTag) NBTIO.readNetwork(new ByteArrayInputStream(AvailableEntityIdentifiersPacket.TAG));
+            CompoundTag networkTag = (CompoundTag) NBTIO.readNetwork(new ByteArrayInputStream(this.vanillaTag));
             ListTag<CompoundTag> identifiers = networkTag.getList("idlist", CompoundTag.class);
 
             for (EntityDefinition definition : this.entityDefinitions.values()) {
                 if (!definition.isServerSideOnly()) {
-                    CompoundTag nbt = definition.getNetworkTag();
-                    identifiers.add(nbt);
+                    identifiers.add(definition.getNetworkTag());
                 }
             }
+
             networkTag.putList(identifiers);
 
-            this.networkTagCached = NBTIO.writeNetwork(networkTag);
+            return NBTIO.writeNetwork(networkTag);
         } catch (IOException e) {
             throw new RuntimeException("Unable to init entityIdentifiers", e);
         }
     }
 
-    public byte[] getNetworkTagCached() {
-        if (this.networkTagCached == null) {
-            this.createNetworkTag();
-        }
-        return this.networkTagCached;
-    }
-
+    @SuppressWarnings("unused")
     public boolean hasCustomEntities() {
         return !this.entityDefinitions.isEmpty();
     }

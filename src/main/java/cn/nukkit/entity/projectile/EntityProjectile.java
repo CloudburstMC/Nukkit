@@ -15,7 +15,6 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.potion.Effect;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -115,10 +114,7 @@ public abstract class EntityProjectile extends Entity {
             }
 
             if (this instanceof EntityArrow && entity instanceof EntityLiving) {
-                Effect e = ItemArrow.getEffect(((EntityArrow) this).getData());
-                if (e != null) {
-                    addEffectFromTippedArrow(entity, e, ev.getFinalDamage());
-                }
+                addEffectFromTippedArrow(entity, ItemArrow.getEffect(((EntityArrow) this).getData()), ev.getFinalDamage());
             }
         }
 

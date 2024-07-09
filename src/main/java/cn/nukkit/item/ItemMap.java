@@ -42,7 +42,7 @@ public class ItemMap extends Item {
     public void setImage(BufferedImage image) {
         try {
             if (this.getMapId() == 0) {
-                Server.getInstance().getLogger().debug("Uninitialized map", new Throwable());
+                Server.getInstance().getLogger().debug("Uninitialized map", new Throwable(""));
                 this.initItem();
             }
 

@@ -11,14 +11,12 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.Faceable;
 
-import java.util.concurrent.ThreadLocalRandom;
-
 /**
  * Created by Pub4Game on 03.07.2016.
  */
 public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
 
-    private final static int[] FACING = {4, 5, 3, 2, 1, 0};
+    protected final static int[] FACING = {4, 5, 3, 2, 1, 0};
 
     private final static int FACING_BITMASK = 0b0111;
     //private final static int MAP_BIT = 0b1000;
@@ -72,8 +70,7 @@ public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
         if (itemFrame.getItem().getId() == Item.AIR) {
             Item itemToFrame = item.clone();
             if (player != null && !player.isCreative()) {
-                item.setCount(item.getCount() - 1);
-                player.getInventory().setItemInHand(item);
+                item.count--;
             }
             itemToFrame.setCount(1);
             itemFrame.setItem(itemToFrame);
@@ -116,21 +113,6 @@ public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
         this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
         this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_REMOVED);
         return true;
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        BlockEntityItemFrame itemFrame = (BlockEntityItemFrame) blockEntity;
-        if (itemFrame != null && ThreadLocalRandom.current().nextFloat() <= itemFrame.getItemDropChance()) {
-            return new Item[]{
-                    toItem(), itemFrame.getItem().clone()
-            };
-        } else {
-            return new Item[]{
-                    toItem()
-            };
-        }
     }
 
     @Override
