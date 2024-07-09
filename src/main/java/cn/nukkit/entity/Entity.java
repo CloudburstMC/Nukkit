@@ -467,7 +467,7 @@ public abstract class Entity extends Location implements Metadatable {
 
                 effect.setAmplifier(e.getByte("Amplifier")).setDuration(e.getInt("Duration")).setVisible(e.getBoolean("ShowParticles"));
 
-                this.addEffect(effect);
+                this.addEffect(effect, null); // No event
             }
         }
 
@@ -743,15 +743,35 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void removeAllEffects() {
+        this.removeAllEffects(EntityPotionEffectEvent.Cause.UNKNOWN);
+    }
+
+    public void removeAllEffects(EntityPotionEffectEvent.Cause cause) {
         for (Effect effect : this.effects.values()) {
-            this.removeEffect(effect.getId());
+            this.removeEffect(effect.getId(), cause);
         }
     }
 
     public void removeEffect(int effectId) {
+        this.removeEffect(effectId, EntityPotionEffectEvent.Cause.UNKNOWN);
+    }
+
+    public void removeEffect(int effectId, EntityPotionEffectEvent.Cause cause) {
         if (this.effects.containsKey(effectId)) {
             Effect effect = this.effects.get(effectId);
+
+            if (cause != null) {
+                EntityPotionEffectEvent event =
+                        new EntityPotionEffectEvent(this, effect, null, EntityPotionEffectEvent.Action.REMOVED, cause);
+
+                this.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) {
+                    return;
+                }
+            }
+
             this.effects.remove(effectId);
+
             effect.remove(this);
 
             this.recalculateEffectColor();
@@ -767,8 +787,28 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void addEffect(Effect effect) {
+        this.addEffect(effect, EntityPotionEffectEvent.Cause.UNKNOWN);
+    }
+
+    public void addEffect(Effect effect, EntityPotionEffectEvent.Cause cause) {
         if (effect == null) {
-            return; //here add null means add nothing
+            return;
+        }
+
+        if (cause != null) {
+            Effect oldEffect = this.effects.get(effect.getId());
+
+            EntityPotionEffectEvent event = new EntityPotionEffectEvent(
+                    this,
+                    oldEffect,
+                    effect,
+                    oldEffect == null ? EntityPotionEffectEvent.Action.ADDED : EntityPotionEffectEvent.Action.CHANGED,
+                    cause);
+
+            this.getServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                return;
+            }
         }
 
         effect.add(this);
@@ -1150,12 +1190,12 @@ public abstract class Entity extends Location implements Metadatable {
                     this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TOTEM);
 
                     this.extinguish();
-                    this.removeAllEffects();
+                    this.removeAllEffects(EntityPotionEffectEvent.Cause.TOTEM);
                     this.setHealth(1);
 
-                    this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1));
-                    this.addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(800));
-                    this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1));
+                    this.addEffect(Effect.getEffect(Effect.REGENERATION).setDuration(800).setAmplifier(1), EntityPotionEffectEvent.Cause.TOTEM);
+                    this.addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(800), EntityPotionEffectEvent.Cause.TOTEM);
+                    this.addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(100).setAmplifier(1), EntityPotionEffectEvent.Cause.TOTEM);
 
                     EntityEventPacket pk = new EntityEventPacket();
                     pk.eid = this.getId();
@@ -1353,7 +1393,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.justCreated = false;
 
         if (!this.isAlive()) {
-            this.removeAllEffects();
+            this.removeAllEffects(EntityPotionEffectEvent.Cause.DEATH);
             this.despawnFromAll();
             if (!this.isPlayer) {
                 this.close();
@@ -1375,7 +1415,7 @@ public abstract class Entity extends Location implements Metadatable {
                 effect.setDuration(effect.getDuration() - tickDiff);
 
                 if (effect.getDuration() <= 0) {
-                    this.removeEffect(effect.getId());
+                    this.removeEffect(effect.getId(), EntityPotionEffectEvent.Cause.EXPIRATION);
                 }
             }
         }

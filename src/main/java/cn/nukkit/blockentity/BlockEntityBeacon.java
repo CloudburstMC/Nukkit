@@ -3,6 +3,7 @@ package cn.nukkit.blockentity;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.format.FullChunk;
@@ -121,7 +122,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                     e.setVisible(false);
 
                     //Add the effect
-                    p.addEffect(e);
+                    p.addEffect(e, EntityPotionEffectEvent.Cause.BEACON);
                 }
 
                 //If we have a secondary power as regen, apply it
@@ -139,7 +140,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                     e.setVisible(false);
 
                     //Add effect
-                    p.addEffect(e);
+                    p.addEffect(e, EntityPotionEffectEvent.Cause.BEACON);
                 }
             }
         }

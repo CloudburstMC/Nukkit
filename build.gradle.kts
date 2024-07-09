@@ -96,6 +96,8 @@ tasks {
         // Backwards compatible jar directory
         destinationDirectory.set(file("$projectDir/target"))
         archiveClassifier.set("")
+
+        exclude("javax/annotation/**")
     }
 
     runShadow {
