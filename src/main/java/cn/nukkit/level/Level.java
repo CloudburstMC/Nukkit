@@ -499,37 +499,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         }
     }
 
-    /**
-     * Play sound
-     * @param pos position
-     * @param sound sound identifier
-     */
-    public void addSound(Vector3 pos, String sound) {
-        this.addSound(pos, sound, (Player[]) null);
-    }
-
-    /**
-     * Play sound
-     * @param pos position
-     * @param sound sound identifier
-     * @param players target players
-     */
-    public void addSound(Vector3 pos, String sound, Player... players) {
-        PlaySoundPacket packet = new PlaySoundPacket();
-        packet.name = sound;
-        packet.volume = 1;
-        packet.pitch = 1;
-        packet.x = pos.getFloorX();
-        packet.y = pos.getFloorY();
-        packet.z = pos.getFloorZ();
-
-        if (players == null || players.length == 0) {
-            addChunkPacket(pos.getChunkX(), pos.getChunkZ(), packet);
-        } else {
-            Server.broadcastPacket(players, packet);
-        }
-    }
-
     public void addLevelEvent(Vector3 pos, int event) {
         this.addLevelEvent(pos, event, 0);
     }
@@ -1009,8 +978,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             server.getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
                 bolt.spawnToAll();
-                this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_THUNDER, -1, EntityLightning.NETWORK_ID);
-                this.addLevelSoundEvent(vector, LevelSoundEventPacket.SOUND_EXPLODE, -1, EntityLightning.NETWORK_ID);
             } else {
                 bolt.setEffect(false);
             }

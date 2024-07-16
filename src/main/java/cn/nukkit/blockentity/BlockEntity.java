@@ -166,7 +166,7 @@ public abstract class BlockEntity extends Position {
         this.saveNBT();
         CompoundTag tag = this.namedTag.clone();
         tag.remove("x").remove("y").remove("z").remove("id");
-        if (!tag.getTags().isEmpty()) {
+        if (!tag.isEmpty()) {
             return tag;
         } else {
             return null;

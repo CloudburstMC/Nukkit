@@ -496,7 +496,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         }
     }
 
-    public static Item getSaved(int id, Integer meta, int count, Tag tag) {
+    public static Item get(int id, Integer meta, int count, Tag tags) {
         try {
             Class<?> c;
             if (id < 0) {
@@ -523,36 +523,15 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
                 item = ((Item) c.getConstructor(Integer.class, int.class).newInstance(meta, count));
             }
 
-            if (item.count > item.getMaxStackSize()) {
-                item.count = item.getMaxStackSize(); // Get rid of stacked items
-
-                if (tag instanceof CompoundTag) {
-                    ((CompoundTag) tag).putByte("Count", item.getMaxStackSize()); // Update count in nbt
-                }
-            }
-
-            if (tag instanceof CompoundTag) {
-                if (item.id == Item.SHULKER_BOX || item.id == Item.UNDYED_SHULKER_BOX) {
-                    Tag list = ((CompoundTag) tag).getList("Items");
-                    if (list != null) {
-                        for (CompoundTag compoundTag : ((ListTag<CompoundTag>) list).getAll()) {
-                            int itemId = compoundTag.getShort("id");
-                            if (itemId == Item.SHULKER_BOX || itemId == Item.UNDYED_SHULKER_BOX) {
-                                ((CompoundTag) tag).remove("Items"); // Get rid of shulker boxes inside shulker box
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                item.setCompoundTag((CompoundTag) tag);
+            if (tags instanceof CompoundTag) {
+                item.setCompoundTag((CompoundTag) tags);
             }
 
             return item.initItem();
         } catch (Exception e) {
             Item item = new Item(id, meta, count);
-            if (tag instanceof CompoundTag) {
-                item.setCompoundTag((CompoundTag) tag);
+            if (tags instanceof CompoundTag) {
+                item.setCompoundTag((CompoundTag) tags);
             }
             return item.initItem();
         }

@@ -62,7 +62,7 @@ public class NBTIO {
             return Item.get(0);
         }
 
-        return Item.getSaved(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"), tag.get("tag"));
+        return Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"), tag.get("tag"));
     }
 
     public static CompoundTag read(File file) throws IOException {

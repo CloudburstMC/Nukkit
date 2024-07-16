@@ -501,8 +501,10 @@ public class CraftingManager {
         map.put(hash, recipe);
     }
 
-    private static int getPotionHash(int ingredientId, int potionType) {
-        return (ingredientId << 15) | potionType;
+    private static int getPotionHash(Item ingredient, Item potion) {
+        int ingredientHash = ((ingredient.getId() & 0x3FF) << 6) | (ingredient.getDamage() & 0x3F);
+        int potionHash = ((potion.getId() & 0x3FF) << 6) | (potion.getDamage() & 0x3F);
+        return ingredientHash << 16 | potionHash;
     }
 
     private static int getContainerHash(int ingredientId, int containerId) {
@@ -513,7 +515,7 @@ public class CraftingManager {
         Item input = recipe.getIngredient();
         Item potion = recipe.getInput();
 
-        this.brewingRecipes.put(getPotionHash(input.getId(), potion.getDamage()), recipe);
+        this.brewingRecipes.put(getPotionHash(input, potion), recipe);
     }
 
     public void registerContainerRecipe(ContainerRecipe recipe) {
@@ -526,7 +528,7 @@ public class CraftingManager {
     public BrewingRecipe matchBrewingRecipe(Item input, Item potion) {
         int id = potion.getId();
         if (id == Item.POTION || id == Item.SPLASH_POTION || id == Item.LINGERING_POTION) {
-            return this.brewingRecipes.get(getPotionHash(input.getId(), potion.getDamage()));
+            return this.brewingRecipes.get(getPotionHash(input, potion));
         }
 
         return null;

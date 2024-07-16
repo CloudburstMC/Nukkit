@@ -341,7 +341,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 if (count + this.toMove.size() > 12) {
                     return false;
                 } else {
-                    while (false && block.getId() == SLIME_BLOCK) {
+                    /*while (false && block.getId() == SLIME_BLOCK) {
                         block = origin.getSide(this.moveDirection.getOpposite(), count);
 
                         if (block.getId() == AIR || !canPush(block, this.moveDirection, false) || block.equals(this.pistonPos)) {
@@ -353,7 +353,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                         if (count + this.toMove.size() > 12) {
                             return false;
                         }
-                    }
+                    }*/
 
                     int blockCount = 0;
 
@@ -378,9 +378,9 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                             for (int l = 0; l <= index + blockCount; ++l) {
                                 Block b = this.toMove.get(l);
 
-                                if (false && b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
+                                /*if (false && b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
                                     return false;
-                                }
+                                }*/
                             }
 
                             return true;
@@ -430,7 +430,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             this.toMove.addAll(list2);
         }
 
-        private boolean addBranchingBlocks(Block block) {
+        /*private boolean addBranchingBlocks(Block block) {
             for (BlockFace face : BlockFace.values()) {
                 if (face.getAxis() != this.moveDirection.getAxis() && !this.addBlockLine(block.getSide(face))) {
                     return false;
@@ -438,7 +438,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             }
 
             return true;
-        }
+        }*/
 
         public List<Block> getBlocksToMove() {
             return this.toMove;

@@ -12,7 +12,6 @@ import cn.nukkit.inventory.ContainerInventory;
 import cn.nukkit.item.*;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
@@ -149,7 +148,7 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
                 if (layer1 instanceof BlockWater || layer1 instanceof BlockIceFrosted) {
                     this.setExtinguished(true);
                     this.level.setBlock(this, this, true, true);
-                    this.level.addSound(this, Sound.RANDOM_FIZZ, 0.5f, 2.2f);
+                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_FIZZ);
                 }
             }
             return type;

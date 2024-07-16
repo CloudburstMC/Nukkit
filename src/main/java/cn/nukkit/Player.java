@@ -3764,6 +3764,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     pk.windowId = -1;
                     pk.wasServerInitiated = false;
                     this.dataPacket(pk);
+                } else { // TODO: check this
+                    ContainerClosePacket pk = new ContainerClosePacket();
+                    pk.windowId = containerClosePacket.windowId;
+                    pk.wasServerInitiated = false;
+                    this.dataPacket(pk);
+
+                    for (Inventory open : new ArrayList<>(this.windows.keySet())) {
+                        if (open instanceof ContainerInventory) {
+                            this.removeWindow(open);
+                        }
+                    }
                 }
                 return;
             case ProtocolInfo.BLOCK_ENTITY_DATA_PACKET:
@@ -4210,7 +4221,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.setUsingItem(false);
 
                                 // We don't seem to verify useItemData.clickPos so don't use it for anything important
-                                if (this.canInteract(blockVector.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 7)) {
+                                if (this.canInteract(blockVector.add(0.5, 0.5, 0.5), this.isCreative() ? 14 : 8)) {
                                     Item i = inventory.getItemInHand();
                                     if (this.isCreative()) {
                                         if (this.level.useItemOn(blockVector.asVector3(), i, face, useItemData.clickPos.x, useItemData.clickPos.y, useItemData.clickPos.z, this) != null) {
@@ -4883,7 +4894,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.resetCraftingGridType();
         Item i = this.getInventory().getItemInHand();
         Item oldItem = i.clone();
-        if (this.canInteract(blockPos.add(0.5, 0.5, 0.5), this.isCreative() ? 13 : 7) && (i = this.level.useBreakOn(blockPos.asVector3(), face, i, this, true)) != null) {
+        if (this.canInteract(blockPos.add(0.5, 0.5, 0.5), this.isCreative() ? 14 : 8) && (i = this.level.useBreakOn(blockPos.asVector3(), face, i, this, true)) != null) {
             if (this.isSurvival() || this.isAdventure()) {
                 this.foodData.updateFoodExpLevel(0.005);
                 if (i.getCount() != oldItem.getCount() || i.getDamage() != oldItem.getDamage() || !i.equals(oldItem)) {

@@ -6,6 +6,9 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.level.Level;
+import cn.nukkit.math.Vector3;
+import cn.nukkit.network.protocol.PlaySoundPacket;
 
 public class PlaySoundCommand extends VanillaCommand {
 
@@ -38,7 +41,7 @@ public class PlaySoundCommand extends VanillaCommand {
 
             Player p = (Player) sender;
 
-            p.getLevel().addSound(p, args[0], p);
+            addSound(p.getLevel(), p, args[0], p);
             p.sendMessage(new TranslationContainer("commands.playsound.success", args[0], p.getName()));
             
             return true;
@@ -46,7 +49,7 @@ public class PlaySoundCommand extends VanillaCommand {
 
         if (args[1].equalsIgnoreCase("@a")) {
             for (Player p : Server.getInstance().getOnlinePlayers().values()) {
-                p.getLevel().addSound(p, args[0], p);
+                addSound(p.getLevel(), p, args[0], p);
             }
 
             sender.sendMessage(new TranslationContainer("commands.playsound.success", args[0], "@a"));
@@ -57,7 +60,7 @@ public class PlaySoundCommand extends VanillaCommand {
         if (args[1].equalsIgnoreCase("@s") && sender instanceof Player) {
             Player p = (Player) sender;
 
-            p.getLevel().addSound(p, args[0], p);
+            addSound(p.getLevel(), p, args[0], p);
             sender.sendMessage(new TranslationContainer("commands.playsound.success", args[0], p.getName()));
 
             return true;
@@ -70,9 +73,25 @@ public class PlaySoundCommand extends VanillaCommand {
             return true;
         }
 
-        p.getLevel().addSound(p, args[0], p);
+        addSound(p.getLevel(), p, args[0], p);
         sender.sendMessage(new TranslationContainer("commands.playsound.success", args[0], p.getName()));
 
         return true;
+    }
+
+    private static void addSound(Level level, Vector3 pos, String sound, Player... players) {
+        PlaySoundPacket packet = new PlaySoundPacket();
+        packet.name = sound;
+        packet.volume = 1f;
+        packet.pitch = 1f;
+        packet.x = pos.getFloorX();
+        packet.y = pos.getFloorY();
+        packet.z = pos.getFloorZ();
+
+        if (players == null || players.length == 0) {
+            level.addChunkPacket(pos.getChunkX(), pos.getChunkZ(), packet);
+        } else {
+            Server.broadcastPacket(players, packet);
+        }
     }
 }

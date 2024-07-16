@@ -77,7 +77,7 @@ public class Skin {
                     (fullSkinId == null || fullSkinId.length() < 200) &&
                     (geometryDataEngineVersion == null || geometryDataEngineVersion.length() < 100);
         } catch (Exception ex) {
-            if (Nukkit.DEBUG > 1) Server.getInstance().getLogger().logException(ex);
+            Server.getInstance().getLogger().logException(ex);
             return false;
         }
     }

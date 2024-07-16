@@ -112,7 +112,7 @@ public class EntityFirework extends Entity {
                         if (nbt instanceof CompoundTag) {
                             nbt = ((CompoundTag) nbt).get("Explosions");
                             if (nbt instanceof ListTag) {
-                                if (!((ListTag) nbt).getAll().isEmpty()) {
+                                if (((ListTag) nbt).size() != 0) {
                                     EntityExplosionPrimeEvent ev = new EntityExplosionPrimeEvent(this, 2.5);
                                     ev.setBlockBreaking(false);
                                     server.getPluginManager().callEvent(ev);
