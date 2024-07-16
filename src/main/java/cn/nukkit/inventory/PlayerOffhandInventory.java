@@ -4,12 +4,20 @@ import cn.nukkit.Player;
 import cn.nukkit.entity.EntityHuman;
 import cn.nukkit.entity.EntityHumanType;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.InventoryContentPacket;
 import cn.nukkit.network.protocol.InventorySlotPacket;
 import cn.nukkit.network.protocol.MobEquipmentPacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 public class PlayerOffhandInventory extends BaseInventory {
+
+    /**
+     * Items that can be put to offhand inventory on Bedrock Edition
+     */
+    private static final IntSet OFFHAND_ITEMS = new IntOpenHashSet(new int[]{Item.AIR, ItemID.SHIELD, ItemID.ARROW, ItemID.TOTEM, ItemID.MAP, ItemID.FIREWORKS, ItemID.NAUTILUS_SHELL, ItemID.SPARKLER});
 
     public PlayerOffhandInventory(EntityHumanType holder) {
         super(holder, InventoryType.OFFHAND);
@@ -34,15 +42,15 @@ public class PlayerOffhandInventory extends BaseInventory {
     @Override
     public void sendContents(Player... players) {
         Item item = this.getItem(0);
-        MobEquipmentPacket pk = this.createMobEquipmentPacket(item);
 
         for (Player player : players) {
             if (player == this.getHolder()) {
-                InventoryContentPacket pk2 = new InventoryContentPacket();
-                pk2.inventoryId = ContainerIds.OFFHAND;
-                pk2.slots = new Item[]{item};
-                player.dataPacket(pk2);
+                InventoryContentPacket pk = new InventoryContentPacket(); // content vs slot
+                pk.inventoryId = ContainerIds.OFFHAND;
+                pk.slots = new Item[]{item};
+                player.dataPacket(pk);
             } else {
+                MobEquipmentPacket pk = this.createMobEquipmentPacket(item);
                 player.dataPacket(pk);
             }
         }
@@ -51,15 +59,15 @@ public class PlayerOffhandInventory extends BaseInventory {
     @Override
     public void sendSlot(int index, Player... players) {
         Item item = this.getItem(0);
-        MobEquipmentPacket pk = this.createMobEquipmentPacket(item);
 
         for (Player player : players) {
             if (player == this.getHolder()) {
-                InventorySlotPacket pk2 = new InventorySlotPacket();
-                pk2.inventoryId = ContainerIds.OFFHAND;
-                pk2.item = item;
-                player.dataPacket(pk2);
+                InventorySlotPacket pk = new InventorySlotPacket(); // slot vs content
+                pk.inventoryId = ContainerIds.OFFHAND;
+                pk.item = item;
+                player.dataPacket(pk);
             } else {
+                MobEquipmentPacket pk = this.createMobEquipmentPacket(item);
                 player.dataPacket(pk);
             }
         }
@@ -71,12 +79,16 @@ public class PlayerOffhandInventory extends BaseInventory {
         pk.item = item;
         pk.inventorySlot = 1;
         pk.windowId = ContainerIds.OFFHAND;
-        pk.tryEncode();
         return pk;
     }
 
     @Override
     public EntityHuman getHolder() {
         return (EntityHuman) super.getHolder();
+    }
+
+    @Override
+    public boolean allowedToAdd(int itemId) {
+        return OFFHAND_ITEMS.contains(itemId);
     }
 }

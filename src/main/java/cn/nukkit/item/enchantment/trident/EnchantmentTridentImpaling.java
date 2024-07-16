@@ -4,6 +4,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.item.enchantment.Enchantment;
 
 public class EnchantmentTridentImpaling extends EnchantmentTrident {
+
     public EnchantmentTridentImpaling() {
         super(Enchantment.ID_TRIDENT_IMPALING, "tridentImpaling", Rarity.RARE);
     }
@@ -25,7 +26,7 @@ public class EnchantmentTridentImpaling extends EnchantmentTrident {
 
     @Override
     public double getDamageBonus(Entity entity) {
-        if (entity.isInsideOfWater() || (entity.getLevel().isRaining() && entity.getLevel().canBlockSeeSky(entity))) {
+        if (entity.isInsideOfWater() || (entity.getLevel().isRaining() && entity.canSeeSky())) {
             return 2.5 * getLevel();
         }
 

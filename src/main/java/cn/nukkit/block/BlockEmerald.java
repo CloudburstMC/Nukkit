@@ -10,12 +10,9 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockEmerald extends BlockSolid {
 
-    public BlockEmerald() {
-    }
-
     @Override
     public String getName() {
-        return "Emerald Block";
+        return "Block of Emerald";
     }
 
     @Override
@@ -40,7 +37,7 @@ public class BlockEmerald extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };

@@ -1,10 +1,11 @@
 package cn.nukkit.level.biome.impl.extremehills;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.level.generator.noise.nukkit.f.SimplexF;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  * <p>
  * make sure this is touching another extreme hills type or it'll look dumb
@@ -12,8 +13,8 @@ import cn.nukkit.math.NukkitRandom;
  * very smooth hills with flat areas between
  */
 public class ExtremeHillsMBiome extends ExtremeHillsPlusBiome {
-    private static final SimplexF gravelNoise = new SimplexF(new NukkitRandom(0), 1f, 1 / 4f, 1 / 64f);
-    private boolean isGravel = false;
+
+    private static final SimplexF gravelNoise = new SimplexF(new NukkitRandom(), 1f, 1 / 4f, 1 / 64f);
 
     public ExtremeHillsMBiome() {
         this(true);
@@ -33,7 +34,7 @@ public class ExtremeHillsMBiome extends ExtremeHillsPlusBiome {
 
     @Override
     public int getSurfaceId(int x, int y, int z) {
-        return gravelNoise.noise2D(x, z, true) < -0.75f ? GRAVEL << 4 : super.getSurfaceId(x, y, z);
+        return gravelNoise.noise2D(x, z, true) < -0.75f ? GRAVEL << Block.DATA_BITS : super.getSurfaceId(x, y, z);
     }
 
     @Override

@@ -3,6 +3,7 @@ package cn.nukkit.inventory;
 import cn.nukkit.item.Item;
 
 public class ContainerRecipe extends MixRecipe {
+
     public ContainerRecipe(Item input, Item ingredient, Item output) {
         super(input, ingredient, output);
     }

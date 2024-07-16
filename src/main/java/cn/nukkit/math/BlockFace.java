@@ -4,9 +4,11 @@ import com.google.common.collect.Iterators;
 
 import java.util.Iterator;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 
 public enum BlockFace {
+
     DOWN(0, 1, -1, "down", AxisDirection.NEGATIVE, new Vector3(0, -1, 0)),
     UP(1, 0, -1, "up", AxisDirection.POSITIVE, new Vector3(0, 1, 0)),
     NORTH(2, 3, 2, "north", AxisDirection.NEGATIVE, new Vector3(0, 0, -1)),
@@ -25,7 +27,6 @@ public enum BlockFace {
     private static final BlockFace[] HORIZONTALS = new BlockFace[4];
 
     static {
-        //Circular dependency
         DOWN.axis = Axis.Y;
         UP.axis = Axis.Y;
         NORTH.axis = Axis.Z;
@@ -36,7 +37,7 @@ public enum BlockFace {
         for (BlockFace face : values()) {
             VALUES[face.index] = face;
 
-            if (face.getAxis().isHorizontal()) {
+            if (face.axis.isHorizontal()) {
                 HORIZONTALS[face.horizontalIndex] = face;
             }
         }
@@ -112,12 +113,12 @@ public enum BlockFace {
 
     public static BlockFace fromAxis(AxisDirection axisDirection, Axis axis) {
         for (BlockFace face : VALUES) {
-            if (face.getAxisDirection() == axisDirection && face.getAxis() == axis) {
+            if (face.axisDirection == axisDirection && face.axis == axis) {
                 return face;
             }
         }
 
-        throw new RuntimeException("Unable to get face from axis: " + axisDirection + " " + axis);
+        throw new RuntimeException("Unable to get face from axis: " + axisDirection + ' ' + axis);
     }
 
     /**
@@ -214,25 +215,25 @@ public enum BlockFace {
     /**
      * Returns an offset that addresses the block in front of this BlockFace
      *
-     * @return x offset
+     * @return z offset
      */
     public int getZOffset() {
         return axis == Axis.Z ? axisDirection.getOffset() : 0;
     }
 
     /**
-     * Get the opposite BlockFace (e.g. DOWN ==&gt; UP)
-     *
-     * @return block face
+    * Get the opposite BlockFace (e.g. DOWN ==&gt; UP)
+    *
+    * @return block face
      */
     public BlockFace getOpposite() {
         return fromIndex(opposite);
     }
 
     /**
-     * Rotate this BlockFace around the Y axis clockwise (NORTH =&gt; EAST =&gt; SOUTH =&gt; WEST =&gt; NORTH)
-     *
-     * @return block face
+    * Rotate this BlockFace around the Y axis clockwise (NORTH =&gt; EAST =&gt; SOUTH =&gt; WEST =&gt; NORTH)
+    *
+    * @return block face
      */
     public BlockFace rotateY() {
         switch (this) {
@@ -250,9 +251,9 @@ public enum BlockFace {
     }
 
     /**
-     * Rotate this BlockFace around the Y axis counter-clockwise (NORTH =&gt; WEST =&gt; SOUTH =&gt; EAST =&gt; NORTH)
-     *
-     * @return block face
+    * Rotate this BlockFace around the Y axis counter-clockwise (NORTH =&gt; WEST =&gt; SOUTH =&gt; EAST =&gt; NORTH)
+    *
+    * @return block face
      */
     public BlockFace rotateYCCW() {
         switch (this) {
@@ -282,7 +283,6 @@ public enum BlockFace {
         private Plane plane;
 
         static {
-            //Circular dependency
             X.plane = Plane.HORIZONTAL;
             Y.plane = Plane.VERTICAL;
             Z.plane = Plane.HORIZONTAL;
@@ -343,15 +343,18 @@ public enum BlockFace {
         VERTICAL;
 
         static {
-            //Circular dependency
             HORIZONTAL.faces = new BlockFace[]{NORTH, EAST, SOUTH, WEST};
             VERTICAL.faces = new BlockFace[]{UP, DOWN};
         }
 
         private BlockFace[] faces;
 
-        public BlockFace random(NukkitRandom rand) { //todo Default Random?
+        public BlockFace random(NukkitRandom rand) {
             return faces[rand.nextBoundedInt(faces.length)];
+        }
+
+        public BlockFace random() {
+            return faces[ThreadLocalRandom.current().nextInt(faces.length)];
         }
 
         public boolean test(BlockFace face) {

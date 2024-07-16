@@ -1,0 +1,98 @@
+# Konfigūracijos failas Nukkit platformai
+# Vieni nustatymai yra saugūs, kiti gali sulaužyti Jūsų serverį, jeigu įrašytos blogos reikšmės
+# Atnaujinant serverio platformą nustatymai turėtų išlikti
+
+settings:
+ #Kalbos nustatymas
+ #Galimos kalbos: bra, chs, cht, cze, deu, eng, idn, jpn, kor, ltu, pol, rus, spa, tur, ukr
+ language: "ltu"
+ #Ar priverstinai įjungti kalbą ar leisti pačiam įrenginiui susidoroti su vertimu
+ force-language: false
+ shutdown-message: "Serveris išjungtas"
+ #Rodo įskiepius per Query
+ query-plugins: true
+ #Rodyti pranešimą konsolėje, jei įskiepiai naudoja senus API metodus
+ deprecated-verbose: true
+ #AsyncTask workerių skaičius
+ #Jeigu nustatytas ant auto, jis automatiškai bandys aptikti branduolių skaičių (ir bent 4)
+ async-workers: auto
+
+network:
+ #Didžiausas leistinas paketų rūšiavimas bitais. Tik šie paketai bus suspausti
+ #Nustatykite 0, jeigu norite suspausti visus paketus, -1, kad išjungti
+ batch-threshold: 256
+ #Suspaudimo lygis naudojant Zlib kai siunčiami suspausti paketai. Didesnė reikšmė = daugiau CPU, mažiau tinklo naudojimo
+ compression-level: 4
+ #Enable network encryption
+ encryption: true
+
+debug:
+ #Jeigu > 1, jis rodys derinimo pranešimus konsolėje
+ level: 1
+
+level-settings:
+ #Įprastinis formatas kuriant pasaulius
+ default-format: leveldb
+ #Automatiškai keisti impuslų greitį, kad atiktiktų pasaulio 20 impulsų per sekundę greitį
+ auto-tick-rate: true
+ auto-tick-rate-limit: 20
+ #Nustatyti impulsų skaičių (1 = 20 impulsai per sekundę, 2 = 10 impulsai per sekunde ir t.t.)
+ base-tick-rate: 1
+ #Atnaujinti visus žaidėjus pasaulyje kiekvieną impulsą, nors kiti nustatymai to neleidžia
+ always-tick-players: false
+
+chunk-sending:
+ #Chunkų skaičius nusiunčiamas žaidėjui per vieną impulsą
+ per-tick: 4
+ #Minimalus chunkų skaičius norint, kad žaidėjas atsirastų pasaulyje
+ spawn-threshold: 56
+ #Įrašyti pasaulio informaciją į RAM, kad informacija būtų greičiau pasiekiama
+ #Tobulas dalykas, jeigu pasaulis yra daugiausiai statinis ir į jį prisijungia daug žaidėjų vienu metu
+ cache-chunks: false
+
+chunk-ticking:
+ #Chunkų limitas, kurį gali apdoroti serveris per vieną impulsą
+ per-tick: 40
+ #Kiek chunkų apdoroti aplink kiekvieną žaidėją
+ tick-radius: 3
+ clear-tick-list: false
+
+chunk-generation:
+ #Kiek daugiausiai chunkų gali laukti generavimo laukimo eilėje
+ queue-size: 8
+ #Kiek daugiausiai chunkų gali laukti antrinio generavimo laukimo eilėje
+ population-queue-size: 8
+
+leveldb:
+ #Use native LevelDB implementation for better performance
+ use-native: false
+ #Set LevelDB memory cache size
+ cache-size-mb: 80
+
+ticks-per:
+ autosave: 6000
+
+player:
+ #Jeigu įvestis "true", tai žaidėjo informacija bus išsaugota faile players/zaidejo-vardas.dat
+ #Jeigu įvestis "false", nukkit neišsaugos žaidėjo informacijos į "dat" failus, kad įskiepiai galėtų kažką padaryti su jais
+ save-player-data: true
+ #The time between skin change action in seconds, set to 0 if you dont want the cooldown
+ skin-change-cooldown: 15
+
+aliases:
+ #Alternatyvos komandoms
+ #Pavyzdžiai:
+ #showtheversion: version
+ #savestop: [save-all, stop]
+
+worlds:
+ #Worlds that the server will use. Options are specific to the chosen generator, and may result in broken generation or
+ #be ignored completely.
+ world:
+  #seed: 404
+  generator: normal
+  options:
+ nether:
+  #seed: my_cool_nether_seed
+  generator: nether
+  options:

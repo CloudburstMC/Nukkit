@@ -1,6 +1,9 @@
 package cn.nukkit.level.generator.populator.impl.tree;
 
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockLeaves;
+import cn.nukkit.block.BlockSapling;
+import cn.nukkit.block.BlockWood;
 import cn.nukkit.level.ChunkManager;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.generator.object.tree.ObjectJungleBigTree;
@@ -15,15 +18,11 @@ public class JungleBigTreePopulator extends Populator {
     private int randomAmount;
     private int baseAmount;
 
-    private final int type;
-
     public JungleBigTreePopulator() {
         this(BlockSapling.JUNGLE);
     }
 
-    public JungleBigTreePopulator(int type) {
-        this.type = type;
-    }
+    public JungleBigTreePopulator(int type) {}
 
     public void setRandomAmount(int randomAmount) {
         this.randomAmount = randomAmount;
@@ -46,7 +45,7 @@ public class JungleBigTreePopulator extends Populator {
             if (y == -1) {
                 continue;
             }
-            new ObjectJungleBigTree(10, 20, Block.get(BlockID.WOOD, BlockWood.JUNGLE), Block.get(BlockID.LEAVES, BlockLeaves.JUNGLE)).generate(this.level, random, v.setComponents(x, y, z));
+            new ObjectJungleBigTree(10, 20, Block.get(WOOD, BlockWood.JUNGLE), Block.get(LEAVES, BlockLeaves.JUNGLE)).generate(this.level, random, v.setComponents(x, y, z));
         }
     }
 

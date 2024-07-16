@@ -1,0 +1,102 @@
+# Nukkit 進階設定
+# 警告：此處部分設定是安全的，而在一些設定不當的情況下可能會損害您的伺服器。
+# 升級後，新的設定及預設值將不會自動顯示在這裡，它們將以預設值運行直到您手動更新設定檔
+
+settings:
+ #多語言設定
+ #可用：eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, cze
+ language: "cht"
+ #伺服器強制語言
+ force-language: false
+ #伺服器關閉訊息
+ shutdown-message: "伺服器已關閉"
+ #允許使用Query協定查詢您的插件
+ query-plugins: true
+ #當某插件使用不推薦的API時，在後台提醒
+ deprecated-verbose: true
+ #非同步線程數量，如果設定為auto，則自動識別CPU核心數量（最少4線程）
+ async-workers: auto
+
+network:
+ #數據包大小閥值（單位：位元組），這些包將被壓縮
+ #設為0，壓縮全部。設為-1，停用功能
+ batch-threshold: 256
+ #壓縮等級，等級越高，CPU佔用越高，佔用頻寬越少
+ compression-level: 4
+ #Enable network encryption
+ encryption: true
+
+debug:
+ #當調試級別 > 1 時，將在控制台顯示調試資訊
+ level: 1
+
+level-settings:
+ #預設生成的地圖格式
+ default-format: leveldb
+ #自動保持Level的tick速度
+ auto-tick-rate: true
+ auto-tick-rate-limit: 20
+ #基本tick速率（1 = 20tick，2 = 10tick，以此類推）
+ base-tick-rate: 1
+ #始終保持玩家Tick
+ always-tick-players: false
+
+chunk-sending:
+ #區塊發送設定
+ #組織時間（tick）內發送給玩家區塊的數量
+ per-tick: 4
+ #玩家完成進服需要的區塊數量
+ spawn-threshold: 56
+ #使用區塊緩存
+ #緩解多玩家同時加入時的伺服器壓力
+ cache-chunks: false
+
+chunk-ticking:
+ #區塊處理設定
+ #每組織時間（tick）中處理的區塊數量
+ per-tick: 40
+ #玩家周圍區塊處理的半徑設定
+ tick-radius: 3
+ clear-tick-list: false
+
+chunk-generation:
+ #區塊生成設定
+ #等待隊列中，被生成的區塊的數量上限
+ queue-size: 8
+ #等待隊列中，被填充的區塊的數量上限
+ population-queue-size: 8
+
+leveldb:
+ #Use native LevelDB implementation for better performance
+ use-native: false
+ #Set LevelDB memory cache size
+ cache-size-mb: 80
+
+ticks-per:
+ #自動儲存
+ autosave: 6000
+
+player:
+ #設置為 ture，玩家資料將被儲存為 player/<玩家代號>.dat
+ #設置為 false，nukkit 將不會儲存玩家資料為 "dat" 檔案，以便插件可以在其上執行某些操作。
+ save-player-data: true
+ #The time between skin change action in seconds, set to 0 if you dont want the cooldown
+ skin-change-cooldown: 15
+ 
+aliases:
+ #指令別稱
+ #例：
+ #showtheversion: version
+ #savestop: [save-all, stop]
+
+worlds:
+ #Worlds that the server will use. Options are specific to the chosen generator, and may result in broken generation or
+ #be ignored completely.
+ world:
+  #seed: 404
+  generator: normal
+  options:
+ nether:
+  #seed: my_cool_nether_seed
+  generator: nether
+  options:

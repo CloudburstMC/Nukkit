@@ -27,7 +27,6 @@ public class CompletedUsingItemPacket extends DataPacket {
     public int itemId;
     public int action;
 
-
     @Override
     public byte pid() {
         return NETWORK_ID;
@@ -35,6 +34,7 @@ public class CompletedUsingItemPacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.decodeUnsupported();
     }
 
     @Override

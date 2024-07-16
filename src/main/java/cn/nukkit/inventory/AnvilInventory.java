@@ -5,7 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Position;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class AnvilInventory extends FakeBlockUIComponent {
@@ -22,18 +22,6 @@ public class AnvilInventory extends FakeBlockUIComponent {
 
     public AnvilInventory(PlayerUIInventory playerUI, Position position) {
         super(playerUI, InventoryType.ANVIL, 1, position);
-    }
-
-    @Override
-    public void onClose(Player who) {
-        super.onClose(who);
-        who.craftingType = Player.CRAFTING_SMALL;
-        who.resetCraftingGridType();
-
-        for (int i = 0; i < 2; ++i) {
-            this.getHolder().getLevel().dropItem(this.getHolder().add(0.5, 0.5, 0.5), this.getItem(i));
-            this.clear(i);
-        }
     }
 
     @Override

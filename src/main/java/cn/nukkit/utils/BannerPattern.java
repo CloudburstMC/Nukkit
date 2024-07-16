@@ -5,30 +5,51 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Banner pattern
+ */
 public class BannerPattern {
 
-    private Type type;
-    private DyeColor color;
+    private final Type type;
+    private final DyeColor color;
 
     public BannerPattern(Type type, DyeColor color) {
         this.type = type;
         this.color = color;
     }
 
+    /**
+     * Get banner pattern color
+     *
+     * @return color as DyeColor
+     */
     public DyeColor getColor() {
         return this.color;
     }
 
+    /**
+     * Get banner pattern type
+     *
+     * @return type as BannerPattern.Type
+     */
     public Type getType() {
         return this.type;
     }
 
+    /**
+     * Read banner pattern from CompoundTag
+     *
+     * @param compoundTag CompoundTag in
+     * @return BannerPattern out
+     */
     public static BannerPattern fromCompoundTag(CompoundTag compoundTag) {
         return new BannerPattern(Type.getByName(compoundTag.contains("Pattern") ? compoundTag.getString("Pattern") : ""), compoundTag.contains("Color") ? DyeColor.getByDyeData(compoundTag.getInt("Color")) : DyeColor.BLACK);
     }
 
+    /**
+     * Banner pattern type enum
+     */
     public enum Type {
-
         PATTERN_BOTTOM_STRIPE("bs"),
         PATTERN_TOP_STRIPE("ts"),
         PATTERN_LEFT_STRIPE("ls"),
@@ -70,7 +91,7 @@ public class BannerPattern {
 
         private final static Map<String, Type> BY_NAME = new HashMap<>();
 
-        private String name;
+        private final String name;
 
         Type(String name) {
             this.name = name;
@@ -89,7 +110,5 @@ public class BannerPattern {
         public static Type getByName(String name) {
             return BY_NAME.get(name);
         }
-
     }
-
 }

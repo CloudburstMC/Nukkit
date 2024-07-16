@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemSwordGold extends ItemTool {
@@ -15,7 +15,7 @@ public class ItemSwordGold extends ItemTool {
     }
 
     public ItemSwordGold(Integer meta, int count) {
-        super(GOLD_SWORD, meta, count, "Gold Sword");
+        super(GOLD_SWORD, meta, count, "Golden Sword");
     }
 
     @Override

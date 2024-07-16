@@ -1,7 +1,7 @@
 package cn.nukkit.inventory;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class CraftingGrid extends PlayerUIComponent {

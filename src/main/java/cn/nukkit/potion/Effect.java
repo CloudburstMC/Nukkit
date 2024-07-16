@@ -1,7 +1,9 @@
 package cn.nukkit.potion;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityBoss;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
@@ -9,7 +11,7 @@ import cn.nukkit.network.protocol.MobEffectPacket;
 import cn.nukkit.utils.ServerException;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class Effect implements Cloneable {
@@ -17,7 +19,7 @@ public class Effect implements Cloneable {
     public static final int SPEED = 1;
     public static final int SLOWNESS = 2;
     public static final int HASTE = 3;
-    public static final int SWIFTNESS = 3;
+    public static final int SWIFTNESS = 3; // incorrect?
     public static final int FATIGUE = 4;
     public static final int MINING_FATIGUE = 4;
     public static final int STRENGTH = 5;
@@ -59,7 +61,7 @@ public class Effect implements Cloneable {
 
         effects[Effect.SPEED] = new Effect(Effect.SPEED, "%potion.moveSpeed", 124, 175, 198);
         effects[Effect.SLOWNESS] = new Effect(Effect.SLOWNESS, "%potion.moveSlowdown", 90, 108, 129, true);
-        effects[Effect.SWIFTNESS] = new Effect(Effect.SWIFTNESS, "%potion.digSpeed", 217, 192, 67);
+        effects[Effect.HASTE] = new Effect(Effect.HASTE, "%potion.digSpeed", 217, 192, 67);
         effects[Effect.FATIGUE] = new Effect(Effect.FATIGUE, "%potion.digSlowDown", 74, 66, 23, true);
         effects[Effect.STRENGTH] = new Effect(Effect.STRENGTH, "%potion.damageBoost", 147, 36, 35);
         effects[Effect.HEALING] = new InstantEffect(Effect.HEALING, "%potion.heal", 248, 36, 35);
@@ -71,16 +73,13 @@ public class Effect implements Cloneable {
         effects[Effect.FIRE_RESISTANCE] = new Effect(Effect.FIRE_RESISTANCE, "%potion.fireResistance", 228, 154, 58);
         effects[Effect.WATER_BREATHING] = new Effect(Effect.WATER_BREATHING, "%potion.waterBreathing", 46, 82, 153);
         effects[Effect.INVISIBILITY] = new Effect(Effect.INVISIBILITY, "%potion.invisibility", 127, 131, 146);
-
         effects[Effect.BLINDNESS] = new Effect(Effect.BLINDNESS, "%potion.blindness", 191, 192, 192);
         effects[Effect.NIGHT_VISION] = new Effect(Effect.NIGHT_VISION, "%potion.nightVision", 0, 0, 139);
         effects[Effect.HUNGER] = new Effect(Effect.HUNGER, "%potion.hunger", 46, 139, 87);
-
         effects[Effect.WEAKNESS] = new Effect(Effect.WEAKNESS, "%potion.weakness", 72, 77, 72, true);
         effects[Effect.POISON] = new Effect(Effect.POISON, "%potion.poison", 78, 147, 49, true);
         effects[Effect.WITHER] = new Effect(Effect.WITHER, "%potion.wither", 53, 42, 39, true);
         effects[Effect.HEALTH_BOOST] = new Effect(Effect.HEALTH_BOOST, "%potion.healthBoost", 248, 125, 35);
-
         effects[Effect.ABSORPTION] = new Effect(Effect.ABSORPTION, "%potion.absorption", 36, 107, 251);
         effects[Effect.SATURATION] = new Effect(Effect.SATURATION, "%potion.saturation", 255, 0, 255);
         effects[Effect.LEVITATION] = new Effect(Effect.LEVITATION, "%potion.levitation", 206, 255, 255, true);
@@ -188,18 +187,18 @@ public class Effect implements Cloneable {
     public boolean canTick() {
         int interval;
         switch (this.id) {
-            case Effect.POISON: //POISON
+            case Effect.POISON:
             case Effect.FATAL_POISON:
                 if ((interval = (25 >> this.amplifier)) > 0) {
                     return (this.duration % interval) == 0;
                 }
                 return true;
-            case Effect.WITHER: //WITHER
+            case Effect.WITHER:
                 if ((interval = (50 >> this.amplifier)) > 0) {
                     return (this.duration % interval) == 0;
                 }
                 return true;
-            case Effect.REGENERATION: //REGENERATION
+            case Effect.REGENERATION:
                 if ((interval = (40 >> this.amplifier)) > 0) {
                     return (this.duration % interval) == 0;
                 }
@@ -209,18 +208,19 @@ public class Effect implements Cloneable {
     }
 
     public void applyEffect(Entity entity) {
+        if (entity instanceof EntityBoss) return; // Boss mobs are immune to poison, wither and regeneration
         switch (this.id) {
-            case Effect.POISON: //POISON
+            case Effect.POISON:
             case Effect.FATAL_POISON:
                 if (entity.getHealth() > 1 || this.id == FATAL_POISON) {
                     entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, 1));
                 }
                 break;
-            case Effect.WITHER: //WITHER
+            case Effect.WITHER:
                 entity.attack(new EntityDamageEvent(entity, DamageCause.MAGIC, 1));
                 break;
-            case Effect.REGENERATION: //REGENERATION
-                if (entity.getHealth() < entity.getMaxHealth()) {
+            case Effect.REGENERATION:
+                if (entity.getHealth() < entity.getRealMaxHealth()) {
                     entity.heal(new EntityRegainHealthEvent(entity, 1, EntityRegainHealthEvent.CAUSE_MAGIC));
                 }
                 break;
@@ -236,10 +236,10 @@ public class Effect implements Cloneable {
     }
 
     public void add(Entity entity) {
-        Effect oldEffect = entity.getEffect(getId());
-        if (oldEffect != null && (Math.abs(this.getAmplifier()) < Math.abs(oldEffect.getAmplifier()) ||
-                Math.abs(this.getAmplifier()) == Math.abs(oldEffect.getAmplifier())
-                        && this.getDuration() < oldEffect.getDuration())) {
+        Effect oldEffect = entity.getEffect(id);
+        if (oldEffect != null && (Math.abs(this.amplifier) < Math.abs(oldEffect.amplifier) ||
+                Math.abs(this.amplifier) == Math.abs(oldEffect.amplifier)
+                        && this.duration < oldEffect.duration)) {
             return;
         }
         if (entity instanceof Player) {
@@ -247,10 +247,10 @@ public class Effect implements Cloneable {
 
             MobEffectPacket pk = new MobEffectPacket();
             pk.eid = entity.getId();
-            pk.effectId = this.getId();
-            pk.amplifier = this.getAmplifier();
-            pk.particles = this.isVisible();
-            pk.duration = this.getDuration();
+            pk.effectId = this.id;
+            pk.amplifier = this.amplifier;
+            pk.particles = this.show;
+            pk.duration = this.duration;
             if (oldEffect != null) {
                 pk.eventId = MobEffectPacket.EVENT_MODIFY;
             } else {
@@ -260,17 +260,19 @@ public class Effect implements Cloneable {
             player.dataPacket(pk);
 
             if (this.id == Effect.SPEED) {
-                if (oldEffect != null) {
+                /*if (oldEffect != null) {
                     player.setMovementSpeed(player.getMovementSpeed() / (1 + 0.2f * (oldEffect.amplifier + 1)), false);
                 }
-                player.setMovementSpeed(player.getMovementSpeed() * (1 + 0.2f * (this.amplifier + 1)));
+                player.setMovementSpeed(player.getMovementSpeed() * (1 + 0.2f * (this.amplifier + 1)));*/
+                player.setMovementSpeed(Player.DEFAULT_SPEED * (1 + 0.2f * (this.amplifier + 1))); //HACK: Fix beacon exploit
             }
 
             if (this.id == Effect.SLOWNESS) {
-                if (oldEffect != null) {
+                /*if (oldEffect != null) {
                     player.setMovementSpeed(player.getMovementSpeed() / (1 - 0.15f * (oldEffect.amplifier + 1)), false);
                 }
-                player.setMovementSpeed(player.getMovementSpeed() * (1 - 0.15f * (this.amplifier + 1)));
+                player.setMovementSpeed(player.getMovementSpeed() * (1 - 0.15f * (this.amplifier + 1)));*/
+                player.setMovementSpeed(Player.DEFAULT_SPEED * (1 - 0.15f * (this.amplifier + 1)));
             }
         }
 
@@ -280,7 +282,7 @@ public class Effect implements Cloneable {
         }
 
         if (this.id == Effect.ABSORPTION) {
-            int add = (this.amplifier + 1) * 4;
+            int add = (this.amplifier + 1) << 2;
             if (add > entity.getAbsorption()) entity.setAbsorption(add);
         }
     }
@@ -289,16 +291,22 @@ public class Effect implements Cloneable {
         if (entity instanceof Player) {
             MobEffectPacket pk = new MobEffectPacket();
             pk.eid = entity.getId();
-            pk.effectId = this.getId();
+            pk.effectId = this.id;
             pk.eventId = MobEffectPacket.EVENT_REMOVE;
 
             ((Player) entity).dataPacket(pk);
 
             if (this.id == Effect.SPEED) {
-                ((Player) entity).setMovementSpeed(((Player) entity).getMovementSpeed() / (1 + 0.2f * (this.amplifier + 1)));
+                //((Player) entity).setMovementSpeed(((Player) entity).getMovementSpeed() / (1 + 0.2f * (this.amplifier + 1)));
+
+                ((Player) entity).setMovementSpeed(entity.isSprinting() ? Player.DEFAULT_SPEED * 1.3f : Player.DEFAULT_SPEED, false);
+                ((Player) entity).setAttribute(Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(Player.DEFAULT_SPEED).setDefaultValue(Player.DEFAULT_SPEED));
             }
             if (this.id == Effect.SLOWNESS) {
-                ((Player) entity).setMovementSpeed(((Player) entity).getMovementSpeed() / (1 - 0.15f * (this.amplifier + 1)));
+                //((Player) entity).setMovementSpeed(((Player) entity).getMovementSpeed() / (1 - 0.15f * (this.amplifier + 1)));
+
+                ((Player) entity).setMovementSpeed(entity.isSprinting() ? Player.DEFAULT_SPEED * 1.3f : Player.DEFAULT_SPEED, false);
+                ((Player) entity).setAttribute(Attribute.getAttribute(Attribute.MOVEMENT_SPEED).setValue(Player.DEFAULT_SPEED).setDefaultValue(Player.DEFAULT_SPEED));
             }
         }
 

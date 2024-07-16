@@ -1,10 +1,9 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemCarrot extends ItemEdible {
@@ -19,7 +18,6 @@ public class ItemCarrot extends ItemEdible {
 
     public ItemCarrot(Integer meta, int count) {
         super(CARROT, 0, count, "Carrot");
-        this.block = Block.get(BlockID.CARROT_BLOCK);
+        this.block = Block.get(CARROT_BLOCK);
     }
-
 }

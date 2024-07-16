@@ -119,17 +119,14 @@ public enum TextFormat {
     public static final char ESCAPE = '\u00A7';
 
     private static final Pattern CLEAN_PATTERN = Pattern.compile("(?i)" + ESCAPE + "[0-9A-U]");
-    //private final static Map<Integer, TextFormat> BY_ID = new TreeMap<>(); //unused
     private final static Map<Character, TextFormat> BY_CHAR = new HashMap<>();
 
     static {
         for (TextFormat color : values()) {
-            //BY_ID.put(color.intCode, color);
             BY_CHAR.put(color.code, color);
         }
     }
 
-    //private final int intCode;
     private final char code;
     private final boolean isFormat;
     private final String toString;
@@ -140,7 +137,6 @@ public enum TextFormat {
 
     TextFormat(char code, int intCode, boolean isFormat) {
         this.code = code;
-        //this.intCode = intCode;
         this.isFormat = isFormat;
         this.toString = new String(new char[]{ESCAPE, code});
     }
@@ -149,7 +145,7 @@ public enum TextFormat {
      * Gets the TextFormat represented by the specified format code.
      *
      * @param code Code to check
-     * @return Associative {@link TextFormat} with the given code,
+     * @return Associative  with the given code,
      * or null if it doesn't exist
      */
     public static TextFormat getByChar(char code) {
@@ -160,7 +156,7 @@ public enum TextFormat {
      * Gets the TextFormat represented by the specified format code.
      *
      * @param code Code to check
-     * @return Associative {@link TextFormat} with the given code,
+     * @return Associative  with the given code,
      * or null if it doesn't exist
      */
     public static TextFormat getByChar(String code) {
@@ -181,6 +177,13 @@ public enum TextFormat {
         return clean(input, false);
     }
 
+    /**
+     * Cleans the given message of all format codes.
+     *
+     * @param input String to clean.
+     * @param recursive Do recursively.
+     * @return A copy of the input string, without any formatting.
+     */
     public static String clean(final String input, final boolean recursive) {
         if (input == null) {
             return null;
@@ -200,7 +203,7 @@ public enum TextFormat {
      * character. The alternate format code character will only be replaced if
      * it is immediately followed by 0-9, A-G, a-g, K-O, k-o, R or r.
      *
-     * @param altFormatChar   The alternate format code character to replace. Ex: &amp;
+     * @param altFormatChar   The alternate format code character to replace. Ex: &amp;amp;
      * @param textToTranslate Text containing the alternate format code character.
      * @return Text containing the TextFormat.ESCAPE format code character.
      */
@@ -241,10 +244,8 @@ public enum TextFormat {
 
         // Search backwards from the end as it is faster
         for (int index = length - 1; index > -1; index--) {
-            char section = input.charAt(index);
-            if (section == ESCAPE && index < length - 1) {
-                char c = input.charAt(index + 1);
-                TextFormat color = getByChar(c);
+            if (input.charAt(index) == ESCAPE && index < length - 1) {
+                TextFormat color = getByChar(input.charAt(index + 1));
 
                 if (color != null) {
                     result.insert(0, color.toString());

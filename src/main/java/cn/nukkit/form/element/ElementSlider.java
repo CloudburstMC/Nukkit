@@ -4,7 +4,8 @@ import com.google.gson.annotations.SerializedName;
 
 public class ElementSlider extends Element {
 
-    private final String type = "slider"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
+    @SuppressWarnings("unused")
+    private final String type = "slider";
     private String text = "";
     private float min = 0f;
     private float max = 100f;
@@ -24,8 +25,8 @@ public class ElementSlider extends Element {
         this.text = text;
         this.min = Math.max(min, 0f);
         this.max = Math.max(max, this.min);
-        if (step != -1f && step > 0) this.step = step;
-        if (defaultValue != -1f) this.defaultValue = defaultValue;
+        if (step != -1.0f && step > 0) this.step = step;
+        if (defaultValue != -1.0f) this.defaultValue = defaultValue;
     }
 
     public String getText() {

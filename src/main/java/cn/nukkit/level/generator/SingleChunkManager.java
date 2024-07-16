@@ -3,6 +3,7 @@ package cn.nukkit.level.generator;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 
 public class SingleChunkManager extends SimpleChunkManager {
+
     private int CX = Integer.MAX_VALUE;
     private int CZ = Integer.MAX_VALUE;
     private BaseFullChunk chunk;
@@ -40,5 +41,15 @@ public class SingleChunkManager extends SimpleChunkManager {
         chunk = null;
         CX = Integer.MAX_VALUE;
         CZ = Integer.MAX_VALUE;
+    }
+
+    @Override
+    public int getMinBlockY() {
+        return 0;
+    }
+
+    @Override
+    public int getMaxBlockY() {
+        return 255;
     }
 }

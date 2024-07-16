@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class HelpCommand extends VanillaCommand {
@@ -22,7 +22,7 @@ public class HelpCommand extends VanillaCommand {
         this.setPermission("nukkit.command.help");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                CommandParameter.newType("page", true, CommandParamType.INT)
+                new CommandParameter("page", CommandParamType.INT, true)
         });
     }
 
@@ -50,16 +50,16 @@ public class HelpCommand extends VanillaCommand {
                     args = new String[0];
                 }*/
                 for (String arg : args) {
-                    if (!command.toString().equals("")) {
-                        command.append(" ");
+                    if (command.length() > 0) {
+                        command.append(' ');
                     }
                     command.append(arg);
                 }
             } catch (NumberFormatException e) {
                 pageNumber = 1;
                 for (String arg : args) {
-                    if (!command.toString().equals("")) {
-                        command.append(" ");
+                    if (command.length() > 0) {
+                        command.append(' ');
                     }
                     command.append(arg);
                 }
@@ -70,7 +70,7 @@ public class HelpCommand extends VanillaCommand {
             pageHeight = Integer.MAX_VALUE;
         }
 
-        if (command.toString().equals("")) {
+        if (command.length() == 0) {
             Map<String, Command> commands = new TreeMap<>();
             for (Command cmd : sender.getServer().getCommandMap().getCommands().values()) {
                 if (cmd.testPermissionSilent(sender)) {
@@ -98,16 +98,16 @@ public class HelpCommand extends VanillaCommand {
             if (cmd != null) {
                 if (cmd.testPermissionSilent(sender)) {
                     String message = TextFormat.YELLOW + "--------- " + TextFormat.WHITE + " Help: /" + cmd.getName() + TextFormat.YELLOW + " ---------\n";
-                    message += TextFormat.GOLD + "Description: " + TextFormat.WHITE + cmd.getDescription() + "\n";
+                    message += TextFormat.GOLD + "Description: " + TextFormat.WHITE + cmd.getDescription() + '\n';
                     StringBuilder usage = new StringBuilder();
                     String[] usages = cmd.getUsage().split("\n");
                     for (String u : usages) {
-                        if (!usage.toString().equals("")) {
+                        if (usage.length() > 0) {
                             usage.append("\n" + TextFormat.WHITE);
                         }
                         usage.append(u);
                     }
-                    message += TextFormat.GOLD + "Usage: " + TextFormat.WHITE + usage + "\n";
+                    message += TextFormat.GOLD + "Usage: " + TextFormat.WHITE + usage + '\n';
                     sender.sendMessage(message);
                     return true;
                 }

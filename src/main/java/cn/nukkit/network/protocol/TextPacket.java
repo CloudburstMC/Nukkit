@@ -1,11 +1,7 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
-/**
- * Created on 15-10-13.
- */
 @ToString
 public class TextPacket extends DataPacket {
 
@@ -58,7 +54,11 @@ public class TextPacket extends DataPacket {
             case TYPE_POPUP:
             case TYPE_JUKEBOX_POPUP:
                 this.message = this.getString();
-                this.parameters = this.getArray(String.class, BinaryStream::getString);
+                int paramCount = (int) this.getUnsignedVarInt();
+                this.parameters = new String[Math.min(paramCount, 128)];
+                for (int i = 0; i < this.parameters.length; i++) {
+                    this.parameters[i] = this.getString();
+                }
         }
         this.xboxUserId = this.getString();
         this.platformChatId = this.getString();

@@ -12,6 +12,16 @@ import cn.nukkit.utils.Faceable;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockHayBale extends BlockSolidMeta implements Faceable {
+
+    private static final short[] faces = {
+            0,
+            0,
+            0b1000,
+            0b1000,
+            0b0100,
+            0b0100,
+    };
+
     public BlockHayBale() {
         this(0);
     }
@@ -41,11 +51,6 @@ public class BlockHayBale extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public int getToolType() {
-        return ItemTool.TYPE_HOE;
-    }
-
-    @Override
     public int getBurnChance() {
         return 60;
     }
@@ -56,15 +61,12 @@ public class BlockHayBale extends BlockSolidMeta implements Faceable {
     }
 
     @Override
+    public int getToolType() {
+        return ItemTool.TYPE_HOE;
+    }
+
+    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = new int[]{
-                0,
-                0,
-                0b1000,
-                0b1000,
-                0b0100,
-                0b0100,
-        };
         this.setDamage((this.getDamage() & 0x03) | faces[face.getIndex()]);
         this.getLevel().setBlock(block, this, true, true);
 
@@ -78,7 +80,7 @@ public class BlockHayBale extends BlockSolidMeta implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
     }
 
     @Override

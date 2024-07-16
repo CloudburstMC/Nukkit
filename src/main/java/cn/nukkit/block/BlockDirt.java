@@ -3,11 +3,15 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Sound;
+import cn.nukkit.level.generator.object.ObjectTallGrass;
+import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * AMAZING COARSE DIRT added by kvetinac97
  * Nukkit Project
  */
@@ -17,7 +21,7 @@ public class BlockDirt extends BlockSolidMeta {
         this(0);
     }
 
-    public BlockDirt(int meta){
+    public BlockDirt(int meta) {
         super(meta);
     }
 
@@ -54,15 +58,35 @@ public class BlockDirt extends BlockSolidMeta {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
-            if (this.up() instanceof BlockAir) {
+            Block up = this.up();
+            if (up instanceof BlockAir || up instanceof BlockFlowable) {
                 item.useOn(this);
                 this.getLevel().setBlock(this, this.getDamage() == 0 ? get(FARMLAND) : get(DIRT), true);
+                if (player != null) {
+                    player.getLevel().addSound(player, Sound.STEP_GRASS);
+                }
                 return true;
             }
         } else if (item.isShovel()) {
-            if (this.up() instanceof BlockAir) {
+            Block up = this.up();
+            if (up instanceof BlockAir || up instanceof BlockFlowable) {
                 item.useOn(this);
-                this.getLevel().setBlock(this, get(GRASS_PATH));
+                this.getLevel().setBlock(this, Block.get(GRASS_PATH));
+                if (player != null) {
+                    player.getLevel().addSound(player, Sound.STEP_GRASS);
+                }
+                return true;
+            }
+        } else if (player != null && item.getId() == Item.DYE && item.getDamage() == ItemDye.BONE_MEAL) {
+            Block up = this.up();
+            if (up instanceof BlockWater) {
+                if (!player.isCreative()) {
+                    item.count--;
+                }
+                this.level.addParticle(new BoneMealParticle(this));
+                if (up.up() instanceof BlockWater) {
+                    ObjectTallGrass.growSeagrass(this.getLevel(), this);
+                }
                 return true;
             }
         }
@@ -72,7 +96,8 @@ public class BlockDirt extends BlockSolidMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[]{new ItemBlock(Block.get(BlockID.DIRT))};
+        int damage = this.getDamage() & 0x01;
+        return new Item[]{new ItemBlock(Block.get(BlockID.DIRT, damage), damage)};
     }
 
     @Override

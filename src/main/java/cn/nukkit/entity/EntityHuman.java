@@ -3,12 +3,16 @@ package cn.nukkit.entity;
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.IntPositionEntityData;
 import cn.nukkit.entity.data.Skin;
+import cn.nukkit.event.entity.EntityDamageBlockedEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.protocol.AddPlayerPacket;
-import cn.nukkit.network.protocol.RemoveEntityPacket;
+import cn.nukkit.network.protocol.MobArmorEquipmentPacket;
 import cn.nukkit.network.protocol.SetEntityLinkPacket;
 import cn.nukkit.utils.*;
 
@@ -18,7 +22,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EntityHuman extends EntityHumanType {
@@ -27,12 +31,12 @@ public class EntityHuman extends EntityHumanType {
     public static final int DATA_PLAYER_FLAG_DEAD = 2;
 
     public static final int DATA_PLAYER_FLAGS = 26;
-
-    public static final int DATA_PLAYER_BED_POSITION = 28;
     public static final int DATA_PLAYER_BUTTON_TEXT = 40;
 
     protected UUID uuid;
     protected byte[] rawUUID;
+
+    protected Skin skin;
 
     @Override
     public float getWidth() {
@@ -46,20 +50,23 @@ public class EntityHuman extends EntityHumanType {
 
     @Override
     public float getHeight() {
-        return 1.8f;
+        return isSwimming() || isGliding() || isCrawling() ? 0.6f : isSneaking() ? 1.5f : 1.8f;
+    }
+
+    @Override
+    protected double getStepHeight() {
+        return 0.6;
     }
 
     @Override
     public float getEyeHeight() {
-        return 1.62f;
+        return isSwimming() || isGliding() || isCrawling() ? 0.42f : isSneaking() ? 1.26f : 1.62f;
     }
 
     @Override
     protected float getBaseOffset() {
-        return this.getEyeHeight();
+        return 1.62f;
     }
-
-    protected Skin skin;
 
     @Override
     public int getNetworkId() {
@@ -88,9 +95,8 @@ public class EntityHuman extends EntityHumanType {
 
     @Override
     protected void initEntity() {
-        this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY);
-
+        this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false, false);
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY, true, false);
         this.setDataProperty(new IntPositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0), false);
 
         if (!(this instanceof Player)) {
@@ -113,9 +119,7 @@ public class EntityHuman extends EntityHumanType {
                 if (skinTag.contains("Data")) {
                     byte[] data = skinTag.getByteArray("Data");
                     if (skinTag.contains("SkinImageWidth") && skinTag.contains("SkinImageHeight")) {
-                        int width = skinTag.getInt("SkinImageWidth");
-                        int height = skinTag.getInt("SkinImageHeight");
-                        newSkin.setSkinData(new SerializedImage(width, height, data));
+                        newSkin.setSkinData(new SerializedImage(skinTag.getInt("SkinImageWidth"), skinTag.getInt("SkinImageHeight"), data));
                     } else {
                         newSkin.setSkinData(data);
                     }
@@ -126,9 +130,7 @@ public class EntityHuman extends EntityHumanType {
                 if (skinTag.contains("CapeData")) {
                     byte[] data = skinTag.getByteArray("CapeData");
                     if (skinTag.contains("CapeImageWidth") && skinTag.contains("CapeImageHeight")) {
-                        int width = skinTag.getInt("CapeImageWidth");
-                        int height = skinTag.getInt("CapeImageHeight");
-                        newSkin.setCapeData(new SerializedImage(width, height, data));
+                        newSkin.setCapeData(new SerializedImage(skinTag.getInt("CapeImageWidth"), skinTag.getInt("CapeImageHeight"), data));
                     } else {
                         newSkin.setCapeData(data);
                     }
@@ -144,7 +146,7 @@ public class EntityHuman extends EntityHumanType {
                 }
                 if (skinTag.contains("SkinAnimationData")) {
                     newSkin.setAnimationData(new String(skinTag.getByteArray("SkinAnimationData"), StandardCharsets.UTF_8));
-                } else if (skinTag.contains("AnimationData")) { // backwards compatible
+                } else if (skinTag.contains("AnimationData")) { // Backwards compatible
                     newSkin.setAnimationData(new String(skinTag.getByteArray("AnimationData"), StandardCharsets.UTF_8));
                 }
                 if (skinTag.contains("PremiumSkin")) {
@@ -157,15 +159,8 @@ public class EntityHuman extends EntityHumanType {
                     newSkin.setCapeOnClassic(skinTag.getBoolean("CapeOnClassicSkin"));
                 }
                 if (skinTag.contains("AnimatedImageData")) {
-                    ListTag<CompoundTag> list = skinTag.getList("AnimatedImageData", CompoundTag.class);
-                    for (CompoundTag animationTag : list.getAll()) {
-                        float frames = animationTag.getFloat("Frames");
-                        int type = animationTag.getInt("Type");
-                        byte[] image = animationTag.getByteArray("Image");
-                        int width = animationTag.getInt("ImageWidth");
-                        int height = animationTag.getInt("ImageHeight");
-                        int expression = animationTag.getInt("AnimationExpression");
-                        newSkin.getAnimations().add(new SkinAnimation(new SerializedImage(width, height, image), type, frames, expression));
+                    for (CompoundTag animationTag : skinTag.getList("AnimatedImageData", CompoundTag.class).getAll()) {
+                        newSkin.getAnimations().add(new SkinAnimation(new SerializedImage(animationTag.getInt("ImageWidth"), animationTag.getInt("ImageHeight"), animationTag.getByteArray("Image")), animationTag.getInt("Type"), animationTag.getFloat("Frames"), animationTag.getInt("AnimationExpression")));
                     }
                 }
                 if (skinTag.contains("ArmSize")) {
@@ -202,7 +197,7 @@ public class EntityHuman extends EntityHumanType {
                 this.setSkin(newSkin);
             }
 
-            this.uuid = Utils.dataToUUID(String.valueOf(this.getId()).getBytes(StandardCharsets.UTF_8), this.getSkin()
+            this.uuid = Utils.dataToUUID(String.valueOf(this.getId()).getBytes(StandardCharsets.UTF_8), this.skin
                     .getSkinData().data, this.getNameTag().getBytes(StandardCharsets.UTF_8));
         }
 
@@ -223,13 +218,13 @@ public class EntityHuman extends EntityHumanType {
                     .putByteArray("Data", this.getSkin().getSkinData().data)
                     .putInt("SkinImageWidth", this.getSkin().getSkinData().width)
                     .putInt("SkinImageHeight", this.getSkin().getSkinData().height)
-                    .putString("ModelId", this.getSkin().getSkinId())
+                    .putString("ModelId", this.skin.getSkinId())
                     .putString("CapeId", this.getSkin().getCapeId())
                     .putByteArray("CapeData", this.getSkin().getCapeData().data)
                     .putInt("CapeImageWidth", this.getSkin().getCapeData().width)
                     .putInt("CapeImageHeight", this.getSkin().getCapeData().height)
                     .putByteArray("SkinResourcePatch", this.getSkin().getSkinResourcePatch().getBytes(StandardCharsets.UTF_8))
-                    .putByteArray("GeometryData", this.getSkin().getGeometryData().getBytes(StandardCharsets.UTF_8))
+                    .putByteArray("GeometryData", this.skin.getGeometryData().getBytes(StandardCharsets.UTF_8))
                     .putByteArray("SkinAnimationData", this.getSkin().getAnimationData().getBytes(StandardCharsets.UTF_8))
                     .putBoolean("PremiumSkin", this.getSkin().isPremium())
                     .putBoolean("PersonaSkin", this.getSkin().isPersona())
@@ -299,13 +294,14 @@ public class EntityHuman extends EntityHumanType {
                 throw new IllegalStateException(this.getClass().getSimpleName() + " must have a valid skin set");
             }
 
-            if (this instanceof Player)
-                this.server.updatePlayerListData(this.getUniqueId(), this.getId(), ((Player) this).getDisplayName(), this.skin, ((Player) this).getLoginChainData().getXUID(), new Player[]{player});
-            else
-                this.server.updatePlayerListData(this.getUniqueId(), this.getId(), this.getName(), this.skin, new Player[]{player});
+            if (this instanceof Player) {
+                this.server.updatePlayerListData(this.uuid, this.getId(), ((Player) this).getDisplayName(), this.skin, ((Player) this).getLoginChainData().getXUID(), new Player[]{player});
+            } else {
+                this.server.updatePlayerListData(this.uuid, this.getId(), this.getName(), this.skin, new Player[]{player});
+            }
 
             AddPlayerPacket pk = new AddPlayerPacket();
-            pk.uuid = this.getUniqueId();
+            pk.uuid = this.uuid;
             pk.username = this.getName();
             pk.entityUniqueId = this.getId();
             pk.entityRuntimeId = this.getId();
@@ -318,10 +314,20 @@ public class EntityHuman extends EntityHumanType {
             pk.yaw = (float) this.yaw;
             pk.pitch = (float) this.pitch;
             pk.item = this.getInventory().getItemInHand();
-            pk.metadata = this.dataProperties;
+            pk.metadata = this.dataProperties.clone();
             player.dataPacket(pk);
 
-            this.inventory.sendArmorContents(player);
+            if (this instanceof Player) {
+                this.inventory.sendArmorContents(player);
+            } else {
+                Item[] armor = this.inventory.getArmorContents();
+                if (armor[0].getId() != 0 || armor[1].getId() != 0 || armor[2].getId() != 0 || armor[3].getId() != 0) {
+                    MobArmorEquipmentPacket pk2 = new MobArmorEquipmentPacket();
+                    pk2.eid = this.getId();
+                    pk2.slots = armor;
+                    player.dataPacket(pk2);
+                }
+            }
             this.offhandInventory.sendContents(player);
 
             if (this.riding != null) {
@@ -330,24 +336,12 @@ public class EntityHuman extends EntityHumanType {
                 pkk.riderUniqueId = this.getId();
                 pkk.type = 1;
                 pkk.immediate = 1;
-
                 player.dataPacket(pkk);
             }
 
             if (!(this instanceof Player)) {
-                this.server.removePlayerListData(this.getUniqueId(), player);
+                this.server.removePlayerListData(this.uuid, player);
             }
-        }
-    }
-
-    @Override
-    public void despawnFrom(Player player) {
-        if (this.hasSpawned.containsKey(player.getLoaderId())) {
-
-            RemoveEntityPacket pk = new RemoveEntityPacket();
-            pk.eid = this.getId();
-            player.dataPacket(pk);
-            this.hasSpawned.remove(player.getLoaderId());
         }
     }
 
@@ -364,4 +358,17 @@ public class EntityHuman extends EntityHumanType {
         }
     }
 
+    @Override
+    protected void onBlock(Entity damager, EntityDamageBlockedEvent event, EntityDamageEvent source) {
+        super.onBlock(damager, event, source);
+        Item shieldOffhand = getOffhandInventory().getItem(0);
+        if (shieldOffhand.getId() == ItemID.SHIELD) {
+            getOffhandInventory().setItem(0, damageArmor(shieldOffhand, damager, source.getDamage(), true, null));
+        } else {
+            Item shield = getInventory().getItemInHand();
+            if (shield.getId() == ItemID.SHIELD) {
+                getInventory().setItemInHand(damageArmor(shield, damager, source.getDamage(), true, null));
+            }
+        }
+    }
 }

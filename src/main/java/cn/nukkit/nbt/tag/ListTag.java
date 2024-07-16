@@ -25,8 +25,8 @@ public class ListTag<T extends Tag> extends Tag {
     }
 
     @Override
-    void write(NBTOutputStream dos) throws IOException {
-        if (list.size() > 0) type = list.get(0).getId();
+    public void write(NBTOutputStream dos) throws IOException {
+        if (!list.isEmpty()) type = list.get(0).getId();
         else type = 1;
 
         dos.writeByte(type);
@@ -36,7 +36,7 @@ public class ListTag<T extends Tag> extends Tag {
 
     @Override
     @SuppressWarnings("unchecked")
-    void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis) throws IOException {
         type = dis.readByte();
         int size = dis.readInt();
 
@@ -64,11 +64,11 @@ public class ListTag<T extends Tag> extends Tag {
     public void print(String prefix, PrintStream out) {
         super.print(prefix, out);
 
-        out.println(prefix + "{");
+        out.println(prefix + '{');
         String orgPrefix = prefix;
         prefix += "   ";
         for (T aList : list) aList.print(prefix, out);
-        out.println(orgPrefix + "}");
+        out.println(orgPrefix + '}');
     }
 
     public ListTag<T> add(T tag) {
@@ -152,5 +152,4 @@ public class ListTag<T extends Tag> extends Tag {
         }
         return false;
     }
-
 }

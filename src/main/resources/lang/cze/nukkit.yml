@@ -1,0 +1,99 @@
+# Hlavni nastavovaci soubor pro Nukkit
+# Některé z těchto nastavení jsou bezpečné, jiné mohou přerušit váš server, pokud jsou nesprávně upraveny
+# Nové nastavení/výchozí hodnoty se v tomto souboru automaticky nezobrazí při upgradu
+
+settings:
+ #Multi-jazykove nastaveni
+ #Dostupne: eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, cze 
+ language: "cze"
+ #Whether to send all strings translated to server locale or let the device handle them
+ #Zda chcete odeslat všechny řetězce přeložené do lokálního serveru nebo nechat zařízení zvládnout
+ force-language: false
+ shutdown-message: "Server se vypíná"
+ #Povolí prohlížení pluginu pomoci Query
+ query-plugins: true
+ #Console pošle zprávu pokud plugin používá zastaralé metody API
+ deprecated-verbose: true
+ #Počet pracovníků AsyncTasku
+ #Pokud je nastaven na automatické, pokusí se detekovat počet jader (a nejméně 4)
+ async-workers: auto
+
+network:
+ #Threshold pro dávkové pakety v bajtech. Pouze tyto pakety budou komprimovány
+ #Nastavte na 0, chcete-li vše komprimovat, -1 zakázat
+ batch-threshold: 256
+ #Compression level používaný Zlib při odesílání dávkových paketů. Vyšší = více CPU, méně využití šířky pásma
+ compression-level: 4
+ #Enable network encryption
+ encryption: true
+
+debug:
+ #Pokud je nastavena 1, console posílá debug zprávy
+ level: 1
+
+level-settings:
+ #Výchozí formát, který budou světy používat při vytvoření
+ default-format: leveldb
+ #Automaticky měnit level tick a zachovat 20 ticků za sekundu
+ auto-tick-rate: true
+ auto-tick-rate-limit: 20
+ #Nastaví základní ticky (1 = 20 ticků za sekundu, 2 = 10 ticku za sekundu atd.).
+ base-tick-rate: 1
+ #Tickne všechny hráče každý tick, i když to ostatní nastavení zakáže
+ always-tick-players: false
+
+chunk-sending:
+ #Množství chunků které se pošlou hráčovi každý tick
+ per-tick: 4
+ #Množství chunků, které je třeba poslat před tím, než se hráč spawne
+ spawn-threshold: 56
+ #Uloží serializovanou kopii chunků v paměti pro rychlejší odesílání
+ #Použije se ve většině statických světech, kde se najednou připojuje spousta hráčů
+ cache-chunks: false
+
+chunk-ticking:
+ #Max množství chunků které se zpracovává každý tick
+ per-tick: 40
+ #Radius chunků kolem hráče, který se má ticknout
+ tick-radius: 3
+ clear-tick-list: false
+
+chunk-generation:
+ #Max. Množství chunků v čekací frontě, která má být generována
+ queue-size: 8
+ #Max. množství chunků ktere vyčkává ve frontě na "osídlení"
+ population-queue-size: 8
+
+leveldb:
+ #Use native LevelDB implementation for better performance
+ use-native: false
+ #Set LevelDB memory cache size
+ cache-size-mb: 80
+
+ticks-per:
+ autosave: 6000
+
+player:
+ #Pokud je true, data hráče budou uložena jako players/playername.dat
+ #Pokud je false, nukkit neukládá data hráče jako "datové" soubory, aby mohly pluginy něco udělat.
+ save-player-data: true
+ #The time between skin change action in seconds, set to 0 if you dont want the cooldown
+ skin-change-cooldown: 15
+ 
+aliases:
+ #Aliasy pro příkazy
+ #Například:
+ #showtheversion: version
+ #savestop: [save-all, stop]
+
+worlds:
+ #Worlds that the server will use. Options are specific to the chosen generator, and may result in broken generation or
+ #be ignored completely.
+ world:
+  #seed: 404
+  generator: normal
+  options:
+ nether:
+  #seed: my_cool_nether_seed
+  generator: nether
+  options:

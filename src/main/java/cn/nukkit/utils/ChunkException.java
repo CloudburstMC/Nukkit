@@ -1,7 +1,9 @@
 package cn.nukkit.utils;
 
 /**
- * author: MagicDroidX
+ * ChunkException
+ *
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ChunkException extends RuntimeException {
@@ -17,5 +19,4 @@ public class ChunkException extends RuntimeException {
     public ChunkException(Throwable cause) {
         super(cause);
     }
-
 }

@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsBeetroot;
+import cn.nukkit.utils.Utils;
 
 /**
  * Created on 2015/11/22 by xtypr.
@@ -28,7 +28,7 @@ public class BlockBeetroot extends BlockCrops {
 
     @Override
     public Item toItem() {
-        return new ItemSeedsBeetroot();
+        return Item.get(Item.BEETROOT_SEEDS);
     }
 
     @Override
@@ -36,7 +36,7 @@ public class BlockBeetroot extends BlockCrops {
         if (this.getDamage() >= 0x07) {
             return new Item[]{
                     Item.get(Item.BEETROOT, 0, 1),
-                    Item.get(Item.BEETROOT_SEEDS, 0, (int) (4d * Math.random()))
+                    Item.get(Item.BEETROOT_SEEDS, 0, Utils.random.nextInt(0, 4))
             };
         } else {
             return new Item[]{

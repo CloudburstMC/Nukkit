@@ -20,7 +20,7 @@ public class BlockGlassPaneStained extends BlockGlassPane {
 
     @Override
     public int getFullId() {
-        return (getId() << 4) + getDamage();
+        return (STAINED_GLASS_PANE << Block.DATA_BITS) + meta;
     }
 
     @Override
@@ -30,7 +30,7 @@ public class BlockGlassPaneStained extends BlockGlassPane {
 
     @Override
     public String getName() {
-        return getDyeColor().getName() + " stained glass pane";
+        return getDyeColor().getName() + " Stained Glass Pane";
     }
 
     @Override
@@ -39,7 +39,7 @@ public class BlockGlassPaneStained extends BlockGlassPane {
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByWoolData(getDamage());
+        return DyeColor.getByWoolData(meta);
     }
 
     @Override
@@ -50,10 +50,5 @@ public class BlockGlassPaneStained extends BlockGlassPane {
     @Override
     public final void setDamage(int meta) {
         this.meta = meta;
-    }
-
-    @Override
-    public boolean canSilkTouch() {
-        return true;
     }
 }

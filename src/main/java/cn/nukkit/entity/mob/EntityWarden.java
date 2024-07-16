@@ -3,12 +3,17 @@ package cn.nukkit.entity.mob;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-public class EntityWarden extends EntityMob {
+public class EntityWarden extends EntityWalkingMob {
 
     public static final int NETWORK_ID = 131;
 
     public EntityWarden(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
+
+    @Override
+    public int getKillExperience() {
+        return 5;
     }
 
     @Override
@@ -28,12 +33,7 @@ public class EntityWarden extends EntityMob {
 
     @Override
     protected void initEntity() {
-        super.initEntity();
         this.setMaxHealth(500);
-    }
-
-    @Override
-    public String getName() {
-        return "Warden";
+        super.initEntity();
     }
 }

@@ -14,7 +14,7 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockTorch extends BlockFlowable implements Faceable {
 
-    private static final int[] faces = new int[]{
+    private static final short[] faces = {
             0, //0, never used
             5, //1
             4, //2
@@ -23,7 +23,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
             1, //5
     };
 
-    private static final int[] faces2 = new int[]{
+    private static final short[] faces2 = {
             0, //0
             4, //1
             5, //2
@@ -75,6 +75,10 @@ public class BlockTorch extends BlockFlowable implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (block instanceof BlockWater) {
+            return false;
+        }
+
         int side = faces[face.getIndex()];
         int bid = this.getSide(BlockFace.fromIndex(faces2[side])).getId();
         if ((!target.isTransparent() || bid == GLASS || bid == STAINED_GLASS) && face != BlockFace.DOWN) {
@@ -94,7 +98,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
@@ -120,5 +124,10 @@ public class BlockTorch extends BlockFlowable implements Faceable {
             default:
                 return BlockFace.UP;
         }
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

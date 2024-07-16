@@ -1,17 +1,12 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.ItemID;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
-public class BlockOreIron extends BlockSolid {
-
-
-    public BlockOreIron() {
-    }
+public class BlockOreIron extends BlockOre {
 
     @Override
     public int getId() {
@@ -19,38 +14,12 @@ public class BlockOreIron extends BlockSolid {
     }
 
     @Override
-    public double getHardness() {
-        return 3;
-    }
-
-    @Override
-    public double getResistance() {
-        return 5;
-    }
-
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_PICKAXE;
+    protected int getRawMaterial() {
+        return ItemID.RAW_IRON;
     }
 
     @Override
     public String getName() {
         return "Iron Ore";
-    }
-
-    @Override
-    public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
-            return new Item[]{
-                    Item.get(IRON_ORE)
-            };
-        } else {
-            return new Item[0];
-        }
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 }

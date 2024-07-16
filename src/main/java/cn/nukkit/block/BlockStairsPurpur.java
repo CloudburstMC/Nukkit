@@ -42,4 +42,9 @@ public class BlockStairsPurpur extends BlockStairs {
     public BlockColor getColor() {
         return BlockColor.MAGENTA_BLOCK_COLOR;
     }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
 }

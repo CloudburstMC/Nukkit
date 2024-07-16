@@ -4,11 +4,17 @@ import cn.nukkit.item.Item;
 
 /**
  * Created on 2015/12/1 by xtypr.
- * Package cn.nukkit.block in project Nukkit .
+ * Package cn.nukkit.block in project Nukkit.
  */
 public class BlockLeaves2 extends BlockLeaves {
+
     public static final int ACACIA = 0;
     public static final int DARK_OAK = 1;
+
+    private static final String[] names = {
+            "Acacia Leaves",
+            "Dark Oak Leaves"
+    };
 
     public BlockLeaves2() {
         this(0);
@@ -19,10 +25,6 @@ public class BlockLeaves2 extends BlockLeaves {
     }
 
     public String getName() {
-        String[] names = new String[]{
-                "Acacia Leaves",
-                "Dark Oak Leaves"
-        };
         return names[this.getDamage() & 0x01];
     }
 
@@ -33,7 +35,7 @@ public class BlockLeaves2 extends BlockLeaves {
 
     @Override
     protected boolean canDropApple() {
-        return (this.getDamage() & 0x01) != 0;
+        return (this.getDamage() & 0x01) == DARK_OAK;
     }
 
     @Override

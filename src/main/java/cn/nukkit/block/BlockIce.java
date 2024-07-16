@@ -8,13 +8,10 @@ import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockIce extends BlockTransparent {
-
-    public BlockIce() {
-    }
 
     @Override
     public int getId() {
@@ -28,7 +25,7 @@ public class BlockIce extends BlockTransparent {
 
     @Override
     public double getResistance() {
-        return 2.5;
+        return 0.5;
     }
 
     @Override
@@ -48,11 +45,10 @@ public class BlockIce extends BlockTransparent {
 
     @Override
     public boolean onBreak(Item item) {
-        if (this.getLevel().getDimension() != Level.DIMENSION_NETHER) {
-            return this.getLevel().setBlock(this, Block.get(BlockID.WATER), true);
-        } else {
+        if (this.getLevel().getDimension() == Level.DIMENSION_NETHER || item.hasEnchantment(Enchantment.ID_SILK_TOUCH) || down().getId() == BlockID.AIR) {
             return super.onBreak(item);
         }
+        return this.getLevel().setBlock(this, Block.get(BlockID.WATER), true);
     }
 
     @Override
@@ -82,7 +78,7 @@ public class BlockIce extends BlockTransparent {
     public BlockColor getColor() {
         return BlockColor.ICE_BLOCK_COLOR;
     }
-
+    
     @Override
     public boolean canSilkTouch() {
         return true;

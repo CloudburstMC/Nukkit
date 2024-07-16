@@ -1,49 +1,42 @@
 package cn.nukkit.level.format.anvil;
 
+import cn.nukkit.Server;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.generic.BaseLevelProvider;
 import cn.nukkit.level.format.generic.BaseRegionLoader;
-import cn.nukkit.level.format.generic.serializer.NetworkChunkSerializer;
 import cn.nukkit.level.generator.Generator;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.scheduler.AsyncTask;
-import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteOrder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class Anvil extends BaseLevelProvider {
-    public static final int VERSION = 19133;
-    private static final byte[] PAD_256 = new byte[256];
-    public static final int EXTENDED_NEGATIVE_SUB_CHUNKS = 4;
 
     public Anvil(Level level, String path) throws IOException {
         super(level, path);
     }
 
+    @SuppressWarnings("unused")
     public static String getProviderName() {
         return "anvil";
     }
 
-    public static byte getProviderOrder() {
-        return ORDER_YZX;
-    }
-
+    @SuppressWarnings("unused")
     public static boolean usesChunkSection() {
         return true;
     }
@@ -72,7 +65,6 @@ public class Anvil extends BaseLevelProvider {
 
         CompoundTag levelData = new CompoundTag("Data")
                 .putCompound("GameRules", new CompoundTag())
-
                 .putLong("DayTime", 0)
                 .putInt("GameType", 0)
                 .putString("generatorName", Generator.getGeneratorName(generator))
@@ -90,11 +82,11 @@ public class Anvil extends BaseLevelProvider {
                 .putInt("SpawnZ", 128)
                 .putBoolean("thundering", false)
                 .putInt("thunderTime", 0)
-                .putInt("version", VERSION)
+                .putInt("version", 19133)
                 .putLong("Time", 0)
                 .putLong("SizeOnDisk", 0);
 
-        NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), new FileOutputStream(path + "level.dat"), ByteOrder.BIG_ENDIAN);
+        NBTIO.writeGZIPCompressed(new CompoundTag().putCompound("Data", levelData), Files.newOutputStream(Paths.get(path + "level.dat")), ByteOrder.BIG_ENDIAN);
     }
 
     @Override
@@ -103,17 +95,15 @@ public class Anvil extends BaseLevelProvider {
     }
 
     @Override
-    public AsyncTask requestChunkTask(int x, int z) throws ChunkException {
+    public void requestChunkTask(int x, int z) throws ChunkException {
         Chunk chunk = (Chunk) this.getChunk(x, z, false);
         if (chunk == null) {
-            throw new ChunkException("Invalid Chunk Set");
+            throw new ChunkException("Invalid chunk set (" + x + ", " + z + ')');
         }
 
         long timestamp = chunk.getChanges();
-        BiConsumer<BinaryStream, Integer> callback = (stream, subchunks) ->
-                this.getLevel().chunkRequestCallback(timestamp, x, z, subchunks, stream.getBuffer());
-        NetworkChunkSerializer.serialize(chunk, callback, this.level.getDimensionData());
-        return null;
+
+        level.asyncChunk(chunk.cloneForChunkSending(), timestamp, x, z);
     }
 
     private int lastPosition = 0;
@@ -135,7 +125,6 @@ public class Anvil extends BaseLevelProvider {
                 BaseFullChunk chunk = iter.next();
                 if (chunk == null) continue;
                 if (chunk.isGenerated() && chunk.isPopulated() && chunk instanceof Chunk) {
-                    Chunk anvilChunk = (Chunk) chunk;
                     chunk.compress();
                     if (System.currentTimeMillis() - start >= time) break;
                 }
@@ -149,13 +138,13 @@ public class Anvil extends BaseLevelProvider {
         int regionX = getRegionIndexX(chunkX);
         int regionZ = getRegionIndexZ(chunkZ);
         BaseRegionLoader region = this.loadRegion(regionX, regionZ);
-        this.level.timings.syncChunkLoadDataTimer.startTiming();
-        BaseFullChunk chunk;
-        try {
-            chunk = region.readChunk(chunkX - regionX * 32, chunkZ - regionZ * 32);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        BaseFullChunk chunk = null;
+        try { // Note: We don't want to ignore corrupted regions here as those would eventually cause problems when chunks are saved
+            chunk = region.readChunk(chunkX - (regionX << 5), chunkZ - (regionZ << 5));
+        } catch (IOException ex) {
+            Server.getInstance().getLogger().error("Failed to read chunk " + chunkX + ", " + chunkZ, ex);
         }
+
         if (chunk == null) {
             if (create) {
                 chunk = this.getEmptyChunk(chunkX, chunkZ);
@@ -164,7 +153,6 @@ public class Anvil extends BaseLevelProvider {
         } else {
             putChunk(index, chunk);
         }
-        this.level.timings.syncChunkLoadDataTimer.stopTiming();
         return chunk;
     }
 
@@ -175,16 +163,15 @@ public class Anvil extends BaseLevelProvider {
             try {
                 this.loadRegion(X >> 5, Z >> 5).writeChunk(chunk);
             } catch (Exception e) {
-                throw new ChunkException("Error saving chunk (" + X + ", " + Z + ")", e);
+                throw new ChunkException("Error saving chunk (" + X + ", " + Z + ')', e);
             }
         }
     }
 
-
     @Override
     public synchronized void saveChunk(int x, int z, FullChunk chunk) {
         if (!(chunk instanceof Chunk)) {
-            throw new ChunkException("Invalid Chunk class");
+            throw new ChunkException("Invalid chunk class (" + x + ", " + z + ')');
         }
         int regionX = x >> 5;
         int regionZ = z >> 5;
@@ -198,6 +185,7 @@ public class Anvil extends BaseLevelProvider {
         }
     }
 
+    @SuppressWarnings("unused")
     public static ChunkSection createChunkSection(int y) {
         ChunkSection cs = new ChunkSection(y);
         cs.hasSkyLight = true;

@@ -5,8 +5,12 @@ import lombok.ToString;
 
 import java.util.List;
 
+/**
+ * Persona skin piece tint
+ */
 @ToString
 public class PersonaPieceTint {
+
     public final String pieceType;
     public final ImmutableList<String> colors;
 

@@ -7,10 +7,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
@@ -21,6 +21,8 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
 
     public static final int TRAPDOOR_OPEN_BIT = 0x08;
     public static final int TRAPDOOR_TOP_BIT = 0x04;
+
+    private static final int[] FACES = {2, 1, 3, 0};
 
     public BlockTrapdoor() {
         this(0);
@@ -167,11 +169,16 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
+            boolean powered = this.level.isBlockPowered(this);
+            if ((!isOpen() && powered) || (isOpen() && !powered)) {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, isOpen() ? 15 : 0, isOpen() ? 0 : 15));
                 this.setDamage(this.getDamage() ^ TRAPDOOR_OPEN_BIT);
                 this.level.setBlock(this, this, true);
-                this.level.addLevelEvent(this.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_DOOR);
+                if (this.isOpen()) {
+                    this.level.addSound(this, Sound.RANDOM_DOOR_OPEN);
+                } else {
+                    this.level.addSound(this, Sound.RANDOM_DOOR_CLOSE);
+                }
                 return type;
             }
         }
@@ -193,40 +200,41 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
             top = face != BlockFace.UP;
         }
 
-        int[] faces = {2, 1, 3, 0};
-        int faceBit = faces[facing.getHorizontalIndex()];
-        meta |= faceBit;
+        meta |= FACES[facing.getHorizontalIndex()];
 
         if (top) {
             meta |= TRAPDOOR_TOP_BIT;
         }
+
         this.setDamage(meta);
-        this.getLevel().setBlock(block, this, true, true);
+
+        this.getLevel().setBlock(this, this, true, true);
         return true;
     }
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if(toggle(player)) {
-            this.level.addLevelEvent(this.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_DOOR);
-            return true;
-        }
-        return false;
+        return toggle(player);
     }
 
     public boolean toggle(Player player) {
         DoorToggleEvent ev = new DoorToggleEvent(this, player);
-        getLevel().getServer().getPluginManager().callEvent(ev);
-        if(ev.isCancelled()) {
+        level.getServer().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
             return false;
         }
         this.setDamage(this.getDamage() ^ TRAPDOOR_OPEN_BIT);
-        getLevel().setBlock(this, this, true);
+        level.setBlock(this, this, true, true);
+        if (this.isOpen()) {
+            this.level.addSound(this, Sound.RANDOM_DOOR_OPEN);
+        } else {
+            this.level.addSound(this, Sound.RANDOM_DOOR_CLOSE);
+        }
         return true;
     }
 
@@ -245,6 +253,16 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public boolean canPassThrough() {
+        return this.isOpen();
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

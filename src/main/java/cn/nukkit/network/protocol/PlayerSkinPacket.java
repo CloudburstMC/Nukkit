@@ -8,14 +8,17 @@ import java.util.UUID;
 @ToString
 public class PlayerSkinPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.PLAYER_SKIN_PACKET;
+
     public UUID uuid;
     public Skin skin;
     public String newSkinName;
     public String oldSkinName;
+    public boolean premium;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.PLAYER_SKIN_PACKET;
+        return NETWORK_ID;
     }
 
     @Override

@@ -1,8 +1,5 @@
 package cn.nukkit.item;
 
-/**
- * Created by PetteriM1
- */
 public class ItemDriedKelp extends ItemEdible {
 
     public ItemDriedKelp() {
@@ -15,5 +12,10 @@ public class ItemDriedKelp extends ItemEdible {
 
     public ItemDriedKelp(Integer meta, int count) {
         super(DRIED_KELP, 0, count, "Dried Kelp");
+    }
+
+    @Override
+    protected int getUseTicks() {
+        return 15;
     }
 }

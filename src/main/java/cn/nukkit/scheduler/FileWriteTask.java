@@ -10,10 +10,11 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class FileWriteTask extends AsyncTask {
+
     private final File file;
     private final InputStream contents;
 
@@ -53,5 +54,4 @@ public class FileWriteTask extends AsyncTask {
             Server.getInstance().getLogger().logException(e);
         }
     }
-
 }

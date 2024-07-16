@@ -12,10 +12,6 @@ public interface NetworkPlayerSession {
     void sendPacket(DataPacket packet);
     void sendImmediatePacket(DataPacket packet, Runnable callback);
 
-    default void flush() {
-
-    }
-
     void disconnect(String reason);
 
     Player getPlayer();
@@ -25,5 +21,9 @@ public interface NetworkPlayerSession {
 
     default void setEncryption(SecretKey encryptionKey, Cipher encryptionCipher, Cipher decryptionCipher) {
 
+    }
+
+    default long getPing() {
+        return -1;
     }
 }

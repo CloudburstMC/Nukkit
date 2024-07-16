@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.StringJoiner;
 
 public class CompoundTag extends Tag implements Cloneable {
+
     private final Map<String, Tag> tags = new HashMap<>();
 
     public CompoundTag() {
@@ -24,7 +25,6 @@ public class CompoundTag extends Tag implements Cloneable {
 
     @Override
     public void write(NBTOutputStream dos) throws IOException {
-
         for (Map.Entry<String, Tag> entry : this.tags.entrySet()) {
             Tag.writeNamedTag(entry.getValue(), entry.getKey(), dos);
         }
@@ -132,70 +132,86 @@ public class CompoundTag extends Tag implements Cloneable {
         return (T) tags.remove(name);
     }
 
-
     public int getByte(String name) {
-        if (!tags.containsKey(name)) return (byte) 0;
-        return ((NumberTag) tags.get(name)).getData().intValue();
+        Tag t = tags.get(name);
+        if (t == null) return (byte) 0;
+        return ((NumberTag) t).getData().intValue();
     }
 
     public int getShort(String name) {
-        if (!tags.containsKey(name)) return 0;
-        return ((NumberTag) tags.get(name)).getData().intValue();
+        Tag t = tags.get(name);
+        if (t == null) return 0;
+        return ((NumberTag) t).getData().intValue();
     }
 
     public int getInt(String name) {
-        if (!tags.containsKey(name)) return 0;
-        return ((NumberTag) tags.get(name)).getData().intValue();
+        Tag t = tags.get(name);
+        if (t == null) return 0;
+        return ((NumberTag) t).getData().intValue();
     }
 
     public long getLong(String name) {
-        if (!tags.containsKey(name)) return 0;
-        return ((NumberTag) tags.get(name)).getData().longValue();
+        Tag t = tags.get(name);
+        if (t == null) return 0;
+        return ((NumberTag) t).getData().longValue();
     }
 
     public float getFloat(String name) {
-        if (!tags.containsKey(name)) return (float) 0;
-        return ((NumberTag) tags.get(name)).getData().floatValue();
+        Tag t = tags.get(name);
+        if (t == null) return 0f;
+        return ((NumberTag) t).getData().floatValue();
     }
 
     public double getDouble(String name) {
-        if (!tags.containsKey(name)) return 0;
-        return ((NumberTag) tags.get(name)).getData().doubleValue();
+        Tag t = tags.get(name);
+        if (t == null) return 0;
+        return ((NumberTag) t).getData().doubleValue();
     }
 
     public String getString(String name) {
-        if (!tags.containsKey(name)) return "";
-        Tag tag = tags.get(name);
-        if (tag instanceof NumberTag) {
-            return String.valueOf(((NumberTag) tag).getData());
+        Tag t = tags.get(name);
+        if (t == null) return "";
+        if (t instanceof NumberTag) {
+            return String.valueOf(((NumberTag) t).getData());
         }
-        return ((StringTag) tag).data;
+        return ((StringTag) t).data;
     }
 
     public byte[] getByteArray(String name) {
-        if (!tags.containsKey(name)) return new byte[0];
-        return ((ByteArrayTag) tags.get(name)).data;
+        Tag t = tags.get(name);
+        if (t == null) return new byte[0];
+        return ((ByteArrayTag) t).data;
+    }
+
+    public byte[] getByteArray(String name, int defaultSize) {
+        Tag t = tags.get(name);
+        if (t == null) return new byte[defaultSize];
+        return ((ByteArrayTag) t).data;
     }
 
     public int[] getIntArray(String name) {
-        if (!tags.containsKey(name)) return new int[0];
-        return ((IntArrayTag) tags.get(name)).data;
+        Tag t = tags.get(name);
+        if (t == null) return new int[0];
+        return ((IntArrayTag) t).data;
     }
 
     public CompoundTag getCompound(String name) {
-        if (!tags.containsKey(name)) return new CompoundTag(name);
-        return (CompoundTag) tags.get(name);
+        Tag t = tags.get(name);
+        if (t == null) return new CompoundTag(name);
+        return (CompoundTag) t;
     }
 
     public ListTag<? extends Tag> getList(String name) {
-        if (!tags.containsKey(name)) return new ListTag<>(name);
-        return (ListTag<? extends Tag>) tags.get(name);
+        Tag t = tags.get(name);
+        if (t == null) return new ListTag<>(name);
+        return (ListTag<? extends Tag>) t;
     }
 
     @SuppressWarnings("unchecked")
     public <T extends Tag> ListTag<T> getList(String name, Class<T> type) {
-        if (tags.containsKey(name)) {
-            return (ListTag<T>) tags.get(name);
+        Tag t = tags.get(name);
+        if (t != null) {
+            return (ListTag<T>) t;
         }
         return new ListTag<>(name);
     }
@@ -219,6 +235,12 @@ public class CompoundTag extends Tag implements Cloneable {
         return getByte(name) != 0;
     }
 
+    public boolean getBoolean(String name, boolean def) {
+        Tag t = tags.get(name);
+        if (t == null) return def;
+        return (((NumberTag) t).getData().intValue()) != 0;
+    }
+
     public String toString() {
         StringJoiner joiner = new StringJoiner(",\n\t");
         tags.forEach((key, tag) -> joiner.add('\'' + key + "' : " + tag.toString().replace("\n", "\n\t")));
@@ -227,13 +249,13 @@ public class CompoundTag extends Tag implements Cloneable {
 
     public void print(String prefix, PrintStream out) {
         super.print(prefix, out);
-        out.println(prefix + "{");
+        out.println(prefix + '{');
         String orgPrefix = prefix;
         prefix += "   ";
         for (Tag tag : tags.values()) {
             tag.print(prefix, out);
         }
-        out.println(orgPrefix + "}");
+        out.println(orgPrefix + '}');
     }
 
     public boolean isEmpty() {
@@ -242,8 +264,8 @@ public class CompoundTag extends Tag implements Cloneable {
 
     public CompoundTag copy() {
         CompoundTag tag = new CompoundTag(getName());
-        for (String key : tags.keySet()) {
-            tag.put(key, tags.get(key).copy());
+        for (Entry<String, Tag> entry : tags.entrySet()) {
+            tag.put(entry.getKey(), entry.getValue().copy());
         }
         return tag;
     }

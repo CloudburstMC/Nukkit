@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BanList {
@@ -42,7 +42,7 @@ public class BanList {
     }
 
     public boolean isBanned(String name) {
-        if (!this.isEnable() || name == null) {
+        if (!this.enable || name == null) {
             return false;
         } else {
             this.removeExpired();
@@ -106,17 +106,15 @@ public class BanList {
                 this.save();
             } else {
 
-                LinkedList<TreeMap<String, String>> list = new Gson().fromJson(Utils.readFile(this.file), new TypeToken<LinkedList<TreeMap<String, String>>>() {
-                }.getType());
+                LinkedList<TreeMap<String, String>> list = new Gson().fromJson(Utils.readFile(this.file), new LinkedListTypeToken().getType());
                 for (TreeMap<String, String> map : list) {
                     BanEntry entry = BanEntry.fromMap(map);
                     this.list.put(entry.getName(), entry);
                 }
             }
         } catch (IOException e) {
-            MainLogger.getLogger().error("Could not load ban list: ", e);
+            MainLogger.getLogger().error("Could not load ban list", e);
         }
-
     }
 
     public void save() {
@@ -134,7 +132,10 @@ public class BanList {
             }
             Utils.writeFile(this.file, new ByteArrayInputStream(new GsonBuilder().setPrettyPrinting().create().toJson(list).getBytes(StandardCharsets.UTF_8)));
         } catch (IOException e) {
-            MainLogger.getLogger().error("Could not save ban list ", e);
+            MainLogger.getLogger().error("Could not save ban list", e);
         }
+    }
+
+    private static class LinkedListTypeToken extends TypeToken<LinkedList<TreeMap<String, String>>> {
     }
 }

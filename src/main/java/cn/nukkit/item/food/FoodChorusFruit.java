@@ -6,9 +6,10 @@ import cn.nukkit.block.BlockLiquid;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.NukkitRandom;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.utils.Utils;
 
 /**
  * Created by Leonidius20 on 20.08.18.
@@ -23,7 +24,6 @@ public class FoodChorusFruit extends FoodNormal {
     @Override
     protected boolean onEatenBy(Player player) {
         super.onEatenBy(player);
-        // Teleportation
         int minX = player.getFloorX() - 8;
         int minY = player.getFloorY() - 8;
         int minZ = player.getFloorZ() - 8;
@@ -31,39 +31,39 @@ public class FoodChorusFruit extends FoodNormal {
         int maxY = minY + 16;
         int maxZ = minZ + 16;
 
+        int minBlockY = player.getLevel().getMinBlockY();
+
         Level level = player.getLevel();
         if (level == null) return false;
 
-        NukkitRandom random = new NukkitRandom();
-        for (int attempts = 0; attempts < 128; attempts++) {
-            int x = random.nextRange(minX, maxX);
-            int y = random.nextRange(minY, maxY);
-            int z = random.nextRange(minZ, maxZ);
+        for (int attempts = 0; attempts < 16; attempts++) {
+            int x = Utils.rand(minX, maxX);
+            int y = Utils.rand(minY, maxY);
+            int z = Utils.rand(minZ, maxZ);
 
-            if (y < 0) continue;
+            if (y < minBlockY) continue;
 
-            while (y >= 0 && !level.getBlock(new Vector3(x, y + 1, z)).isSolid()) {
+            FullChunk chunk = level.getChunk(x >> 4, z >> 4);
+            while (y >= minBlockY && !level.getBlock(chunk, x, y + 1, z, true).isSolid()) {
                 y--;
             }
-            y++; // Back up to non solid
 
-            Block blockUp = level.getBlock(new Vector3(x, y + 1, z));
-            Block blockUp2 = level.getBlock(new Vector3(x, y + 2, z));
+            y++;
 
-            if (blockUp.isSolid() || blockUp instanceof BlockLiquid ||
-                    blockUp2.isSolid() || blockUp2 instanceof BlockLiquid) {
+            Block blockUp = level.getBlock(chunk, x, y + 1, z, true);
+            Block blockUp2 = level.getBlock(chunk, x, y + 2, z, true);
+
+            if (blockUp.isSolid() || blockUp instanceof BlockLiquid || blockUp2.isSolid() || blockUp2 instanceof BlockLiquid) {
                 continue;
             }
 
-            // Sounds are broadcast at both source and destination
             level.addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_TELEPORT);
-            player.teleport(new Vector3(x + 0.5, y + 1, z + 0.5), PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT);
-            level.addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_TELEPORT);
-
+            if (player.teleport(new Vector3(x + 0.5, y + 1, z + 0.5), PlayerTeleportEvent.TeleportCause.CHORUS_FRUIT)) {
+                level.addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_TELEPORT);
+            }
             break;
         }
 
         return true;
     }
-
 }

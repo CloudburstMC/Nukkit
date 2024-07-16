@@ -21,4 +21,9 @@ public class ItemRecordWard extends ItemRecord {
     public String getSoundId() {
         return "record.ward";
     }
+
+    @Override
+    public String getDiscName() {
+        return "C418 - ward";
+    }
 }

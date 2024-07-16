@@ -21,4 +21,9 @@ public class ItemRecordStrad extends ItemRecord {
     public String getSoundId() {
         return "record.strad";
     }
+
+    @Override
+    public String getDiscName() {
+        return "C418 - strad";
+    }
 }

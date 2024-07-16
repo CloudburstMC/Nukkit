@@ -1,6 +1,7 @@
 package cn.nukkit.level;
 
 public enum DimensionEnum {
+
     OVERWORLD(new DimensionData(Level.DIMENSION_OVERWORLD, -64, 319)),
     NETHER(new DimensionData(Level.DIMENSION_NETHER, 0, 127)),
     END(new DimensionData(Level.DIMENSION_THE_END, 0, 255));

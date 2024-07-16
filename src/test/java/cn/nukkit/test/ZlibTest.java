@@ -17,5 +17,4 @@ class ZlibTest {
         byte[] out = Zlib.inflate(compressed);
         assertArrayEquals(in, out);
     }
-
 }

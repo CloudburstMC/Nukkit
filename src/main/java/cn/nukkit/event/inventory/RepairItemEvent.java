@@ -14,11 +14,11 @@ public class RepairItemEvent extends InventoryEvent implements Cancellable {
         return handlers;
     }
 
-    private Item oldItem;
-    private Item newItem;
-    private Item materialItem;
+    private final Item oldItem;
+    private final Item newItem;
+    private final Item materialItem;
     private int cost;
-    private Player player;
+    private final Player player;
 
     public RepairItemEvent(AnvilInventory inventory, Item oldItem, Item newItem, Item materialItem, int cost, Player player) {
         super(inventory);

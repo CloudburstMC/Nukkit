@@ -2,12 +2,22 @@ package cn.nukkit.entity.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockComposter;
+import cn.nukkit.block.BlockRailActivator;
+import cn.nukkit.blockentity.BlockEntity;
+import cn.nukkit.blockentity.BlockEntityContainer;
+import cn.nukkit.blockentity.BlockEntityFurnace;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.inventory.InventoryMoveItemEvent;
+import cn.nukkit.inventory.FurnaceInventory;
+import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.InventoryHolder;
 import cn.nukkit.inventory.MinecartHopperInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -20,14 +30,12 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
 
     protected MinecartHopperInventory inventory;
 
+    public int transferCooldown;
+
     public EntityMinecartHopper(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
         setDisplayBlock(Block.get(Block.HOPPER_BLOCK), false);
-    }
-
-    @Override
-    public String getName() {
-        return getType().getName();
+        setName("Minecart with Hopper");
     }
 
     @Override
@@ -36,7 +44,7 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
     }
 
     @Override
-    public boolean isRideable(){
+    public boolean isRideable() {
         return false;
     }
 
@@ -47,10 +55,6 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
 
     @Override
     public void dropItem() {
-        for (Item item : this.inventory.getContents().values()) {
-            this.level.dropItem(this, item);
-        }
-
         if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
             Entity damager = ((EntityDamageByEntityEvent) this.lastDamageCause).getDamager();
             if (damager instanceof Player && ((Player) damager).isCreative()) {
@@ -58,12 +62,13 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
             }
         }
         this.level.dropItem(this, Item.get(Item.HOPPER_MINECART));
-    }
-
-    @Override
-    public void kill() {
-        super.kill();
-        this.inventory.clearAll();
+        if (this.inventory != null) {
+            this.inventory.getViewers().clear();
+            for (Item item : this.inventory.getContents().values()) {
+                this.level.dropItem(this, item);
+            }
+            this.inventory.clearAll();
+        }
     }
 
     @Override
@@ -73,7 +78,9 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
 
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        player.addWindow(this.inventory);
+        if (this.isAlive()) {
+            player.addWindow(this.inventory);
+        }
         return false; // If true, the count of items player has in hand decreases
     }
 
@@ -117,7 +124,183 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
     }
 
     @Override
+    public boolean onUpdate(int currentTick) {
+        if (super.onUpdate(currentTick) && !this.closed && isAlive()) {
+            if (this.isOnTransferCooldown()) {
+                this.transferCooldown--;
+                return true;
+            }
+
+            Block rail = level.getBlock(this.chunk, getFloorX(), getFloorY(), getFloorZ(), false);
+            if (rail instanceof BlockRailActivator && ((BlockRailActivator) rail).isActive()) {
+                return false;
+            }
+
+            boolean changed;
+            BlockEntity blockEntity = this.level.getBlockEntity(this.chunk, this.up());
+            Block block = null;
+            if (blockEntity instanceof BlockEntityContainer || (block = this.level.getBlock(this.chunk, this.getFloorX(), this.getFloorY() + 1, this.getFloorZ(), false)) instanceof BlockComposter) {
+                changed = pullItems(blockEntity, block);
+            } else {
+                changed = pickupItems(new SimpleAxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 2, this.z + 1));
+            }
+
+            if (changed) {
+                this.setTransferCooldown(8);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    @Override
     public String getInteractButtonText() {
         return "action.interact.opencontainer";
+    }
+
+    public boolean isOnTransferCooldown() {
+        return this.transferCooldown > 0;
+    }
+
+    public void setTransferCooldown(int transferCooldown) {
+        this.transferCooldown = transferCooldown;
+    }
+
+    private boolean pullItems(BlockEntity blockEntity, Block block) {
+        if (this.inventory.isFull()) {
+            return false;
+        }
+
+        if (blockEntity instanceof BlockEntityFurnace) {
+            FurnaceInventory inv = ((BlockEntityFurnace) blockEntity).getInventory();
+            Item item = inv.getResult();
+
+            if (!item.isNull()) {
+                Item itemToAdd = item.clone();
+                itemToAdd.count = 1;
+
+                if (!this.inventory.canAddItem(itemToAdd)) {
+                    return false;
+                }
+
+                InventoryMoveItemEvent ev = new InventoryMoveItemEvent(inv, this.inventory, this, itemToAdd, InventoryMoveItemEvent.Action.SLOT_CHANGE);
+                this.server.getPluginManager().callEvent(ev);
+
+                if (ev.isCancelled()) {
+                    return false;
+                }
+
+                Item[] items = this.inventory.addItem(itemToAdd);
+
+                if (items.length == 0) {
+                    item.count--;
+                    inv.setResult(item);
+                    return true;
+                }
+            }
+        } else if (blockEntity instanceof InventoryHolder) {
+            Inventory inv = ((InventoryHolder) blockEntity).getInventory();
+
+            for (int i = 0; i < inv.getSize(); i++) {
+                Item item = inv.getItem(i);
+
+                if (!item.isNull()) {
+                    Item itemToAdd = item.clone();
+                    itemToAdd.count = 1;
+
+                    if (!this.inventory.canAddItem(itemToAdd)) {
+                        continue;
+                    }
+
+                    InventoryMoveItemEvent ev = new InventoryMoveItemEvent(inv, this.inventory, this, itemToAdd, InventoryMoveItemEvent.Action.SLOT_CHANGE);
+                    this.server.getPluginManager().callEvent(ev);
+
+                    if (ev.isCancelled()) {
+                        continue;
+                    }
+
+                    Item[] items = this.inventory.addItem(itemToAdd);
+
+                    if (items.length >= 1) {
+                        continue;
+                    }
+
+                    item.count--;
+
+                    inv.setItem(i, item);
+                    return true;
+                }
+            }
+        } else if (block instanceof BlockComposter) {
+            BlockComposter composter = (BlockComposter) block;
+            Item item = composter.empty();
+            if (item == null || item.isNull()) {
+                return false;
+            }
+            Item itemToAdd = item.clone();
+            itemToAdd.setCount(1);
+            if (!this.inventory.canAddItem(itemToAdd)) {
+                return false;
+            }
+            InventoryMoveItemEvent ev = new InventoryMoveItemEvent(null, this.inventory, this, item, InventoryMoveItemEvent.Action.PICKUP);
+            this.server.getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return false;
+            }
+            Item[] items = inventory.addItem(itemToAdd);
+            return items.length == 0;
+        }
+        return false;
+    }
+
+    private boolean pickupItems(AxisAlignedBB pickupArea) {
+        if (this.inventory.isFull()) {
+            return false;
+        }
+
+        boolean pickedUpItem = false;
+
+        for (Entity entity : this.level.getCollidingEntities(pickupArea)) {
+            if (entity.isClosed() || !(entity instanceof EntityItem)) {
+                continue;
+            }
+
+            EntityItem itemEntity = (EntityItem) entity;
+            Item item = itemEntity.getItem();
+
+            if (item.isNull()) {
+                continue;
+            }
+
+            int originalCount = item.getCount();
+
+            if (!this.inventory.canAddItem(item)) {
+                continue;
+            }
+
+            InventoryMoveItemEvent ev = new InventoryMoveItemEvent(null, this.inventory, this, item, InventoryMoveItemEvent.Action.PICKUP);
+            this.server.getPluginManager().callEvent(ev);
+
+            if (ev.isCancelled()) {
+                continue;
+            }
+
+            Item[] items = this.inventory.addItem(item);
+
+            if (items.length == 0) {
+                entity.close();
+                pickedUpItem = true;
+                continue;
+            }
+
+            if (items[0].getCount() != originalCount) {
+                pickedUpItem = true;
+                item.setCount(items[0].getCount());
+            }
+        }
+
+        return pickedUpItem;
     }
 }

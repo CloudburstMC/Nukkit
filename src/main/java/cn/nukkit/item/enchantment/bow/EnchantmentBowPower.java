@@ -3,10 +3,11 @@ package cn.nukkit.item.enchantment.bow;
 import cn.nukkit.item.enchantment.Enchantment;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentBowPower extends EnchantmentBow {
+
     public EnchantmentBowPower() {
         super(Enchantment.ID_BOW_POWER, "arrowDamage", Rarity.COMMON);
     }

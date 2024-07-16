@@ -30,6 +30,7 @@ public class PlayerActionPacket extends DataPacket {
     public static final int ACTION_STOP_GLIDE = 16;
     public static final int ACTION_BUILD_DENIED = 17;
     public static final int ACTION_CONTINUE_BREAK = 18;
+    public static final int ACTION_CHANGE_SKIN = 19;
     public static final int ACTION_SET_ENCHANTMENT_SEED = 20;
     public static final int ACTION_START_SWIMMING = 21;
     public static final int ACTION_STOP_SWIMMING = 22;
@@ -67,7 +68,11 @@ public class PlayerActionPacket extends DataPacket {
         this.putEntityRuntimeId(this.entityId);
         this.putVarInt(this.action);
         this.putBlockVector3(this.x, this.y, this.z);
-        this.putBlockVector3(this.resultPosition);
+        if (this.resultPosition == null) {
+            this.putBlockVector3(new BlockVector3());
+        } else {
+            this.putBlockVector3(this.resultPosition);
+        }
         this.putVarInt(this.face);
     }
 
@@ -75,5 +80,4 @@ public class PlayerActionPacket extends DataPacket {
     public byte pid() {
         return NETWORK_ID;
     }
-
 }

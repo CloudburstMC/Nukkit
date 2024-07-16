@@ -1,21 +1,23 @@
 package cn.nukkit.inventory;
 
+import cn.nukkit.block.BlockID;
 import cn.nukkit.item.Item;
 
 import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class Fuel {
+
     public static final Map<Integer, Short> duration = new TreeMap<>();
 
     static {
         duration.put(Item.COAL, (short) 1600);
         duration.put(Item.COAL_BLOCK, (short) 16000);
-        duration.put(Item.TRUNK, (short) 300);
+        duration.put(Item.WOOD, (short) 300);
         duration.put(Item.WOODEN_PLANKS, (short) 300);
         duration.put(Item.SAPLING, (short) 100);
         duration.put(Item.WOODEN_AXE, (short) 200);
@@ -55,6 +57,13 @@ public abstract class Fuel {
         duration.put(Item.WOOD_SLAB, (short) 300);
         duration.put(Item.DOUBLE_WOOD_SLAB, (short) 300);
         duration.put(Item.BOAT, (short) 1200);
+        duration.put(Item.ACACIA_CHEST_BOAT, (short) 1200);
+        duration.put(Item.BIRCH_CHEST_BOAT, (short) 1200);
+        duration.put(Item.JUNGLE_CHEST_BOAT, (short) 1200);
+        duration.put(Item.DARK_OAK_CHEST_BOAT, (short) 1200);
+        duration.put(Item.MANGROVE_CHEST_BOAT, (short) 1200);
+        duration.put(Item.OAK_CHEST_BOAT, (short) 1200);
+        duration.put(Item.SPRUCE_CHEST_BOAT, (short) 1200);
         duration.put(Item.BLAZE_ROD, (short) 2400);
         duration.put(Item.BROWN_MUSHROOM_BLOCK, (short) 300);
         duration.put(Item.RED_MUSHROOM_BLOCK, (short) 300);
@@ -67,7 +76,51 @@ public abstract class Fuel {
         duration.put(Item.ACACIA_DOOR, (short) 200);
         duration.put(Item.DARK_OAK_DOOR, (short) 200);
         duration.put(Item.BANNER, (short) 300);
+        duration.put(Item.CROSSBOW, (short) 200);
         duration.put(Item.DEAD_BUSH, (short) 100);
         duration.put(Item.SIGN, (short) 200);
+        duration.put(Item.ACACIA_SIGN, (short) 200);
+        duration.put(Item.BIRCH_SIGN, (short) 200);
+        duration.put(Item.SPRUCE_SIGN, (short) 200);
+        duration.put(Item.DARKOAK_SIGN, (short) 200);
+        duration.put(Item.JUNGLE_SIGN, (short) 200);
+
+        /* New blocks use negative IDs in their item form */
+        duration.put(255 - BlockID.DRIED_KELP_BLOCK, (short) 4000);
+        duration.put(255 - BlockID.SCAFFOLDING, (short) 50);
+        duration.put(255 - BlockID.BEE_NEST, (short) 300);
+        duration.put(255 - BlockID.BEEHIVE, (short) 300);
+        duration.put(255 - BlockID.BAMBOO, (short) 50);
+        duration.put(255 - BlockID.BARREL, (short) 300);
+        duration.put(255 - BlockID.LECTERN, (short) 300);
+        duration.put(255 - BlockID.CARTOGRAPHY_TABLE, (short) 300);
+        duration.put(255 - BlockID.FLETCHING_TABLE, (short) 300);
+        duration.put(255 - BlockID.SMITHING_TABLE, (short) 300);
+        duration.put(255 - BlockID.COMPOSTER, (short) 300);
+        duration.put(255 - BlockID.LOOM, (short) 300);
+        duration.put(255 - BlockID.WOOD_BARK, (short) 300);
+        duration.put(255 - BlockID.STRIPPED_OAK_LOG, (short) 300);
+        duration.put(255 - BlockID.STRIPPED_SPRUCE_LOG, (short) 300);
+        duration.put(255 - BlockID.STRIPPED_BIRCH_LOG, (short) 300);
+        duration.put(255 - BlockID.STRIPPED_JUNGLE_LOG, (short) 300);
+        duration.put(255 - BlockID.STRIPPED_ACACIA_LOG, (short) 300);
+        duration.put(255 - BlockID.STRIPPED_DARK_OAK_LOG, (short) 300);
+        duration.put(255 - BlockID.SPRUCE_TRAPDOOR, (short) 300);
+        duration.put(255 - BlockID.BIRCH_TRAPDOOR, (short) 300);
+        duration.put(255 - BlockID.JUNGLE_TRAPDOOR, (short) 300);
+        duration.put(255 - BlockID.ACACIA_TRAPDOOR, (short) 300);
+        duration.put(255 - BlockID.DARK_OAK_TRAPDOOR, (short) 300);
+        duration.put(255 - BlockID.SPRUCE_BUTTON, (short) 300);
+        duration.put(255 - BlockID.BIRCH_BUTTON, (short) 300);
+        duration.put(255 - BlockID.JUNGLE_BUTTON, (short) 300);
+        duration.put(255 - BlockID.ACACIA_BUTTON, (short) 300);
+        duration.put(255 - BlockID.DARK_OAK_BUTTON, (short) 300);
+        duration.put(255 - BlockID.SPRUCE_PRESSURE_PLATE, (short) 300);
+        duration.put(255 - BlockID.BIRCH_PRESSURE_PLATE, (short) 300);
+        duration.put(255 - BlockID.JUNGLE_PRESSURE_PLATE, (short) 300);
+        duration.put(255 - BlockID.ACACIA_PRESSURE_PLATE, (short) 300);
+        duration.put(255 - BlockID.DARK_OAK_PRESSURE_PLATE, (short) 300);
+        duration.put(255 - BlockID.AZALEA, (short) 100);
+        duration.put(255 - BlockID.FLOWERING_AZALEA, (short) 100);
     }
 }

@@ -5,7 +5,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.Level;
 
 /**
- * author: funcraft
+ * @author funcraft
  * Nukkit Project
  */
 public class WeatherChangeEvent extends WeatherEvent implements Cancellable {
@@ -31,5 +31,4 @@ public class WeatherChangeEvent extends WeatherEvent implements Cancellable {
     public boolean toWeatherState() {
         return to;
     }
-
 }

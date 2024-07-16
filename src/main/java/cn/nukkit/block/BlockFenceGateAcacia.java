@@ -8,6 +8,7 @@ import cn.nukkit.utils.BlockColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockFenceGateAcacia extends BlockFenceGate {
+
     public BlockFenceGateAcacia() {
         this(0);
     }
@@ -25,7 +26,7 @@ public class BlockFenceGateAcacia extends BlockFenceGate {
     public String getName() {
         return "Acacia Fence Gate";
     }
-
+    
     @Override
     public Item toItem() {
         return Item.get(Item.FENCE_GATE_ACACIA, 0, 1);

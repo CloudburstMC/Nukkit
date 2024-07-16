@@ -19,5 +19,4 @@ public class FormResponseSimple extends FormResponse {
     public ElementButton getClickedButton() {
         return clickedButton;
     }
-
 }

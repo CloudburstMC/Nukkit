@@ -30,5 +30,4 @@ public class BlockStairsBirch extends BlockStairsWood {
     public BlockColor getColor() {
         return BlockColor.SAND_BLOCK_COLOR;
     }
-
 }

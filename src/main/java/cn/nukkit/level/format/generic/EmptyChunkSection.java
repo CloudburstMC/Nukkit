@@ -1,30 +1,30 @@
 package cn.nukkit.level.format.generic;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockLayer;
 import cn.nukkit.level.format.ChunkSection;
-import cn.nukkit.level.util.BitArrayVersion;
-import cn.nukkit.level.util.PalettedBlockStorage;
 import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.ChunkException;
 
 import java.util.Arrays;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EmptyChunkSection implements ChunkSection {
+
     public static final EmptyChunkSection[] EMPTY = new EmptyChunkSection[16];
-    private static final PalettedBlockStorage EMPTY_STORAGE = PalettedBlockStorage.createFromBlockPalette(BitArrayVersion.V1);
+
+    public static final byte[] EMPTY_LIGHT_ARR = new byte[2048];
+    public static final byte[] EMPTY_SKY_LIGHT_ARR = new byte[2048];
+    private static final byte[] EMPTY_ID_ARR = new byte[4096];
 
     static {
         for (int y = 0; y < EMPTY.length; y++) {
             EMPTY[y] = new EmptyChunkSection(y);
         }
-    }
-    public static byte[] EMPTY_LIGHT_ARR = new byte[2048];
-    public static byte[] EMPTY_SKY_LIGHT_ARR = new byte[2048];
-    static {
+
         Arrays.fill(EMPTY_SKY_LIGHT_ARR, (byte) 255);
     }
 
@@ -40,17 +40,17 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
-    final public int getBlockId(int x, int y, int z) {
+    public int getBlockId(int x, int y, int z, BlockLayer layer) {
         return 0;
     }
 
     @Override
-    public int getFullBlock(int x, int y, int z) throws ChunkException {
+    public int getFullBlock(int x, int y, int z, BlockLayer layer) {
         return 0;
     }
 
     @Override
-    public Block getAndSetBlock(int x, int y, int z, Block block) {
+    public Block getAndSetBlock(int x, int y, int z, BlockLayer layer, Block block) {
         if (block.getId() != 0) throw new ChunkException("Tried to modify an empty Chunk");
         return Block.get(0);
     }
@@ -68,13 +68,25 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
+    public boolean setBlockAtLayer(int x, int y, int z, BlockLayer layer, int blockId) {
+        if (blockId != 0) throw new ChunkException("Tried to modify an empty Chunk");
+        return false;
+    }
+
+    @Override
+    public boolean setBlockAtLayer(int x, int y, int z, BlockLayer layer, int blockId, int meta) {
+        if (blockId != 0) throw new ChunkException("Tried to modify an empty Chunk");
+        return false;
+    }
+
+    @Override
     public byte[] getIdArray() {
-        return new byte[4096];
+        return EMPTY_ID_ARR;
     }
 
     @Override
     public byte[] getDataArray() {
-        return new byte[2048];
+        return EMPTY_LIGHT_ARR; // empty 2048
     }
 
     @Override
@@ -88,22 +100,22 @@ public class EmptyChunkSection implements ChunkSection {
     }
 
     @Override
-    final public void setBlockId(int x, int y, int z, int id) throws ChunkException {
+    public void setBlockId(int x, int y, int z, BlockLayer layer, int id) {
         if (id != 0) throw new ChunkException("Tried to modify an empty Chunk");
     }
 
     @Override
-    final public int getBlockData(int x, int y, int z) {
+    public int getBlockData(int x, int y, int z, BlockLayer layer) {
         return 0;
     }
 
     @Override
-    public void setBlockData(int x, int y, int z, int data) throws ChunkException {
+    public void setBlockData(int x, int y, int z, BlockLayer layer, int data) {
         if (data != 0) throw new ChunkException("Tried to modify an empty Chunk");
     }
 
     @Override
-    public boolean setFullBlockId(int x, int y, int z, int fullId) {
+    public boolean setFullBlockId(int x, int y, int z, BlockLayer layer, int fullId) {
         if (fullId != 0) throw new ChunkException("Tried to modify an empty Chunk");
         return false;
     }
@@ -135,10 +147,8 @@ public class EmptyChunkSection implements ChunkSection {
 
     @Override
     public void writeTo(BinaryStream stream) {
-        stream.putByte((byte) 8);
-        stream.putByte((byte) 2);
-        EMPTY_STORAGE.writeTo(stream);
-        EMPTY_STORAGE.writeTo(stream);
+        stream.putByte((byte) 8); // paletted
+        stream.putByte((byte) 0); // layers
     }
 
     @Override

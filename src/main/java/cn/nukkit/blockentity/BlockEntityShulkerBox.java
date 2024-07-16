@@ -13,11 +13,8 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 
-import java.util.HashSet;
+import java.util.ArrayList;
 
-/**
- * Created by PetteriM1
- */
 public class BlockEntityShulkerBox extends BlockEntitySpawnable implements InventoryHolder, BlockEntityContainer, BlockEntityNameable {
 
     protected ShulkerBoxInventory inventory;
@@ -28,18 +25,6 @@ public class BlockEntityShulkerBox extends BlockEntitySpawnable implements Inven
 
     @Override
     protected void initBlockEntity() {
-        this.inventory = new ShulkerBoxInventory(this);
-
-        if (!this.namedTag.contains("Items") || !(this.namedTag.get("Items") instanceof ListTag)) {
-            this.namedTag.putList(new ListTag<CompoundTag>("Items"));
-        }
-
-        ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
-        for (CompoundTag compound : list.getAll()) {
-            Item item = NBTIO.getItemHelper(compound);
-            this.inventory.slots.put(compound.getByte("Slot"), item);
-        }
-
         if (!this.namedTag.contains("facing")) {
             this.namedTag.putByte("facing", 0);
         }
@@ -47,27 +32,48 @@ public class BlockEntityShulkerBox extends BlockEntitySpawnable implements Inven
         super.initBlockEntity();
     }
 
-    @Override
-    public void close() {
-        if (!closed) {
-            for (Player player : new HashSet<>(this.getInventory().getViewers())) {
-                player.removeWindow(this.getInventory());
+    private void initInventory() {
+        if (!this.namedTag.contains("Items") || !(this.namedTag.get("Items") instanceof ListTag)) {
+            this.namedTag.putList(new ListTag<CompoundTag>("Items"));
+        }
+        ListTag<CompoundTag> list = (ListTag<CompoundTag>) this.namedTag.getList("Items");
+
+        this.inventory = new ShulkerBoxInventory(this);
+
+        for (CompoundTag compound : list.getAll()) {
+            Item item = NBTIO.getItemHelper(compound);
+            if (item.getId() != 0 && item.getCount() > 0) {
+                this.inventory.slots.put(compound.getByte("Slot"), item);
             }
-            super.close();
         }
     }
 
     @Override
+    public void close() {
+        if (!this.closed && this.inventory != null) {
+            for (Player player : new ArrayList<>(this.inventory.getViewers())) {
+                player.removeWindow(this.inventory);
+            }
+        }
+
+        super.close();
+    }
+
+    @Override
     public void saveNBT() {
-        this.namedTag.putList(new ListTag<CompoundTag>("Items"));
-        for (int index = 0; index < this.getSize(); index++) {
-            this.setItem(index, this.inventory.getItem(index));
+        super.saveNBT();
+
+        if (this.inventory != null) {
+            this.namedTag.putList(new ListTag<CompoundTag>("Items"));
+            for (int index = 0; index < this.getSize(); index++) {
+                this.setItem(index, this.inventory.getItem(index));
+            }
         }
     }
 
     @Override
     public boolean isBlockEntityValid() {
-        int blockID = this.getBlock().getId();
+        int blockID = level.getBlockIdAt(chunk, (int) x, (int) y, (int) z);
         return blockID == Block.SHULKER_BOX || blockID == Block.UNDYED_SHULKER_BOX;
     }
 
@@ -117,11 +123,17 @@ public class BlockEntityShulkerBox extends BlockEntitySpawnable implements Inven
 
     @Override
     public BaseInventory getInventory() {
+        if (this.inventory == null) {
+            this.initInventory();
+        }
         return this.inventory;
     }
 
     public ShulkerBoxInventory getRealInventory() {
-        return inventory;
+        if (this.inventory == null) {
+            this.initInventory();
+        }
+        return this.inventory;
     }
 
     @Override

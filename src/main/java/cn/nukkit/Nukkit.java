@@ -1,6 +1,5 @@
 package cn.nukkit;
 
-import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.utils.ServerKiller;
 import com.google.common.base.Preconditions;
 import io.netty.util.ResourceLeakDetector;
@@ -13,7 +12,6 @@ import lombok.extern.log4j.Log4j2;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
-import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 
 import java.io.IOException;
@@ -30,52 +28,47 @@ import java.util.Properties;
  */
 
 /**
- * Nukkit启动类，包含{@code main}函数。<br>
- * The launcher class of Nukkit, including the {@code main} function.
+ * The launcher class of Nukkit, including the {@code main} function
  *
  * @author MagicDroidX(code) @ Nukkit Project
  * @author 粉鞋大妈(javadoc) @ Nukkit Project
- * @since Nukkit 1.0 | Nukkit API 1.0.0
  */
 @Log4j2
 public class Nukkit {
 
     public final static Properties GIT_INFO = getGitInfo();
     public final static String VERSION = getVersion();
-    public final static String API_VERSION = "1.0.15";
-    public final static String CODENAME = "";
-    @Deprecated
-    public final static String MINECRAFT_VERSION = ProtocolInfo.MINECRAFT_VERSION;
-    @Deprecated
-    public final static String MINECRAFT_VERSION_NETWORK = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
-
-    public final static String PATH = System.getProperty("user.dir") + "/";
-    public final static String DATA_PATH = System.getProperty("user.dir") + "/";
+    public final static String API_VERSION = "1.0.20";
+    public final static String PATH = System.getProperty("user.dir") + '/';
+    public final static String DATA_PATH = System.getProperty("user.dir") + '/';
     public final static String PLUGIN_PATH = DATA_PATH + "plugins";
-    public static final long START_TIME = System.currentTimeMillis();
-    public static boolean ANSI = true;
-    public static boolean TITLE = false;
-    public static boolean shortTitle = requiresShortTitle();
+    /**
+     * Server start time
+     */
+    public final static long START_TIME = System.currentTimeMillis();
+    /**
+     * Console title enabled
+     */
+    public static boolean TITLE = true;
+    /**
+     * Debug logging level
+     */
     public static int DEBUG = 1;
 
     public static void main(String[] args) {
-        // Force IPv4 since Nukkit is not compatible with IPv6
         System.setProperty("java.net.preferIPv4Stack" , "true");
         System.setProperty("log4j.skipJansi", "false");
-        System.getProperties().putIfAbsent("io.netty.allocator.type", "unpooled"); // Disable memory pooling unless specified
 
-        // Force Mapped ByteBuffers for LevelDB till fixed.
+        // Disable memory pooling unless specified
+        System.getProperties().putIfAbsent("io.netty.allocator.type", "unpooled");
+
+        // Force Mapped ByteBuffers for LevelDB till fixed
         System.setProperty("leveldb.mmap", "true");
-
-        // Netty logger for debug info
-        InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
-        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
 
         // Define args
         OptionParser parser = new OptionParser();
         parser.allowsUnrecognizedOptions();
         OptionSpec<Void> helpSpec = parser.accepts("help", "Shows this page").forHelp();
-        OptionSpec<Void> ansiSpec = parser.accepts("disable-ansi", "Disables console coloring");
         OptionSpec<Void> titleSpec = parser.accepts("enable-title", "Enables title at the top of the window");
         OptionSpec<String> vSpec = parser.accepts("v", "Set verbosity of logging").withRequiredArg().ofType(String.class);
         OptionSpec<String> verbositySpec = parser.accepts("verbosity", "Set verbosity of logging").withRequiredArg().ofType(String.class);
@@ -88,13 +81,14 @@ public class Nukkit {
             try {
                 // Display help page
                 parser.printHelpOn(System.out);
-            } catch (IOException e) {
-                // ignore
+            } catch (IOException ignored) {
             }
             return;
         }
 
-        ANSI = !options.has(ansiSpec);
+        InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
+        ResourceLeakDetector.setLevel(ResourceLeakDetector.Level.PARANOID);
+
         TITLE = options.has(titleSpec);
 
         String verbosity = options.valueOf(vSpec);
@@ -106,8 +100,7 @@ public class Nukkit {
             try {
                 Level level = Level.valueOf(verbosity);
                 setLogLevel(level);
-            } catch (Exception e) {
-                // ignore
+            } catch (Exception ignored) {
             }
         }
 
@@ -115,7 +108,7 @@ public class Nukkit {
 
         try {
             if (TITLE) {
-                System.out.print((char) 0x1b + "]0;Nukkit is starting up..." + (char) 0x07);
+                System.out.print((char) 0x1b + "]0;Nukkit " + getVersion() + (char) 0x07);
             }
             new Server(PATH, DATA_PATH, PLUGIN_PATH, language);
         } catch (Throwable t) {
@@ -125,7 +118,7 @@ public class Nukkit {
         if (TITLE) {
             System.out.print((char) 0x1b + "]0;Stopping Server..." + (char) 0x07);
         }
-        log.info("Stopping other threads");
+        log.info("Stopping other threads...");
 
         for (Thread thread : java.lang.Thread.getAllStackTraces().keySet()) {
             if (!(thread instanceof InterruptibleThread)) {
@@ -146,21 +139,17 @@ public class Nukkit {
         System.exit(0);
     }
 
-    private static boolean requiresShortTitle() {
-        //Shorter title for windows 8/2012
-        String osName = System.getProperty("os.name").toLowerCase();
-        return osName.contains("windows") &&(osName.contains("windows 8") || osName.contains("2012"));
-    }
-
     private static Properties getGitInfo() {
         InputStream gitFileStream = Nukkit.class.getClassLoader().getResourceAsStream("git.properties");
         if (gitFileStream == null) {
+            log.debug("Unable to find git.properties");
             return null;
         }
         Properties properties = new Properties();
         try {
             properties.load(gitFileStream);
         } catch (IOException e) {
+            log.debug("Unable to load git.properties", e);
             return null;
         }
         return properties;
@@ -170,7 +159,7 @@ public class Nukkit {
         StringBuilder version = new StringBuilder();
         version.append("git-");
         String commitId;
-        if (GIT_INFO == null || (commitId = GIT_INFO.getProperty("git.commit.id.abbrev")) == null) {
+        if (GIT_INFO == null || (commitId = GIT_INFO.getProperty("git.commit.id.abbrev")) == null || commitId.isEmpty()) {
             return version.append("null").toString();
         }
         return version.append(commitId).toString();
@@ -179,16 +168,12 @@ public class Nukkit {
     public static void setLogLevel(Level level) {
         Preconditions.checkNotNull(level, "level");
         LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-        Configuration log4jConfig = ctx.getConfiguration();
-        LoggerConfig loggerConfig = log4jConfig.getLoggerConfig(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME);
+        LoggerConfig loggerConfig = ctx.getConfiguration().getLoggerConfig(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME);
         loggerConfig.setLevel(level);
         ctx.updateLoggers();
     }
 
     public static Level getLogLevel() {
-        LoggerContext ctx = (LoggerContext) LogManager.getContext(false);
-        Configuration log4jConfig = ctx.getConfiguration();
-        LoggerConfig loggerConfig = log4jConfig.getLoggerConfig(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME);
-        return loggerConfig.getLevel();
+        return ((LoggerContext) LogManager.getContext(false)).getConfiguration().getLoggerConfig(org.apache.logging.log4j.LogManager.ROOT_LOGGER_NAME).getLevel();
     }
 }

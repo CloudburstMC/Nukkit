@@ -4,7 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemAppleGold extends ItemEdible {
