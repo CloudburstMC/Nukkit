@@ -14,11 +14,11 @@ public interface ProtocolInfo {
      * Actual Minecraft: PE protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("686"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("712"); // DO NOT REMOVE BOXING
 
-    List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(685, CURRENT_PROTOCOL);
+    List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION_NETWORK = "1.21.2";
+    String MINECRAFT_VERSION_NETWORK = "1.21.20";
     String MINECRAFT_VERSION = 'v' + MINECRAFT_VERSION_NETWORK;
 
     byte BATCH_PACKET = (byte) 0xff;
@@ -230,4 +230,9 @@ public interface ProtocolInfo {
     byte __INTERNAL__SET_PLAYER_INVENTORY_OPTIONS_PACKET = (byte) 207;
     byte __INTERNAL__SET_HUD_PACKET = (byte) 208;
     byte __INTERNAL__AWARD_ACHIEVEMENT_PACKET = (byte) 209;
+    byte __INTERNAL__CLIENTBOUND_CLOSE_FORM_PACKET = (byte) 210;
+    byte __INTERNAL__SERVERBOUND_LOADING_SCREEN_PACKET = (byte) 212;
+    byte __INTERNAL__JIGSAW_STRUCTURE_DATA_PACKET = (byte) 213;
+    byte __INTERNAL__CURRENT_STRUCTURE_FEATURE_PACKET = (byte) 214;
+    byte __INTERNAL__SERVERBOUND_DIAGNOSTICS_PACKET = (byte) 215;
 }

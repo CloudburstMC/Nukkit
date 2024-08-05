@@ -5532,4 +5532,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         pk.visible = visible;
         this.dataPacket(pk);
     }
+
+    /**
+     * Close form windows sent with showFormWindow
+     */
+    public void closeFormWindows() {
+        this.formWindows.clear();
+        this.dataPacket(new ClientboundCloseFormPacket());
+    }
 }

@@ -73,6 +73,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 UseItemData useItemData = (UseItemData) this.transactionData;
 
                 this.putUnsignedVarInt(useItemData.actionType);
+                this.putUnsignedVarInt(useItemData.triggerType);
                 this.putBlockVector3(useItemData.blockPos);
                 this.putBlockFace(useItemData.face);
                 this.putVarInt(useItemData.hotbarSlot);
@@ -80,6 +81,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 this.putVector3f(useItemData.playerPos.asVector3f());
                 this.putVector3f(useItemData.clickPos);
                 this.putUnsignedVarInt(useItemData.blockRuntimeId);
+                this.putUnsignedVarInt(useItemData.clientInteractPrediction);
                 break;
             case TYPE_USE_ITEM_ON_ENTITY:
                 UseItemOnEntityData useItemOnEntityData = (UseItemOnEntityData) this.transactionData;
@@ -135,6 +137,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 UseItemData itemData = new UseItemData();
 
                 itemData.actionType = (int) this.getUnsignedVarInt();
+                itemData.triggerType = (int) this.getUnsignedVarInt();
                 itemData.blockPos = this.getBlockVector3();
                 itemData.face = this.getBlockFace();
                 itemData.hotbarSlot = this.getVarInt();
@@ -142,6 +145,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 itemData.playerPos = this.getVector3f().asVector3();
                 itemData.clickPos = this.getVector3f();
                 itemData.blockRuntimeId = (int) this.getUnsignedVarInt();
+                itemData.clientInteractPrediction = (int) this.getUnsignedVarInt();
 
                 this.transactionData = itemData;
                 break;

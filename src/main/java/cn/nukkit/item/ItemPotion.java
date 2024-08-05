@@ -74,7 +74,7 @@ public class ItemPotion extends Item {
         if (consumeEvent.isCancelled()) {
             return false;
         }
-        Potion potion = Potion.getPotion(this.getDamage()).setSplash(false);
+        Potion potion = Potion.getPotion(this.getDamage());
 
         if (player.isAdventure() || player.isSurvival()) {
             --this.count;
@@ -83,6 +83,7 @@ public class ItemPotion extends Item {
         }
 
         if (potion != null) {
+            potion.setSplash(false);
             potion.applyPotion(player);
         }
         return true;

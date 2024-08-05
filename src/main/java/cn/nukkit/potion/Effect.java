@@ -6,7 +6,6 @@ import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.network.protocol.MobEffectPacket;
-import cn.nukkit.utils.ServerException;
 
 /**
  * author: MagicDroidX
@@ -96,7 +95,7 @@ public class Effect implements Cloneable {
         if (id >= 0 && id < effects.length && effects[id] != null) {
             return effects[id].clone();
         } else {
-            throw new ServerException("Effect id: " + id + " not found");
+            return null;
         }
     }
 
@@ -106,7 +105,7 @@ public class Effect implements Cloneable {
             int id = Effect.class.getField(name.toUpperCase()).getInt(null);
             return getEffect(id);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 
