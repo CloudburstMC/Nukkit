@@ -11,6 +11,7 @@ public enum GameRule {
     DO_FIRE_TICK("doFireTick"),
     DO_INSOMNIA("doInsomnia"),
     DO_IMMEDIATE_RESPAWN("doImmediateRespawn"),
+    DO_LIMITED_CRAFTING("doLimitedCrafting"),
     DO_MOB_LOOT("doMobLoot"),
     DO_MOB_SPAWNING("doMobSpawning"),
     DO_TILE_DROPS("doTileDrops"),
@@ -24,15 +25,22 @@ public enum GameRule {
     MAX_COMMAND_CHAIN_LENGTH("maxCommandChainLength"),
     MOB_GRIEFING("mobGriefing"),
     NATURAL_REGENERATION("naturalRegeneration"),
+    PLAYERS_SLEEPING_PERCENTAGE("playersSleepingPercentage"),
+    PROJECTILES_CAN_BREAK_BLOCKS("projectilesCanBreakBlocks"),
     PVP("pvp"),
     RANDOM_TICK_SPEED("randomTickSpeed"),
+    RECIPES_UNLOCK("recipesUnlock"),
+    RESPAWN_BLOCKS_EXPLODE("respawnBlocksExplode"),
+    SHOW_BORDER_EFFECT("showBorderEffect"),
     SEND_COMMAND_FEEDBACK("sendCommandFeedback"),
     SHOW_COORDINATES("showCoordinates"),
+    SHOW_DAYS_PLAYED("showDaysPlayed"),
     SHOW_DEATH_MESSAGES("showDeathMessages"),
+    SHOW_RECIPE_MESSAGES("showRecipeMessages"),
+    SHOW_TAGS("showTags"),
     SPAWN_RADIUS("spawnRadius"),
     TNT_EXPLODES("tntExplodes"),
-    SHOW_TAGS("showTags"),
-    PLAYERS_SLEEPING_PERCENTAGE("playersSleepingPercentage");
+    TNT_EXPLOSION_DROP_DECAY("tntExplosionDropDecay");
 
     private final String name;
 

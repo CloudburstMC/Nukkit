@@ -9,7 +9,6 @@ import cn.nukkit.item.ItemBed;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
@@ -66,18 +65,21 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-
         if (this.level.getDimension() == Level.DIMENSION_NETHER || this.level.getDimension() == Level.DIMENSION_THE_END) {
             CompoundTag tag = EntityPrimedTNT.getDefaultNBT(this).putShort("Fuse", 0);
             new EntityPrimedTNT(this.level.getChunk(this.getFloorX() >> 4, this.getFloorZ() >> 4), tag);
             return true;
         }
 
+        if (player == null) {
+            return false;
+        }
+
         int time = this.getLevel().getTime() % Level.TIME_FULL;
 
         boolean isNight = (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE);
 
-        if (player != null && !isNight) {
+        if (!isNight && !this.getLevel().isThundering()) {
             player.sendMessage(new TranslationContainer("tile.bed.noSleep"));
             return true;
         }
@@ -100,18 +102,15 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
             } else if (blockWest.getId() == this.getId() && (blockWest.getDamage() & 0x08) == 0x08) {
                 b = blockWest;
             } else {
-                if (player != null) {
-                    player.sendMessage(new TranslationContainer("tile.bed.notValid"));
-                }
+                player.sendMessage(new TranslationContainer("tile.bed.notValid"));
 
                 return true;
             }
         }
 
-        if (player != null && !player.sleepOn(b)) {
+        if (!player.sleepOn(b)) {
             player.sendMessage(new TranslationContainer("tile.bed.occupied"));
         }
-
 
         return true;
     }
@@ -172,11 +171,11 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
         return true;
     }
 
-    private void createBlockEntity(Vector3 pos, int color) {
+    private void createBlockEntity(Block pos, int color) {
         CompoundTag nbt = BlockEntity.getDefaultCompound(pos, BlockEntity.BED);
         nbt.putByte("color", color);
 
-        BlockEntity.createBlockEntity(BlockEntity.BED, this.level.getChunk(pos.getFloorX() >> 4, pos.getFloorZ() >> 4), nbt);
+        BlockEntity.createBlockEntity(BlockEntity.BED, pos.getChunk(), nbt);
     }
 
     @Override

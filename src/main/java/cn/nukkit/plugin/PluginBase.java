@@ -8,7 +8,11 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 import com.google.common.base.Preconditions;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
+import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -241,7 +245,9 @@ abstract public class PluginBase implements Plugin {
         if (configStream != null) {
             DumperOptions dumperOptions = new DumperOptions();
             dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-            Yaml yaml = new Yaml(dumperOptions);
+            LoaderOptions loaderOptions = new LoaderOptions();
+            loaderOptions.setCodePointLimit(104857600); // Allow over 3mb config files
+            Yaml yaml = new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions, new Resolver());
             try {
                 this.config.setDefault(yaml.loadAs(Utils.readFile(this.configFile), LinkedHashMap.class));
             } catch (IOException e) {

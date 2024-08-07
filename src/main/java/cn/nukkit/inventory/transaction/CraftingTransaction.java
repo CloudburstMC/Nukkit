@@ -99,18 +99,25 @@ public class CraftingTransaction extends InventoryTransaction {
     protected void sendInventories() {
         super.sendInventories();
 
+        if (source.craftingType == Player.CRAFTING_SMALL) {
+            return; // Already closed
+        }
+
 		/*
          * TODO: HACK!
 		 * we can't resend the contents of the crafting window, so we force the client to close it instead.
 		 * So people don't whine about messy desync issues when someone cancels CraftItemEvent, or when a crafting
 		 * transaction goes wrong.
 		 */
-        ContainerClosePacket pk = new ContainerClosePacket();
-        pk.windowId = ContainerIds.NONE;
         source.getServer().getScheduler().scheduleDelayedTask(new Task() {
             @Override
             public void onRun(int currentTick) {
-                source.dataPacket(pk);
+                if (source.isOnline() && source.isAlive()) {
+                    ContainerClosePacket pk = new ContainerClosePacket();
+                    pk.windowId = ContainerIds.NONE;
+                    pk.wasServerInitiated = true;
+                    source.dataPacket(pk);
+                }
             }
         }, 20);
 

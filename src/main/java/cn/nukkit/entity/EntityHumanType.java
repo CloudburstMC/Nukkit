@@ -184,7 +184,6 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             for (int slot = 0; slot < 4; slot++) {
                 Item armor = this.inventory.getArmorItem(slot);
 
-                if (armor.hasEnchantments()) {
                     if (damager != null) {
                         for (Enchantment enchantment : armor.getEnchantments()) {
                             enchantment.doPostAttack(damager, this);
@@ -192,7 +191,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                     }
 
                     Enchantment durability = armor.getEnchantment(Enchantment.ID_DURABILITY);
-                    if (durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= ThreadLocalRandom.current().nextInt(100))
+                    if (durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= ThreadLocalRandom.current().nextInt(100)) {
                         continue;
                 }
 
@@ -226,10 +225,6 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
     }
 
     protected double calculateEnchantmentProtectionFactor(Item item, EntityDamageEvent source) {
-        if (!item.hasEnchantments()) {
-            return 0;
-        }
-
         double epf = 0;
 
         for (Enchantment ench : item.getEnchantments()) {

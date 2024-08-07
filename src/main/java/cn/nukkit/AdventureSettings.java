@@ -48,7 +48,18 @@ public class AdventureSettings implements Cloneable {
         return value == null ? type.getDefaultValue() : value;
     }
 
+    /**
+     * Send adventure settings values to the player
+     */
     public void update() {
+        this.update(true);
+    }
+
+    /**
+     * Send adventure settings values to the player
+     * @param reset reset in air ticks
+     */
+    void update(boolean reset) {
         UpdateAbilitiesPacket packet = new UpdateAbilitiesPacket();
         packet.setEntityId(player.getId());
         packet.setCommandPermission(player.isOp() ? UpdateAbilitiesPacket.CommandPermission.OPERATOR : UpdateAbilitiesPacket.CommandPermission.NORMAL);
@@ -102,7 +113,9 @@ public class AdventureSettings implements Cloneable {
 
         player.dataPacket(packet);
         player.dataPacket(adventurePacket);
-        player.resetInAirTicks();
+        if (reset) {
+            player.resetInAirTicks();
+        }
     }
 
     public enum Type {

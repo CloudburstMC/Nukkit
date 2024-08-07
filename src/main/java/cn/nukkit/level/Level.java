@@ -908,8 +908,7 @@ public class Level implements ChunkManager, Metadatable {
     }
 
     private void performThunder(long index, FullChunk chunk) {
-        if (areNeighboringChunksLoaded(index)) return;
-        if (ThreadLocalRandom.current().nextInt(10000) == 0) {
+        if (ThreadLocalRandom.current().nextInt(10000) == 0 && !areNeighboringChunksLoaded(index)) {
             int LCG = this.getUpdateLCG() >> 2;
 
             int chunkX = chunk.getX() * 16;
@@ -986,8 +985,13 @@ public class Level implements ChunkManager, Metadatable {
         if (playerCount > 0 && sleepingPlayerCount / playerCount * 100 >= this.gameRules.getInteger(GameRule.PLAYERS_SLEEPING_PERCENTAGE)) {
             int time = this.getTime() % Level.TIME_FULL;
 
-            if (time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE) {
+            if ((time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE) || this.isThundering()) {
                 this.setTime(this.getTime() + Level.TIME_FULL - time);
+
+                if (this.isThundering()) {
+                    this.setThundering(false);
+                    this.setRaining(false);
+                }
 
                 for (Player p : this.getPlayers().values()) {
                     p.stopSleep();
@@ -1984,9 +1988,7 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (createParticles) {
-            Map<Integer, Player> players = this.getChunkPlayers((int) target.x >> 4, (int) target.z >> 4);
-
-            this.addParticle(new DestroyBlockParticle(target.add(0.5), target), players.values());
+            this.addParticle(new DestroyBlockParticle(target.add(0.5), target));
 
             if (player != null) {
                 players.remove(player.getLoaderId());
@@ -2136,18 +2138,22 @@ public class Level implements ChunkManager, Metadatable {
         }
 
         if (target.canBeReplaced()) {
+            Block b = item.getBlockUnsafe();
+            if (b != null && target.getId() == b.getId() && target.getDamage() == b.getDamage()) {
+                return item;
+            }
+
             block = target;
             hand.position(block);
         }
 
         if (!hand.canPassThrough() && hand.getBoundingBox() != null) {
             Entity[] entities = this.getCollidingEntities(hand.getBoundingBox());
-            int realCount = 0;
             for (Entity e : entities) {
                 if (e instanceof EntityArrow || e instanceof EntityItem || (e instanceof Player && ((Player) e).isSpectator())) {
                     continue;
                 }
-                ++realCount;
+                return null;
             }
 
             if (player != null) {
@@ -2155,13 +2161,9 @@ public class Level implements ChunkManager, Metadatable {
                 if (diff.lengthSquared() > 0.00001) {
                     AxisAlignedBB bb = player.getBoundingBox().getOffsetBoundingBox(diff.x, diff.y, diff.z);
                     if (hand.getBoundingBox().intersectsWith(bb)) {
-                        ++realCount;
+                        return null;
                     }
                 }
-            }
-
-            if (realCount > 0) {
-                return null; // Entity in block
             }
         }
 
@@ -3415,6 +3417,14 @@ public class Level implements ChunkManager, Metadatable {
 
     public int getDimension() {
         return this.dimensionData.getDimensionId();
+    }
+
+    public int getMinBlockY() {
+        return 0; //this.dimensionData.getMinHeight();
+    }
+
+    public int getMaxBlockY() {
+        return this.getDimension() == DIMENSION_NETHER ? 127 : 255; //this.dimensionData.getMaxHeight();
     }
 
     public boolean canBlockSeeSky(Vector3 pos) {

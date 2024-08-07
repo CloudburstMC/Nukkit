@@ -57,14 +57,22 @@ public class LoginPacket extends DataPacket {
         return protocol;
     }
 
+    private static final Gson GSON = new Gson();
+
     private void decodeChainData() {
-        Map<String, List<String>> map = new Gson().fromJson(new String(this.get(getLInt()), StandardCharsets.UTF_8),
+        int size = this.getLInt();
+        if (size > 52428800) {
+            throw new IllegalArgumentException(this.username + ": Chain data too big: " + size);
+        }
+
+        String data = new String(this.get(size), StandardCharsets.UTF_8);
+        Map<String, List<String>> map = GSON.fromJson(data,
                 new TypeToken<Map<String, List<String>>>() {
                 }.getType());
         if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
         List<String> chains = map.get("chain");
         for (String c : chains) {
-            JsonObject chainMap = decodeToken(c);
+            JsonObject chainMap = ClientChainData.decodeToken(c);
             if (chainMap == null) continue;
             if (chainMap.has("extraData")) {
                 JsonObject extra = chainMap.get("extraData").getAsJsonObject();
@@ -75,7 +83,14 @@ public class LoginPacket extends DataPacket {
     }
 
     private void decodeSkinData() {
-        JsonObject skinToken = decodeToken(new String(this.get(this.getLInt())));
+        int size = this.getLInt();
+        if (size > 52428800) {
+            throw new IllegalArgumentException(this.username + ": Skin data too big: " + size);
+        }
+
+        JsonObject skinToken = ClientChainData.decodeToken(new String(this.get(size), StandardCharsets.UTF_8));
+        if (skinToken == null) throw new RuntimeException("Invalid null skin token");
+
         if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
 
         skin = new Skin();
@@ -147,12 +162,6 @@ public class LoginPacket extends DataPacket {
                 skin.getTintColors().add(getTint(object.getAsJsonObject()));
             }
         }
-    }
-
-    private JsonObject decodeToken(String token) {
-        String[] base = token.split("\\.");
-        if (base.length < 2) return null;
-        return new Gson().fromJson(new String(Base64.getDecoder().decode(base[1]), StandardCharsets.UTF_8), JsonObject.class);
     }
 
     private static SkinAnimation getAnimation(JsonObject element) {

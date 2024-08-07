@@ -24,13 +24,14 @@ public class GameRules {
     public static GameRules getDefault() {
         GameRules gameRules = new GameRules();
 
-        gameRules.gameRules.put(COMMAND_BLOCKS_ENABLED, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(COMMAND_BLOCKS_ENABLED, new Value<>(Type.BOOLEAN, false)); // Vanilla: default true
         gameRules.gameRules.put(COMMAND_BLOCK_OUTPUT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_DAYLIGHT_CYCLE, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_ENTITY_DROPS, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_FIRE_TICK, new Value(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_INSOMNIA, new Value(Type.BOOLEAN, true));
-        gameRules.gameRules.put(DO_IMMEDIATE_RESPAWN, new Value(Type.BOOLEAN, false));
+        gameRules.gameRules.put(DO_FIRE_TICK, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(DO_INSOMNIA, new Value<>(Type.BOOLEAN, false)); // Vanilla: default true
+        gameRules.gameRules.put(DO_IMMEDIATE_RESPAWN, new Value<>(Type.BOOLEAN, false));
+        gameRules.gameRules.put(DO_LIMITED_CRAFTING, new Value<>(Type.BOOLEAN, false));
         gameRules.gameRules.put(DO_MOB_LOOT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_MOB_SPAWNING, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(DO_TILE_DROPS, new Value<>(Type.BOOLEAN, true));
@@ -44,15 +45,22 @@ public class GameRules {
         gameRules.gameRules.put(MAX_COMMAND_CHAIN_LENGTH, new Value<>(Type.INTEGER, 65536));
         gameRules.gameRules.put(MOB_GRIEFING, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(NATURAL_REGENERATION, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(PLAYERS_SLEEPING_PERCENTAGE, new Value<>(Type.INTEGER, 100));
+        gameRules.gameRules.put(PROJECTILES_CAN_BREAK_BLOCKS, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(PVP, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(RANDOM_TICK_SPEED, new Value<>(Type.INTEGER, 3));
+        gameRules.gameRules.put(RANDOM_TICK_SPEED, new Value<>(Type.INTEGER, 3)); // Vanilla: default 1
+        gameRules.gameRules.put(RECIPES_UNLOCK, new Value<>(Type.BOOLEAN, false)); // Vanilla: default true
+        gameRules.gameRules.put(RESPAWN_BLOCKS_EXPLODE, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(SHOW_BORDER_EFFECT, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(SEND_COMMAND_FEEDBACK, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(SHOW_COORDINATES, new Value<>(Type.BOOLEAN, false));
+        gameRules.gameRules.put(SHOW_DAYS_PLAYED, new Value<>(Type.BOOLEAN, false));
         gameRules.gameRules.put(SHOW_DEATH_MESSAGES, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(SPAWN_RADIUS, new Value<>(Type.INTEGER, 5));
-        gameRules.gameRules.put(TNT_EXPLODES, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(SHOW_RECIPE_MESSAGES, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(SHOW_TAGS, new Value<>(Type.BOOLEAN, true));
-        gameRules.gameRules.put(PLAYERS_SLEEPING_PERCENTAGE, new Value<>(Type.INTEGER, 100));
+        gameRules.gameRules.put(SPAWN_RADIUS, new Value<>(Type.INTEGER, 10));
+        gameRules.gameRules.put(TNT_EXPLODES, new Value<>(Type.BOOLEAN, true));
+        gameRules.gameRules.put(TNT_EXPLOSION_DROP_DECAY, new Value<>(Type.BOOLEAN, false));
 
         return gameRules;
     }

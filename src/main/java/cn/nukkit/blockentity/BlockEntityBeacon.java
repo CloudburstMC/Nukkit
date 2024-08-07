@@ -1,15 +1,17 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.event.entity.EntityPotionEffectEvent;
-import cn.nukkit.inventory.BeaconInventory;
-import cn.nukkit.item.ItemBlock;
+import cn.nukkit.inventory.Inventory;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.potion.Effect;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 import java.util.Map;
 
@@ -235,20 +237,37 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         }
     }
 
+    private static final IntSet ALLOWED_EFFECTS = new IntOpenHashSet(new int[]{0, Effect.SPEED, Effect.HASTE, Effect.DAMAGE_RESISTANCE, Effect.JUMP, Effect.STRENGTH, Effect.REGENERATION});
+
     @Override
     public boolean updateCompoundTag(CompoundTag nbt, Player player) {
         if (!nbt.getString("id").equals(BlockEntity.BEACON)) {
             return false;
         }
 
-        this.setPrimaryPower(nbt.getInt("primary"));
-        this.setSecondaryPower(nbt.getInt("secondary"));
+        Inventory inv = player.getWindowById(Player.BEACON_WINDOW_ID);
+        if (inv != null) {
+            inv.setItem(0, Item.get(Item.AIR));
+        } else {
+            Server.getInstance().getLogger().debug(player.getName() + " tried to set effect but beacon inventory is null");
+            return false;
+        }
+
+        int primary = nbt.getInt("primary");
+        if (ALLOWED_EFFECTS.contains(primary)) {
+            this.setPrimaryPower(primary);
+        } else {
+            Server.getInstance().getLogger().debug(player.getName() + " tried to set an invalid primary effect to a beacon: " + primary);
+        }
+
+        int secondary = nbt.getInt("secondary");
+        if (ALLOWED_EFFECTS.contains(secondary)) {
+            this.setSecondaryPower(secondary);
+        } else {
+            Server.getInstance().getLogger().debug(player.getName() + " tried to set an invalid secondary effect to a beacon: " + secondary);
+        }
 
         this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BEACON_POWER);
-
-        BeaconInventory inv = (BeaconInventory)player.getWindowById(Player.BEACON_WINDOW_ID);
-
-        inv.setItem(0, new ItemBlock(Block.get(BlockID.AIR), 0, 0));
         return true;
     }
 }
