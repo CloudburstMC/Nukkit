@@ -235,4 +235,9 @@ public class BlockCaveVines extends BlockTransparentMeta {
         }
         return false;
     }
+
+    @Override
+    public boolean canPassThrough() {
+        return true;
+    }
 }

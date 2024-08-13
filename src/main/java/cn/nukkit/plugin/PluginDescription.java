@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * 描述一个Nukkit插件的类。<br>
  * Describes a Nukkit plugin.
- * 
+ * <p>
  * 在jar格式的插件中，插件的描述内容可以在plugin.yml中定义。比如这个：<br>
  * The description of a jar-packed plugin can be defined in the 'plugin.yml' file. For example:
  * <blockquote><pre>
@@ -21,7 +21,7 @@ import java.util.*;
  * load: POSTWORLD
  * @author 粉鞋大妈
  * description: A simple Hello World plugin for Nukkit
- * website: http://www.cnblogs.com/xtypr
+ * website: <a href="http://www.cnblogs.com/xtypr">...</a>
  * permissions:
  *  helloworldplugin.command.helloworld:
  *   description: Allows to use helloworld command.
@@ -39,7 +39,7 @@ import java.util.*;
  * When using plugin.yml file to define your plugin, it's REQUIRED to fill these items:
  * {@code name},{@code main},{@code version} and {@code api}.You are supposed to fill these items to make sure
  * your plugin can be normally loaded by Nukkit.<br>
- * 
+ *
  * 接下来对所有的字段做一些说明，<b>加粗</b>的字段表示必需，<i>斜体</i>表示可选：（来自
  * <a href="http://www.cnblogs.com/xtypr/p/nukkit_plugin_start_from_0_about_config.html">粉鞋大妈的博客文章</a>）<br>
  * Here are some instructions for there items, <b>bold</b> means required, <i>italic</i> means optional: (From
@@ -201,7 +201,7 @@ public class PluginDescription {
     /**
      * 返回这个插件完整的名字。<br>
      * Returns the full name of this plugin.
-     * 
+     * <p>
      * 一个插件完整的名字由{@code 名字+" v"+版本号}组成。比如：<br>
      * A full name of a plugin is composed by {@code name+" v"+version}.for example:
      * {@code HelloWorld v1.0.0}
@@ -235,7 +235,7 @@ public class PluginDescription {
     /**
      * 返回这个插件的信息前缀。<br>
      * Returns the message title of this plugin.
-     * 
+     * <p>
      * 插件的信息前缀在记录器记录信息时，会作为信息头衔使用。如果没有定义记录器，会使用插件的名字作为信息头衔。<br>
      * When a PluginLogger logs, the message title is used as the prefix of message. If prefix is undefined,
      * the plugin name will be used instead. 
@@ -261,7 +261,7 @@ public class PluginDescription {
     /**
      * 返回这个插件所依赖的插件名字。<br>
      * The names of the plugins what is depended by this plugin.
-     * 
+     * <p>
      * Nukkit插件的依赖有这些注意事项：<br>Here are some note for Nukkit plugin depending:
      * <ul>
      * <li>一个插件不能依赖自己（否则会报错）。<br>A plugin can not depend on itself (or there will be an exception).</li>
@@ -305,7 +305,7 @@ public class PluginDescription {
     /**
      * 返回这个插件的主类名。<br>
      * Returns the main class name of this plugin.
-     * 
+     * <p>
      * 一个插件的加载都是从主类开始的。主类的名字在插件的配置文件中定义后可以通过这个函数返回。一个返回值例子：<br>
      * The load action of a Nukkit plugin begins from main class. The name of main class should be defined
      * in the plugin configuration, and it can be returned by this function. An example for return value: <br>

@@ -23,6 +23,7 @@ public class NukkitLegacyMapper implements LegacyStateMapper {
                 builder.remove("block_id");
                 state = builder.build();
             }
+            //noinspection ResultOfMethodCallIgnored
             state.hashCode(); // cache hashCode
             mapping.registerState(i, state);
         }

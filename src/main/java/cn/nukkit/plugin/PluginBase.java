@@ -8,7 +8,11 @@ import cn.nukkit.utils.Config;
 import cn.nukkit.utils.Utils;
 import com.google.common.base.Preconditions;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
+import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +65,7 @@ abstract public class PluginBase implements Plugin {
     /**
      * 加载这个插件。<br>
      * Enables this plugin.
-     * 
+     * <p>
      * 如果你需要卸载这个插件，建议使用{@link #setEnabled(boolean)}<br>
      * If you need to disable this plugin, it's recommended to use {@link #setEnabled(boolean)}
      *
@@ -73,7 +77,7 @@ abstract public class PluginBase implements Plugin {
     /**
      * 加载或卸载这个插件。<br>
      * Enables or disables this plugin.
-     * 
+     * <p>
      * 插件管理器插件常常使用这个方法。<br>
      * It's normally used by a plugin manager plugin to manage plugins.
      *
@@ -105,7 +109,7 @@ abstract public class PluginBase implements Plugin {
     /**
      * 初始化这个插件。<br>
      * Initialize the plugin.
-     * 
+     * <p>
      * 这个方法会在加载(load)之前被插件加载器调用，初始化关于插件的一些事项，不能被重写。<br>
      * Called by plugin loader before load, and initialize the plugin. Can't be overridden.
      *
@@ -236,7 +240,9 @@ abstract public class PluginBase implements Plugin {
         if (configStream != null) {
             DumperOptions dumperOptions = new DumperOptions();
             dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-            Yaml yaml = new Yaml(dumperOptions);
+            LoaderOptions loaderOptions = new LoaderOptions();
+            loaderOptions.setCodePointLimit(104857600); // Allow over 3mb config files
+            Yaml yaml = new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions, new Resolver());
             try {
                 this.config.setDefault(yaml.loadAs(Utils.readFile(this.configFile), LinkedHashMap.class));
             } catch (IOException e) {
@@ -258,7 +264,7 @@ abstract public class PluginBase implements Plugin {
     /**
      * 返回这个插件完整的名字。<br>
      * Returns the full name of this plugin.
-     * 
+     * <p>
      * 一个插件完整的名字由{@code 名字+" v"+版本号}组成。比如：<br>
      * A full name of a plugin is composed by {@code name+" v"+version}.for example:
      * {@code HelloWorld v1.0.0}

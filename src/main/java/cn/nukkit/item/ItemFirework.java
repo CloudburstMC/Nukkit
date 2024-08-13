@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFirework;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -138,8 +139,7 @@ public class ItemFirework extends Item {
                         .add(new FloatTag("", 0)))
                 .putCompound("FireworkItem", NBTIO.putItemHelper(this));
 
-        EntityFirework entity = new EntityFirework(level.getChunk(pos.getChunkX(), pos.getChunkZ()), nbt);
-        entity.spawnToAll();
+        Entity.createEntity(EntityFirework.NETWORK_ID, level.getChunk(pos.getChunkX(), pos.getChunkZ()), nbt).spawnToAll();
     }
 
     public int getFlight() {

@@ -2,7 +2,7 @@ package cn.nukkit;
 
 /**
  * An interface to describe a thread that can be interrupted.
- * 
+ * <p>
  * When a Nukkit server is stopping, Nukkit finds all threads implements {@code InterruptibleThread},
  * and interrupt them one by one.
  *

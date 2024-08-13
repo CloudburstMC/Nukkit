@@ -373,6 +373,12 @@ public abstract class Entity extends Location implements Metadatable {
     public double entityCollisionReduction = 0; // Higher than 0.9 will result a fast collisions
     public AxisAlignedBB boundingBox;
     public boolean onGround;
+    @Deprecated
+    public boolean inBlock;
+    @Deprecated
+    public boolean positionChanged;
+    @Deprecated
+    public boolean motionChanged;
     public int deadTicks = 0;
     public int age = 0;
     public int ticksLived = 0;
@@ -2868,7 +2874,7 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean isOnLadder() {
         int b = this.level.getBlockIdAt(this.chunk, this.getFloorX(), this.getFloorY(), this.getFloorZ());
-        return b == Block.LADDER || b == Block.VINES || b == Block.TWISTING_VINES || b == Block.WEEPING_VINES;
+        return b == Block.LADDER || b == Block.VINES || b == Block.TWISTING_VINES || b == Block.WEEPING_VINES || b == Block.CAVE_VINES_BODY_WITH_BERRIES || b == Block.CAVE_VINES_HEAD_WITH_BERRIES;
     }
 
     /**

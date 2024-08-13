@@ -14,8 +14,8 @@ import static cn.nukkit.utils.Rail.Orientation.State.*;
 
 /**
  * INTERNAL helper class of railway
- * 
- * By lmlstarqaq http://snake1999.com/
+ * <p>
+ * By lmlstarqaq <a href="http://snake1999.com/">...</a>
  * Creation time: 2017/7/1 17:42.
  */
 public final class Rail {

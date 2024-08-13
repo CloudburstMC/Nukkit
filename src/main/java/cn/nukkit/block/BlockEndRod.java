@@ -8,7 +8,7 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.Faceable;
 
 /**
- * http://minecraft.gamepedia.com/End_Rod
+ * <a href="http://minecraft.gamepedia.com/End_Rod">...</a>
  *
  * @author PikyCZ
  */

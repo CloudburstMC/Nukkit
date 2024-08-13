@@ -24,7 +24,7 @@ public class BoatDispenseBehavior extends DefaultDispenseBehavior {
 
         Location pos = target.getLocation().setYaw(face.getHorizontalAngle());
 
-        EntityBoat boat = new EntityBoat(block.level.getChunk(pos.getChunkX(), pos.getChunkZ()),
+        EntityBoat boat = (EntityBoat) Entity.createEntity(EntityBoat.NETWORK_ID, block.level.getChunk(pos.getChunkX(), pos.getChunkZ()),
                 Entity.getDefaultNBT(pos)
                         .putByte("woodID", item.getDamage())
         );

@@ -4,7 +4,7 @@ import java.util.*;
 
 /**
  * Config section
- *
+ * <p>
  * Created by fromgate on 26.04.2016.
  */
 @SuppressWarnings("serial")

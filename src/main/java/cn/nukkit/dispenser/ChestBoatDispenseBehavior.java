@@ -26,7 +26,7 @@ public class ChestBoatDispenseBehavior extends DefaultDispenseBehavior {
 
         Location pos = target.getLocation().setYaw(face.getHorizontalAngle());
 
-        EntityBoat boat = new EntityChestBoat(block.level.getChunk(pos.getChunkX(), pos.getChunkZ()),
+        EntityBoat boat = (EntityChestBoat) Entity.createEntity(EntityChestBoat.NETWORK_ID, block.level.getChunk(pos.getChunkX(), pos.getChunkZ()),
                 Entity.getDefaultNBT(pos)
                         .putByte("Variant", getBoatId(item))
         );

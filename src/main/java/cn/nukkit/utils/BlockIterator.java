@@ -25,7 +25,6 @@ public class BlockIterator implements Iterator<Block> {
     private final Block[] blockQueue;
     private int currentBlock;
 
-    private Block currentBlockObject = null;
     private int currentDistance;
     private final int maxDistanceInt;
 
@@ -210,12 +209,13 @@ public class BlockIterator implements Iterator<Block> {
     public Block next() {
         this.scan();
 
+        Block currentBlockObject;
         if (this.currentBlock <= -1) {
             throw new IndexOutOfBoundsException();
         } else {
-            this.currentBlockObject = this.blockQueue[this.currentBlock--];
+            currentBlockObject = this.blockQueue[this.currentBlock--];
         }
-        return this.currentBlockObject;
+        return currentBlockObject;
     }
 
     @Override

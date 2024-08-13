@@ -13,9 +13,9 @@ public class TNTDispenseBehavior extends DefaultDispenseBehavior {
     public Item dispense(BlockDispenser block, BlockFace face, Item item) {
         Vector3 pos = block.getSide(face).add(0.5, 0, 0.5);
 
-        EntityPrimedTNT tnt = new EntityPrimedTNT(block.level.getChunk(pos.getChunkX(), pos.getChunkZ()),
-                Entity.getDefaultNBT(pos));
-        tnt.spawnToAll();
+        Entity.createEntity(EntityPrimedTNT.NETWORK_ID,
+                block.getLevel().getChunk(pos.getChunkX(), pos.getChunkZ()),
+                Entity.getDefaultNBT(pos)).spawnToAll();
 
         return null;
     }

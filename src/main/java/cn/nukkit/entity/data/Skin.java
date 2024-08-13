@@ -1,6 +1,5 @@
 package cn.nukkit.entity.data;
 
-import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.utils.*;

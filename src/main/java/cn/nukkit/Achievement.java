@@ -13,7 +13,7 @@ public class Achievement {
 
     /**
      * All known achievements.
-     *
+     * <p>
      * Based on <a href="https://minecraft.fandom.com/wiki/Achievement/Java_Edition#List_of_achievements">...</a>
      */
     public static final HashMap<String, Achievement> achievements = new HashMap<String, Achievement>() {

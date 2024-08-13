@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.properties.BlockNotImplemented;
 import cn.nukkit.customblock.CustomBlockManager;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
@@ -83,41 +82,30 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 if (c != null) {
                     Block block;
                     try {
-                        if (c.isAssignableFrom(BlockNotImplemented.class)) {
-                            Constructor<?> constructor = c.getDeclaredConstructor(int.class, int.class);
+                        block = (Block) c.newInstance();
+                        try {
+                            @SuppressWarnings("rawtypes")
+                            Constructor constructor = c.getDeclaredConstructor(int.class);
                             constructor.setAccessible(true);
-                            block = (Block) constructor.newInstance(id, 0);
                             for (int data = 0; data < (1 << DATA_BITS); ++data) {
                                 int fullId = (id << DATA_BITS) | data;
-                                fullList[fullId] = (Block) constructor.newInstance(id, data);
-                            }
-                            hasMeta[id] = true;
-                        } else {
-                            block = (Block) c.newInstance();
-                            try {
-                                @SuppressWarnings("rawtypes")
-                                Constructor constructor = c.getDeclaredConstructor(int.class);
-                                constructor.setAccessible(true);
-                                for (int data = 0; data < (1 << DATA_BITS); ++data) {
-                                    int fullId = (id << DATA_BITS) | data;
-                                    Block blockState;
-                                    try {
-                                        blockState = (Block) constructor.newInstance(data);
-                                        if (blockState.getDamage() != data) {
-                                            blockState = new BlockUnknown(id, data);
-                                        }
-                                    } catch (Exception e) {
-                                        Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
+                                Block blockState;
+                                try {
+                                    blockState = (Block) constructor.newInstance(data);
+                                    if (blockState.getDamage() != data) {
                                         blockState = new BlockUnknown(id, data);
                                     }
-                                    fullList[fullId] = blockState;
+                                } catch (Exception e) {
+                                    Server.getInstance().getLogger().error("Error while registering " + c.getName(), e);
+                                    blockState = new BlockUnknown(id, data);
                                 }
-                                hasMeta[id] = true;
-                            } catch (NoSuchMethodException ignore) {
-                                for (int data = 0; data < DATA_SIZE; ++data) {
-                                    int fullId = (id << DATA_BITS) | data;
-                                    fullList[fullId] = block;
-                                }
+                                fullList[fullId] = blockState;
+                            }
+                            hasMeta[id] = true;
+                        } catch (NoSuchMethodException ignore) {
+                            for (int data = 0; data < DATA_SIZE; ++data) {
+                                int fullId = (id << DATA_BITS) | data;
+                                fullList[fullId] = block;
                             }
                         }
                     } catch (Exception e) {

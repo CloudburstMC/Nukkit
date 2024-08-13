@@ -2,7 +2,7 @@ package cn.nukkit.utils;
 
 /**
  * Block color
- *
+ * <p>
  * Created by Snake1999 on 2016/1/10.
  * Package cn.nukkit.utils in project Nukkit
  */

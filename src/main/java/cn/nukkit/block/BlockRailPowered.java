@@ -10,7 +10,7 @@ import cn.nukkit.utils.Rail;
 /**
  * Created by Snake1999 on 2016/1/11.
  * Contributed by: larryTheCoder on 2017/7/18.
- * 
+ * <p>
  * Nukkit Project,
  * Minecart and Riding Project,
  * Package cn.nukkit.block in project Nukkit.

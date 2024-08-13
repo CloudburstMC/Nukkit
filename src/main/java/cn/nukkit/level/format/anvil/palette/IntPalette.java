@@ -3,7 +3,7 @@ package cn.nukkit.level.format.anvil.palette;
 import java.util.Arrays;
 
 /**
- * @author https://github.com/boy0001/
+ * @author <a href="https://github.com/boy0001/">...</a>
  */
 public class IntPalette {
 

@@ -255,7 +255,7 @@ public class EntityFishingHook extends EntityProjectile {
 				this.getServer().getPluginManager().callEvent(event);
 
 				if (!event.isCancelled()) {
-					EntityItem itemEntity = new EntityItem(
+					EntityItem itemEntity = (EntityItem) Entity.createEntity(EntityItem.NETWORK_ID,
 							this.level.getChunk(this.getChunkX(), this.getChunkZ(), true),
 							Entity.getDefaultNBT(new Vector3(this.x, this.getWaterHeight(), this.z), event.getMotion(), ThreadLocalRandom.current().nextFloat() * 360, 0).putShort("Health", 5).putCompound("Item", NBTIO.putItemHelper(event.getLoot())).putShort("PickupDelay", 1));
 

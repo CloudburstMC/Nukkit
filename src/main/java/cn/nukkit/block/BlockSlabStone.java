@@ -39,7 +39,7 @@ public class BlockSlabStone extends BlockSlab {
     private static final String[] names = {
             "Stone",
             "Sandstone",
-            "Wooden",
+            "Oak",
             "Cobblestone",
             "Brick",
             "Stone Brick",

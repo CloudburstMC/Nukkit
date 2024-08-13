@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 /**
  * Helper class of Minecart variants
- * 
+ * <p>
  * By Adam Matthew
  * Creation time: 2017/7/17 19:55.
  */

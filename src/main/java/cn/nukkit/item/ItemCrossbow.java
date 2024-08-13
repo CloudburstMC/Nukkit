@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.EntityShootBowEvent;
@@ -160,7 +161,7 @@ public class ItemCrossbow extends ItemBow {
                         .add(new FloatTag("", (float) -player.pitch)));
         EntityProjectile arrow;
         {
-            arrow = new EntityArrow(player.chunk, nbt, player, false, true);
+            arrow = (EntityArrow) Entity.createEntity(EntityArrow.NETWORK_ID, player.chunk, nbt, player, false, true);
             if (arrowData > 0) {
                 ((EntityArrow) arrow).setData(arrowData);
             }
@@ -197,7 +198,7 @@ public class ItemCrossbow extends ItemBow {
                                 .putList(new ListTag<FloatTag>("Rotation")
                                         .add(new FloatTag("", (player.yaw > 180 ? 360 : 0) - (float) player.yaw - 10))
                                         .add(new FloatTag("", (float) -player.pitch)));
-                        EntityArrow arrow1 = new EntityArrow(player.chunk, nbt1, player, false, true);
+                        EntityArrow arrow1 = (EntityArrow) Entity.createEntity(EntityArrow.NETWORK_ID, player.chunk, nbt1, player, false, true);
                         arrow1.setPickupMode(EntityProjectile.PICKUP_NONE_REMOVE);
                         if (arrowData > 0) {
                             arrow1.setData(arrowData);
@@ -219,7 +220,7 @@ public class ItemCrossbow extends ItemBow {
                                 .putList(new ListTag<FloatTag>("Rotation")
                                         .add(new FloatTag("", (player.yaw > 180 ? 360 : 0) - (float) player.yaw + 10))
                                         .add(new FloatTag("", (float) -player.pitch)));
-                        EntityArrow arrow2 = new EntityArrow(player.chunk, nbt2, player, false, true);
+                        EntityArrow arrow2 = (EntityArrow) Entity.createEntity(EntityArrow.NETWORK_ID, player.chunk, nbt2, player, false, true);
                         arrow2.setPickupMode(EntityProjectile.PICKUP_NONE_REMOVE);
                         if (arrowData > 0) {
                             arrow2.setData(arrowData);

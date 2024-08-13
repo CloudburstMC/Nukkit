@@ -10,15 +10,15 @@ import cn.nukkit.potion.Effect;
 
 /**
  * This class handles player's food.
- *
+ * <p>
  * Created by funcraft on 2015/11/11.
  */
 public class PlayerFood {
 
     private int foodLevel;
     private float foodSaturationLevel;
-    private short foodTickTimer = 0;
-    private double foodExpLevel = 0;
+    private int foodTickTimer;
+    private double foodExpLevel;
 
     private final Player player;
 

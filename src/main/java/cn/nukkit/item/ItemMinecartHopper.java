@@ -3,6 +3,7 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockRail;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityMinecartHopper;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -39,7 +40,7 @@ public class ItemMinecartHopper extends Item {
             if (type.isAscending()) {
                 adjacent = 0.5D;
             }
-            EntityMinecartHopper minecart = new EntityMinecartHopper(
+            Entity.createEntity(EntityMinecartHopper.NETWORK_ID,
                     level.getChunk(target.getChunkX(), target.getChunkZ()), new CompoundTag("")
                     .putList(new ListTag<>("Pos")
                             .add(new DoubleTag("", target.getX() + 0.5))
@@ -52,8 +53,7 @@ public class ItemMinecartHopper extends Item {
                     .putList(new ListTag<>("Rotation")
                             .add(new FloatTag("", 0))
                             .add(new FloatTag("", 0)))
-            );
-            minecart.spawnToAll();
+            ).spawnToAll();
             count -= 1;
             return true;
         }

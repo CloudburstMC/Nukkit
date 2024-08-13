@@ -25,8 +25,8 @@ public class BlockRedSandstone extends BlockSandstone {
     private static final String[] names = {
             "Red Sandstone",
             "Chiseled Red Sandstone",
-            "Smooth Red Sandstone",
-            ""
+            "Cut Red Sandstone",
+            "Smooth Red Sandstone"
     };
 
     @Override

@@ -42,7 +42,7 @@ public class BlockNetherWart extends BlockFlowable {
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (Utils.random.nextInt(10) == 1) {
                 if (this.getDamage() < 0x03) {
-                    BlockNetherWart block = (BlockNetherWart) this.clone();
+                    Block block = this.clone();
                     block.setDamage(block.getDamage() + 1);
                     BlockGrowEvent ev = new BlockGrowEvent(this, block);
                     Server.getInstance().getPluginManager().callEvent(ev);

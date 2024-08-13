@@ -105,6 +105,7 @@ public class StateBlockStorage {
             for (int i = 0; i < paletteSize; i++) {
                 try {
                     NbtMap state = (NbtMap) nbtInputStream.readTag();
+                    //noinspection ResultOfMethodCallIgnored
                     state.hashCode(); // cache hashCode
 
                     BlockStateSnapshot blockState = BlockStateMapping.get().getStateUnsafe(state);

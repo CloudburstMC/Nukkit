@@ -69,7 +69,7 @@ public class ItemTrident extends ItemTool {
                         .add(new FloatTag("", (player.yaw > 180 ? 360 : 0) - (float) player.yaw))
                         .add(new FloatTag("", (float) -player.pitch)));
 
-        EntityThrownTrident trident = new EntityThrownTrident(player.chunk, nbt, player);
+        EntityThrownTrident trident = (EntityThrownTrident) EntityThrownTrident.createEntity(EntityThrownTrident.NETWORK_ID, player.chunk, nbt, player);
         trident.setItem(this);
 
         if (player.isCreative()) {

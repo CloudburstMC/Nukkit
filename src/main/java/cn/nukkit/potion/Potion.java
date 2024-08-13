@@ -12,7 +12,6 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.potion.PotionApplyEvent;
-import cn.nukkit.utils.ServerException;
 
 /**
  * @author MagicDroidX
@@ -121,7 +120,7 @@ public class Potion implements Cloneable {
         if (id >= 0 && id < potions.length && potions[id] != null) {
             return potions[id].clone();
         } else {
-            throw new ServerException("Effect id: " + id + " not found");
+            return null;
         }
     }
 
@@ -130,7 +129,7 @@ public class Potion implements Cloneable {
             byte id = Potion.class.getField(name.toUpperCase()).getByte(null);
             return getPotion(id);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            return null;
         }
     }
 

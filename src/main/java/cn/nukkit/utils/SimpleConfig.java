@@ -16,7 +16,7 @@ import java.util.List;
 
 /**
  * Simple config for Nukkit
- *
+ * <p>
  * Added 11/02/2016 by fromgate
  */
 public abstract class SimpleConfig {

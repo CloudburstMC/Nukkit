@@ -32,7 +32,7 @@ public class BlockSlabWood extends BlockSlab {
 
     @Override
     public String getName() {
-        return (((this.getDamage() & 0x08) == 0x08) ? "Upper " : "") + names[this.getDamage() & 0x07] + " Wooden Slab";
+        return (((this.getDamage() & 0x08) == 0x08) ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
     }
 
     @Override

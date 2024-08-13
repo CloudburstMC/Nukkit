@@ -14,7 +14,7 @@ public class ItemSignCrimson extends Item {
     }
 
     public ItemSignCrimson(Integer meta, int count) {
-        super(CRIMSON_SIGN, 0, count, "Sign");
+        super(CRIMSON_SIGN, 0, count, "Crimson Sign");
         this.block = Block.get(BlockID.CRIMSON_STANDING_SIGN);
     }
 

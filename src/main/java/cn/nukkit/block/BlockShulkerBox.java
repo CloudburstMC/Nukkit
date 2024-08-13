@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityShulkerBox;
-import cn.nukkit.inventory.ShulkerBoxInventory;
+import cn.nukkit.inventory.BaseInventory;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
@@ -63,7 +63,7 @@ public class BlockShulkerBox extends BlockTransparentMeta {
         if (be instanceof BlockEntityShulkerBox) {
             BlockEntityShulkerBox t = (BlockEntityShulkerBox) be;
 
-            ShulkerBoxInventory i = t.getRealInventory();
+            BaseInventory i = t.getInventory();
 
             if (!i.slots.isEmpty()) {
 

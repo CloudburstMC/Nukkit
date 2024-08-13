@@ -122,7 +122,7 @@ public class ListTag<T extends Tag> extends Tag {
     }
 
     public void removeAll(Collection<T> tags) {
-        list.remove(tags);
+        list.removeAll(tags);
     }
 
     public int size() {

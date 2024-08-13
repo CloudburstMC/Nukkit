@@ -6,8 +6,8 @@ import java.io.OutputStream;
 
 /**
  * Tool class for VarInt or VarLong operations.
- * 
- * Some code from http://wiki.vg/Protocol.
+ * <p>
+ * Some code from <a href="http://wiki.vg/Protocol">...</a>.
  *
  * @author MagicDroidX
  * @author lmlstarqaq

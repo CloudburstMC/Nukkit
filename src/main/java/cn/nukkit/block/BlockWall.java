@@ -44,11 +44,38 @@ public class BlockWall extends BlockTransparentMeta {
 
     @Override
     public String getName() {
-        if (this.getDamage() == 0x01) {
-            return "Mossy Cobblestone Wall";
+        switch (this.getDamage()) {
+            case 0:
+                return "Cobblestone Wall";
+            case 1:
+                return "Mossy Cobblestone Wall";
+            case 2:
+                return "Granite Wall";
+            case 3:
+                return "Diorite Wall";
+            case 4:
+                return "Andesite Wall";
+            case 5:
+                return "Sandstone Wall";
+            case 6:
+                return "Brick Wall";
+            case 7:
+                return "Stone Brick Wall";
+            case 8:
+                return "Mossy Stone Brick Wall";
+            case 9:
+                return "Nether Brick Wall";
+            case 10:
+                return "End Stone Brick Wall";
+            case 11:
+                return "Prismarine Wall";
+            case 12:
+                return "Red Sandstone Wall";
+            case 13:
+                return "Red Nether Brick Wall";
         }
 
-        return "Cobblestone Wall";
+        return "Wall";
     }
 
     @Override

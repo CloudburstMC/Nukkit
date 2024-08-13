@@ -50,12 +50,12 @@ public class BlockPlanks extends BlockSolidMeta {
     }
 
     private static final String[] names = {
-            "Oak Wood Planks",
-            "Spruce Wood Planks",
-            "Birch Wood Planks",
-            "Jungle Wood Planks",
-            "Acacia Wood Planks",
-            "Dark Oak Wood Planks",
+            "Oak Planks",
+            "Spruce Planks",
+            "Birch Planks",
+            "Jungle Planks",
+            "Acacia Planks",
+            "Dark Oak Planks",
     };
 
     @Override

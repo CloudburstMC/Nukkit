@@ -88,6 +88,10 @@ public class BlockGrass extends BlockDirt {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
             Block up = this.up();
+            if (up instanceof BlockUnknown) {
+                return 0;
+            }
+
             if ((up.isSolid() && !up.isTransparent()) || up instanceof BlockLiquid) {
                 BlockSpreadEvent ev = new BlockSpreadEvent(this, this, Block.get(BlockID.DIRT));
                 Server.getInstance().getPluginManager().callEvent(ev);

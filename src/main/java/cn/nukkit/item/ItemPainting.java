@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityPainting;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
@@ -114,12 +115,11 @@ public class ItemPainting extends Item {
                         .add(new FloatTag("0", direction * 90))
                         .add(new FloatTag("1", 0)));
 
-        EntityPainting entity = new EntityPainting(chunk, nbt);
+        Entity.createEntity(EntityPainting.NETWORK_ID, chunk, nbt).spawnToAll();
 
         if (!player.isCreative()) {
             player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
         }
-        entity.spawnToAll();
 
         level.addLevelEvent(block, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_PLACED);
         return true;

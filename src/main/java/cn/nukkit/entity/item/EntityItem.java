@@ -114,10 +114,12 @@ public class EntityItem extends Entity {
             return;
         }
 
-        this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
-
-        if (this.item == null) {
-            throw new NullPointerException("EntityItem with null item");
+        try {
+            this.item = NBTIO.getItemHelper(this.namedTag.getCompound("Item"));
+        } catch (Exception ex) {
+            server.getLogger().error("Item couldn't be loaded", ex);
+            this.close();
+            return;
         }
 
         int id = this.item.getId();

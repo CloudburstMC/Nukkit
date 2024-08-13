@@ -6,7 +6,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import org.yaml.snakeyaml.DumperOptions;
+import org.yaml.snakeyaml.LoaderOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakeyaml.constructor.Constructor;
+import org.yaml.snakeyaml.representer.Representer;
+import org.yaml.snakeyaml.resolver.Resolver;
 
 import java.io.File;
 import java.io.IOException;
@@ -306,7 +310,9 @@ public class Config {
                 case Config.YAML:
                     DumperOptions dumperOptions = new DumperOptions();
                     dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                    Yaml yaml = new Yaml(dumperOptions);
+                    LoaderOptions loaderOptions = new LoaderOptions();
+                    loaderOptions.setCodePointLimit(104857600); // Allow over 3mb config files
+                    Yaml yaml = new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions, new Resolver());
                     content = new StringBuilder(yaml.dump(this.config));
                     break;
                 case Config.ENUM:
@@ -317,7 +323,7 @@ public class Config {
                     break;
             }
             if (async) {
-                Server.getInstance().getScheduler().scheduleAsyncTask(new FileWriteTask(this.file, content.toString()));
+                Server.getInstance().getScheduler().scheduleAsyncTask(null, new FileWriteTask(this.file, content.toString()));
             } else {
                 try {
                     Utils.writeFile(this.file, content.toString());
@@ -638,7 +644,9 @@ public class Config {
             case Config.YAML:
                 DumperOptions dumperOptions = new DumperOptions();
                 dumperOptions.setDefaultFlowStyle(DumperOptions.FlowStyle.BLOCK);
-                Yaml yaml = new Yaml(dumperOptions);
+                LoaderOptions loaderOptions = new LoaderOptions();
+                loaderOptions.setCodePointLimit(104857600); // Allow over 3mb config files
+                Yaml yaml = new Yaml(new Constructor(loaderOptions), new Representer(dumperOptions), dumperOptions, loaderOptions, new Resolver());
                 this.config = new ConfigSection(yaml.loadAs(content, LinkedHashMap.class));
                 break;
             // case Config.SERIALIZED

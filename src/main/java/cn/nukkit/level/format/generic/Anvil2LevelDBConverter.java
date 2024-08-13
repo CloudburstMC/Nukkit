@@ -108,7 +108,7 @@ public class Anvil2LevelDBConverter {
         AtomicInteger chunksConverted = new AtomicInteger();
         AtomicInteger chunksConvertedPerSecond = new AtomicInteger();
 
-        TaskHandler tickFuture = server.getScheduler().scheduleRepeatingTask(() ->
+        TaskHandler tickFuture = server.getScheduler().scheduleRepeatingTask(null, () ->
                 chunksConvertedPerSecond.set(0), 20);
 
         IntConsumer callback = chunksCount -> {
@@ -137,7 +137,7 @@ public class Anvil2LevelDBConverter {
             } else {
                 this.convertFinished();
             }
-        }, server.getScheduler()::scheduleTask);
+        }, task -> server.getScheduler().scheduleTask(null, task));
     }
 
     private void convertFinished() {

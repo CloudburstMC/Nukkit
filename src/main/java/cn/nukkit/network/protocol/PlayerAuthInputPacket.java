@@ -75,7 +75,7 @@ public class PlayerAuthInputPacket extends DataPacket {
 
         if (this.inputData.contains(AuthInputAction.PERFORM_BLOCK_ACTIONS)) {
             int arraySize = this.getVarInt();
-            if (arraySize > 512) throw new IllegalArgumentException("PlayerAuthInputPacket PERFORM_BLOCK_ACTIONS is too long: " + arraySize);
+            if (arraySize > 256) throw new IllegalArgumentException("PlayerAuthInputPacket PERFORM_BLOCK_ACTIONS is too long: " + arraySize);
             for (int i = 0; i < arraySize; i++) {
                 PlayerActionType type = PlayerActionType.from(this.getVarInt());
                 switch (type) {

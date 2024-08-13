@@ -3,7 +3,7 @@ package cn.nukkit.level.format.anvil.palette;
 import cn.nukkit.utils.ThreadCache;
 
 /**
- * @author https://github.com/boy0001/
+ * @author <a href="https://github.com/boy0001/">...</a>
  */
 public final class BitArray256 {
 

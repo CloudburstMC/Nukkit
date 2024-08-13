@@ -8,7 +8,7 @@ import java.util.UUID;
 
 /**
  * A serializer that handles the player data saving.
- *
+ * <p>
  * Use setPlayerDataSerializer() in Server to register it.
  */
 public interface PlayerDataSerializer {

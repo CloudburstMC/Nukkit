@@ -19,12 +19,12 @@ import java.util.*;
 
 /**
  * ClientChainData is a container of chain data sent from clients.
- *
+ * <p>
  * Device information such as client UUID, xuid and serverAddress, can be
  * read from instances of this object.
- *
+ * <p>
  * To get chain data, you can use player.getLoginChainData() or read(loginPacket)
- *
+ * <p>
  * ===============
  * @author boybook
  * Nukkit Project
@@ -196,7 +196,7 @@ public final class ClientChainData implements LoginChainData {
 
     private void decodeSkinData() {
         int size = bs.getLInt();
-        if (size > 10485760) {
+        if (size > 52428800) {
             throw new TooBigSkinException("The skin data is too big: " + size);
         }
 

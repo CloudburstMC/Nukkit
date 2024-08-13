@@ -11,12 +11,18 @@ public class EntityLink {
     public byte type;
     public boolean immediate;
     public boolean riderInitiated;
+    public float vehicleAngularVelocity;
 
     public EntityLink(long fromEntityUniquieId, long toEntityUniquieId, byte type, boolean immediate, boolean riderInitiated) {
+        this(fromEntityUniquieId, toEntityUniquieId, type, immediate, riderInitiated, 0f);
+    }
+
+    public EntityLink(long fromEntityUniquieId, long toEntityUniquieId, byte type, boolean immediate, boolean riderInitiated, float vehicleAngularVelocity) {
         this.fromEntityUniquieId = fromEntityUniquieId;
         this.toEntityUniquieId = toEntityUniquieId;
         this.type = type;
         this.immediate = immediate;
         this.riderInitiated = riderInitiated;
+        this.vehicleAngularVelocity = vehicleAngularVelocity;
     }
 }

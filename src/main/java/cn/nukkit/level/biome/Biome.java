@@ -140,7 +140,7 @@ public abstract class Biome implements BlockID {
 
     /**
      * Whether or not overhangs should generate in this biome (places where solid blocks generate over air)
-     *
+     * <p>
      * This should probably be used with a custom max elevation or things can look stupid
      *
      * @return overhang

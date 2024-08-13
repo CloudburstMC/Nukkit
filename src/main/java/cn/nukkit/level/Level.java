@@ -973,7 +973,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                     .putList(new ListTag<FloatTag>("Rotation").add(new FloatTag("", 0))
                             .add(new FloatTag("", 0)));
 
-            EntityLightning bolt = new EntityLightning(chunk, nbt);
+            EntityLightning bolt = (EntityLightning) Entity.createEntity(EntityLightning.NETWORK_ID, chunk, nbt);
             LightningStrikeEvent ev = new LightningStrikeEvent(this, bolt);
             server.getPluginManager().callEvent(ev);
             if (!ev.isCancelled()) {
@@ -2032,7 +2032,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             CompoundTag itemTag = NBTIO.putItemHelper(item);
             itemTag.setName("Item");
 
-            EntityItem itemEntity = new EntityItem(
+            EntityItem itemEntity = (EntityItem) Entity.createEntity(EntityItem.NETWORK_ID,
                     this.getChunk(source.getChunkX(), source.getChunkZ(), true),
                     new CompoundTag().putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", source.getX()))
                                     .add(new DoubleTag("", source.getY())).add(new DoubleTag("", source.getZ())))
@@ -2198,8 +2198,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         }
 
         if (createParticles) {
-            Map<Integer, Player> players = this.getChunkPlayers(target.getChunkX(), target.getChunkZ());
-            this.addParticle(new DestroyBlockParticle(target.add(0.5), target), players.values());
+            this.addParticle(new DestroyBlockParticle(target.add(0.5), target));
         }
 
         BlockEntity blockEntity = this.getBlockEntity(target);

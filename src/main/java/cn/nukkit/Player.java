@@ -364,7 +364,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void onFireworkBoost(int boostLevel) {
         this.lastFireworkBoost = this.server.getTick();
         this.fireworkBoostLevel = boostLevel;
-        this.fireworkBoostTicks = 40;
+        this.fireworkBoostTicks = boostLevel == 3 ? 44 : boostLevel == 2 ? 29 : 23;
     }
 
     /**
@@ -2008,27 +2008,27 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.speed == null) speed = new Vector3(from.x - to.x, from.y - to.y, from.z - to.z);
         else this.speed.setComponents(from.x - to.x, from.y - to.y, from.z - to.z);
 
-        if (this.isFoodEnabled() && this.getServer().getDifficulty() > 0) {
-            if (distanceSquared >= 0.05) {
-                double jump = 0;
-                double swimming = this.isInsideOfWater() ? 0.01 * distanceSquared : 0;
-                double dd = distanceSquared;
-                if (swimming != 0) dd = 0;
-                if (this.isSprinting()) {
-                    if (this.inAirTicks == 3 && swimming == 0) {
-                        jump = 0.2;
+        if (this.riding == null && this.inventory != null) {
+            if (this.isFoodEnabled() && this.getServer().getDifficulty() > 0) {
+                if (distanceSquared >= 0.05) {
+                    double jump = 0;
+                    double swimming = this.isInsideOfWater() ? 0.01 * distanceSquared : 0;
+                    double dd = distanceSquared;
+                    if (swimming != 0) dd = 0;
+                    if (this.isSprinting()) {
+                        if (this.inAirTicks == 3 && swimming == 0) {
+                            jump = 0.2;
+                        }
+                        this.foodData.updateFoodExpLevel(0.1 * dd + jump + swimming);
+                    } else {
+                        if (this.inAirTicks == 3 && swimming == 0) {
+                            jump = 0.05;
+                        }
+                        this.foodData.updateFoodExpLevel(jump + swimming);
                     }
-                    this.foodData.updateFoodExpLevel(0.1 * dd + jump + swimming);
-                } else {
-                    if (this.inAirTicks == 3 && swimming == 0) {
-                        jump = 0.05;
-                    }
-                    this.foodData.updateFoodExpLevel(jump + swimming);
                 }
             }
-        }
 
-        if (this.riding == null && this.inventory != null) {
             Item boots = this.inventory.getBootsFast();
 
             Enchantment frostWalker = boots.getEnchantment(Enchantment.ID_FROST_WALKER);
@@ -2517,7 +2517,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
         };
 
-        this.server.getScheduler().scheduleAsyncTask(this.preLoginEventTask);
+        this.server.getScheduler().scheduleAsyncTask(null, this.preLoginEventTask);
 
         try {
             this.processLogin();
@@ -2954,7 +2954,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 if (server.encryptionEnabled) {
-                    this.getServer().getScheduler().scheduleAsyncTask(new PrepareEncryptionTask(this) {
+                    this.getServer().getScheduler().scheduleAsyncTask(null, new PrepareEncryptionTask(this) {
 
                         @Override
                         public void onCompletion(Server server) {
@@ -3295,7 +3295,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                 }
 
-                Vector3 clientPosition = authPacket.getPosition().subtract(0, this.getBaseOffset(), 0).asVector3();
+                Vector3 clientPosition = authPacket.getPosition().subtract(0, this.riding == null ? this.getBaseOffset() : this.riding.getMountedOffset(this).getY(), 0).asVector3();
 
                 double distSqrt = clientPosition.distanceSquared(this);
                 if (distSqrt > 100) { // Notice: This is the distance to player's position on server side. There are likely still unhandled previous movements when next move packet is received.
@@ -7049,7 +7049,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         .add(new FloatTag("", (float) yaw))
                         .add(new FloatTag("", (float) pitch)));
         double f = 1.1;
-        EntityFishingHook fishingHook = new EntityFishingHook(chunk, nbt, this);
+        EntityFishingHook fishingHook = (EntityFishingHook) Entity.createEntity(EntityFishingHook.NETWORK_ID, chunk, nbt, this);
         fishingHook.setMotion(new Vector3(-Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f, -Math.sin(Math.toRadians(pitch)) * f * f,
                 Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * f * f));
         ProjectileLaunchEvent ev = new ProjectileLaunchEvent(fishingHook);
@@ -7202,5 +7202,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.fireworkBoostTicks = 0;
 
         super.setGliding(value);
+    }
+
+    /**
+     * Close form windows sent with showFormWindow
+     */
+    public void closeFormWindows() {
+        this.formWindows.clear();
+        this.dataPacket(new ClientboundCloseFormPacket());
     }
 }

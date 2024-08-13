@@ -324,14 +324,16 @@ public class EntityAreaEffectCloud extends Entity {
                 nextApply = reapplicationDelay + 10;
 
                 Entity[] collidingEntities = level.getCollidingEntities(getBoundingBox());
-                if (collidingEntities.length > 0) {
+                if (collidingEntities.length > 1) { // This entity counts
                     radius += radiusOnUse;
                     radiusOnUse /= 2;
 
-                    setDuration(getDuration() + durationOnUse);
+                    setDuration(getDuration() + durationOnUse, false);
 
                     for (Entity collidingEntity : collidingEntities) {
-                        if (collidingEntity == null || collidingEntity.closed || !collidingEntity.isAlive() || !(collidingEntity instanceof EntityLiving) || collidingEntity instanceof EntityBoss) continue;
+                        if (collidingEntity == null || collidingEntity == this || collidingEntity.closed || !collidingEntity.isAlive() || !(collidingEntity instanceof EntityLiving) || collidingEntity instanceof EntityBoss) {
+                            continue;
+                        }
 
                         for (Effect effect : cloudEffects) {
                             if (effect instanceof InstantEffect) {

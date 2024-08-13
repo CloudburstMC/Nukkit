@@ -23,7 +23,7 @@ public class BlockStairsDarkOak extends BlockStairsWood {
 
     @Override
     public String getName() {
-        return "Dark Oak Wood Stairs";
+        return "Dark Oak Stairs";
     }
 
     @Override

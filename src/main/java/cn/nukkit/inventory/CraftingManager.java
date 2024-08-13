@@ -9,6 +9,7 @@ import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.utils.*;
 import io.netty.util.collection.CharObjectHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import lombok.Getter;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.File;
@@ -33,8 +34,10 @@ public class CraftingManager {
     public final Map<Integer, FurnaceRecipe> furnaceRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, BrewingRecipe> brewingRecipes = new Int2ObjectOpenHashMap<>();
     public final Map<Integer, ContainerRecipe> containerRecipes = new Int2ObjectOpenHashMap<>();
-    public final Map<Integer, CampfireRecipe> campfireRecipes = new Int2ObjectOpenHashMap<>(); // Server only
-    public final Map<Integer, SmithingRecipe> smithingRecipes = new Int2ObjectOpenHashMap<>();
+    @Getter
+    private final Map<Integer, CampfireRecipe> campfireRecipes = new Int2ObjectOpenHashMap<>(); // Server only
+    @Getter
+    private final Map<Integer, SmithingRecipe> smithingRecipes = new Int2ObjectOpenHashMap<>();
 
     private static int RECIPE_COUNT = 0;
     static int NEXT_NETWORK_ID;

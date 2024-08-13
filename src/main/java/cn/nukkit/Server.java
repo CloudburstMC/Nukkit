@@ -1037,6 +1037,9 @@ public class Server {
     }
 
     public void removeOnlinePlayer(Player player) {
+        if (player.getUniqueId() == null) {
+            return;
+        }
         if (this.playerList.remove(player.getUniqueId()) != null) {
             PlayerListPacket pk = new PlayerListPacket();
             pk.type = PlayerListPacket.TYPE_REMOVE;
@@ -1796,7 +1799,7 @@ public class Server {
             }
 
             if (async) {
-                this.getScheduler().scheduleTask(new Task() {
+                this.getScheduler().scheduleTask(null, new Task() {
                     private volatile boolean hasRun = false;
 
                     @Override
@@ -2044,7 +2047,7 @@ public class Server {
 
     /**
      * Unload a level
-     *
+     * <p>
      * Notice: the default level cannot be unloaded without forceUnload=true
      *
      * @param level Level
@@ -2605,7 +2608,7 @@ public class Server {
 
     /**
      * Checks the current thread against the expected primary thread for the server.
-     *
+     * <p>
      * <b>Note:</b> this method should not be used to indicate the current synchronized state of the runtime. A current thread matching the main thread indicates that it is synchronized, but a mismatch does not preclude the same assumption.
      *
      * @return true if the current thread matches the expected primary thread, false otherwise

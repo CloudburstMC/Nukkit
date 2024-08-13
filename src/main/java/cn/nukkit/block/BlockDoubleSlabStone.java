@@ -21,7 +21,7 @@ public class BlockDoubleSlabStone extends BlockDoubleSlabBase  {
     private static final String[] NAMES = new String[]{
             "Stone",
             "Sandstone",
-            "Wooden",
+            "Oak",
             "Cobblestone",
             "Brick",
             "Stone Brick",

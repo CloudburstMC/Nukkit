@@ -17,7 +17,7 @@ public class FireworksDispenseBehavior extends DefaultDispenseBehavior {
         Vector3 pos = block.getSide(face).add(0.5 + opposite.getXOffset() * 0.2, 0.5 + opposite.getYOffset() * 0.2, 0.5 + opposite.getZOffset() * 0.2);
         CompoundTag nbt = Entity.getDefaultNBT(pos);
         nbt.putCompound("FireworkItem", NBTIO.putItemHelper(item));
-        new EntityFirework(block.level.getChunk(pos.getChunkX(), pos.getChunkZ()), nbt).spawnToAll();
+        Entity.createEntity(EntityFirework.NETWORK_ID, block.level.getChunk(pos.getChunkX(), pos.getChunkZ()), nbt).spawnToAll();
         return null;
     }
 }

@@ -13,7 +13,8 @@ public class BlockSandstone extends BlockSolidMeta {
 
     public static final int NORMAL = 0;
     public static final int CHISELED = 1;
-    public static final int SMOOTH = 2;
+    public static final int CUT = 2;
+    public static final int SMOOTH = 3;
 
     public BlockSandstone() {
         this(0);
@@ -41,8 +42,8 @@ public class BlockSandstone extends BlockSolidMeta {
     private static final String[] names = {
             "Sandstone",
             "Chiseled Sandstone",
-            "Smooth Sandstone",
-            ""
+            "Cut Sandstone",
+            "Smooth Sandstone"
     };
 
     @Override

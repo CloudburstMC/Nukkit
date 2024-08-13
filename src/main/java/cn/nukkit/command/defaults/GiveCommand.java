@@ -7,6 +7,8 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.RuntimeItemMapping;
+import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
@@ -71,7 +73,7 @@ public class GiveCommand extends VanillaCommand {
         Item item;
 
         try {
-            item = Item.fromString(args[1].replace("minecraft:", ""));
+            item = Item.fromString(args[1]);
         } catch (Exception e) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return true;
@@ -82,10 +84,23 @@ public class GiveCommand extends VanillaCommand {
             return true;
         }
 
+        int count = 1;
         try {
-            item.setCount(Integer.parseInt(args[2]));
-        } catch (Exception e) {
-            item.setCount(1);
+            count = Integer.parseInt(args[2]);
+        } catch (Exception ignore) {
+        }
+        item.setCount(count);
+
+        if (item.getId() == 0) {
+            String identifier = args[1].toLowerCase();
+            if (!identifier.startsWith("minecraft:")) {
+                identifier = "minecraft:" + identifier;
+            }
+            RuntimeItemMapping.LegacyEntry entry = RuntimeItems.getMapping().fromIdentifier(identifier);
+
+            if (entry != null) {
+                item = Item.get(entry.getLegacyId(), entry.getDamage(), count);
+            }
         }
 
         if (item.getId() == 0) {

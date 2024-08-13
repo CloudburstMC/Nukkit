@@ -17,8 +17,11 @@ public class MobArmorEquipmentPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    private static final Item AIR = Item.get(Item.AIR);
+
     public long eid;
     public Item[] slots = new Item[4];
+    public Item body = AIR;
 
     @Override
     public void decode() {
@@ -28,6 +31,7 @@ public class MobArmorEquipmentPacket extends DataPacket {
         this.slots[1] = this.getSlot();
         this.slots[2] = this.getSlot();
         this.slots[3] = this.getSlot();
+        this.body = this.getSlot();
     }
 
     @Override
@@ -38,5 +42,6 @@ public class MobArmorEquipmentPacket extends DataPacket {
         this.putSlot(this.slots[1]);
         this.putSlot(this.slots[2]);
         this.putSlot(this.slots[3]);
+        this.putSlot(this.body);
     }
 }

@@ -4,7 +4,7 @@ import cn.nukkit.Server;
 
 /**
  * 表达一个任务的类。<br>A class that describes a task.
- * 
+ * <p>
  * 一个任务可以被Nukkit服务器立即，延时，循环或延时循环执行。参见:{@link ServerScheduler}<br>
  * A task can be executed by Nukkit server with a/an express, delay, repeat or delay&amp;repeat.
  * See:{@link ServerScheduler}

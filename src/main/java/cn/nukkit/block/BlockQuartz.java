@@ -16,7 +16,7 @@ public class BlockQuartz extends BlockSolidMeta {
     public static final int QUARTZ_NORMAL = 0;
     public static final int QUARTZ_CHISELED = 1;
     public static final int QUARTZ_PILLAR = 2;
-    public static final int QUARTZ_PILLAR2 = 3;
+    public static final int QUARTZ_SMOOTH = 3;
 
     private static final short[] faces = {
             0,
@@ -51,10 +51,10 @@ public class BlockQuartz extends BlockSolidMeta {
     }
 
     private static final String[] names = {
-            "Quartz Block",
+            "Block of Quartz",
             "Chiseled Quartz Block",
-            "Quartz Pillar",
-            "Quartz Pillar"
+            "Quartz Pillar Block",
+            "Smooth Quartz Block"
     };
 
     @Override

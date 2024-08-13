@@ -229,7 +229,7 @@ public class EntityThrownTrident extends EntityProjectile {
         if (this.hasChanneling && !this.didHit) {
             this.didHit = true;
             if (level.isThundering() && this.canSeeSky()) {
-                EntityLightning bolt = new EntityLightning(this.getChunk(), getDefaultNBT(this));
+                EntityLightning bolt = (EntityLightning) Entity.createEntity(EntityLightning.NETWORK_ID, this.getChunk(), getDefaultNBT(this));
                 LightningStrikeEvent strikeEvent = new LightningStrikeEvent(level, bolt);
                 server.getPluginManager().callEvent(strikeEvent);
                 if (!strikeEvent.isCancelled()) {

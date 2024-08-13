@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.item.EntityFallingBlock;
 import cn.nukkit.event.block.BlockFallEvent;
 import cn.nukkit.level.Level;
@@ -44,9 +45,7 @@ public abstract class BlockFallableMeta extends BlockSolidMeta {
                         .putInt("TileID", this.getId())
                         .putByte("Data", this.getDamage());
 
-                EntityFallingBlock fall = new EntityFallingBlock(this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt);
-
-                fall.spawnToAll();
+                Entity.createEntity(EntityFallingBlock.NETWORK_ID, this.getLevel().getChunk((int) this.x >> 4, (int) this.z >> 4), nbt).spawnToAll();
             }
         }
         return type;

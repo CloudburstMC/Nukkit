@@ -129,11 +129,9 @@ public class BlockEntityShulkerBox extends BlockEntitySpawnable implements Inven
         return this.inventory;
     }
 
+    @Deprecated
     public ShulkerBoxInventory getRealInventory() {
-        if (this.inventory == null) {
-            this.initInventory();
-        }
-        return this.inventory;
+        return (ShulkerBoxInventory) this.getInventory();
     }
 
     @Override

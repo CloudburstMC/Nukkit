@@ -100,14 +100,7 @@ public class BlockComposter extends BlockTransparentMeta implements ItemID {
         }
 
         if (isFull()) {
-            ComposterEmptyEvent event = new ComposterEmptyEvent(this, player, item, new ItemDye(DyeColor.WHITE), 0);
-            this.level.getServer().getPluginManager().callEvent(event);
-            if (!event.isCancelled()) {
-                this.setDamage(event.getNewLevel());
-                this.level.setBlock(this, this, true, true);
-                this.level.dropItem(add(0.5, 0.85, 0.5), event.getDrop());
-                this.level.addSound(add(0.5 , 0.5, 0.5), Sound.BLOCK_COMPOSTER_EMPTY);
-            }
+            empty(item, player);
             return true;
         }
 
@@ -150,6 +143,9 @@ public class BlockComposter extends BlockTransparentMeta implements ItemID {
     }
 
     public Item empty(Item item, Player player) {
+        if (isEmpty()) {
+            return null;
+        }
         ComposterEmptyEvent event = new ComposterEmptyEvent(this, player, item, new ItemDye(DyeColor.WHITE), 0);
         this.level.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {

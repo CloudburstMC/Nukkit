@@ -23,7 +23,7 @@ public class BlockConcretePowder extends BlockFallableMeta {
 
     @Override
     public int getFullId() {
-        return (this.getId() << Block.DATA_BITS) + getDamage();
+        return (CONCRETE_POWDER << Block.DATA_BITS) + getDamage();
     }
 
     @Override
@@ -33,7 +33,7 @@ public class BlockConcretePowder extends BlockFallableMeta {
 
     @Override
     public String getName() {
-        return "Concrete Powder";
+        return getDyeColor().getName() + " Concrete Powder";
     }
 
     @Override
@@ -92,5 +92,9 @@ public class BlockConcretePowder extends BlockFallableMeta {
     @Override
     public BlockColor getColor() {
         return DyeColor.getByWoolData(getDamage()).getColor();
+    }
+
+    public DyeColor getDyeColor() {
+        return DyeColor.getByWoolData(getDamage());
     }
 }

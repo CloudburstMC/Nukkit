@@ -11,7 +11,7 @@ import cn.nukkit.math.SimpleAxisAlignedBB;
 /**
  * Created on 2015/11/22 by CreeperFace.
  * Contributed by: larryTheCoder on 2017/7/8.
- * 
+ * <p>
  * Nukkit Project,
  * Minecart and Riding Project,
  * Package cn.nukkit.block in project Nukkit.

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 /**
  * An interface to describe a player and get its information.
- * 
+ * <p>
  * This player can be online or offline.
  *
  * @author MagicDroidX(code) @ Nukkit Project
@@ -26,7 +26,7 @@ public interface IPlayer extends ServerOperator, Metadatable {
 
     /**
      * Returns the name of this player.
-     * 
+     * <p>
      * 如果是在线的玩家，这个函数只会返回登录名字。如果要返回显示的名字，参见{@link cn.nukkit.Player#getDisplayName}<br>
      * Notice that this will only return its login name. If you need its display name, turn to
      * {@link cn.nukkit.Player#getDisplayName}
@@ -104,7 +104,7 @@ public interface IPlayer extends ServerOperator, Metadatable {
 
     /**
      * Returns if this player has played in this server before.
-     * 
+     * <p>
      * If you want to know if this player is the first time playing in this server, you can use:<br>
      * <pre>if (!player.hasPlayerBefore()) {...}</pre>
      *

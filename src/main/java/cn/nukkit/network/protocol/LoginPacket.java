@@ -78,7 +78,7 @@ public class LoginPacket extends DataPacket {
 
     private void decodeSkinData() {
         int size = this.getLInt();
-        if (size > 10485760) {
+        if (size > 52428800) {
             Server.getInstance().getLogger().warning(username + ": The skin data is too big: " + size);
             return; // Get disconnected due to "invalid skin"
         }

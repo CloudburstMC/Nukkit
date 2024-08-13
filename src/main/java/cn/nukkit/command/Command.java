@@ -245,6 +245,7 @@ public abstract class Command {
         this.usageMessage = usageMessage;
     }
 
+    @Deprecated
     public static CommandData generateDefaultData() {
         return null; //defaultDataTemplate.clone();
     }

@@ -245,15 +245,14 @@ public class RegionLoader extends BaseRegionLoader {
     private int cleanGarbage() throws IOException {
         RandomAccessFile raf = this.getRandomAccessFile();
         Map<Integer, Integer> sectors = new TreeMap<>();
-        for (Map.Entry entry : this.locationTable.entrySet()) {
-            int index = (int) entry.getKey();
-            Integer[] data = (Integer[]) entry.getValue();
-            if (data[0] == 0 || data[1] == 0) {
+        this.locationTable.forEach((key, value) -> {
+            int index = key;
+            if (value[0] == 0 || value[1] == 0) {
                 this.locationTable.put(index, new Integer[]{0, 0, 0});
-                continue;
+                return;
             }
-            sectors.put(data[0], index);
-        }
+            sectors.put(value[0], index);
+        });
 
         if (sectors.size() == (this.lastSector - 2)) {
             return 0;

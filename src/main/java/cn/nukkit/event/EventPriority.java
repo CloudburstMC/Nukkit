@@ -31,7 +31,7 @@ public enum EventPriority {
     HIGHEST(4),
     /**
      * Event is listened to purely for monitoring the outcome of an event.
-     * 
+     * <p>
      * No modifications to the event should be made under this priority
      */
     MONITOR(5);

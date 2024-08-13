@@ -1,6 +1,8 @@
 package cn.nukkit.level.format.leveldb;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
+import cn.nukkit.block.Block;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
 import cn.nukkit.level.Level;
@@ -8,6 +10,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.level.format.leveldb.serializer.*;
+import cn.nukkit.level.format.leveldb.structure.BlockStateSnapshot;
 import cn.nukkit.level.format.leveldb.structure.ChunkBuilder;
 import cn.nukkit.level.format.leveldb.structure.LevelDBChunk;
 import cn.nukkit.level.format.leveldb.structure.LevelDBChunkSection;
@@ -17,19 +20,25 @@ import cn.nukkit.nbt.stream.NBTInputStream;
 import cn.nukkit.nbt.stream.NBTOutputStream;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.Tag;
+import cn.nukkit.utils.BlockUpdateEntry;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.LevelException;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import io.netty.buffer.Unpooled;
+import io.netty.buffer.*;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.daporkchop.ldbjni.DBProvider;
 import net.daporkchop.ldbjni.LevelDB;
 import net.daporkchop.lib.natives.FeatureBuilder;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMapBuilder;
+import org.cloudburstmc.nbt.NbtType;
+import org.cloudburstmc.nbt.NbtUtils;
 import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
@@ -43,9 +52,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -94,7 +101,7 @@ public class LevelDBProvider implements LevelProvider {
             }
 
             if (generator == null) {
-                generator =  Generator.getGenerator("DEFAULT");
+                generator = Generator.getGenerator("DEFAULT");
             }
             this.levelData.putString("generatorName", generator.getSimpleName().toLowerCase());
         }
@@ -107,7 +114,9 @@ public class LevelDBProvider implements LevelProvider {
 
         ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
         builder.setNameFormat("LevelDB Executor-" + this.getName() + " #%s");
-        builder.setUncaughtExceptionHandler((thread, ex) -> Server.getInstance().getLogger().error("Exception in " + thread.getName(), ex));
+        builder.setUncaughtExceptionHandler((thread, ex) -> {
+            Server.getInstance().getLogger().error("Exception in " + thread.getName(), ex);
+        });
         this.executor = Executors.newFixedThreadPool(3, builder.build());
     }
 
@@ -168,7 +177,7 @@ public class LevelDBProvider implements LevelProvider {
     public BaseFullChunk getChunk(int chunkX, int chunkZ, boolean create) {
         // BaseFullChunk tmp = lastChunk.get();
         // if (tmp != null && tmp.getX() == chunkX && tmp.getZ() == chunkZ) {
-            // return tmp;
+        // return tmp;
         // }
         long index = Level.chunkHash(chunkX, chunkZ);
         BaseFullChunk chunk = this.chunks.get(index);
@@ -302,7 +311,60 @@ public class LevelDBProvider implements LevelProvider {
 
         BlockEntitySerializer.loadBlockEntities(this.db, chunkBuilder);
         EntitySerializer.loadEntities(this.db, chunkBuilder);
+
+        byte[] pendingBlockUpdates = this.db.get(LevelDBKey.PENDING_TICKS.getKey(chunkX, chunkZ, this.level.getDimension()));
+        if (pendingBlockUpdates != null && pendingBlockUpdates.length > 0) {
+            loadPendingBlockUpdates(pendingBlockUpdates);
+        }
+
         return chunkBuilder.build();
+    }
+
+    private void loadPendingBlockUpdates(byte[] data) {
+        NbtMap ticks;
+        try (ByteBufInputStream stream = new ByteBufInputStream(Unpooled.wrappedBuffer(data))) {
+            ticks = (NbtMap) NbtUtils.createReaderLE(stream).readTag();
+        } catch (IOException ex) {
+            throw new ChunkException("Corrupted block ticking data", ex);
+        }
+
+        int currentTick = ticks.getInt("currentTick");
+
+        for (NbtMap nbtMap : ticks.getList("tickList", NbtType.COMPOUND)) {
+            Block block = null;
+
+            NbtMap state = nbtMap.getCompound("blockState");
+            //noinspection ResultOfMethodCallIgnored
+            state.hashCode();
+
+            if (state.containsKey("name")) {
+                BlockStateSnapshot blockState = BlockStateMapping.get().getStateUnsafe(state);
+                if (blockState == null) {
+                    NbtMap updatedState = BlockStateMapping.get().updateVanillaState(state);
+                    blockState = BlockStateMapping.get().getUpdatedOrCustom(state, updatedState);
+                }
+                block = Block.get(blockState.getLegacyId(), blockState.getLegacyData());
+            } else if (nbtMap.containsKey("tileID")) {
+                block = Block.get(nbtMap.getByte("tileID") & 0xff);
+            }
+
+            if (block == null) {
+                if (Nukkit.DEBUG > 1) {
+                    Server.getInstance().getLogger().debug("Invalid block ticking entry: " + nbtMap);
+                }
+                continue;
+            }
+
+            block.x = nbtMap.getInt("x");
+            block.y = nbtMap.getInt("y");
+            block.z = nbtMap.getInt("z");
+            block.level = level;
+
+            int delay = (int) (nbtMap.getLong("time") - currentTick);
+            int priority = nbtMap.getInt("p");
+
+            level.scheduleUpdate(block, block, delay, priority, false);
+        }
     }
 
     @Override
@@ -328,20 +390,7 @@ public class LevelDBProvider implements LevelProvider {
         }
         chunk.setChanged(false);
 
-        WriteBatch batch = this.db.createWriteBatch();
-        ChunkSerializers.serializeChunk(batch, chunk, LATEST_CHUNK_VERSION);
-        if (chunk.has3dBiomes()) {
-            Data3dSerializer.serialize(batch, chunk);
-        } else {
-            Data2dSerializer.serialize(batch, chunk);
-        }
-
-        batch.put(LevelDBKey.VERSION.getKey(chunkX, chunkZ, this.level.getDimension()), new byte[]{LATEST_CHUNK_VERSION});
-        batch.put(LevelDBKey.STATE_FINALIZATION.getKey(chunkX, chunkZ, this.level.getDimension()),
-                Unpooled.buffer(4).writeIntLE(chunk.getState() - 1).array());
-
-        BlockEntitySerializer.saveBlockEntities(batch, chunk);
-        EntitySerializer.saveEntities(batch, chunk);
+        WriteBatch batch = save0(chunkX, chunkZ, chunk);
         return CompletableFuture.runAsync(() -> this.saveChunkCallback(batch, chunk), this.executor);
     }
 
@@ -355,6 +404,11 @@ public class LevelDBProvider implements LevelProvider {
         }
         chunk.setChanged(false);
 
+        WriteBatch batch = save0(chunkX, chunkZ, chunk);
+        this.saveChunkCallback(batch, chunk);
+    }
+
+    private WriteBatch save0(int chunkX, int chunkZ, LevelDBChunk chunk) {
         WriteBatch batch = this.db.createWriteBatch();
         ChunkSerializers.serializeChunk(batch, chunk, LATEST_CHUNK_VERSION);
         if (chunk.has3dBiomes()) {
@@ -369,7 +423,65 @@ public class LevelDBProvider implements LevelProvider {
 
         BlockEntitySerializer.saveBlockEntities(batch, chunk);
         EntitySerializer.saveEntities(batch, chunk);
-        this.saveChunkCallback(batch, chunk);
+
+        long currentTick = 0;
+        Set<BlockUpdateEntry> pendingBlockUpdates = null;
+
+        LevelProvider provider;
+        if ((provider = chunk.getProvider()) != null) {
+            Level level = provider.getLevel();
+            currentTick = level.getCurrentTick();
+            pendingBlockUpdates = level.getPendingBlockUpdates(chunk);
+        }
+
+        byte[] pendingBlockUpdatesKey = LevelDBKey.PENDING_TICKS.getKey(chunkX, chunkZ, this.level.getDimension());
+        if (pendingBlockUpdates != null && !pendingBlockUpdates.isEmpty()) {
+            NbtMap ticks = savePendingBlockUpdates(pendingBlockUpdates, currentTick);
+
+            if (ticks != null) {
+                ByteBuf byteBuf = ByteBufAllocator.DEFAULT.ioBuffer();
+                try (org.cloudburstmc.nbt.NBTOutputStream outputStream = NbtUtils.createWriterLE(new ByteBufOutputStream(byteBuf))) {
+                    outputStream.writeTag(ticks);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+                byte[] bytes = new byte[byteBuf.readableBytes()];
+                byteBuf.readBytes(bytes);
+                byteBuf.release();
+                batch.put(pendingBlockUpdatesKey, bytes);
+            } else {
+                batch.delete(pendingBlockUpdatesKey);
+            }
+        } else {
+            batch.delete(pendingBlockUpdatesKey);
+        }
+
+        return batch;
+    }
+
+    private NbtMap savePendingBlockUpdates(Set<BlockUpdateEntry> entries, long currentTick) {
+        ObjectArrayList<NbtMap> list = new ObjectArrayList<>();
+
+        for (BlockUpdateEntry entry : entries) {
+            NbtMap blockTag = BlockStateMapping.get().getState(entry.block.getId(), entry.block.getDamage()).getVanillaState();
+
+            NbtMapBuilder tag = NbtMap.builder()
+                    .putInt("x", entry.pos.getFloorX())
+                    .putInt("y", entry.pos.getFloorY())
+                    .putInt("z", entry.pos.getFloorZ())
+                    .putCompound("blockState", blockTag)
+                    .putLong("time", entry.delay - currentTick);
+
+            if (entry.priority != 0) {
+                tag.putInt("p", entry.priority);
+            }
+
+            list.add(tag.build());
+        }
+
+        return list.isEmpty() ? null : NbtMap.builder()
+                .putInt("currentTick", 0)
+                .putList("tickList", NbtType.COMPOUND, list).build();
     }
 
     private void saveChunkCallback(WriteBatch batch, LevelDBChunk chunk) {
@@ -400,7 +512,7 @@ public class LevelDBProvider implements LevelProvider {
 
     @Override
     public void unloadChunks() {
-       this.unloadChunksUnsafe(false);
+        this.unloadChunksUnsafe(false);
     }
 
     private void unloadChunksUnsafe(boolean wait) {
@@ -593,6 +705,7 @@ public class LevelDBProvider implements LevelProvider {
 
     @Override
     public void setGameRules(GameRules rules) {
+        //noinspection rawtypes
         for (Map.Entry<GameRule, GameRules.Value> entry : rules.getGameRules().entrySet()) {
             String name = entry.getKey().getName().toLowerCase();
 
@@ -679,7 +792,7 @@ public class LevelDBProvider implements LevelProvider {
 
     @Override
     public void saveLevelData() {
-       saveLevelData(this.levelData, this.path);
+        saveLevelData(this.levelData, this.path);
     }
 
     @Override
