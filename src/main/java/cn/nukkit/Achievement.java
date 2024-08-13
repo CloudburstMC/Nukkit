@@ -15,7 +15,7 @@ public class Achievement {
             put("buildWorkBench", new Achievement("Benchmarking", "mineWood"));
             put("buildPickaxe", new Achievement("Time to Mine!", "buildWorkBench"));
             put("buildFurnace", new Achievement("Hot Topic", "buildPickaxe"));
-            put("acquireIron", new Achievement("Acquire hardware", "buildFurnace"));
+            put("acquireIron", new Achievement("Acquire Hardware", "buildFurnace"));
             put("buildHoe", new Achievement("Time to Farm!", "buildWorkBench"));
             put("makeBread", new Achievement("Bake Bread", "buildHoe"));
             put("bakeCake", new Achievement("The Lie", "buildHoe"));

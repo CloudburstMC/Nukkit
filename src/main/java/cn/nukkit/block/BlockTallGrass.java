@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemSeedsWheat;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
@@ -123,24 +122,15 @@ public class BlockTallGrass extends BlockFlowable {
 
     @Override
     public Item[] getDrops(Item item) {
-        boolean dropSeeds = ThreadLocalRandom.current().nextInt(10) == 0;
         if (item.isShears()) {
-            //todo enchantment
-            if (dropSeeds) {
-                return new Item[]{
-                        new ItemSeedsWheat(),
-                        Item.get(Item.TALL_GRASS, this.getDamage(), 1)
-                };
-            } else {
-                return new Item[]{
-                        Item.get(Item.TALL_GRASS, this.getDamage(), 1)
-                };
-            }
+            return new Item[]{
+                    Item.get(Item.TALL_GRASS, this.getDamage() & 2, 1)
+            };
         }
 
-        if (dropSeeds) {
+        if (ThreadLocalRandom.current().nextInt(10) == 0) {
             return new Item[]{
-                    new ItemSeedsWheat()
+                    Item.get(Item.WHEAT_SEEDS)
             };
         } else {
             return new Item[0];

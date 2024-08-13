@@ -22,7 +22,7 @@ public class ResourcePackClientResponsePacket extends DataPacket {
         this.responseStatus = (byte) this.getByte();
         this.packEntries = new Entry[Math.min(this.getLShort(), 1024)];
         for (int i = 0; i < this.packEntries.length; i++) {
-            String[] entry = this.getString().split("_");
+            String[] entry = this.getString().split("_", 3);
             this.packEntries[i] = new Entry(UUID.fromString(entry[0]), entry[1]);
         }
     }

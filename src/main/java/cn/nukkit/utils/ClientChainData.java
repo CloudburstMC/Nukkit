@@ -33,6 +33,8 @@ import java.util.*;
  */
 public final class ClientChainData implements LoginChainData {
 
+    private static final Gson GSON = new Gson();
+
     public static ClientChainData of(byte[] buffer) {
         return new ClientChainData(buffer);
     }
@@ -190,7 +192,13 @@ public final class ClientChainData implements LoginChainData {
     }
 
     private void decodeSkinData() {
-        JsonObject skinToken = decodeToken(new String(bs.get(bs.getLInt())));
+        int size = bs.getLInt();
+        if (size > 52428800) {
+            throw new IllegalArgumentException("Skin data too big: " + size);
+        }
+
+        JsonObject skinToken = decodeToken(new String(bs.get(size), StandardCharsets.UTF_8));
+
         if (skinToken == null) return;
         if (skinToken.has("ClientRandomId")) this.clientId = skinToken.get("ClientRandomId").getAsLong();
         if (skinToken.has("ServerAddress")) this.serverAddress = skinToken.get("ServerAddress").getAsString();
@@ -208,16 +216,20 @@ public final class ClientChainData implements LoginChainData {
         this.rawData = skinToken;
     }
 
-    private JsonObject decodeToken(String token) {
-        String[] base = token.split("\\.");
+    public static JsonObject decodeToken(String token) {
+        String[] base = token.split("\\.", 100);
         if (base.length < 2) return null;
-        String json = new String(Base64.getDecoder().decode(base[1]), StandardCharsets.UTF_8);
-        //Server.getInstance().getLogger().debug(json);
-        return new Gson().fromJson(json, JsonObject.class);
+        return GSON.fromJson(new String(Base64.getDecoder().decode(base[1]), StandardCharsets.UTF_8), JsonObject.class);
     }
 
     private void decodeChainData() {
-        Map<String, List<String>> map = new Gson().fromJson(new String(bs.get(bs.getLInt()), StandardCharsets.UTF_8),
+        int size = bs.getLInt();
+        if (size > 52428800) {
+            throw new IllegalArgumentException("Chain data too big: " + size);
+        }
+
+        String data = new String(bs.get(size), StandardCharsets.UTF_8);
+        Map<String, List<String>> map = GSON.fromJson(data,
                 new TypeToken<Map<String, List<String>>>() {
                 }.getType());
         if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
