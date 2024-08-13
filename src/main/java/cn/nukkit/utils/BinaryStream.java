@@ -791,6 +791,7 @@ public class BinaryStream {
         putByte(link.type);
         putBoolean(link.immediate);
         putBoolean(link.riderInitiated);
+        putLFloat(link.vehicleAngularVelocity);
     }
 
     public EntityLink getEntityLink() {
@@ -799,7 +800,8 @@ public class BinaryStream {
                 getEntityUniqueId(),
                 (byte) getByte(),
                 getBoolean(),
-                getBoolean()
+                getBoolean(),
+                getLFloat()
         );
     }
 

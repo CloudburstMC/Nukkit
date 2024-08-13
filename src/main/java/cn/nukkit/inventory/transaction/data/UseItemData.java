@@ -14,6 +14,7 @@ import lombok.ToString;
 public class UseItemData implements TransactionData {
 
     public int actionType;
+    public int triggerType;
     public BlockVector3 blockPos;
     public BlockFace face;
     public int hotbarSlot;
@@ -21,4 +22,5 @@ public class UseItemData implements TransactionData {
     public Vector3 playerPos;
     public Vector3f clickPos;
     public int blockRuntimeId;
+    public int clientInteractPrediction;
 }

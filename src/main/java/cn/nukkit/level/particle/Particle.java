@@ -28,7 +28,7 @@ public abstract class Particle extends Vector3 {
     public static final int TYPE_SNOWBALL_POOF = 15;
     public static final int TYPE_HUGE_EXPLODE = 16;
     public static final int TYPE_HUGE_EXPLODE_SEED = 17;
-    public static final int TYPE_WIND_EXPLOSION = 18;
+    public static final int BREEZE_WIND_EXPLOSION = 18;
     public static final int TYPE_MOB_FLAME = 19;
     public static final int TYPE_HEART = 20;
     public static final int TYPE_TERRAIN = 21;
@@ -99,6 +99,10 @@ public abstract class Particle extends Vector3 {
     public static final int TYPE_CHERRY_LEAVES = 87;
     public static final int TYPE_DUST_PLUME = 88;
     public static final int TYPE_WHITE_SMOKE = 89;
+    public static final int TYPE_VAULT_CONNECTION = 90;
+    public static final int TYPE_WIND_EXPLOSION = 91;
+    public static final int TYPE_WOLF_ARMOR_BREAK = 92;
+    public static final int TYPE_OMINOUS_ITEM_SPAWNER = 93;
 
     public static Integer getParticleIdByName(String name) {
         name = name.toUpperCase();

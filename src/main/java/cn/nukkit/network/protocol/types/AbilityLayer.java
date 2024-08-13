@@ -18,6 +18,7 @@ public class AbilityLayer {
         BASE,
         SPECTATOR,
         COMMANDS,
-        EDITOR
+        EDITOR,
+        LOADING_SCREEN
     }
 }
