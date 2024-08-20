@@ -860,7 +860,7 @@ public abstract class Entity extends Location implements Metadatable {
                     ambient = false;
                 }
                 if (packedEffectsCount < 8) {
-                    effectsData = effectsData << 7 | (effect.getId() & 0x3f << 1) | (effect.isAmbient() ? 1 : 0);
+                    effectsData = effectsData << 7 | ((effect.getId() & 0x3f) << 1) | (effect.isAmbient() ? 1 : 0);
                     packedEffectsCount++;
                 }
             }
