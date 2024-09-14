@@ -47,7 +47,7 @@ public class Network {
     public static final byte CHANNEL_TEXT = 7; //Chat and other text stuff
     public static final byte CHANNEL_END = 31;
 
-    private Class<? extends DataPacket>[] packetPool = new Class[512];
+    private Class<? extends DataPacket>[] packetPool = new Class[256];
 
     private final Server server;
 
@@ -245,8 +245,8 @@ public class Network {
                 // |   2 bits  |   2 bits  |  10 bits  |
                 int packetId = header & 0x3ff;
 
-                DataPacket pk = this.getPacket(packetId);
-
+                // Use internal backwards compatible IDs until pid() is rewritten
+                DataPacket pk = this.getPacket(packetId >= 300 ? packetId - 100 : packetId);
                 if (pk != null) {
                     pk.setBuffer(buf, buf.length - bais.available());
                     try {
@@ -261,7 +261,7 @@ public class Network {
 
                     packets.add(pk);
                 } else {
-                    log.debug("Received unknown packet with ID: {}", Integer.toHexString(packetId));
+                    log.debug("Received unknown packet with vanilla ID 0x{}", Integer.toHexString(packetId));
                 }
             }
         } catch (Exception e) {
@@ -308,7 +308,7 @@ public class Network {
     }
 
     private void registerPackets() {
-        this.packetPool = new Class[512];
+        this.packetPool = new Class[256];
 
         this.registerPacket(ProtocolInfo.ADD_ENTITY_PACKET, AddEntityPacket.class);
         this.registerPacket(ProtocolInfo.ADD_ITEM_ENTITY_PACKET, AddItemEntityPacket.class);

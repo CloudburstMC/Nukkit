@@ -10,6 +10,7 @@ public class EmotePacket extends DataPacket {
     public String platformId;
     public String emoteID;
     public byte flags;
+    public long emoteTicks;
 
     @Override
     public byte pid() {
@@ -20,6 +21,7 @@ public class EmotePacket extends DataPacket {
     public void decode() {
         this.runtimeId = this.getEntityRuntimeId();
         this.emoteID = this.getString();
+        this.emoteTicks = this.getUnsignedVarInt();
         this.xuid = this.getString();
         this.platformId = this.getString();
         this.flags = (byte) this.getByte();
@@ -30,6 +32,7 @@ public class EmotePacket extends DataPacket {
         this.reset();
         this.putEntityRuntimeId(this.runtimeId);
         this.putString(this.emoteID);
+        this.putUnsignedVarInt(this.emoteTicks);
         this.putString(this.xuid);
         this.putString(this.platformId);
         this.putByte(flags);

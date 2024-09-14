@@ -20,7 +20,6 @@ public class InventorySlotPacket extends DataPacket {
     public int inventoryId;
     public int slot;
     public Item item;
-    public int dynamicContainerId;
 
     @Override
     public void decode() {
@@ -31,7 +30,9 @@ public class InventorySlotPacket extends DataPacket {
         this.reset();
         this.putUnsignedVarInt(this.inventoryId);
         this.putUnsignedVarInt(this.slot);
-        this.putUnsignedVarInt(this.dynamicContainerId);
+        this.putByte((byte) 0); // fullContainerName.id
+        this.putBoolean(false); // fullContainerName.optional.present
+        this.putUnsignedVarInt(0); // dynamicContainerSize
         this.putSlot(this.item);
     }
 }

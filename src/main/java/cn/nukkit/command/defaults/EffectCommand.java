@@ -71,12 +71,11 @@ public class EffectCommand extends Command {
         try {
             effect = Effect.getEffect(Integer.parseInt(args[1]));
         } catch (NumberFormatException | ServerException a) {
-            try {
-                effect = Effect.getEffectByName(args[1]);
-            } catch (Exception e) {
-                sender.sendMessage(new TranslationContainer("commands.effect.notFound", args[1]));
-                return true;
-            }
+            effect = Effect.getEffectByName(args[1]);
+        }
+        if (effect == null) {
+            sender.sendMessage(new TranslationContainer("commands.effect.notFound", args[1]));
+            return true;
         }
         int duration = 300;
         int amplification = 0;
