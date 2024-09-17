@@ -43,7 +43,11 @@ public class FoodChorusFruit extends FoodNormal {
 
             if (y < minBlockY) continue;
 
-            FullChunk chunk = level.getChunk(x >> 4, z >> 4);
+            FullChunk chunk = level.getChunkIfLoaded(x >> 4, z >> 4);
+            if (chunk == null) {
+                continue;
+            }
+
             while (y >= minBlockY && !level.getBlock(chunk, x, y + 1, z, true).isSolid()) {
                 y--;
             }

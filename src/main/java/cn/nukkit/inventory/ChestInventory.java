@@ -3,6 +3,7 @@ package cn.nukkit.inventory;
 import cn.nukkit.Player;
 import cn.nukkit.block.BlockTrappedChest;
 import cn.nukkit.blockentity.BlockEntityChest;
+import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.BlockEventPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
@@ -92,5 +93,12 @@ public class ChestInventory extends ContainerInventory {
         } else {
             super.sendSlot(index, players);
         }
+    }
+
+    @Override
+    public void onSlotChange(int index, Item before, boolean send) {
+        super.onSlotChange(index, before, send);
+
+        this.getHolder().chunk.setChanged();
     }
 }

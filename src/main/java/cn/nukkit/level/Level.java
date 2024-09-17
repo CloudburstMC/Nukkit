@@ -4,8 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityContainer;
-import cn.nukkit.customblock.CustomBlockManager;
+import cn.nukkit.block.custom.CustomBlockManager;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.custom.EntityDefinition;
 import cn.nukkit.entity.custom.EntityManager;
@@ -284,7 +283,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     public GameRules gameRules;
 
     private final AsyncChunkThread asyncChunkThread;
-    private Vector3 cachedSpawnPos;
 
     private GeneratorTaskFactory generatorTaskFactory = this;
 
@@ -1199,6 +1197,9 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
                 for (Entity entity : chunk.getEntities().values()) {
                     if (entity.updateMode < 1 || (entity.updateMode % 3 == 2 && server.getTick() - entity.lastUpdate > 300)) { // Force an update every 15 seconds to check age for despawning
+                        if (entity.updateMode % 2 == 1) {
+                            entity.updateMode = 1;
+                        }
                         entity.scheduleUpdate();
                     }
                 }
@@ -2320,7 +2321,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             if (!ev.isCancelled()) {
                 target.onUpdate(BLOCK_UPDATE_TOUCH);
 
-                if ((!player.isSneaking() || item.isNull()) && target.canBeActivated() && target.onActivate(item, player)) {
+                if ((!player.sneakToBlockInteract() || item.isNull()) && target.canBeActivated() && target.onActivate(item, player)) {
                     if (item.isTool() && item.getDamage() >= item.getMaxDurability()) {
                         this.addSound(target, cn.nukkit.level.Sound.RANDOM_BREAK);
                         this.addParticle(new ItemBreakParticle(target, item));
@@ -2330,10 +2331,15 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                     return item;
                 }
 
-                if (item.canBeActivated() && item.onActivate(this, player, block, target, face, fx, fy, fz)) {
-                    if (item.getCount() <= 0) {
-                        item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
-                        return item;
+                if (item.canBeActivated()) {
+                    int oldCount = item.getCount();
+                    if (item.onActivate(this, player, block, target, face, fx, fy, fz)) {
+                        if (oldCount != item.getCount()) {
+                            if (item.getCount() <= 0) {
+                                item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
+                            }
+                            return item;
+                        }
                     }
                 }
             } else {
@@ -2482,8 +2488,8 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     }
 
     public boolean isInSpawnRadius(Vector3 vector3) {
-        Position spawn;
-        return server.getSpawnRadius() > -1 && new Vector2(vector3.x, vector3.z).distance(new Vector2((spawn = this.getSpawnLocation()).x, spawn.z)) <= server.getSpawnRadius();
+        Vector3 spawn;
+        return server.getSpawnRadius() > -1 && new Vector2(vector3.x, vector3.z).distance(new Vector2((spawn = this.provider.getSpawn()).x, spawn.z)) <= server.getSpawnRadius();
     }
 
     public Entity getEntity(long entityId) {
@@ -3124,8 +3130,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
     public void setSpawnLocation(Vector3 pos) {
         Position previousSpawn = this.getSpawnLocation();
-        this.provider.setSpawn(pos);
-        this.cachedSpawnPos = this.getSpawnLocation();
+        this.provider.setSpawn(new Vector3(pos.x, pos.y, pos.z));
         this.server.getPluginManager().callEvent(new SpawnChangeEvent(this, previousSpawn));
         SetSpawnPositionPacket pk = new SetSpawnPositionPacket();
         pk.spawnType = SetSpawnPositionPacket.TYPE_WORLD_SPAWN;
@@ -3373,16 +3378,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
                     if (!needSave) {
                         for (Entity e : chunk.getEntities().values()) {
-                            if (e.canSaveToStorage()) {
-                                needSave = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!needSave) {
-                        for (BlockEntity e : chunk.getBlockEntities().values()) {
-                            if (e instanceof BlockEntityContainer) {
+                            if (e.canSaveToStorage() && e.notIgnoredAsSaveReason()) {
                                 needSave = true;
                                 break;
                             }
@@ -3411,9 +3407,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     }
 
     public boolean isSpawnChunk(int X, int Z) {
-        if (this.cachedSpawnPos == null) {
-            this.cachedSpawnPos = this.getSpawnLocation();
-        }
+        Vector3 cachedSpawnPos = this.provider.getSpawn();
 
         return Math.abs(X - (cachedSpawnPos.getChunkX())) <= 1 && Math.abs(Z - (cachedSpawnPos.getChunkZ())) <= 1;
     }

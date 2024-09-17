@@ -14,4 +14,9 @@ public class ItemTotem extends Item {
     public int getMaxStackSize() {
         return 1;
     }
+
+    @Override
+    public boolean allowOffhand() {
+        return true;
+    }
 }

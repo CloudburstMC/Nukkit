@@ -285,10 +285,6 @@ public class Nether extends Generator {
         }
     }
 
-    private static double lerp(double a, double b, double t) {
-        return a + (b - a) * t;
-    }
-
     private double densityGet(int x, int y, int z) {
         if (y >= 128) {
             return 0.0d;
@@ -298,7 +294,7 @@ public class Nether extends Generator {
         double low = this.low.get(x, y, (double) z) * NOISE_SCALE_FACTOR;
         double high = this.high.get(x, y, (double) z) * NOISE_SCALE_FACTOR;
 
-        double outputNoise = lerp(low, high, selector);
+        double outputNoise = NukkitMath.lerp(low, high, selector);
 
         double threshold = y * 0.125d;
         double offset = Math.cos(threshold * Math.PI * 6.0d / 17.0d) * 2.0d;

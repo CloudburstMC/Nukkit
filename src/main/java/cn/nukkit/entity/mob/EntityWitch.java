@@ -41,12 +41,14 @@ public class EntityWitch extends EntityWalkingMob {
     public Item[] getDrops() {
         List<Item> drops = new ArrayList<>();
 
+        drops.add(Item.get(Item.REDSTONE, 0, Utils.rand(4, 8)));
+
         if (Utils.rand(1, 4) == 1) {
             drops.add(Item.get(Item.STICK, 0, Utils.rand(0, 2)));
         }
 
         if (Utils.rand(1, 3) == 1) {
-            switch (Utils.rand(1, 6)) {
+            switch (Utils.rand(1, 5)) {
                 case 1:
                     drops.add(Item.get(Item.BOTTLE, 0, Utils.rand(0, 2)));
                     break;
@@ -57,12 +59,9 @@ public class EntityWitch extends EntityWalkingMob {
                     drops.add(Item.get(Item.GUNPOWDER, 0, Utils.rand(0, 2)));
                     break;
                 case 4:
-                    drops.add(Item.get(Item.REDSTONE, 0, Utils.rand(0, 2)));
-                    break;
-                case 5:
                     drops.add(Item.get(Item.SPIDER_EYE, 0, Utils.rand(0, 2)));
                     break;
-                case 6:
+                case 5:
                     drops.add(Item.get(Item.SUGAR, 0, Utils.rand(0, 2)));
                     break;
             }

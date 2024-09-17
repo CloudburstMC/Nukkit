@@ -283,8 +283,7 @@ public class Chunk extends BaseChunk {
     }
 
     private CompoundTag chunkNBT() {
-        CompoundTag nbt = this.getNBT().copy();
-        nbt.remove("BiomeColors");
+        CompoundTag nbt = this.getNBT();
 
         nbt.putInt("xPos", this.getX());
         nbt.putInt("zPos", this.getZ());

@@ -196,4 +196,12 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
             player.dataPacket(pk);
         }
     }
+
+    @Override
+    public void onSlotChange(int index, Item before, boolean send) {
+        super.onSlotChange(index, before, send);
+
+        this.left.getHolder().chunk.setChanged();
+        this.right.getHolder().chunk.setChanged();
+    }
 }

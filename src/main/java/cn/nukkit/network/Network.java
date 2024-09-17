@@ -35,7 +35,7 @@ public class Network {
     public static final byte CHANNEL_TEXT = 7; //Chat and other text stuff
     public static final byte CHANNEL_END = 31;
 
-    private Class<? extends DataPacket>[] packetPool = new Class[512];
+    private Class<? extends DataPacket>[] packetPool = new Class[256];
 
     private final Server server;
 
@@ -151,7 +151,8 @@ public class Network {
 
             int packetId = ((int) VarInt.readUnsignedVarInt(bais) & 0x3ff);
 
-            DataPacket pk = this.getPacket(packetId);
+            // Use internal backwards compatible IDs until pid() is rewritten
+            DataPacket pk = this.getPacket(packetId >= 300 ? packetId - 100 : packetId);
             if (pk == null) {
                 if (Nukkit.DEBUG > 1) {
                     log.debug("Received unknown packet with ID: 0x{}", Integer.toHexString(packetId));
@@ -216,7 +217,7 @@ public class Network {
     }
 
     private void registerPackets() {
-        this.packetPool = new Class[512];
+        this.packetPool = new Class[256];
 
         this.registerPacket(ProtocolInfo.BATCH_PACKET, BatchPacket.class);
 

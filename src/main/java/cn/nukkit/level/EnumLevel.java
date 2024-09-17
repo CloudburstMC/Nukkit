@@ -12,7 +12,7 @@ public enum EnumLevel {
     NETHER,
     THE_END;
 
-    Level level;
+    private Level level;
 
     /**
      * Get Level
@@ -29,14 +29,14 @@ public enum EnumLevel {
     public static void initLevels() {
         Server server = Server.getInstance();
         OVERWORLD.level = server.getDefaultLevel();
-        if (server.netherEnabled) {
+        if (server.getPropertyBoolean("allow-nether", true)) {
             if (server.getLevelByName("nether") == null) {
                 server.generateLevel("nether", System.currentTimeMillis(), Generator.getGenerator(Generator.TYPE_NETHER));
                 server.loadLevel("nether");
             }
             NETHER.level = server.getLevelByName("nether");
         }
-        if (server.endEnabled) {
+        if (server.getPropertyBoolean("allow-the-end", true)) {
             if (server.getLevelByName("the_end") == null) {
                 server.generateLevel("the_end", System.currentTimeMillis(), Generator.getGenerator(Generator.TYPE_THE_END));
                 server.loadLevel("the_end");

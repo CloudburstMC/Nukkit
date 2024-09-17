@@ -26,9 +26,4 @@ public class BlockBlueIce extends BlockIcePacked {
     public double getResistance() {
         return 14;
     }
-
-    @Override
-    public int getLightLevel() {
-        return 4;
-    }
 }

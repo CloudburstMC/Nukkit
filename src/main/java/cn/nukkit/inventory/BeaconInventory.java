@@ -29,7 +29,7 @@ public class BeaconInventory extends FakeBlockUIComponent {
     }
 
     @Override
-    public boolean allowedToAdd(int itemId) {
-        return ITEMS.contains(itemId);
+    public boolean allowedToAdd(Item item) {
+        return ITEMS.contains(item.getId());
     }
 }

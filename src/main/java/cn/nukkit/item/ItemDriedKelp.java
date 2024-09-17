@@ -15,7 +15,7 @@ public class ItemDriedKelp extends ItemEdible {
     }
 
     @Override
-    protected int getUseTicks() {
+    public int getUseTicks() {
         return 15;
     }
 }

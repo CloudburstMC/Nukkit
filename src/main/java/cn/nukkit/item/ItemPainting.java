@@ -118,7 +118,7 @@ public class ItemPainting extends Item {
         Entity.createEntity(EntityPainting.NETWORK_ID, chunk, nbt).spawnToAll();
 
         if (!player.isCreative()) {
-            player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
+            this.count--;
         }
 
         level.addLevelEvent(block, LevelEventPacket.EVENT_SOUND_ITEM_FRAME_PLACED);

@@ -78,7 +78,7 @@ public class BlockEndPortalFrame extends BlockTransparentMeta implements Faceabl
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if ((this.getDamage() & 0x04) == 0 && player != null && item.getId() == Item.ENDER_EYE && !player.isSneaking()) {
+        if ((this.getDamage() & 0x04) == 0 && player != null && item.getId() == Item.ENDER_EYE && !player.sneakToBlockInteract()) {
             this.setDamage(this.getDamage() + 4);
             this.getLevel().setBlock(this, this, true, false);
             this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_END_PORTAL_FRAME_FILL);

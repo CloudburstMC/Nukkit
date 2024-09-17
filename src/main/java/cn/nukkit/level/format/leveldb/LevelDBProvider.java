@@ -88,9 +88,11 @@ public class LevelDBProvider implements LevelProvider {
         Options options = new Options()
                 .createIfMissing(true)
                 .compressionType(CompressionType.ZLIB_RAW)
-                .cacheSize(1024L * 1024L * level.getServer().levelDbCache)
+                .cacheSize(1024L * 1024L * level.getServer().getConfig("leveldb.cache-size-mb", 80))
                 .blockSize(64 * 1024);
-        this.db = level.getServer().useNativeLevelDB ? LevelDB.PROVIDER.open(dbPath.toFile(), options) : JAVA_LDB_PROVIDER.open(dbPath.toFile(), options);
+
+        this.db = level.getServer().getConfig("leveldb.use-native", false) ?
+                LevelDB.PROVIDER.open(dbPath.toFile(), options) : JAVA_LDB_PROVIDER.open(dbPath.toFile(), options);
 
         this.levelData = loadLevelData(this.path);
 

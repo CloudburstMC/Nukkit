@@ -3,6 +3,7 @@ package cn.nukkit.command.defaults;
 import cn.nukkit.command.Command;
 
 /**
+ * Commands provided by Nukkit
  * @author MagicDroidX
  * Nukkit Project
  */

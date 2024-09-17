@@ -41,7 +41,7 @@ public interface Inventory {
 
     boolean canAddItem(Item item);
 
-    default boolean allowedToAdd(int itemId) {
+    default boolean allowedToAdd(Item item) {
         return true;
     }
 

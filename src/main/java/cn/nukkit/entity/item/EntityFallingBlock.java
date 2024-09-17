@@ -156,21 +156,18 @@ public class EntityFallingBlock extends Entity {
             motionY *= 1 - getDrag();
             motionZ *= friction;
 
-            Vector3 pos = new Vector3(x - 0.5, y, z - 0.5).round();
-
-            if (onGround) {
+            if (onGround && !closed) {
                 close();
-                Block block = level.getBlock(pos);
-                Block floorBlock = this.level.getBlock(pos);
+                Block floorBlock = level.getBlock(this);
                 if (this.getBlock() == Block.SNOW_LAYER && floorBlock.getId() == Block.SNOW_LAYER && (floorBlock.getDamage() & 0x7) != 0x7) {
                     int mergedHeight = (floorBlock.getDamage() & 0x7) + 1 + (this.getDamage() & 0x7) + 1;
                     if (mergedHeight > 8) {
                         EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, floorBlock, Block.get(Block.SNOW_LAYER, 0x7));
                         this.server.getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
-                            this.level.setBlock(pos, event.getTo(), true);
+                            this.level.setBlock(floorBlock, event.getTo(), true);
 
-                            Vector3 abovePos = pos.getSideVec(BlockFace.UP);
+                            Vector3 abovePos = floorBlock.getSideVec(BlockFace.UP);
                             Block aboveBlock = this.level.getBlock(abovePos);
                             if (aboveBlock.getId() == Block.AIR) {
                                 EntityBlockChangeEvent event2 = new EntityBlockChangeEvent(this, aboveBlock, Block.get(Block.SNOW_LAYER, mergedHeight - 9)); // -8-1
@@ -184,21 +181,20 @@ public class EntityFallingBlock extends Entity {
                         EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, floorBlock, Block.get(Block.SNOW_LAYER, mergedHeight - 1));
                         this.server.getPluginManager().callEvent(event);
                         if (!event.isCancelled()) {
-                            this.level.setBlock(pos, event.getTo(), true);
+                            this.level.setBlock(floorBlock, event.getTo(), true);
                         }
                     }
-                } else if ((block.isTransparent() && !block.canBeReplaced() || this.getBlock() == Block.SNOW_LAYER && block instanceof BlockLiquid)) {
+                } else if ((floorBlock.isTransparent() && !floorBlock.canBeReplaced() || this.getBlock() == Block.SNOW_LAYER && floorBlock instanceof BlockLiquid)) {
                     if (this.getBlock() != Block.SNOW_LAYER ? this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS) : this.level.getGameRules().getBoolean(GameRule.DO_TILE_DROPS)) {
                         getLevel().dropItem(this, Item.get(this.blockId, this.damage, 1));
                     }
                 } else {
-                    EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, block, Block.get(blockId, damage));
+                    EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, floorBlock, Block.get(blockId, damage));
                     server.getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {
                         int blockId = event.getTo().getId();
                         if (blockId != Item.POINTED_DRIPSTONE) {
-                            getLevel().setBlock(pos, event.getTo(), true, true);
-                            getLevel().scheduleUpdate(getLevel().getBlock(pos), 1);
+                            getLevel().setBlock(floorBlock, event.getTo(), true, true);
                         }
 
                         if (blockId == Item.ANVIL || blockId == Item.POINTED_DRIPSTONE) {

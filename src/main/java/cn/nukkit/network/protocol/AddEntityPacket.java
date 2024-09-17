@@ -143,6 +143,12 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityAllay.NETWORK_ID, "minecraft:allay")
             .put(EntityChestBoat.NETWORK_ID, "minecraft:chest_boat")
             .put(EntityCamel.NETWORK_ID, "minecraft:camel")
+            .put(EntitySniffer.NETWORK_ID, "minecraft:sniffer")
+            .put(EntityBreeze.NETWORK_ID, "minecraft:breeze")
+            .put(141, "minecraft:breeze_wind_charge_projectile")
+            .put(EntityArmadillo.NETWORK_ID, "minecraft:armadillo")
+            .put(143, "minecraft:wind_charge_projectile")
+            .put(EntityBogged.NETWORK_ID, "minecraft:bogged")
             .build();
 
     @Override

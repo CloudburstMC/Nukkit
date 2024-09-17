@@ -1,9 +1,9 @@
 package cn.nukkit.command.simple;
 
 import cn.nukkit.Server;
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.ConsoleCommandSender;
+import cn.nukkit.command.defaults.VanillaCommand;
 import cn.nukkit.lang.TranslationContainer;
 
 import java.lang.reflect.Method;
@@ -11,7 +11,7 @@ import java.lang.reflect.Method;
 /**
  * @author Tee7even
  */
-public class SimpleCommand extends Command {
+public class SimpleCommand extends VanillaCommand {
     private final Object object;
     private final Method method;
     private boolean forbidConsole;

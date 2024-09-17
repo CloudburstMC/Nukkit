@@ -30,10 +30,13 @@ public abstract class ItemEdible extends Item {
 
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        return player.canEat(true);
+        return this.canAlwaysEat() || player.canEat(true);
     }
 
-    protected int getUseTicks() {
+    /**
+     * How many ticks player must eat the food before it can be consumed
+     */
+    public int getUseTicks() {
         return 30;
     }
 
@@ -59,5 +62,19 @@ public abstract class ItemEdible extends Item {
             }
         }
         return true;
+    }
+
+    /**
+     * Whether food is a drink (mainly used for custom food item sounds)
+     */
+    public boolean isDrink() {
+        return false;
+    }
+
+    /**
+     * Whether food can be eaten even if food bar is full
+     */
+    public boolean canAlwaysEat() {
+        return false;
     }
 }

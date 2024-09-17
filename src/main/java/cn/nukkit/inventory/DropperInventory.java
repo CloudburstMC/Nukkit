@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.blockentity.BlockEntityDropper;
+import cn.nukkit.item.Item;
 
 public class DropperInventory extends ContainerInventory {
 
@@ -11,5 +12,12 @@ public class DropperInventory extends ContainerInventory {
     @Override
     public BlockEntityDropper getHolder() {
         return (BlockEntityDropper) super.getHolder();
+    }
+
+    @Override
+    public void onSlotChange(int index, Item before, boolean send) {
+        super.onSlotChange(index, before, send);
+
+        this.getHolder().chunk.setChanged();
     }
 }

@@ -32,7 +32,7 @@ import java.util.HashSet;
  */
 public abstract class Enchantment implements Cloneable {
 
-    protected static Enchantment[] enchantments;
+    public static Enchantment[] enchantments = new Enchantment[256];
 
     public static final int ID_PROTECTION_ALL = 0;
     public static final int ID_PROTECTION_FIRE = 1;
@@ -74,8 +74,6 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_SWIFT_SNEAK = 37;
 
     public static void init() {
-        enchantments = new Enchantment[256];
-
         enchantments[ID_PROTECTION_ALL] = new EnchantmentProtectionAll();
         enchantments[ID_PROTECTION_FIRE] = new EnchantmentProtectionFire();
         enchantments[ID_PROTECTION_FALL] = new EnchantmentProtectionFall();

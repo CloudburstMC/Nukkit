@@ -66,15 +66,17 @@ public class BlockJukebox extends BlockSolid {
         } else if (item instanceof ItemRecord) {
             jukebox.setRecordItem(item);
             jukebox.play();
-            if (player != null) {
-                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
 
+            if (player != null) {
                 TextPacket pk = new TextPacket();
                 pk.type = TextPacket.TYPE_JUKEBOX_POPUP;
                 pk.message = "%record.nowPlaying";
                 pk.parameters = new String[]{((ItemRecord) item).getDiscName()};
                 pk.isLocalized = true;
                 player.dataPacket(pk);
+
+                item.count--;
+                return true;
             }
         }
 
@@ -84,36 +86,18 @@ public class BlockJukebox extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (super.place(item, block, target, face, fx, fy, fz, player)) {
-            createBlockEntity();
+            CompoundTag nbt = new CompoundTag()
+                    .putList(new ListTag<>("Items"))
+                    .putString("id", BlockEntity.JUKEBOX)
+                    .putInt("x", getFloorX())
+                    .putInt("y", getFloorY())
+                    .putInt("z", getFloorZ());
+
+            BlockEntity.createBlockEntity(BlockEntity.JUKEBOX, this.getChunk(), nbt);
             return true;
         }
 
         return false;
-    }
-
-    /*@Override // Replaced with BlockEntityJukebox#onBreak
-    public boolean onBreak(Item item) {
-        if (super.onBreak(item)) {
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
-
-            if (blockEntity instanceof BlockEntityJukebox) {
-                ((BlockEntityJukebox) blockEntity).dropItem();
-            }
-            return true;
-        }
-
-        return false;
-    }*/
-
-    private BlockEntity createBlockEntity() {
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.JUKEBOX)
-                .putInt("x", getFloorX())
-                .putInt("y", getFloorY())
-                .putInt("z", getFloorZ());
-
-        return BlockEntity.createBlockEntity(BlockEntity.JUKEBOX, this.getChunk(), nbt);
     }
 
     @Override

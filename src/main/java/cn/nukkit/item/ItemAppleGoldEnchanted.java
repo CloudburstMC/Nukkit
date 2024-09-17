@@ -1,8 +1,5 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
-import cn.nukkit.math.Vector3;
-
 /**
  * Created by Snake1999 on 2016/1/14.
  * Package cn.nukkit.item in project nukkit.
@@ -22,7 +19,7 @@ public class ItemAppleGoldEnchanted extends ItemEdible {
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean canAlwaysEat() {
         return true;
     }
 }

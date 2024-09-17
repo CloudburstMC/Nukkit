@@ -77,7 +77,7 @@ public class BlockCoralBlock extends BlockSolidMeta {
         } else {
             name = names[variant];
         }
-        return this.isDead() ? "Dead" + name : name;
+        return this.isDead() ? "Dead " + name : name;
     }
 
     @Override

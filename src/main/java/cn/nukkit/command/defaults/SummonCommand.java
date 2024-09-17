@@ -2,7 +2,6 @@ package cn.nukkit.command.defaults;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
@@ -14,7 +13,7 @@ import cn.nukkit.utils.TextFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SummonCommand extends Command {
+public class SummonCommand extends VanillaCommand {
 
     public SummonCommand(String name) {
         super(name, "%nukkit.command.summon.description", "%nukkit.command.summon.usage");
@@ -62,7 +61,7 @@ public class SummonCommand extends Command {
             Entity ent;
             if ((ent = Entity.createEntity(mob, pos)) != null) {
                 ent.spawnToAll();
-                sender.sendMessage("\u00A76Spawned " + mob + " to " + playerThatSpawns.getName());
+                sender.sendMessage("§6Spawned " + mob + " to " + playerThatSpawns.getName());
             } else {
                 sender.sendMessage(TextFormat.RED + "Unable to spawn " + mob);
             }

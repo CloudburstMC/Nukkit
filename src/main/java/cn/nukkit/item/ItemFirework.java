@@ -67,7 +67,7 @@ public class ItemFirework extends Item {
             this.spawnFirework(level, block);
 
             if (!player.isCreative()) {
-                player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
+                this.count--;
             }
 
             return true;
@@ -220,5 +220,10 @@ public class ItemFirework extends Item {
             CREEPER_SHAPED,
             BURST
         }
+    }
+
+    @Override
+    public boolean allowOffhand() {
+        return true;
     }
 }

@@ -51,5 +51,7 @@ public class FurnaceInventory extends ContainerInventory {
         super.onSlotChange(index, before, send);
 
         this.getHolder().scheduleUpdate();
+
+        this.getHolder().chunk.setChanged();
     }
 }

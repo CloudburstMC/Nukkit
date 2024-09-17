@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.scheduler.FileWriteTask;
 import com.google.gson.Gson;
@@ -15,7 +16,6 @@ import org.yaml.snakeyaml.resolver.Resolver;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -553,7 +553,7 @@ public class Config {
     }
 
     private String writeProperties() {
-        StringBuilder content = new StringBuilder("#Properties Config File\r\n#" + new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").format(new Date()) + "\r\n");
+        StringBuilder content = new StringBuilder();
         for (Object o : this.config.entrySet()) {
             Map.Entry entry = (Map.Entry) o;
             Object v = entry.getValue();
@@ -566,16 +566,18 @@ public class Config {
         return content.toString();
     }
 
+    private static final Pattern propLinePattern = Pattern.compile("[a-zA-Z0-9\\-_.]*+=+[^\\r\\n]*");
+
     private void parseProperties(String content) {
         for (final String line : content.split("\n")) {
-            if (Pattern.compile("[a-zA-Z0-9\\-_.]*+=+[^\\r\\n]*").matcher(line).matches()) {
+            if (propLinePattern.matcher(line).matches()) {
                 final int splitIndex = line.indexOf('=');
                 if (splitIndex == -1) {
                     continue;
                 }
                 final String key = line.substring(0, splitIndex);
                 final String value = line.substring(splitIndex + 1);
-                if (this.config.containsKey(key)) {
+                if (Nukkit.DEBUG > 1 && this.config.containsKey(key)) {
                     MainLogger.getLogger().debug("[Config] Repeated property " + key + " in file " + this.file.toString());
                 }
                 switch (value.toLowerCase()) {

@@ -38,4 +38,9 @@ public class ItemHoneyBottle extends ItemEdible {
         }
         return true;
     }
+
+    @Override
+    public boolean isDrink() {
+        return true;
+    }
 }

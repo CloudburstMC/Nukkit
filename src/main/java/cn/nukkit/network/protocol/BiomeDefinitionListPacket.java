@@ -43,8 +43,9 @@ public class BiomeDefinitionListPacket extends DataPacket {
     @Override
     public void encode() {
         if (this.tag == null) {
-            throw new RuntimeException("tag == null");
+            throw new RuntimeException("tag == null, use getCachedPacket!");
         }
+
         this.reset();
         this.put(this.tag);
     }

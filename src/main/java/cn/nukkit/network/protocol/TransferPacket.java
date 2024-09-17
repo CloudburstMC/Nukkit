@@ -20,6 +20,7 @@ public class TransferPacket extends DataPacket {
         this.reset();
         this.putString(address);
         this.putLShort(port);
+        this.putBoolean(false); // reloadWorld
     }
 
     @Override

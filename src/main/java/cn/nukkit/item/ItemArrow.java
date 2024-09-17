@@ -105,4 +105,9 @@ public class ItemArrow extends Item {
                 return null;
         }
     }
+
+    @Override
+    public boolean allowOffhand() {
+        return true;
+    }
 }

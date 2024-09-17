@@ -1,7 +1,7 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.customblock.CustomBlockDefinition;
-import cn.nukkit.customblock.CustomBlockManager;
+import cn.nukkit.block.custom.CustomBlockDefinition;
+import cn.nukkit.block.custom.CustomBlockManager;
 import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRules;
 import cn.nukkit.network.protocol.types.ExperimentData;

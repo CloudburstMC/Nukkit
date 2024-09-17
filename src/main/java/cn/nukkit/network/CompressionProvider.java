@@ -37,7 +37,7 @@ public interface CompressionProvider {
 
         @Override
         public byte[] decompress(byte[] compressed) throws Exception {
-            return Zlib.inflate(compressed, 3145728);
+            return Zlib.inflate(compressed, 4194304);
         }
 
         @Override
@@ -54,7 +54,7 @@ public interface CompressionProvider {
 
         @Override
         public byte[] decompress(byte[] compressed) throws Exception {
-            return Zlib.inflateRaw(compressed, 3145728);
+            return Zlib.inflateRaw(compressed, 4194304);
         }
 
         @Override
@@ -76,7 +76,7 @@ public interface CompressionProvider {
 
         @Override
         public byte[] decompress(byte[] compressed) throws Exception {
-            return SnappyCompression.decompress(compressed, 3145728);
+            return SnappyCompression.decompress(compressed, 4194304);
         }
 
         @Override

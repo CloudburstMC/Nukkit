@@ -1,5 +1,6 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
@@ -44,7 +45,7 @@ public class EntitySquid extends EntityWaterAnimal {
 
     @Override
     public int getKillExperience() {
-        return Utils.rand(1, 3);
+        return this.isBaby() ? 0 : Utils.rand(1, 3);
     }
 
     @Override
@@ -54,10 +55,12 @@ public class EntitySquid extends EntityWaterAnimal {
             return att;
         }
 
-        EntityEventPacket pk = new EntityEventPacket();
-        pk.eid = this.getId();
-        pk.event = EntityEventPacket.SQUID_INK_CLOUD;
-        this.level.addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
+        if (source instanceof EntityDamageByEntityEvent) {
+            EntityEventPacket pk = new EntityEventPacket();
+            pk.eid = this.getId();
+            pk.event = EntityEventPacket.SQUID_INK_CLOUD;
+            this.level.addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
+        }
         return att;
     }
 }

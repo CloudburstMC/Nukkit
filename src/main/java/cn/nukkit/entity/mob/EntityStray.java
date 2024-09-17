@@ -40,7 +40,7 @@ public class EntityStray extends EntityWalkingMob implements EntitySmite {
 
     @Override
     public float getHeight() {
-        return 1.99f;
+        return 1.9f;
     }
 
     @Override

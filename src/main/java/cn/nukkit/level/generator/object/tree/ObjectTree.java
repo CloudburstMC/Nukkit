@@ -11,6 +11,8 @@ import cn.nukkit.math.NukkitRandom;
  */
 public abstract class ObjectTree {
 
+    public static final int SNOWY_TREE = 100;
+
     protected boolean overridable(int id) {
         switch (id) {
             case Block.AIR:
@@ -51,6 +53,9 @@ public abstract class ObjectTree {
         switch (type) {
             case BlockSapling.SPRUCE:
                 tree = new ObjectSpruceTree();
+                break;
+            case BlockSapling.SPRUCE + SNOWY_TREE:
+                tree = new ObjectSpruceTree(true);
                 break;
             case BlockSapling.BIRCH:
                 tree = new ObjectBirchTree();

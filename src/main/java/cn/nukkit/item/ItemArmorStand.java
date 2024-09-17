@@ -68,7 +68,7 @@ public class ItemArmorStand extends Item {
         Entity entity = Entity.createEntity("ArmorStand", chunk, nbt);
 
         if (!player.isCreative()) {
-            player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
+            this.count--;
         }
 
         if (entity != null) {

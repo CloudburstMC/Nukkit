@@ -127,9 +127,7 @@ public class ItemBucket extends Item {
                     if (this.getCount() - 1 <= 0) {
                         player.getInventory().setItemInHand(ev.getItem());
                     } else {
-                        Item clone = this.clone();
-                        clone.setCount(this.getCount() - 1);
-                        player.getInventory().setItemInHand(clone);
+                        player.getInventory().setItemInHand(this.decrement(1));
                         if (player.getInventory().canAddItem(ev.getItem())) {
                             player.getInventory().addItem(ev.getItem());
                         } else {
@@ -175,9 +173,7 @@ public class ItemBucket extends Item {
                         if (this.getCount() - 1 <= 0) {
                             player.getInventory().setItemInHand(ev.getItem());
                         } else {
-                            Item clone = this.clone();
-                            clone.setCount(this.getCount() - 1);
-                            player.getInventory().setItemInHand(clone);
+                            player.getInventory().setItemInHand(this.decrement(1));
                             if (player.getInventory().canAddItem(ev.getItem())) {
                                 player.getInventory().addItem(ev.getItem());
                             } else {
@@ -239,9 +235,7 @@ public class ItemBucket extends Item {
                     if (this.getCount() - 1 <= 0) {
                         player.getInventory().setItemInHand(ev.getItem());
                     } else {
-                        Item clone = this.clone();
-                        clone.setCount(this.getCount() - 1);
-                        player.getInventory().setItemInHand(clone);
+                        player.getInventory().setItemInHand(this.decrement(1));
                         if (player.getInventory().canAddItem(ev.getItem())) {
                             player.getInventory().addItem(ev.getItem());
                         } else {
@@ -311,9 +305,7 @@ public class ItemBucket extends Item {
                     if (this.getCount() - 1 <= 0) {
                         player.getInventory().setItemInHand(ev.getItem());
                     } else {
-                        Item clone = this.clone();
-                        clone.setCount(this.getCount() - 1);
-                        player.getInventory().setItemInHand(clone);
+                        player.getInventory().setItemInHand(this.decrement(1));
                         if (player.getInventory().canAddItem(ev.getItem())) {
                             player.getInventory().addItem(ev.getItem());
                         } else {

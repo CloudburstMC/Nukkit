@@ -124,7 +124,7 @@ public class BlockLeaves extends BlockTransparentMeta {
             LeavesDecayEvent ev = new LeavesDecayEvent(this);
 
             Server.getInstance().getPluginManager().callEvent(ev);
-            if (ev.isCancelled() || findLog(this, new LongArraySet(), 0, 0)) {
+            if (ev.isCancelled() || findLog(this, new LongArraySet())) {
                 getLevel().setBlock((int) this.x, (int) this.y, (int) this.z, BlockLayer.NORMAL, this, false, false, false); // No need to send this to client
             } else {
                 getLevel().useBreakOn(this);
@@ -138,11 +138,11 @@ public class BlockLeaves extends BlockTransparentMeta {
         setDamage(getDamage() & 0x03);
     }
 
-    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check) {
-        return findLog(pos, visited, distance, check, null);
+    private boolean findLog(Block pos, LongSet visited) {
+        return findLog(pos, visited, 0, 0, null);
     }
 
-    private Boolean findLog(Block pos, LongSet visited, Integer distance, Integer check, BlockFace fromSide) {
+    private boolean findLog(Block pos, LongSet visited, Integer distance, Integer check, BlockFace fromSide) {
         ++check;
         long index = Hash.hashBlock((int) pos.x, (int) pos.y, (int) pos.z);
         if (visited.contains(index)) return false;

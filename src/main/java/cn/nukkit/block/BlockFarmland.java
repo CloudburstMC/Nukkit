@@ -56,16 +56,13 @@ public class BlockFarmland extends BlockTransparentMeta {
         if (type == Level.BLOCK_UPDATE_RANDOM) {
             Block up = this.up();
 
-            if (up instanceof BlockCrops) {
-                return 0;
-            }
-
             if (up.isSolid()) {
                 this.level.setBlock(this, Block.get(BlockID.DIRT), false, true);
                 return Level.BLOCK_UPDATE_RANDOM;
             }
 
             boolean found = false;
+            boolean unloadedChunk = false;
 
             if (this.level.isRaining()) {
                 found = true;
@@ -77,7 +74,11 @@ public class BlockFarmland extends BlockTransparentMeta {
                                 continue;
                             }
 
-                            FullChunk chunk = this.level.getChunk(x >> 4, z >> 4);
+                            FullChunk chunk = this.level.getChunkIfLoaded(x >> 4, z >> 4);
+                            if (chunk == null) {
+                                unloadedChunk = true;
+                                continue;
+                            }
 
                             int block = this.level.getBlockIdAt(chunk, x, y, z);
                             if (Block.hasWater(block) || block == FROSTED_ICE || this.level.isBlockWaterloggedAt(chunk, x, y, z)) {
@@ -87,6 +88,10 @@ public class BlockFarmland extends BlockTransparentMeta {
                         }
                     }
                 }
+            }
+
+            if (!found && unloadedChunk) {
+                return 0;
             }
 
             Block block;
@@ -101,7 +106,7 @@ public class BlockFarmland extends BlockTransparentMeta {
             if (this.getDamage() > 0) {
                 this.setDamage(this.getDamage() - 1);
                 this.level.setBlock(this, this, false, true);
-            } else {
+            } else if (!(up instanceof BlockCrops)) {
                 this.level.setBlock(this, Block.get(Block.DIRT), false, true);
             }
 

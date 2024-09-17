@@ -19,7 +19,15 @@ public class BlockCoral extends BlockTransparentMeta {
             "Brain Coral",
             "Bubble Coral",
             "Fire Coral",
-            "Horn Coral"
+            "Horn Coral",
+            "",
+            "",
+            "",
+            "Dead Tube Coral",
+            "Dead Brain Coral",
+            "Dead Bubble Coral",
+            "Dead Fire Coral",
+            "Dead Horn Coral"
     };
 
     public BlockCoral() {
@@ -32,7 +40,7 @@ public class BlockCoral extends BlockTransparentMeta {
 
     @Override
     public String getName() {
-        int variant = this.getDamage() & 0x7;
+        int variant = this.getDamage();
         if (variant >= names.length) {
             return names[0];
         }
@@ -94,5 +102,10 @@ public class BlockCoral extends BlockTransparentMeta {
         } else {
             return new Item[0];
         }
+    }
+
+    @Override
+    public boolean canPassThrough() {
+        return true;
     }
 }

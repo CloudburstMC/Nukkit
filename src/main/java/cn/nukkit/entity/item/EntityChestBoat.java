@@ -32,7 +32,7 @@ public class EntityChestBoat extends EntityBoat implements InventoryHolder {
 
     @Override
     public String getInteractButtonText(Player player) {
-        if (player.isSneaking()) {
+        if (player.sneakToBlockInteract()) {
             return "action.interact.opencontainer";
         }
         return super.getInteractButtonText();
@@ -53,7 +53,7 @@ public class EntityChestBoat extends EntityBoat implements InventoryHolder {
 
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
-        if (player.isSneaking() && this.isAlive()) {
+        if (player.sneakToBlockInteract() && this.isAlive()) {
             player.addWindow(this.getInventory());
             return false;
         }

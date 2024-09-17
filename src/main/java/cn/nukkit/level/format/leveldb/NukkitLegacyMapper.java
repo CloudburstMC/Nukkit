@@ -50,7 +50,7 @@ public class NukkitLegacyMapper implements LegacyStateMapper {
     @Override
     public int runtimeToLegacyId(int runtimeId) {
         int fullId = this.runtimeToFullId(runtimeId);
-        return fullId == -1 ? -1 : fullId >> 6;
+        return fullId == -1 ? -1 : fullId >> Block.DATA_BITS;
     }
 
     @Override

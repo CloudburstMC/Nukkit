@@ -39,7 +39,7 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
 
     public void setRecordItem(Item recordItem) {
         Objects.requireNonNull(recordItem, "Record item cannot be null");
-        this.recordItem = recordItem;
+        this.recordItem = recordItem.clone();
         setDirty();
     }
 

@@ -6,6 +6,7 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 /**
  * 描述一个Nukkit插件的类。<br>
@@ -125,8 +126,10 @@ public class PluginDescription {
         this.loadMap(yaml.loadAs(yamlString, LinkedHashMap.class));
     }
 
+    private static final Pattern filter = Pattern.compile("[^A-Za-z0-9 _.-]");
+
     private void loadMap(Map<String, Object> plugin) throws PluginException {
-        this.name = ((String) plugin.get("name")).replaceAll("[^A-Za-z0-9 _.-]", "");
+        this.name = filter.matcher((String) plugin.get("name")).replaceAll("");
         if (this.name.isEmpty()) {
             throw new PluginException("plugin.yml must contain 'name'");
         }

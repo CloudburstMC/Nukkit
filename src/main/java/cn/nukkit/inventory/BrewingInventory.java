@@ -45,6 +45,8 @@ public class BrewingInventory extends ContainerInventory {
         }
 
         this.getHolder().scheduleUpdate();
+
+        this.getHolder().chunk.setChanged();
     }
 
     @Override

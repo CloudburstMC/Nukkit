@@ -203,14 +203,11 @@ public class EntityItem extends Entity {
 
                     for (Entity entity : e) {
                         if (entity instanceof EntityItem) {
-                            if (entity.closed || !entity.isAlive()) {
+                            if (entity.closed || !entity.isAlive() || !entity.isOnGround()) {
                                 continue;
                             }
                             Item closeItem = ((EntityItem) entity).getItem();
                             if (!closeItem.equals(item, true, true)) {
-                                continue;
-                            }
-                            if (!entity.isOnGround()) {
                                 continue;
                             }
                             int newAmount = this.item.getCount() + closeItem.getCount();

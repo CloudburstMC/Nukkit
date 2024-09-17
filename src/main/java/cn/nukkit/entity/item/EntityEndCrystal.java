@@ -165,4 +165,9 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
         this.minimalEntityTick(currentTick, tickDiff);
         return false;
     }
+
+    @Override
+    public boolean notIgnoredAsSaveReason() {
+        return false;
+    }
 }

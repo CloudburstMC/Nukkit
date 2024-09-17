@@ -4,7 +4,7 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.console.NukkitConsole;
-import cn.nukkit.customblock.CustomBlockManager;
+import cn.nukkit.block.custom.CustomBlockManager;
 import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
@@ -27,6 +27,7 @@ import cn.nukkit.inventory.CraftingManager;
 import cn.nukkit.inventory.Recipe;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.RuntimeItems;
+import cn.nukkit.item.custom.CustomItemManager;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.BaseLang;
 import cn.nukkit.lang.TextContainer;
@@ -34,7 +35,6 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.EnumLevel;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 import cn.nukkit.level.biome.EnumBiome;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.LevelProviderManager;
@@ -42,6 +42,7 @@ import cn.nukkit.level.format.anvil.Anvil;
 import cn.nukkit.level.format.leveldb.LevelDBProvider;
 import cn.nukkit.level.generator.*;
 import cn.nukkit.math.NukkitMath;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.metadata.EntityMetadataStore;
 import cn.nukkit.metadata.LevelMetadataStore;
 import cn.nukkit.metadata.PlayerMetadataStore;
@@ -199,31 +200,27 @@ public class Server {
     /**
      * The server's MOTD. Remember to call network.setName() when updated.
      */
-    public String motd;
+    private String motd;
     /**
      * Default player data saving enabled.
      */
-    public boolean shouldSavePlayerData;
+    boolean shouldSavePlayerData;
     /**
      * Anti fly checks enabled.
      */
-    public boolean allowFlight;
+    private boolean allowFlight;
     /**
      * Hardcore mode enabled.
      */
-    public boolean isHardcore;
+    private boolean isHardcore;
     /**
      * Force resource packs.
      */
-    public boolean forceResources;
+    private boolean forceResources;
     /**
      * Force player gamemode to default on every join.
      */
-    public boolean forceGamemode;
-    /**
-     * The nether dimension and portals enabled.
-     */
-    public boolean netherEnabled;
+    private boolean forceGamemode;
     /**
      * Whitelist enabled.
      */
@@ -235,19 +232,15 @@ public class Server {
     /**
      * Server side achievements enabled.
      */
-    public boolean achievementsEnabled;
-    /**
-     * The end dimension and portals enabled.
-     */
-    public boolean endEnabled;
+    boolean achievementsEnabled;
     /**
      * Pvp enabled. Can be changed per world using game rules.
      */
-    public boolean pvpEnabled;
+    boolean pvpEnabled;
     /**
      * Announce server side announcements to all players.
      */
-    public boolean announceAchievements;
+    boolean announceAchievements;
     /**
      * How many chunks are sent to player per tick.
      */
@@ -255,7 +248,7 @@ public class Server {
     /**
      * How many chunks needs to be sent before the player can spawn.
      */
-    public int spawnThreshold;
+    int spawnThreshold;
     /**
      * Zlib compression level for sent packets.
      */
@@ -263,7 +256,7 @@ public class Server {
     /**
      * Maximum view distance in chunks.
      */
-    public int viewDistance;
+    private int viewDistance;
     /**
      * Server's default gamemode.
      */
@@ -271,27 +264,19 @@ public class Server {
     /**
      * Minimum amount of time between player skin changes.
      */
-    public int skinChangeCooldown;
+    private int skinChangeCooldown;
     /**
      * Spawn protection radius.
      */
-    public int spawnRadius;
+    private int spawnRadius;
     /**
      * How often auto save should happen.
      */
-    public int autoSaveTicks;
+    private int autoSaveTicks;
     /**
      * Limit automatic tick rate.
      */
-    public int autoTickRateLimit;
-    /**
-     * Set LevelDB cache size.
-     */
-    public int levelDbCache;
-    /**
-     * Use native LevelDB implementation for better performance.
-     */
-    public boolean useNativeLevelDB;
+    private int autoTickRateLimit;
     /**
      * Showing plugins in query enabled.
      */
@@ -303,27 +288,27 @@ public class Server {
     /**
      * Whether attacking an entity should stop player from sprinting.
      */
-    public boolean attackStopSprint;
+    boolean attackStopSprint;
     /**
      * Enable automatic tick rate adjustments.
      */
-    public boolean autoTickRate;
+    private boolean autoTickRate;
     /**
      * Force server side translations.
      */
-    public boolean forceLanguage;
+    private boolean forceLanguage;
     /**
      * Always tick players.
      */
-    public boolean alwaysTickPlayers;
+    private boolean alwaysTickPlayers;
     /**
      * Don't disable client's own packs when force-resources is enabled.
      */
-    public boolean forceResourcesAllowOwnPacks;
+    boolean forceResourcesAllowOwnPacks;
     /**
      * Enable encryption.
      */
-    public boolean encryptionEnabled;
+    boolean encryptionEnabled;
     /**
      * Use Snappy for packet compression for 1.19.30+ clients.
      */
@@ -344,14 +329,17 @@ public class Server {
 
         this.filePath = filePath;
         if (!new File(dataPath + "worlds/").exists()) {
+            //noinspection ResultOfMethodCallIgnored
             new File(dataPath + "worlds/").mkdirs();
         }
 
         if (!new File(dataPath + "players/").exists()) {
+            //noinspection ResultOfMethodCallIgnored
             new File(dataPath + "players/").mkdirs();
         }
 
         if (!new File(pluginPath).exists()) {
+            //noinspection ResultOfMethodCallIgnored
             new File(pluginPath).mkdirs();
         }
 
@@ -488,13 +476,16 @@ public class Server {
         GlobalBlockPalette.init();
         RuntimeItems.init();
         Item.init();
+        //noinspection ResultOfMethodCallIgnored
         EnumBiome.values();
         Effect.init();
         Potion.init();
         Attribute.init();
         DispenseBehaviorRegister.init();
         CustomBlockManager.init(this);
-        EntityManager.get().getCachedPacket();
+        //noinspection ResultOfMethodCallIgnored
+        EntityManager.get();
+        //noinspection ResultOfMethodCallIgnored
         BiomeDefinitionListPacket.getCachedPacket();
 
         // Convert legacy data before plugins get the chance to mess with it
@@ -544,15 +535,26 @@ public class Server {
         this.pluginManager.loadPlugins(this.pluginPath);
         this.enablePlugins(PluginLoadOrder.STARTUP);
 
+        boolean regenerateItemPalette = false;
         try {
             if (CustomBlockManager.get().closeRegistry()) {
-                RuntimeItems.getMapping().generatePalette();
+                regenerateItemPalette = true;
             }
-
-            Item.initCreativeItems();
         } catch (Exception e) {
-            throw new IllegalStateException("Failed to init custom blocks", e);
+            throw new RuntimeException("Failed to init custom blocks", e);
         }
+
+        if (CustomItemManager.get().closeRegistry()) {
+            regenerateItemPalette = true;
+        }
+
+        if (regenerateItemPalette) {
+            RuntimeItems.getMapping().generatePalette();
+        }
+
+        EntityManager.get().closeRegistry();
+
+        Item.initCreativeItems();
 
         craftingManager.rebuildPacket();
 
@@ -563,7 +565,7 @@ public class Server {
         Generator.addGenerator(Normal.class, "normal", Generator.TYPE_INFINITE);
         Generator.addGenerator(Normal.class, "default", Generator.TYPE_INFINITE);
         Generator.addGenerator(Nether.class, "nether", Generator.TYPE_NETHER);
-        Generator.addGenerator(End.class, "the_end", Generator.TYPE_THE_END);
+        Generator.addGenerator(TheEnd.class, "the_end", Generator.TYPE_THE_END);
         Generator.addGenerator(cn.nukkit.level.generator.Void.class, "void", Generator.TYPE_VOID);
 
         for (String name : this.getConfig("worlds", new HashMap<String, Object>()).keySet()) {
@@ -625,7 +627,7 @@ public class Server {
         //for (Map.Entry<Integer, Level> entry : this.getLevels().entrySet()) {
             Level level = this.defaultLevel;//entry.getValue();
             this.getLogger().debug("Preparing spawn region for level " + level.getName());
-            Position spawn = level.getSpawnLocation();
+            Vector3 spawn = level.getProvider().getSpawn();
             level.populateChunk(spawn.getChunkX(), spawn.getChunkZ(), true);
         //}
 
@@ -644,10 +646,12 @@ public class Server {
         this.start();
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public int broadcastMessage(String message) {
         return this.broadcast(message, BROADCAST_CHANNEL_USERS);
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public int broadcastMessage(TextContainer message) {
         return this.broadcast(message, BROADCAST_CHANNEL_USERS);
     }
@@ -660,6 +664,7 @@ public class Server {
         return recipients.length;
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public int broadcastMessage(String message, Collection<? extends CommandSender> recipients) {
         for (CommandSender recipient : recipients) {
             recipient.sendMessage(message);
@@ -1722,7 +1727,7 @@ public class Server {
 
         Optional<InputStream> dataStream = Optional.empty();
         try {
-            dataStream = event.getSerializer().read(name, event.getUuid().orElse(null)); // TODO: should the name be lower case?
+            dataStream = event.getSerializer().read(name, event.getUuid().orElse(null));
             if (dataStream.isPresent()) {
                 return NBTIO.readCompressed(dataStream.get());
             }
@@ -1742,7 +1747,7 @@ public class Server {
             if (this.shouldSavePlayerData()) {
                 log.info(this.getLanguage().translateString("nukkit.data.playerNotFound", name));
             }
-            Position spawn = this.getDefaultLevel().getSpawnLocation();
+            Vector3 spawn = this.getDefaultLevel().getProvider().getSpawn();
             long time = System.currentTimeMillis();
             nbt = new CompoundTag()
                     .putLong("firstPlayed", time / 1000)
@@ -2041,6 +2046,7 @@ public class Server {
      * @param level Level
      * @return unloaded
      */
+    @SuppressWarnings("UnusedReturnValue")
     public boolean unloadLevel(Level level) {
         return this.unloadLevel(level, false);
     }
@@ -2318,7 +2324,8 @@ public class Server {
      * @return value
      */
     public Object getProperty(String variable, Object defaultValue) {
-        return this.properties.exists(variable) ? this.properties.get(variable) : defaultValue;
+        Object value = this.properties.get(variable);
+        return value == null ? defaultValue : value;
     }
 
     /**
@@ -2350,7 +2357,8 @@ public class Server {
      * @return value
      */
     public String getPropertyString(String key, String defaultValue) {
-        return this.properties.exists(key) ? this.properties.get(key).toString() : defaultValue;
+        Object value = this.properties.get(key);
+        return value == null ? defaultValue : value.toString();
     }
 
     /**
@@ -2371,7 +2379,8 @@ public class Server {
      * @return value
      */
     public int getPropertyInt(String variable, Integer defaultValue) {
-        return this.properties.exists(variable) ? (!this.properties.get(variable).equals("") ? Integer.parseInt(String.valueOf(this.properties.get(variable))) : defaultValue) : defaultValue;
+        Object value = this.properties.get(variable);
+        return value == null || (value instanceof String && ((String) value).isEmpty()) ? defaultValue : Integer.parseInt(String.valueOf(value));
     }
 
     /**
@@ -2403,7 +2412,10 @@ public class Server {
      * @return value
      */
     public boolean getPropertyBoolean(String variable, Object defaultValue) {
-        Object value = this.properties.exists(variable) ? this.properties.get(variable) : defaultValue;
+        Object value = this.properties.get(variable);
+        if (value == null) {
+            value = defaultValue;
+        }
         if (value instanceof Boolean) {
             return (Boolean) value;
         }
@@ -2689,6 +2701,8 @@ public class Server {
         Entity.registerEntity("Zoglin", EntityZoglin.class);
         Entity.registerEntity("PiglinBrute", EntityPiglinBrute.class);
         Entity.registerEntity("Warden", EntityWarden.class);
+        Entity.registerEntity("Breeze", EntityBreeze.class);
+        Entity.registerEntity("Bogged", EntityBogged.class);
         //Passive
         Entity.registerEntity("Bat", EntityBat.class);
         Entity.registerEntity("Cat", EntityCat.class);
@@ -2730,6 +2744,8 @@ public class Server {
         Entity.registerEntity("Frog", EntityFrog.class);
         Entity.registerEntity("Tadpole", EntityTadpole.class);
         Entity.registerEntity("Camel", EntityCamel.class);
+        Entity.registerEntity("Sniffer", EntitySniffer.class);
+        Entity.registerEntity("Armadillo", EntityArmadillo.class);
         //Vehicles
         Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
         Entity.registerEntity("MinecartChest", EntityMinecartChest.class);
@@ -2784,7 +2800,7 @@ public class Server {
      * @return nether enabled
      */
     public boolean isNetherAllowed() {
-        return this.netherEnabled;
+        return EnumLevel.NETHER.getLevel() != null;
     }
 
     /**
@@ -2832,9 +2848,6 @@ public class Server {
         this.baseTickRate = this.getConfig("level-settings.base-tick-rate", 1);
         this.alwaysTickPlayers = this.getConfig("level-settings.always-tick-players", false);
 
-        this.useNativeLevelDB = this.getConfig("leveldb.use-native", false);
-        this.levelDbCache = this.getConfig("leveldb.cache-size-mb", 80);
-
         this.autoSaveTicks = this.getConfig("ticks-per.autosave", 6000);
 
         this.shouldSavePlayerData = this.getConfig("player.save-player-data", true);
@@ -2850,8 +2863,6 @@ public class Server {
         /* server.properties */
 
         this.maxPlayers = this.getPropertyInt("max-players", 20);
-        this.netherEnabled = this.getPropertyBoolean("allow-nether", true);
-        //this.endEnabled = this.getPropertyBoolean("allow-the-end", true);
         this.xboxAuth = this.getPropertyBoolean("xbox-auth", true);
         this.achievementsEnabled = this.getPropertyBoolean("achievements", true);
         this.pvpEnabled = this.getPropertyBoolean("pvp", true);
@@ -2873,7 +2884,7 @@ public class Server {
         try {
             this.gamemode = this.getPropertyInt("gamemode", 0) & 0b11;
         } catch (NumberFormatException exception) {
-            this.gamemode = getGamemodeFromString(this.getPropertyString("gamemode")) & 0b11;
+            this.gamemode = getGamemodeFromString(this.getPropertyString("gamemode", "0")) & 0b11;
         }
 
         if (this.isHardcore && this.difficulty < 3) {
@@ -2916,7 +2927,7 @@ public class Server {
             put("enable-query", false);
             put("allow-flight", false);
             put("allow-nether", true);
-            //put("allow-the-end", true);
+            put("allow-the-end", true);
         }
     }
 

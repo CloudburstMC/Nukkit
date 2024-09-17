@@ -227,7 +227,7 @@ public class BlockNoteblock extends BlockSolid {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (player.isSneaking()) return false;
+        if (player.sneakToBlockInteract()) return false;
         this.increaseStrength();
         this.emitSound();
         return true;

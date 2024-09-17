@@ -3,7 +3,6 @@ package cn.nukkit.level.format.generic;
 import cn.nukkit.Player;
 import cn.nukkit.block.BlockLayer;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.blockentity.BlockEntityContainer;
 import cn.nukkit.blockentity.PersistentDataContainerBlockEntity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.level.ChunkManager;
@@ -478,16 +477,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
             if (!needSave) {
                 for (Entity e : this.getEntities().values()) {
-                    if (e.canSaveToStorage()) {
-                        needSave = true;
-                        break;
-                    }
-                }
-            }
-
-            if (!needSave) {
-                for (BlockEntity e : this.getBlockEntities().values()) {
-                    if (e instanceof BlockEntityContainer) {
+                    if (e.canSaveToStorage() && e.notIgnoredAsSaveReason()) {
                         needSave = true;
                         break;
                     }

@@ -60,7 +60,7 @@ public class EntityParrot extends EntityFlyingAnimal {
 
     @Override
     public int getKillExperience() {
-        return Utils.rand(1, 3);
+        return this.isBaby() ? 0 : Utils.rand(1, 3);
     }
 
     private static int getRandomVariant() {

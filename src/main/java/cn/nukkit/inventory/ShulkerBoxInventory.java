@@ -61,11 +61,19 @@ public class ShulkerBoxInventory extends ContainerInventory {
 
     @Override
     public boolean canAddItem(Item item) {
-        return this.allowedToAdd(item.getId()) && super.canAddItem(item);
+        return this.allowedToAdd(item) && super.canAddItem(item);
     }
 
     @Override
-    public boolean allowedToAdd(int itemId) {
+    public boolean allowedToAdd(Item item) {
+        int itemId = item.getId();
         return itemId != BlockID.SHULKER_BOX && itemId != BlockID.UNDYED_SHULKER_BOX;
+    }
+
+    @Override
+    public void onSlotChange(int index, Item before, boolean send) {
+        super.onSlotChange(index, before, send);
+
+        this.getHolder().chunk.setChanged();
     }
 }

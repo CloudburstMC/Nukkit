@@ -12,6 +12,15 @@ import cn.nukkit.math.NukkitRandom;
 public class ObjectSpruceTree extends ObjectTree {
 
     protected int treeHeight = 15;
+    private final boolean canCreateSnow;
+
+    public ObjectSpruceTree() {
+        this(false);
+    }
+
+    public ObjectSpruceTree(boolean canCreateSnow) {
+        this.canCreateSnow = canCreateSnow;
+    }
 
     @Override
     public int getType() {
@@ -53,6 +62,12 @@ public class ObjectSpruceTree extends ObjectTree {
 
                     if (!Block.isBlockSolidById(level.getBlockIdAt(xx, yyy, zz))) {
                         level.setBlockAt(xx, yyy, zz, this.getLeafBlock(), this.getType());
+
+                        if (this.canCreateSnow) {
+                            if (level.getBlockIdAt(xx, yyy + 1, zz) == Block.AIR && level.getBlockIdAt(xx, yyy + 2, zz) == Block.AIR) {
+                                level.setBlockAt(xx, yyy + 1, zz, Block.SNOW_LAYER, 0);
+                            }
+                        }
                     }
                 }
             }

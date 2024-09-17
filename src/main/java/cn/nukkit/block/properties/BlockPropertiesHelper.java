@@ -1,6 +1,6 @@
 package cn.nukkit.block.properties;
 
-import cn.nukkit.customblock.container.BlockStorageContainer;
+import cn.nukkit.block.custom.container.BlockStorageContainer;
 
 public interface BlockPropertiesHelper extends BlockStorageContainer {
 

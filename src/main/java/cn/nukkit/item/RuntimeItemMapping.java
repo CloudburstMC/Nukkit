@@ -96,7 +96,7 @@ public class RuntimeItemMapping {
         for (RuntimeEntry entry : this.legacy2Runtime.values()) {
             paletteBuffer.putString(entry.getIdentifier());
             paletteBuffer.putLShort(entry.getRuntimeId());
-            paletteBuffer.putBoolean(false); // Component item
+            paletteBuffer.putBoolean(!entry.getIdentifier().startsWith("minecraft:")); // TODO: Component item without bc break
         }
         this.itemPalette = paletteBuffer.getBuffer();
     }

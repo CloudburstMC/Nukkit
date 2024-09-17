@@ -62,31 +62,6 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public double getMinX() {
-        return this.x + 0.0625;
-    }
-
-    @Override
-    public double getMinZ() {
-        return this.z + 0.0625;
-    }
-
-    @Override
-    public double getMaxX() {
-        return this.x + 0.9375;
-    }
-
-    @Override
-    public double getMaxY() {
-        return this.y + 0.9475;
-    }
-
-    @Override
-    public double getMaxZ() {
-        return this.z + 0.9375;
-    }
-
-    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         BlockEntityChest chest = null;
         this.setDamage(Block.FACES2534[player != null ? player.getDirection().getHorizontalIndex() : 0]);

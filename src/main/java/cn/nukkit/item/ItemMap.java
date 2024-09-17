@@ -154,4 +154,9 @@ public class ItemMap extends Item {
         }
         return super.initItem();
     }
+
+    @Override
+    public boolean allowOffhand() {
+        return true;
+    }
 }

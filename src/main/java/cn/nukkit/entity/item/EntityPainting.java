@@ -155,4 +155,9 @@ public class EntityPainting extends EntityHanging {
             this.level.dropItem(this, Item.get(Item.PAINTING));
         }
     }
+
+    @Override
+    public boolean notIgnoredAsSaveReason() {
+        return false;
+    }
 }

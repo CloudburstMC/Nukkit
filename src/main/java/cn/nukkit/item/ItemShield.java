@@ -23,4 +23,9 @@ public class ItemShield extends ItemTool {
     public boolean noDamageOnAttack() {
         return true;
     }
+
+    @Override
+    public boolean allowOffhand() {
+        return true;
+    }
 }

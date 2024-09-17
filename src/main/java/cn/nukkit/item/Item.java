@@ -5,7 +5,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
-import cn.nukkit.customblock.CustomBlockManager;
+import cn.nukkit.block.custom.CustomBlockManager;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.RuntimeItemMapping.RuntimeEntry;
@@ -365,13 +365,13 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         clearCreativeItems();
     }
 
-    private static final List<Item> creative = new ObjectArrayList<>();
+    private static final List<Item> CREATIVE_ITEMS = new ObjectArrayList<>();
 
     public static void initCreativeItems() {
         Server.getInstance().getLogger().debug("Loading creative items...");
 
-        if (Nukkit.DEBUG > 1 && !creative.isEmpty()) {
-            Server.getInstance().getLogger().warning("registerCreativeItemsNew: creativeItems is not empty!");
+        if (!CREATIVE_ITEMS.isEmpty()) {
+            throw new IllegalStateException("CREATIVE_ITEMS is not empty");
         }
 
         JsonArray itemsArray = Utils.loadJsonResource("creative_items.json").getAsJsonObject().getAsJsonArray("items");
@@ -383,21 +383,21 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             Item item = RuntimeItems.getMapping().parseCreativeItem(element.getAsJsonObject(), true);
             if (item != null && !item.getName().equals(UNKNOWN_STR)) {
                 // Add only implemented items
-                creative.add(item);
+                CREATIVE_ITEMS.add(item);
             }
         }
     }
 
     public static void clearCreativeItems() {
-        Item.creative.clear();
+        Item.CREATIVE_ITEMS.clear();
     }
 
     public static ArrayList<Item> getCreativeItems() {
-        return new ArrayList<>(Item.creative);
+        return new ArrayList<>(Item.CREATIVE_ITEMS);
     }
 
     public static void addCreativeItem(Item item) {
-        Item.creative.add(item.clone());
+        Item.CREATIVE_ITEMS.add(item.clone());
     }
 
     public static void removeCreativeItem(Item item) {
@@ -537,30 +537,39 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         }
     }
 
+    private static final Pattern integerPattern = Pattern.compile("^[-1-9]\\d*$");
+
     public static Item fromString(String str) {
         String[] b = str.trim().replace(' ', '_').replace("minecraft:", "").split(":");
 
         int id = 0;
         int meta = 0;
 
-        Pattern integerPattern = Pattern.compile("^[-1-9]\\d*$");
-        if (integerPattern.matcher(b[0]).matches()) {
-            id = Integer.parseInt(b[0]);
+        String idStr = b[0];
+        if (integerPattern.matcher(idStr).matches()) {
+            id = Integer.parseInt(idStr);
         } else {
+            String idStrUp = idStr.toUpperCase();
             try {
-                id = BlockID.class.getField(b[0].toUpperCase()).getInt(null);
+                id = BlockID.class.getField(idStrUp).getInt(null);
                 if (id > 255) {
                     id = 255 - id;
                 }
             } catch (Exception ignore) {
                 try {
-                    id = ItemID.class.getField(b[0].toUpperCase()).getInt(null);
+                    id = ItemID.class.getField(idStrUp).getInt(null);
                 } catch (Exception ignore1) {
                 }
             }
         }
 
-        if (b.length != 1) meta = Integer.parseInt(b[1]) & 0xFFFF;
+        if (b.length != 1) {
+            try {
+                meta = Integer.parseInt(b[1]) & 0xFFFF;
+            } catch (NumberFormatException customItem) {
+                return Item.get(AIR);
+            }
+        }
 
         return get(id, meta);
     }
@@ -970,7 +979,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         return this.count <= 0 || this.id == AIR;
     }
 
-    final public String getName() {
+    public String getName() {
         return this.hasCustomName() ? this.getCustomName() : this.name;
     }
 
@@ -1128,7 +1137,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     }
 
     @Override
-    final public String toString() {
+    public String toString() {
         String out = "Item " + this.name + " (" + this.id + ':' + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count;
         CompoundTag tag;
         if (Nukkit.DEBUG > 1 && (tag = this.getNamedTag()) != null) {
@@ -1188,14 +1197,17 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         return this.equals(other, true, true) && this.count == other.count;
     }
 
+    @Deprecated
     public final boolean deepEquals(Item item) {
         return equals(item, true);
     }
 
+    @Deprecated
     public final boolean deepEquals(Item item, boolean checkDamage) {
         return equals(item, checkDamage, true);
     }
 
+    @Deprecated
     public final boolean deepEquals(Item item, boolean checkDamage, boolean checkCompound) {
         return equals(item, checkDamage, checkCompound);
     }
@@ -1265,10 +1277,16 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         return this.hasCompoundTag() && !this.getPersistentDataContainer().isEmpty();
     }
 
+    /**
+     * Returns a new item instance with count decreased by amount or air if new count is less or equal to 0
+     */
     public final Item decrement(int amount) {
         return increment(-amount);
     }
 
+    /**
+     * Returns a new item instance with count increased by amount or air if new count is less or equal to 0
+     */
     public final Item increment(int amount) {
         if (this.count + amount <= 0) {
             return get(0);
@@ -1276,5 +1294,12 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         Item cloned = this.clone();
         cloned.count += amount;
         return cloned;
+    }
+
+    /**
+     * Whether item can be placed in player offhand inventory
+     */
+    public boolean allowOffhand() {
+        return this.id == AIR;
     }
 }

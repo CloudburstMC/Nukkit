@@ -222,6 +222,15 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 this.level.setBlock(this.getSideVec(direction), Block.get(BlockID.AIR), false, true);
                 return true;
             }
+
+            Block pistonHead = null;
+            if (extending) {
+                pistonHead = this.getSide(direction);
+                if (!pistonHead.canBePushed()) {
+                    return false; // TODO: figure out why this happens
+                }
+            }
+
             List<Block> newBlocks = new ArrayList<>(blocks);
             List<Block> destroyBlocks = calculator.getBlocksToDestroy();
             BlockFace side = extending ? direction : direction.getOpposite();
@@ -240,9 +249,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 this.level.setBlock(newPos, newBlocks.get(i), true, false);
             }
 
-            if (extending) {
-                // Extension block entity
-                Vector3 pistonHead = this.getSideVec(direction);
+            if (pistonHead != null) {
                 this.level.setBlock(pistonHead, Block.get(this.getPistonHeadBlockId(), this.getDamage()), true, false);
             }
             return true;

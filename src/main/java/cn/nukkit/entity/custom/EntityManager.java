@@ -18,12 +18,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.Deflater;
 
+/**
+ * Handles custom entity registry.
+ * <p>
+ * See <a href="https://github.com/PetteriM1/CustomEntityExample">CustomEntityExample</a> for example usage
+ */
 public class EntityManager {
 
-    private static final EntityManager instance = new EntityManager();
+    private static final EntityManager INSTANCE = new EntityManager();
 
+    /**
+     * Get EntityManager instance
+     */
     public static EntityManager get() {
-        return instance;
+        return INSTANCE;
     }
 
     private final Map<String, EntityDefinition> entityDefinitions = new HashMap<>();
@@ -33,9 +41,11 @@ public class EntityManager {
     private final byte[] vanillaTag;
     private final Map<String, Integer> vanillaEntitiesMap = new HashMap<>();
 
+    private volatile boolean closed;
+
     private BatchPacket cachedPacket;
 
-    public EntityManager() {
+    private EntityManager() {
         try {
             InputStream inputStream = Nukkit.class.getClassLoader().getResourceAsStream("entity_identifiers.dat");
             if (inputStream == null) throw new AssertionError("Could not find entity_identifiers.dat");
@@ -58,9 +68,14 @@ public class EntityManager {
 
     @SuppressWarnings("unused")
     public void registerDefinition(EntityDefinition definition) {
+        if (this.closed) {
+            throw new IllegalStateException("Entity registry was already closed");
+        }
+
         if (this.entityDefinitions.containsKey(definition.getIdentifier())) {
             throw new IllegalArgumentException("Custom entity " + definition.getIdentifier() + " was already registered");
         }
+
         this.entityDefinitions.put(definition.getIdentifier(), definition);
         this.runtimeDefinitions.put(definition.getRuntimeId(), definition);
 
@@ -113,5 +128,18 @@ public class EntityManager {
     @SuppressWarnings("unused")
     public boolean hasCustomEntities() {
         return !this.entityDefinitions.isEmpty();
+    }
+
+    /**
+     * Internal: close registry to prepare for data generation
+     */
+    public void closeRegistry() {
+        if (this.closed) {
+            throw new IllegalStateException("Entity registry was already closed");
+        }
+
+        this.closed = true;
+
+        this.getCachedPacket();
     }
 }

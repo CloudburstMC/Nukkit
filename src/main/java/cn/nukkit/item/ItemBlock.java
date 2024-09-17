@@ -1,7 +1,9 @@
 package cn.nukkit.item;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.block.Block;
-import cn.nukkit.customblock.container.BlockStorageContainer;
+import cn.nukkit.block.custom.container.BlockStorageContainer;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.material.MaterialType;
 
 /**
@@ -69,5 +71,20 @@ public class ItemBlock extends Item {
         }
 
         return super.getMaxStackSize();
+    }
+
+    @Override
+    final public String getName() {
+        return this.hasCustomName() ? this.getCustomName() : this.block.getName();
+    }
+
+    @Override
+    final public String toString() {
+        String out = "ItemBlock " + this.block.getName() + " (" + this.id + ':' + (!this.hasMeta ? "?" : this.meta) + ")x" + this.count;
+        CompoundTag tag;
+        if (Nukkit.DEBUG > 1 && (tag = this.getNamedTag()) != null) {
+            out += '\n' + tag.toString();
+        }
+        return out;
     }
 }

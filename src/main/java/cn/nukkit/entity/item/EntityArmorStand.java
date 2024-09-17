@@ -129,7 +129,7 @@ public class EntityArmorStand extends Entity implements InventoryHolder, EntityI
             }
         }
 
-        if (player.isSneaking()) {
+        if (player.sneakToBlockInteract()) {
             if (this.getPose() >= 12) {
                 this.setPose(0);
             } else {

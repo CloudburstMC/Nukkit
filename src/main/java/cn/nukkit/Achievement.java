@@ -55,6 +55,9 @@ public class Achievement {
         }
     };
 
+    /**
+     * Broadcasts achievement get message if player does not have the achievement yet. Returns true if broadcast.
+     */
     public static boolean broadcast(Player player, String achievementId) {
         if (!achievements.containsKey(achievementId)) {
             return false;
@@ -70,6 +73,12 @@ public class Achievement {
         return true;
     }
 
+    /**
+     * Register an achievement
+     * @param name save id
+     * @param achievement achievement
+     * @return true if successful, false if save id is already in use
+     */
     public static boolean add(String name, Achievement achievement) {
         if (achievements.containsKey(name)) {
             return false;
@@ -82,6 +91,10 @@ public class Achievement {
     public final String message;
     public final String[] requires;
 
+    /**
+     * @param message achievement name displayed in achievement get message
+     * @param requires save IDs of achievements player must complete before this achievement can be completed
+     */
     public Achievement(String message, String... requires) {
         this.message = message;
         this.requires = requires;
@@ -91,6 +104,9 @@ public class Achievement {
         return message;
     }
 
+    /**
+     * Broadcasts achievement get message
+     */
     public void broadcast(Player player) {
         String translation = TextFormat.WHITE + Server.getInstance().getLanguage().translateString("chat.type.achievement", player.getDisplayName(), TextFormat.GREEN + "[" + this.message + "]", null);
 

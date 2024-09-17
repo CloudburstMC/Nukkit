@@ -342,4 +342,9 @@ public class EntityFishingHook extends EntityProjectile {
 	public long getTarget() {
 		return this.target;
 	}
+
+	@Override
+	public boolean canSaveToStorage() {
+		return false;
+	}
 }

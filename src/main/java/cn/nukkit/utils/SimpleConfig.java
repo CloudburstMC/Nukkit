@@ -129,7 +129,7 @@ public abstract class SimpleConfig {
             Path pathDefine = field.getAnnotation(Path.class);
             path = pathDefine.value();
         }
-        if (path == null || path.isEmpty()) path = field.getName().replaceAll("_", ".");
+        if (path == null || path.isEmpty()) path = field.getName().replace("_", ".");
         if (Modifier.isFinal(field.getModifiers())) return null;
         if (Modifier.isPrivate(field.getModifiers())) field.setAccessible(true);
         return path;

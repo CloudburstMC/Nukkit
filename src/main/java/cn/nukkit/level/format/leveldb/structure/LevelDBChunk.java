@@ -1,29 +1,18 @@
 package cn.nukkit.level.format.leveldb.structure;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.entity.Entity;
 import cn.nukkit.level.DimensionData;
 import cn.nukkit.level.biome.Biome;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.format.generic.BaseChunk;
-import cn.nukkit.level.format.generic.EmptyChunkSection;
 import cn.nukkit.level.util.BitArrayVersion;
 import cn.nukkit.level.util.PalettedBlockStorage;
-import cn.nukkit.nbt.NBTIO;
-import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.utils.BinaryStream;
-import cn.nukkit.utils.BlockUpdateEntry;
-import cn.nukkit.utils.Zlib;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.IOException;
-import java.nio.ByteOrder;
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -285,121 +274,13 @@ public class LevelDBChunk extends BaseChunk {
     @Override
     @Deprecated
     public byte[] toFastBinary() {
-        CompoundTag chunk = chunkNBT();
-
-        try {
-            return NBTIO.write(chunk, ByteOrder.BIG_ENDIAN);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return new byte[0];
     }
 
     @Override
     @Deprecated
     public byte[] toBinary() {
-        CompoundTag chunk = chunkNBT();
-
-        try {
-            return Zlib.deflate(NBTIO.write(chunk, ByteOrder.BIG_ENDIAN), 7);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private CompoundTag chunkNBT() {
-        CompoundTag nbt = this.getNBT().copy();
-        nbt.remove("BiomeColors");
-
-        nbt.putInt("xPos", this.getX());
-        nbt.putInt("zPos", this.getZ());
-
-        ListTag<CompoundTag> sectionList = new ListTag<>("Sections");
-        for (ChunkSection section : this.getSections()) {
-            if (section instanceof EmptyChunkSection) {
-                continue;
-            }
-            CompoundTag s = new CompoundTag();
-            s.putByte("Y", (section.getY()));
-            s.putByteArray("Blocks", section.getIdArray());
-            s.putByteArray("Data", section.getDataArray());
-            s.putByteArray("BlockLight", section.getLightArray());
-            s.putByteArray("SkyLight", section.getSkyLightArray());
-            sectionList.add(s);
-        }
-        nbt.putList(sectionList);
-
-        nbt.putByteArray("Biomes", this.getBiomeIdArray());
-
-        int[] heightInts = new int[256];
-        byte[] heightBytes = this.getHeightMapArray();
-        for (int i = 0; i < heightInts.length; i++) {
-            heightInts[i] = heightBytes[i] & 0xFF;
-        }
-        nbt.putIntArray("HeightMap", heightInts);
-
-        ArrayList<CompoundTag> entities = new ArrayList<>();
-        for (Entity entity : this.getEntities().values()) {
-            if (entity.canSaveToStorage() && !entity.closed) {
-                entity.saveNBT();
-                entities.add(entity.namedTag);
-            }
-        }
-
-        ListTag<CompoundTag> entityListTag = new ListTag<>("Entities");
-        entityListTag.setAll(entities);
-        nbt.putList(entityListTag);
-
-        ArrayList<CompoundTag> tiles = new ArrayList<>();
-        for (BlockEntity blockEntity : this.getBlockEntities().values()) {
-            if (blockEntity.canSaveToStorage()) {
-                blockEntity.saveNBT();
-                tiles.add(blockEntity.namedTag);
-            }
-        }
-        ListTag<CompoundTag> tileListTag = new ListTag<>("TileEntities");
-        tileListTag.setAll(tiles);
-        nbt.putList(tileListTag);
-
-        Set<BlockUpdateEntry> entries = this.provider.getLevel().getPendingBlockUpdates(this);
-        if (entries != null) {
-            ListTag<CompoundTag> tileTickTag = new ListTag<>("TileTicks");
-            long totalTime = this.provider.getLevel().getCurrentTick();
-
-            for (BlockUpdateEntry entry : entries) {
-                CompoundTag entryNBT = new CompoundTag()
-                        .putString("i", entry.block.getSaveId())
-                        .putInt("x", entry.pos.getFloorX())
-                        .putInt("y", entry.pos.getFloorY())
-                        .putInt("z", entry.pos.getFloorZ())
-                        .putInt("t", (int) (entry.delay - totalTime))
-                        .putInt("p", entry.priority);
-                tileTickTag.add(entryNBT);
-            }
-
-            nbt.putList(tileTickTag);
-        }
-
-        BinaryStream extraData = new BinaryStream();
-        Map<Integer, Integer> extraDataArray = this.getBlockExtraDataArray();
-        extraData.putInt(extraDataArray.size());
-        for (Map.Entry<Integer, Integer> entry : extraDataArray.entrySet()) {
-            extraData.putInt(entry.getKey());
-            extraData.putShort(entry.getValue());
-        }
-        nbt.putByteArray("ExtraData", extraData.getBuffer());
-
-        CompoundTag chunk = new CompoundTag("");
-        chunk.putCompound("Level", nbt);
-        return chunk;
-    }
-
-    private CompoundTag getNBT() {
-        CompoundTag tag = new CompoundTag();
-        tag.put("LightPopulated", new ByteTag("LightPopulated", (byte) (this.isLightPopulated() ? 1 : 0)));
-        tag.put("V", new ByteTag("V", (byte) 1));
-        tag.put("TerrainGenerated", new ByteTag("TerrainGenerated", (byte) (this.isGenerated() ? 1 : 0)));
-        tag.put("TerrainPopulated", new ByteTag("TerrainPopulated", (byte) (this.isPopulated() ? 1 : 0)));
-        return tag;
+        return new byte[0];
     }
 
     @Override

@@ -15,7 +15,7 @@ public abstract class EntityFish extends EntityWaterAnimal {
 
     @Override
     public int getKillExperience() {
-        return Utils.rand(1, 3);
+        return this.isBaby() ? 0 : Utils.rand(1, 3);
     }
 
     @Override

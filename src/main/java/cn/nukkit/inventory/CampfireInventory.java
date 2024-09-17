@@ -24,6 +24,8 @@ public class CampfireInventory extends ContainerInventory {
 
         this.getHolder().scheduleUpdate();
         this.getHolder().spawnToAll();
+
+        this.getHolder().chunk.setChanged();
     }
 
     @Override

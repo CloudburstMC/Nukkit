@@ -1,8 +1,8 @@
 package cn.nukkit.block.properties;
 
-import cn.nukkit.customblock.properties.BlockProperty;
-import cn.nukkit.customblock.properties.BooleanBlockProperty;
-import cn.nukkit.customblock.properties.EnumBlockProperty;
+import cn.nukkit.block.custom.properties.BlockProperty;
+import cn.nukkit.block.custom.properties.BooleanBlockProperty;
+import cn.nukkit.block.custom.properties.EnumBlockProperty;
 import cn.nukkit.math.BlockFace;
 
 public class VanillaProperties {

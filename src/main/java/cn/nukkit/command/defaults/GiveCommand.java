@@ -93,7 +93,7 @@ public class GiveCommand extends VanillaCommand {
 
         if (item.getId() == 0) {
             String identifier = args[1].toLowerCase();
-            if (!identifier.startsWith("minecraft:")) {
+            if (!identifier.contains(":")) {
                 identifier = "minecraft:" + identifier;
             }
             RuntimeItemMapping.LegacyEntry entry = RuntimeItems.getMapping().fromIdentifier(identifier);
