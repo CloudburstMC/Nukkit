@@ -14,10 +14,11 @@ public class ResourcePacksInfoPacket extends DataPacket {
 
     public boolean mustAccept;
     public boolean scripting;
-    public boolean forceServerPacks;
+    @Deprecated
+    public boolean forceServerPacks; // pre 1.21.30
     public boolean hasAddonPacks;
-    public ResourcePack[] behaviourPackEntries = new ResourcePack[0];
-    public ResourcePack[] resourcePackEntries = new ResourcePack[0];
+    public ResourcePack[] behaviourPackEntries = ResourcePack.EMPTY_ARRAY;
+    public ResourcePack[] resourcePackEntries = ResourcePack.EMPTY_ARRAY;
     public List<CDNEntry> CDNEntries = new ObjectArrayList<>();
 
     @Override
@@ -31,8 +32,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
         this.putBoolean(this.mustAccept);
         this.putBoolean(this.hasAddonPacks);
         this.putBoolean(this.scripting);
-        this.putBoolean(this.forceServerPacks);
-        this.encodeBehaviourPacks(this.behaviourPackEntries);
+
         this.encodeResourcePacks(this.resourcePackEntries);
 
         this.putUnsignedVarInt(this.CDNEntries.size());
@@ -40,19 +40,6 @@ public class ResourcePacksInfoPacket extends DataPacket {
             this.putString(entry.getPackId());
             this.putString(entry.getRemoteUrl());
         });
-    }
-
-    private void encodeBehaviourPacks(ResourcePack[] packs) {
-        this.putLShort(packs.length);
-        for (ResourcePack entry : packs) {
-            this.putString(entry.getPackId().toString());
-            this.putString(entry.getPackVersion());
-            this.putLLong(entry.getPackSize());
-            this.putString(entry.getEncryptionKey());
-            this.putString(""); // sub-pack name
-            this.putString(!entry.getEncryptionKey().isEmpty() ? entry.getPackId().toString() : "");
-            this.putBoolean(false); // scripting
-        }
     }
 
     private void encodeResourcePacks(ResourcePack[] packs) {

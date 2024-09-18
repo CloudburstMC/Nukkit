@@ -37,6 +37,8 @@ public class UpdateAttributesPacket extends DataPacket {
                 this.putLFloat(entry.getMinValue());
                 this.putLFloat(entry.getMaxValue());
                 this.putLFloat(entry.getValue());
+                this.putLFloat(entry.getMinValue()); // defaultMinValue
+                this.putLFloat(entry.getMaxValue()); // defaultMaxValue
                 this.putLFloat(entry.getDefaultValue());
                 this.putString(entry.getName());
                 this.putUnsignedVarInt(0); // Modifiers

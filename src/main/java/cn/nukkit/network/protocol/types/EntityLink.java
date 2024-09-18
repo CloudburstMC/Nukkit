@@ -13,6 +13,7 @@ public class EntityLink {
     public boolean riderInitiated;
     public float vehicleAngularVelocity;
 
+    @Deprecated
     public EntityLink(long fromEntityUniquieId, long toEntityUniquieId, byte type, boolean immediate, boolean riderInitiated) {
         this(fromEntityUniquieId, toEntityUniquieId, type, immediate, riderInitiated, 0f);
     }

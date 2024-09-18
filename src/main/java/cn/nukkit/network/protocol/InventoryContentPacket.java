@@ -25,7 +25,6 @@ public class InventoryContentPacket extends DataPacket {
 
     public int inventoryId;
     public Item[] slots = new Item[0];
-    public int dynamicContainerId;
 
     @Override
     public DataPacket clean() {
@@ -46,7 +45,9 @@ public class InventoryContentPacket extends DataPacket {
         for (Item slot : this.slots) {
             this.putSlot(slot);
         }
-        this.putUnsignedVarInt(this.dynamicContainerId);
+        this.putByte((byte) 0); // fullContainerName.id
+        this.putBoolean(false); // fullContainerName.optional.present
+        this.putUnsignedVarInt(0); // dynamicContainerSize
     }
 
     @Override

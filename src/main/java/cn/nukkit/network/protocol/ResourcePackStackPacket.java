@@ -9,8 +9,8 @@ public class ResourcePackStackPacket extends DataPacket {
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_STACK_PACKET;
 
     public boolean mustAccept = false;
-    public ResourcePack[] behaviourPackStack = new ResourcePack[0];
-    public ResourcePack[] resourcePackStack = new ResourcePack[0];
+    public ResourcePack[] behaviourPackStack = ResourcePack.EMPTY_ARRAY;
+    public ResourcePack[] resourcePackStack = ResourcePack.EMPTY_ARRAY;
     public boolean isExperimental = false;
     public String gameVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
 
