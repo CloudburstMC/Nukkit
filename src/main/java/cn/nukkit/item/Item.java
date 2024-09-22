@@ -12,6 +12,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.ByteTag;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.IntTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -1008,7 +1009,28 @@ public class Item implements Cloneable, BlockID, ItemID {
     }
 
     public boolean isUnbreakable() {
-        return false;
+        if (!(this instanceof ItemDurable)) {
+            return false;
+        }
+
+        Tag tag = this.getNamedTagEntry("Unbreakable");
+        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
+    }
+
+    public Item setUnbreakable(boolean value) {
+        if (!(this instanceof ItemDurable)) {
+            return this;
+        }
+
+        CompoundTag tag = this.getNamedTag();
+        if (tag == null) tag = new CompoundTag();
+
+        this.setNamedTag(tag.putByte("Unbreakable", value ? 1 : 0));
+        return this;
+    }
+
+    public Item setUnbreakable() {
+        return this.setUnbreakable(true);
     }
 
     public boolean onUse(Player player, int ticksUsed) {
