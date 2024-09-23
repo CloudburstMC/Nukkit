@@ -157,7 +157,7 @@ public class EntityPainting extends EntityHanging {
     }
 
     @Override
-    public boolean notIgnoredAsSaveReason() {
-        return false;
+    public boolean ignoredAsSaveReason() {
+        return true;
     }
 }

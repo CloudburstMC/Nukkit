@@ -161,6 +161,7 @@ public class BlockColor  {
      * @param dyeColorMeta dye item meta value
      * @return BlockColor
      */
+    @Deprecated
     public static BlockColor getDyeColor(int dyeColorMeta) {
         return DyeColor.getByDyeData(dyeColorMeta).getColor();
     }

@@ -25,7 +25,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
     protected static final AxisAlignedBB[] NORTH = {new SimpleAxisAlignedBB(0.375D, 0.4375D, 0.0625D, 0.625D, 0.75D, 0.3125D), new SimpleAxisAlignedBB(0.3125D, 0.3125D, 0.0625D, 0.6875D, 0.75D, 0.4375D), new SimpleAxisAlignedBB(0.3125D, 0.3125D, 0.0625D, 0.6875D, 0.75D, 0.4375D)};
     protected static final AxisAlignedBB[] SOUTH = {new SimpleAxisAlignedBB(0.375D, 0.4375D, 0.6875D, 0.625D, 0.75D, 0.9375D), new SimpleAxisAlignedBB(0.3125D, 0.3125D, 0.5625D, 0.6875D, 0.75D, 0.9375D), new SimpleAxisAlignedBB(0.3125D, 0.3125D, 0.5625D, 0.6875D, 0.75D, 0.9375D)};
 
-    private static final short[] faces = {
+    private static final short[] FACES = {
             0,
             0,
             0,
@@ -34,7 +34,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
             1,
     };
 
-    private static final short[] faces2 = {
+    private static final short[] FACES_2 = {
             3, 4, 2, 5, 3, 4, 2, 5, 3, 4, 2, 5
     };
 
@@ -93,7 +93,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (target.getId() == Block.WOOD && (target.getDamage() & 0x03) == BlockWood.JUNGLE) {
             if (face != BlockFace.DOWN && face != BlockFace.UP) {
-                this.setDamage(faces[face.getIndex()]);
+                this.setDamage(FACES[face.getIndex()]);
                 this.level.setBlock(block, this, true, true);
                 return true;
             }
@@ -104,7 +104,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            Block side = this.getSide(BlockFace.fromIndex(faces2[this.getDamage()]));
+            Block side = this.getSide(BlockFace.fromIndex(FACES_2[this.getDamage()]));
 
             if (side.getId() != Block.WOOD && (side.getDamage() & 0x03) != BlockWood.JUNGLE) {
                 this.getLevel().useBreakOn(this);

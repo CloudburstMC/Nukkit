@@ -965,21 +965,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     protected void recalculateEffectColor() {
-        int[] color = new int[3];
-        int count = 0;
-        boolean ambient = true;
         long effectsData = 0;
         int packedEffectsCount = 0;
         for (Effect effect : this.effects.values()) {
             if (effect.isVisible()) {
-                int[] c = effect.getColor();
-                color[0] += c[0] * (effect.getAmplifier() + 1);
-                color[1] += c[1] * (effect.getAmplifier() + 1);
-                color[2] += c[2] * (effect.getAmplifier() + 1);
-                count += effect.getAmplifier() + 1;
-                if (!effect.isAmbient()) {
-                    ambient = false;
-                }
                 if (packedEffectsCount < 8) {
                     effectsData = effectsData << 7 | ((effect.getId() & 0x3f) << 1) | (effect.isAmbient() ? 1 : 0);
                     packedEffectsCount++;
@@ -987,17 +976,6 @@ public abstract class Entity extends Location implements Metadatable {
             }
         }
 
-        if (count > 0) {
-            int r = (color[0] / count) & 0xff;
-            int g = (color[1] / count) & 0xff;
-            int b = (color[2] / count) & 0xff;
-
-            this.setDataProperty(new IntEntityData(Entity.DATA_POTION_COLOR, (r << 16) + (g << 8) + b));
-            this.setDataProperty(new ByteEntityData(Entity.DATA_POTION_AMBIENT, ambient ? 1 : 0));
-        } else {
-            this.setDataProperty(new IntEntityData(Entity.DATA_POTION_COLOR, 0));
-            this.setDataProperty(new ByteEntityData(Entity.DATA_POTION_AMBIENT, 0));
-        }
         this.setDataProperty(new LongEntityData(Entity.DATA_VISIBLE_MOB_EFFECTS, effectsData));
     }
 
@@ -1306,7 +1284,7 @@ public abstract class Entity extends Location implements Metadatable {
     private static boolean canCriticalHit(Player player) {
         if (player.isOnGround() || player.riding != null || player.speed == null || player.speed.y <= 0 || player.hasEffect(Effect.BLINDNESS)) return false;
         int b = player.getLevel().getBlockIdAt(player.chunk, player.getFloorX(), player.getFloorY(), player.getFloorZ());
-        return b != Block.LADDER && b != Block.VINES && !Block.hasWater(b);
+        return b != Block.LADDER && b != Block.VINES && !Block.isWater(b);
     }
 
     public boolean attack(EntityDamageEvent source) {
@@ -1952,6 +1930,7 @@ public abstract class Entity extends Location implements Metadatable {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_ONFIRE, false);
     }
 
+    @Deprecated
     public boolean canTriggerWalking() {
         return true;
     }
@@ -1980,7 +1959,7 @@ public abstract class Entity extends Location implements Metadatable {
     public void fall(float fallDistance) {
         if (fallDistance > 0.75) {
             int block = this.level.getBlockIdAt(this.chunk, this.getFloorX(), this.getFloorY(), this.getFloorZ());
-            if (Block.hasWater(block)) {
+            if (Block.isWater(block)) {
                 this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_SPLASH, ThreadLocalRandom.current().nextInt(600000, 800000), "minecraft:player", false, false);
                 return; // TODO: Some waterlogged blocks prevent fall damage
             }
@@ -2026,6 +2005,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
+    @Deprecated
     public void moveFlying(float strafe, float forward, float friction) {
         // This is special for Nukkit! :)
         float speed = strafe * strafe + forward * forward;
@@ -2085,6 +2065,7 @@ public abstract class Entity extends Location implements Metadatable {
         return onInteract(player, item);
     }
 
+    @Deprecated
     public boolean onInteract(Player player, Item item) {
         return false;
     }
@@ -2141,7 +2122,7 @@ public abstract class Entity extends Location implements Metadatable {
         int bid = level.getBlockIdAt(this.chunk, fx, fy, fz);
 
         return bid != Block.BUBBLE_COLUMN &&
-                (Block.hasWater(bid) || this.level.isBlockWaterloggedAt(this.chunk, fx, fy, fz));
+                (Block.isWater(bid) || this.level.isBlockWaterloggedAt(this.chunk, fx, fy, fz));
     }
 
     public boolean isInsideOfWater() {
@@ -2150,7 +2131,7 @@ public abstract class Entity extends Location implements Metadatable {
         int fz = this.getFloorZ();
         int bid = level.getBlockIdAt(this.chunk, fx, fy, fz);
 
-        return Block.hasWater(bid) || this.level.isBlockWaterloggedAt(this.chunk, fx, fy, fz);
+        return Block.isWater(bid) || this.level.isBlockWaterloggedAt(this.chunk, fx, fy, fz);
     }
 
     public boolean isInsideOfSolid() {
@@ -2895,7 +2876,7 @@ public abstract class Entity extends Location implements Metadatable {
         int px = this.getFloorX();
         int py = this.getFloorY();
         int pz = this.getFloorZ();
-        for (int i = level.getMaxBlockY(); i >= py; i--) {
+        for (int i = level.getMaxBlockY(); i > py; i--) {
             if (level.getBlockIdAt(chunk, px, i, pz) != 0) {
                 return false;
             }
@@ -2944,7 +2925,10 @@ public abstract class Entity extends Location implements Metadatable {
         Server.broadcastPacket(this.hasSpawned.values(), animateEntityPacket);
     }
 
-    public boolean notIgnoredAsSaveReason() {
-        return true;
+    /**
+     * Whether this entity can be modified only by creating or destroying it and doesn't need to cause a chunk save
+     */
+    public boolean ignoredAsSaveReason() {
+        return false;
     }
 }

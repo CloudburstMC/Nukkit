@@ -7,6 +7,9 @@ public class EmotePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.EMOTE_PACKET;
 
+    public static final byte FLAG_SERVER = 1;
+    public static final byte FLAG_MUTE_ANNOUNCEMENT = 2;
+
     public long runtimeId;
     public String xuid = "";
     public String platformId = "";

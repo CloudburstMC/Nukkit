@@ -25,7 +25,7 @@ public class SummonCommand extends VanillaCommand {
         }
         this.commandParameters.put("default", new CommandParameter[]{
                 CommandParameter.newEnum("entityType", false, entityNames.toArray(new String[0])),
-                new CommandParameter("player", CommandParamType.TARGET, true)
+                CommandParameter.newType("player", true, CommandParamType.TARGET)
         });
     }
 

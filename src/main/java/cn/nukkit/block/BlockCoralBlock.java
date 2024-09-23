@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockCoralBlock extends BlockSolidMeta {
 
-    private static final String[] names = new String[] {
+    private static final String[] NAMES = {
             "Tube Coral Block",
             "Brain Coral Block",
             "Bubble Coral Block",
@@ -72,10 +72,10 @@ public class BlockCoralBlock extends BlockSolidMeta {
     public String getName() {
         int variant = this.getDamage() & 0x7;
         String name;
-        if (variant >= names.length) {
-            name = names[0];
+        if (variant >= NAMES.length) {
+            name = NAMES[0];
         } else {
-            name = names[variant];
+            name = NAMES[variant];
         }
         return this.isDead() ? "Dead " + name : name;
     }

@@ -98,11 +98,11 @@ public class JavaPluginLoader implements PluginLoader {
         return this.getPluginDescription(new File(filename));
     }
 
-    private static final Pattern[] filters = new Pattern[]{Pattern.compile("^.+\\.jar$")};
+    private static final Pattern[] FILTERS = new Pattern[]{Pattern.compile("^.+\\.jar$")};
 
     @Override
     public Pattern[] getPluginFilters() {
-        return filters;
+        return FILTERS;
     }
 
     private void initPlugin(PluginBase plugin, PluginDescription description, File dataFolder, File file) {

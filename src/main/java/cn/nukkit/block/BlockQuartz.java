@@ -18,7 +18,7 @@ public class BlockQuartz extends BlockSolidMeta {
     public static final int QUARTZ_PILLAR = 2;
     public static final int QUARTZ_SMOOTH = 3;
 
-    private static final short[] faces = {
+    private static final short[] FACES = {
             0,
             0,
             0b1000,
@@ -50,7 +50,7 @@ public class BlockQuartz extends BlockSolidMeta {
         return 4;
     }
 
-    private static final String[] names = {
+    private static final String[] NAMES = {
             "Block of Quartz",
             "Chiseled Quartz Block",
             "Quartz Pillar Block",
@@ -59,13 +59,13 @@ public class BlockQuartz extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        return names[this.getDamage() & 0x03];
+        return NAMES[this.getDamage() & 0x03];
     }
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (this.getDamage() != QUARTZ_NORMAL) {
-            this.setDamage(((this.getDamage() & 0x03) | faces[face.getIndex()]));
+            this.setDamage(((this.getDamage() & 0x03) | FACES[face.getIndex()]));
         }
         this.getLevel().setBlock(block, this, true, true);
 

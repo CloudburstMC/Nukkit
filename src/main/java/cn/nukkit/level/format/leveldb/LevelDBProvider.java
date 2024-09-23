@@ -553,9 +553,7 @@ public class LevelDBProvider implements LevelProvider {
 
     @SuppressWarnings("unused")
     public static LevelDBChunkSection createChunkSection(int y) {
-        LevelDBChunkSection section = new LevelDBChunkSection(y);
-        section.setHasSkyLight(true);
-        return section;
+        return new LevelDBChunkSection(y);
     }
 
     @Override

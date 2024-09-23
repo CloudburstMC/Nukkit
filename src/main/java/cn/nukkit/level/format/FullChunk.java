@@ -124,6 +124,7 @@ public interface FullChunk extends Cloneable {
         return this.getBiomeId(x, z);
     }
 
+    @Deprecated
     void setBiomeIdAndColor(int x, int z, int idAndColor);
 
     default void setBiomeId(int x, int y, int z, int biomeId)  {
@@ -198,22 +199,28 @@ public interface FullChunk extends Cloneable {
 
     void setBiomeIdArray(byte[] biomeIdArray);
 
+    @Deprecated
     int[] getBiomeColorArray();
 
     byte[] getHeightMapArray();
 
+    @Deprecated
     byte[] getBlockIdArray();
 
+    @Deprecated
     byte[] getBlockDataArray();
 
     Map<Integer, Integer> getBlockExtraDataArray();
 
+    @Deprecated
     byte[] getBlockSkyLightArray();
 
+    @Deprecated
     byte[] getBlockLightArray();
 
     byte[] toBinary();
 
+    @Deprecated
     byte[] toFastBinary();
 
     boolean hasChanged();

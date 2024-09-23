@@ -9,10 +9,6 @@ import java.util.BitSet;
  */
 public class ThreadCache {
 
-    @Deprecated
-    public static void clean() {
-    }
-
     public static final ThreadLocal<byte[][]> idArray = ThreadLocal.withInitial(() -> new byte[16][]);
 
     public static final ThreadLocal<byte[][]> dataArray = ThreadLocal.withInitial(() -> new byte[16][]);

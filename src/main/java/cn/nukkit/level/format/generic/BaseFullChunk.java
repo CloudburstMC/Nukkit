@@ -43,14 +43,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
      */
     protected byte[] biomes;
 
-    protected byte[] blocks;
-
-    protected byte[] data;
-
-    protected byte[] skyLight;
-
-    protected byte[] blockLight;
-
     protected byte[] heightMap;
 
     protected List<CompoundTag> NBTtiles;
@@ -85,22 +77,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
             chunk.biomes = this.biomes.clone();
         }
 
-        if (this.blocks != null) {
-            chunk.blocks = this.blocks.clone();
-        }
-
-        if (this.data != null) {
-            chunk.data = this.data.clone();
-        }
-
-        if (this.skyLight != null) {
-            chunk.skyLight = this.skyLight.clone();
-        }
-
-        if (this.blockLight != null) {
-            chunk.blockLight = this.blockLight.clone();
-        }
-
         if (this.heightMap != null) {
             chunk.heightMap = this.heightMap.clone();
         }
@@ -119,7 +95,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
             chunk.tiles = new Long2ObjectOpenHashMap<>(this.tiles);
         }
 
-        // No need to deep clone biome or block data as we don't modify them
+        // No need to deep clone biome data as we don't modify them
 
         // Not needed for chunk sending
         chunk.entities = null;
@@ -127,7 +103,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
         chunk.NBTentities = null;
         chunk.NBTtiles = null;
         chunk.extraData = null;
-
+        chunk.heightMap = null;
         return chunk;
     }
 
@@ -477,7 +453,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
             if (!needSave) {
                 for (Entity e : this.getEntities().values()) {
-                    if (e.canSaveToStorage() && e.notIgnoredAsSaveReason()) {
+                    if (e.canSaveToStorage() && !e.ignoredAsSaveReason()) {
                         needSave = true;
                         break;
                     }
@@ -511,22 +487,22 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public byte[] getBlockIdArray() {
-        return this.blocks;
+        return new byte[0];
     }
 
     @Override
     public byte[] getBlockDataArray() {
-        return this.data;
+        return new byte[0];
     }
 
     @Override
     public byte[] getBlockSkyLightArray() {
-        return this.skyLight;
+        return new byte[0];
     }
 
     @Override
     public byte[] getBlockLightArray() {
-        return this.blockLight;
+        return new byte[0];
     }
 
     @Override

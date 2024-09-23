@@ -172,21 +172,19 @@ public class BaseLang {
     }
 
     public String internalGet(String id) {
-        if (this.lang.containsKey(id)) {
-            return this.lang.get(id);
-        } else if (this.fallbackLang.containsKey(id)) {
-            return this.fallbackLang.get(id);
+        String translation = this.lang.get(id);
+        if (translation == null) {
+            translation = this.fallbackLang.get(id);
         }
-        return null;
+        return translation;
     }
 
     public String get(String id) {
-        if (this.lang.containsKey(id)) {
-            return this.lang.get(id);
-        } else if (this.fallbackLang.containsKey(id)) {
-            return this.fallbackLang.get(id);
+        String translation = this.lang.get(id);
+        if (translation == null) {
+            translation = this.fallbackLang.get(id);
         }
-        return id;
+        return translation == null ? id : translation;
     }
 
     protected String parseTranslation(String text) {

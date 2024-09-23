@@ -42,12 +42,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     }
 
     public ChunkSection(int y) {
-        this.y = y;
-
-        hasBlockLight = false;
-        hasSkyLight = false;
-
-        storage = new BlockStorage();
+        this(y, new BlockStorage(), null, null, null, false, true);
     }
 
     public ChunkSection(CompoundTag nbt) {
@@ -320,7 +315,9 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 }
                 compressedLight = null;
             } else {
-                blockLight = new byte[2048];
+                if (blockLight == null) {
+                    blockLight = new byte[2048];
+                }
                 skyLight = new byte[2048];
                 if (hasSkyLight) {
                     Arrays.fill(skyLight, (byte) 0xFF);

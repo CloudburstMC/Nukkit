@@ -13,7 +13,7 @@ public class BlockDoubleSlabStone3 extends BlockDoubleSlabBase  {
     public static final int GRANITE = 6;
     public static final int POLISHED_GRANITE = 7;
 
-    private static final String[] NAMES = new String[]{
+    private static final String[] NAMES = {
             "End Stone Brick",
             "Smooth Red Sandstone",
             "Polished Andesite",

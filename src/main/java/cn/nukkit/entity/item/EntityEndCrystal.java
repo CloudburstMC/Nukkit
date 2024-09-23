@@ -167,7 +167,7 @@ public class EntityEndCrystal extends Entity implements EntityExplosive {
     }
 
     @Override
-    public boolean notIgnoredAsSaveReason() {
-        return false;
+    public boolean ignoredAsSaveReason() {
+        return true;
     }
 }

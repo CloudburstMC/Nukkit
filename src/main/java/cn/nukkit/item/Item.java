@@ -85,9 +85,6 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     public static void init() {
         if (list == null) {
             list = new Class[65535];
-            list[LADDER] = ItemLadder.class; //65
-            list[RAIL] = ItemRail.class; //66
-            list[CACTUS] = ItemCactus.class; //81
             list[IRON_SHOVEL] = ItemShovelIron.class; //256
             list[IRON_PICKAXE] = ItemPickaxeIron.class; //257
             list[IRON_AXE] = ItemAxeIron.class; //258
@@ -537,7 +534,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         }
     }
 
-    private static final Pattern integerPattern = Pattern.compile("^[-1-9]\\d*$");
+    private static final Pattern INTEGER_PATTERN = Pattern.compile("^[-1-9]\\d*$");
 
     public static Item fromString(String str) {
         String[] b = str.trim().replace(' ', '_').replace("minecraft:", "").split(":");
@@ -546,7 +543,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         int meta = 0;
 
         String idStr = b[0];
-        if (integerPattern.matcher(idStr).matches()) {
+        if (INTEGER_PATTERN.matcher(idStr).matches()) {
             id = Integer.parseInt(idStr);
         } else {
             String idStrUp = idStr.toUpperCase();
@@ -1125,7 +1122,28 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     }
 
     public boolean isUnbreakable() {
-        return false;
+        if (!(this instanceof ItemDurable)) {
+            return false;
+        }
+
+        Tag tag = this.getNamedTagEntry("Unbreakable");
+        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
+    }
+
+    public Item setUnbreakable(boolean value) {
+        if (!(this instanceof ItemDurable)) {
+            return this;
+        }
+
+        CompoundTag tag = this.getNamedTag();
+        if (tag == null) tag = new CompoundTag();
+
+        this.setNamedTag(tag.putByte("Unbreakable", value ? 1 : 0));
+        return this;
+    }
+
+    public Item setUnbreakable() {
+        return this.setUnbreakable(true);
     }
 
     public boolean onUse(Player player, int ticksUsed) {

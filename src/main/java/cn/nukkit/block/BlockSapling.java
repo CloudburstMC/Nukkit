@@ -46,7 +46,7 @@ public class BlockSapling extends BlockFlowable {
         return SAPLING;
     }
 
-    private static final String[] names = {
+    private static final String[] NAMES = {
             "Oak Sapling",
             "Spruce Sapling",
             "Birch Sapling",
@@ -59,7 +59,7 @@ public class BlockSapling extends BlockFlowable {
 
     @Override
     public String getName() {
-        return names[this.getDamage() & 0x07];
+        return NAMES[this.getDamage() & 0x07];
     }
 
     @Override

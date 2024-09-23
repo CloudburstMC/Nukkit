@@ -20,7 +20,7 @@ public class OpCommand extends VanillaCommand {
         this.setPermission("nukkit.command.op.give");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false)
+                CommandParameter.newType("player", CommandParamType.TARGET)
         });
     }
 

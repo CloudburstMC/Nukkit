@@ -8,7 +8,7 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockDoubleSlabRedSandstone extends BlockDoubleSlabBase {
 
-    private static final String[] NAMES = new String[]{
+    private static final String[] NAMES = {
             "Red Sandstone",
             "Purpur",
             "",

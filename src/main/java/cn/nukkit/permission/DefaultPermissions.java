@@ -8,8 +8,6 @@ import cn.nukkit.Server;
  */
 public abstract class DefaultPermissions {
 
-    public static final String ROOT = "nukkit";
-
     public static Permission registerPermission(Permission perm) {
         return registerPermission(perm, null);
     }
@@ -24,7 +22,7 @@ public abstract class DefaultPermissions {
     }
 
     public static void registerCorePermissions() {
-        Permission parent = registerPermission(new Permission(ROOT, "Allows using all Nukkit commands and utilities"));
+        Permission parent = registerPermission(new Permission("nukkit", "Allows using all Nukkit commands and utilities"));
 
         Permission broadcasts = registerPermission(new Permission("nukkit.broadcast", "Allows the user to receive all broadcast messages"), parent);
 

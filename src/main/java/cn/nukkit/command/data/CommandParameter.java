@@ -31,6 +31,10 @@ public class CommandParameter {
     public CommandEnum enumData;
     public String postFix;
 
+    /**
+     * @deprecated use {@link #newType(String, boolean, CommandParamType)} instead
+     */
+    @Deprecated
     public CommandParameter(String name, String type, boolean optional) {
         this(name, fromString(type), optional);
     }
@@ -41,10 +45,18 @@ public class CommandParameter {
         this.optional = optional;
     }
 
+    /**
+     * @deprecated use {@link #newType(String, boolean, CommandParamType)} instead
+     */
+    @Deprecated
     public CommandParameter(String name, boolean optional) {
         this(name, CommandParamType.RAWTEXT, optional);
     }
 
+    /**
+     * @deprecated use {@link #newType(String, CommandParamType)} instead
+     */
+    @Deprecated
     public CommandParameter(String name) {
         this(name, false);
     }
@@ -56,6 +68,7 @@ public class CommandParameter {
         this.enumData = new CommandEnum(enumType, new ArrayList<>());
     }
 
+    @Deprecated
     public CommandParameter(String name, boolean optional, String[] enumValues) {
         this.name = name;
         this.type = CommandParamType.RAWTEXT;
@@ -63,6 +76,7 @@ public class CommandParameter {
         this.enumData = new CommandEnum(name + "Enums", Arrays.asList(enumValues));
     }
 
+    @Deprecated
     public CommandParameter(String name, String enumType) {
         this(name, false, enumType);
     }

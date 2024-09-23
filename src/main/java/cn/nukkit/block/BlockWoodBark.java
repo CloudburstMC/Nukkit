@@ -7,7 +7,7 @@ import cn.nukkit.math.BlockFace;
 
 public class BlockWoodBark extends BlockWood {
 
-    private static final String[] names = {
+    private static final String[] NAMES = {
             "Oak Wood",
             "Spruce Wood",
             "Birch Wood",
@@ -38,10 +38,10 @@ public class BlockWoodBark extends BlockWood {
     @Override
     public String getName() {
         int variant = (this.getDamage() & 0x7);
-        if (names.length <= variant) {
-            return names[0];
+        if (NAMES.length <= variant) {
+            return NAMES[0];
         }
-        return names[variant];
+        return NAMES[variant];
     }
 
     @Override

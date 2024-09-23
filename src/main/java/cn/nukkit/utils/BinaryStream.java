@@ -115,10 +115,6 @@ public class BinaryStream {
     }
 
     public void put(byte[] bytes) {
-        /*if (bytes == null) {
-            return;
-        }*/
-
         this.ensureCapacity(this.count + bytes.length);
 
         System.arraycopy(bytes, 0, this.buffer, this.count, bytes.length);
@@ -417,12 +413,12 @@ public class BinaryStream {
         }
 
         int blockRuntimeId = this.getVarInt();
-        if (id < 256 && id != 166) { // ItemBlock
+        /*if (id < 256 && id != 166) { // ItemBlock
             int fullId = GlobalBlockPalette.getLegacyFullId(blockRuntimeId);
             if (fullId != -1) {
                 damage = fullId & 0x3f;
             }
-        }
+        }*/
 
         byte[] bytes = this.getByteArray();
         ByteBuf buf = ByteBufAllocator.DEFAULT.ioBuffer(bytes.length);

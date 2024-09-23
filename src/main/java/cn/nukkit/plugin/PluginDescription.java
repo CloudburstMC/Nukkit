@@ -126,10 +126,10 @@ public class PluginDescription {
         this.loadMap(yaml.loadAs(yamlString, LinkedHashMap.class));
     }
 
-    private static final Pattern filter = Pattern.compile("[^A-Za-z0-9 _.-]");
+    private static final Pattern FILTER = Pattern.compile("[^A-Za-z0-9 _.-]");
 
     private void loadMap(Map<String, Object> plugin) throws PluginException {
-        this.name = filter.matcher((String) plugin.get("name")).replaceAll("");
+        this.name = FILTER.matcher((String) plugin.get("name")).replaceAll("");
         if (this.name.isEmpty()) {
             throw new PluginException("plugin.yml must contain 'name'");
         }

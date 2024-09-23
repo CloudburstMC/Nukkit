@@ -29,8 +29,12 @@ public class BanIpCommand extends VanillaCommand {
         this.setAliases(new String[]{"banip"});
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("player", CommandParamType.TARGET, false),
-                new CommandParameter("reason", CommandParamType.STRING, true)
+                CommandParameter.newType("player", CommandParamType.TARGET),
+                CommandParameter.newType("reason", true, CommandParamType.STRING)
+        });
+        this.commandParameters.put("byIp", new CommandParameter[]{
+                CommandParameter.newType("ip", CommandParamType.STRING),
+                CommandParameter.newType("reason", true, CommandParamType.STRING)
         });
     }
 
@@ -96,7 +100,7 @@ public class BanIpCommand extends VanillaCommand {
     private static void processIPBan(String ip, CommandSender sender, String reason) {
         sender.getServer().getIPBans().addBan(ip, reason, null, sender.getName());
 
-        for (Player player : /*new ArrayList<>(*/sender.getServer().getOnlinePlayers().values()/*)*/) {
+        for (Player player : sender.getServer().getOnlinePlayers().values()) {
             if (player.getAddress().equals(ip)) {
                 player.kick(PlayerKickEvent.Reason.IP_BANNED, !reason.isEmpty() ? reason : "IP banned", true);
             }

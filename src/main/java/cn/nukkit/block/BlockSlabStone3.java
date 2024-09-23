@@ -15,7 +15,7 @@ public class BlockSlabStone3 extends BlockSlabStone {
     public static final int GRANITE = 6;
     public static final int POLISHED_GRANITE = 7;
 
-    private static final String[] names = new String[]{
+    private static final String[] NAMES = {
             "End Stone Brick",
             "Smooth Red Sandstone",
             "Polished Andesite",
@@ -36,7 +36,7 @@ public class BlockSlabStone3 extends BlockSlabStone {
 
     @Override
     public String getName() {
-        return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + names[this.getDamage() & 0x07] + " Slab";
+        return ((this.getDamage() & 0x08) > 0 ? "Upper " : "") + NAMES[this.getDamage() & 0x07] + " Slab";
     }
 
     @Override

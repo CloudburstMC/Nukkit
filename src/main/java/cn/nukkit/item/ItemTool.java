@@ -3,8 +3,6 @@ package cn.nukkit.item;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.enchantment.Enchantment;
-import cn.nukkit.nbt.tag.ByteTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.Utils;
 
 /**
@@ -67,7 +65,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean useOn(Block block) {
-        if (this.isUnbreakable() || isDurable() || noDamageOnBreak()) {
+        if (this.noDamageOnBreak() || this.isUnbreakable() || this.isDurable()) {
             return true;
         }
 
@@ -93,7 +91,7 @@ public abstract class ItemTool extends Item implements ItemDurable {
 
     @Override
     public boolean useOn(Entity entity) {
-        if (this.isUnbreakable() || isDurable() || noDamageOnAttack()) {
+        if (this.noDamageOnAttack() || this.isUnbreakable() || this.isDurable()) {
             return true;
         }
 
@@ -109,12 +107,6 @@ public abstract class ItemTool extends Item implements ItemDurable {
     private boolean isDurable() {
         Enchantment durability = getEnchantment(Enchantment.ID_DURABILITY);
         return durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= Utils.random.nextInt(100);
-    }
-
-    @Override
-    public boolean isUnbreakable() {
-        Tag tag = this.getNamedTagEntry("Unbreakable");
-        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
     }
 
     @Override

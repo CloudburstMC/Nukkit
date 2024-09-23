@@ -194,33 +194,12 @@ public class EntityBoat extends EntityVehicle {
             this.updateMovement();
 
             if (this.age % 5 == 0) {
-                int passengersCount = this.passengers.size();
-                if (passengersCount > 0) {
+                if (!this.passengers.isEmpty() && this.passengers.get(0) instanceof Player) {
                     Block[] blocks = this.level.getCollisionBlocks(this.getBoundingBox().grow(0.1, 0.3, 0.1));
                     for (Block b : blocks) {
                         if (b.getId() == Block.LILY_PAD) {
                             this.level.setBlockAt((int) b.x, (int) b.y, (int) b.z, 0, 0);
                             this.level.dropItem(b, Item.get(Item.LILY_PAD, 0, 1));
-                        }
-                    }
-                }
-
-                if (passengersCount < 2) {
-                    Entity[] e = this.level.getCollidingEntities(this.boundingBox.grow(0.20000000298023224, 0.0D, 0.20000000298023224), this);
-                    for (Entity entity : e) {
-                        boolean isPassenger = isPassenger(entity);
-                        if (entity instanceof Player && !isPassenger) {
-                            entity.resetFallDistance(); // Hack: Don't kick players standing on a boat for flying
-                        }
-
-                        if (entity.riding != null || !(entity instanceof EntityLiving) || entity instanceof Player || entity instanceof EntityWaterAnimal || isPassenger) {
-                            continue;
-                        }
-
-                        this.mountEntity(entity);
-
-                        if (this.isFull()) {
-                            break;
                         }
                     }
                 }
@@ -387,6 +366,16 @@ public class EntityBoat extends EntityVehicle {
 
     @Override
     public void applyEntityCollision(Entity entity) {
+        if (entity instanceof Player && entity.riding != this) {
+            ((Player) entity).resetInAirTicks(); // Hack: Don't kick players standing on a boat for flying
+        }
+
+        if (this.passengers.size() < 2) {
+            if (!(entity.riding != null || !(entity instanceof EntityLiving) || entity instanceof Player || entity instanceof EntityWaterAnimal || this.isPassenger(entity))) {
+                this.mountEntity(entity);
+            }
+        }
+
         if (this.riding == null && entity.riding != this && !entity.passengers.contains(this)) {
             if (!entity.boundingBox.intersectsWith(this.boundingBox.grow(0.20000000298023224, -0.1, 0.20000000298023224))
                     || entity instanceof Player && ((Player) entity).getGamemode() == Player.SPECTATOR) {

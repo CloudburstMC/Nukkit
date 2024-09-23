@@ -187,6 +187,10 @@ public abstract class Enchantment implements Cloneable {
         return this.rarity;
     }
 
+    /**
+     * @deprecated use {@link Rarity#getWeight()} instead
+     */
+    @Deprecated
     public int getWeight() {
         return this.rarity.getWeight();
     }

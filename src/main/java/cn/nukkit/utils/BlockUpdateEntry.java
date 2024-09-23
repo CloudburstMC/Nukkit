@@ -11,7 +11,7 @@ import cn.nukkit.math.Vector3;
  */
 public class BlockUpdateEntry implements Comparable<BlockUpdateEntry> {
 
-    private static long entryID = 0;
+    private static long entryID;
 
     public int priority;
     public long delay;

@@ -62,7 +62,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
      */
     protected static final int[] FACES2534 = {2, 5, 3, 4};
 
-    protected Block() {}
+    protected Block() {
+
+    }
 
     public static void init() {
         if (list == null) {
@@ -597,6 +599,55 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 efficiencyLoreLevel, hasteEffectLevel, insideOfWaterWithoutAquaAffinity, outOfWaterButNotOnGround);
     }
 
+    /**
+     * Deprecated: This function lacks the Player and is not accurate enough, use getBreakTime(Item, Player) instead
+     * @param item item used to break the block
+     * @return break time in seconds
+     */
+    @Deprecated
+    public double getBreakTime(Item item) {
+        double base = this.getHardness() * 1.5;
+        if (this.canBeBrokenWith(item)) {
+            if (this.getToolType() == ItemTool.TYPE_SHEARS && item.isShears()) {
+                base /= 15;
+            } else if (
+                    (this.getToolType() == ItemTool.TYPE_PICKAXE && item.isPickaxe()) ||
+                            (this.getToolType() == ItemTool.TYPE_AXE && item.isAxe()) ||
+                            (this.getToolType() == ItemTool.TYPE_SHOVEL && item.isShovel()) ||
+                            (this.getToolType() == ItemTool.TYPE_HOE && item.isHoe())
+            ) {
+                switch (item.getTier()) {
+                    case ItemTool.TIER_WOODEN:
+                        base /= 2;
+                        break;
+                    case ItemTool.TIER_STONE:
+                        base /= 4;
+                        break;
+                    case ItemTool.TIER_IRON:
+                        base /= 6;
+                        break;
+                    case ItemTool.TIER_DIAMOND:
+                        base /= 8;
+                        break;
+                    case ItemTool.TIER_NETHERITE:
+                        base /= 9;
+                        break;
+                    case ItemTool.TIER_GOLD:
+                        base /= 12;
+                        break;
+                }
+            }
+        } else {
+            base *= 3.33;
+        }
+
+        if (item.isSword()) {
+            base *= 0.5;
+        }
+
+        return base;
+    }
+
     public boolean canBeBrokenWith(Item item) {
         return this.getHardness() != -1;
     }
@@ -961,11 +1012,9 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     /**
-     * Check whether client will see a block as water (is water or uses fake waterlogging)
-     * @param id block id
-     * @return block has water
+     * Returns true for WATER and STILL_WATER, false for others
      */
-    public static boolean hasWater(int id) {
+    public static boolean isWater(int id) {
         return id == WATER || id == STILL_WATER;
     }
 

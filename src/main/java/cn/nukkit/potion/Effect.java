@@ -114,13 +114,13 @@ public class Effect implements Cloneable {
 
     protected int duration;
 
-    protected int amplifier = 0;
+    protected int amplifier;
 
     protected int color;
 
     protected boolean show = true;
 
-    protected boolean ambient = false;
+    protected boolean ambient;
 
     protected final boolean bad;
 

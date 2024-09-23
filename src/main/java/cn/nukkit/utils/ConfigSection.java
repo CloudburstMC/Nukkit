@@ -7,7 +7,6 @@ import java.util.*;
  * <p>
  * Created by fromgate on 26.04.2016.
  */
-@SuppressWarnings("serial")
 public class ConfigSection extends LinkedHashMap<String, Object> {
 
     /**

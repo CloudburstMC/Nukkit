@@ -18,7 +18,7 @@ public class BlockDoubleSlabStone extends BlockDoubleSlabBase  {
     public static final int QUARTZ = 6;
     public static final int NETHER_BRICK = 7;
 
-    private static final String[] NAMES = new String[]{
+    private static final String[] NAMES = {
             "Stone",
             "Sandstone",
             "Oak",

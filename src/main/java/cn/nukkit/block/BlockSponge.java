@@ -106,7 +106,7 @@ public class BlockSponge extends BlockSolidMeta {
             for (BlockFace face : BlockFace.values()) {
 
                 Block faceBlock = entry.block.getSide(face);
-                if (Block.hasWater(faceBlock.getId())) {
+                if (Block.isWater(faceBlock.getId())) {
                     this.level.setBlock(faceBlock, Block.get(BlockID.AIR));
                     ++waterRemoved;
                     if (entry.distance < 6) {

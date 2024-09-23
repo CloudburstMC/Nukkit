@@ -233,7 +233,7 @@ public class EntityItem extends Entity {
             int blockId;
             if (this.isOnGround()) {
                 this.motionY = 0;
-            } else if (Block.hasWater((blockId = level.getBlockIdAt(this.chunk, this.getFloorX(), NukkitMath.floorDouble(this.y + 0.53), this.getFloorZ()))) ||
+            } else if (Block.isWater((blockId = level.getBlockIdAt(this.chunk, this.getFloorX(), NukkitMath.floorDouble(this.y + 0.53), this.getFloorZ()))) ||
                     (this.floatsInLava && (blockId == Block.LAVA || blockId == Block.STILL_LAVA))) {
                 this.motionY = this.getGravity() / 2;
             } else {

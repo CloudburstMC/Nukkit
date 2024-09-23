@@ -20,8 +20,8 @@ import java.util.Arrays;
  */
 public class QueryHandler {
 
-    public static final byte HANDSHAKE = 0x09;
-    public static final byte STATISTICS = 0x00;
+    private static final byte HANDSHAKE = 0x09;
+    private static final byte STATISTICS = 0x00;
 
     private final Server server;
     private byte[] lastToken;

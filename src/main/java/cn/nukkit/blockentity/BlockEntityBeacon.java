@@ -21,6 +21,8 @@ import java.util.Map;
  */
 public class BlockEntityBeacon extends BlockEntitySpawnable {
 
+    private long currentTick;
+
     public BlockEntityBeacon(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -65,8 +67,6 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                 .putInt("Primary", this.namedTag.getInt("Primary"))
                 .putInt("Secondary", this.namedTag.getInt("Secondary"));
     }
-
-    private long currentTick = 0;
 
     @Override
     public boolean onUpdate() {

@@ -66,11 +66,11 @@ public class BlockLoom extends BlockSolidMeta {
         return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
-    private static final short[] faces = {2, 3, 0, 1};
+    private static final short[] FACES = {2, 3, 0, 1};
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setDamage(FACES[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         return this.getLevel().setBlock(this, this, true, true);
     }
 }

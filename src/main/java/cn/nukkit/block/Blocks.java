@@ -449,7 +449,7 @@ class Blocks {
         list[QUARTZ_BRICKS] = BlockQuartzBricks.class; //559
         //
         list[POWDER_SNOW] = BlockPowderSnow.class; // 561
-        list[SCULK_SENSOR] = BlockSculkSensor.class; // 562
+        //list[SCULK_SENSOR] = BlockSculkSensor.class; // 562
         list[POINTED_DRIPSTONE] = BlockPointedDripstone.class; // 563
         //
         list[COPPER_ORE] = BlockOreCopper.class; //566

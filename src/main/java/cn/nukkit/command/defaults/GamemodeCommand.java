@@ -27,11 +27,11 @@ public class GamemodeCommand extends VanillaCommand {
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
                 CommandParameter.newType("gameMode", CommandParamType.INT),
-                new CommandParameter("player", CommandParamType.TARGET, true)
+                CommandParameter.newType("player", true, CommandParamType.TARGET)
         });
         this.commandParameters.put("byString", new CommandParameter[]{
                 CommandParameter.newEnum("gameMode", CommandEnum.ENUM_GAMEMODE),
-                new CommandParameter("player", CommandParamType.TARGET, true)
+                CommandParameter.newType("player", true, CommandParamType.TARGET)
         });
     }
 

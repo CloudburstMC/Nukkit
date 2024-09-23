@@ -15,14 +15,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ConvertCommand extends VanillaCommand {
 
-    private static final Set<String> conversionInProgress = ConcurrentHashMap.newKeySet();
+    private static final Set<String> CONVERSION_IN_PROGRESS = ConcurrentHashMap.newKeySet();
 
     public ConvertCommand(String name) {
         super(name, "%nukkit.command.world.convert.description", "%nukkit.command.world.convert.usage");
         this.setPermission("nukkit.command.world.convert");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("world", CommandParamType.STRING, false)
+                CommandParameter.newType("world", CommandParamType.STRING)
         });
     }
 
@@ -59,12 +59,12 @@ public class ConvertCommand extends VanillaCommand {
             return true;
         }
 
-        if (conversionInProgress.contains(worldName)) {
+        if (CONVERSION_IN_PROGRESS.contains(worldName)) {
             sender.sendMessage(worldName + " is already being converted");
             return true;
         }
 
-        conversionInProgress.add(worldName);
+        CONVERSION_IN_PROGRESS.add(worldName);
 
         Anvil2LevelDBConverter converter = new Anvil2LevelDBConverter(level);
         converter.convert().whenComplete((ignore, error) -> {
@@ -73,7 +73,7 @@ public class ConvertCommand extends VanillaCommand {
                Server.getInstance().getLogger().logException(error);
            }
 
-           conversionInProgress.remove(worldName);
+           CONVERSION_IN_PROGRESS.remove(worldName);
         });
         return true;
     }

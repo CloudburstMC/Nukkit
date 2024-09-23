@@ -8,7 +8,7 @@ import cn.nukkit.math.BlockFace;
 
 public abstract class BlockStem extends BlockSolidMeta {
 
-    private static final short[] faces = new short[]{
+    private static final short[] FACES = {
             0,
             0,
             2,
@@ -27,7 +27,7 @@ public abstract class BlockStem extends BlockSolidMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(faces[face.getIndex()]);
+        this.setDamage(FACES[face.getIndex()]);
         this.getLevel().setBlock(block, this, true, true);
         return true;
     }

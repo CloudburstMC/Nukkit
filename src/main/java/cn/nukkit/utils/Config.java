@@ -566,11 +566,11 @@ public class Config {
         return content.toString();
     }
 
-    private static final Pattern propLinePattern = Pattern.compile("[a-zA-Z0-9\\-_.]*+=+[^\\r\\n]*");
+    private static final Pattern PROP_LINE_PATTERN = Pattern.compile("[a-zA-Z0-9\\-_.]*+=+[^\\r\\n]*");
 
     private void parseProperties(String content) {
         for (final String line : content.split("\n")) {
-            if (propLinePattern.matcher(line).matches()) {
+            if (PROP_LINE_PATTERN.matcher(line).matches()) {
                 final int splitIndex = line.indexOf('=');
                 if (splitIndex == -1) {
                     continue;

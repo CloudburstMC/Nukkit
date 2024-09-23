@@ -1,6 +1,7 @@
 package cn.nukkit.nbt;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.RuntimeItemMapping;
 import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.nbt.stream.NBTInputStream;
@@ -58,11 +59,36 @@ public class NBTIO {
     }
 
     public static Item getItemHelper(CompoundTag tag) {
-        if (!tag.contains("id") || !tag.contains("Count")) {
+        if (!tag.contains("Count")) {
             return Item.get(0);
         }
 
-        return Item.get(tag.getShort("id"), !tag.contains("Damage") ? 0 : tag.getShort("Damage"), tag.getByte("Count"), tag.get("tag"));
+        // Nukkit format
+        if (tag.contains("id")) {
+            return Item.get(
+                    tag.getShort("id"),
+                    tag.getShort("Damage"),
+                    tag.getByte("Count"),
+                    tag.get("tag")
+            );
+        }
+
+        // Vanilla format (current version only)
+        if (tag.contains("Name")) {
+            RuntimeItemMapping.LegacyEntry legacy = RuntimeItems.getMapping().fromIdentifier(tag.getString("Name"));
+            if (legacy == null) {
+                return Item.get(0);
+            }
+
+            return Item.get(
+                    legacy.getLegacyId(),
+                    legacy.isHasDamage() ? legacy.getDamage() : tag.getShort("Damage"),
+                    tag.getByte("Count"),
+                    tag.get("tag")
+            );
+        }
+
+        return Item.get(0);
     }
 
     public static CompoundTag read(File file) throws IOException {

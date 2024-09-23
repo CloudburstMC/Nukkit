@@ -31,6 +31,7 @@ abstract public class ItemColorArmor extends ItemArmor {
      * @param dyeColor - Dye color data value
      * @return - Return colored item
      */
+    @Deprecated
     public ItemColorArmor setColor(int dyeColor) {
         BlockColor blockColor = DyeColor.getByDyeData(dyeColor).getColor();
         return setColor(blockColor.getRed(), blockColor.getGreen(), blockColor.getBlue());

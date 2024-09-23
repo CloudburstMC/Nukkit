@@ -95,7 +95,9 @@ public abstract class BlockEntity extends Position {
         this.getLevel().addBlockEntity(this);
     }
 
-    protected void initBlockEntity() {}
+    protected void initBlockEntity() {
+
+    }
 
     public static BlockEntity createBlockEntity(String type, FullChunk chunk, CompoundTag nbt, Object... args) {
         BlockEntity blockEntity = null;
@@ -215,7 +217,9 @@ public abstract class BlockEntity extends Position {
         }
     }
 
-    public void onBreak() {}
+    public void onBreak() {
+
+    }
 
     public void setDirty() {
         if (this.chunk != null) {

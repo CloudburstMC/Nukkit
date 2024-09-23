@@ -14,7 +14,7 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockTorch extends BlockFlowable implements Faceable {
 
-    private static final short[] faces = {
+    private static final short[] FACES = {
             0, //0, never used
             5, //1
             4, //2
@@ -23,7 +23,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
             1, //5
     };
 
-    private static final short[] faces2 = {
+    private static final short[] FACES_2 = {
             0, //0
             4, //1
             5, //2
@@ -61,7 +61,7 @@ public class BlockTorch extends BlockFlowable implements Faceable {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Block below = this.down();
             int side = this.getDamage();
-            Block block = this.getSide(BlockFace.fromIndex(faces2[side]));
+            Block block = this.getSide(BlockFace.fromIndex(FACES_2[side]));
             int id = block.getId();
 
             if ((block.isTransparent() && !(side == 0 && (below instanceof BlockFence || below.getId() == COBBLE_WALL))) && id != GLASS && id != STAINED_GLASS) {
@@ -79,8 +79,8 @@ public class BlockTorch extends BlockFlowable implements Faceable {
             return false;
         }
 
-        int side = faces[face.getIndex()];
-        int bid = this.getSide(BlockFace.fromIndex(faces2[side])).getId();
+        int side = FACES[face.getIndex()];
+        int bid = this.getSide(BlockFace.fromIndex(FACES_2[side])).getId();
         if ((!target.isTransparent() || bid == GLASS || bid == STAINED_GLASS) && face != BlockFace.DOWN) {
             this.setDamage(side);
             this.getLevel().setBlock(block, this, true, true);

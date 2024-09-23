@@ -136,8 +136,8 @@ public abstract class Food {
         return result[0];
     }
 
-    protected int restoreFood = 0;
-    protected float restoreSaturation = 0;
+    protected int restoreFood;
+    protected float restoreSaturation;
     protected final List<NodeIDMeta> relativeIDs = new ArrayList<>();
 
     public final boolean eatenBy(Player player) {

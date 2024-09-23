@@ -147,7 +147,7 @@ public class Server {
     private final float[] tickAverage = {20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20};
     private final float[] useAverage = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     private float maxTick = 20;
-    private float maxUse = 0;
+    private float maxUse;
     private int baseTickRate;
     private int autoSaveTicker;
     private int maxPlayers; // setMaxPlayers
@@ -156,7 +156,7 @@ public class Server {
     int spawnThresholdRadius;
     private String ip;
     private int port;
-    private final UUID serverID;
+    private final UUID serverID = UUID.randomUUID();
     private RCON rcon;
     private final Network network;
     private QueryHandler queryHandler;
@@ -168,7 +168,7 @@ public class Server {
     private final Map<InetSocketAddress, Player> players = new HashMap<>();
     final Map<UUID, Player> playerList = new HashMap<>();
 
-    private static final Pattern uuidPattern = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}.dat$");
+    private static final Pattern UUID_PATTERN = Pattern.compile("^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}.dat$");
 
     private final Map<Integer, Level> levels = new HashMap<Integer, Level>() {
         public Level put(Integer key, Level value) {
@@ -196,6 +196,7 @@ public class Server {
     private final DB nameLookup;
     private PlayerDataSerializer playerDataSerializer;
     private final BatchingHelper batchingHelper;
+    private final Set<String> ignoredPackets = new HashSet<>();
 
     /**
      * The server's MOTD. Remember to call network.setName() when updated.
@@ -414,8 +415,7 @@ public class Server {
             }
         }
 
-        //ignoredPackets.addAll(getConfig().getStringList("debug.ignored-packets"));
-        //ignoredPackets.add("BatchPacket");
+        this.ignoredPackets.addAll(getConfig().getStringList("debug.ignored-packets"));
 
         this.properties = new Config(this.dataPath + "server.properties", Config.PROPERTIES, new ServerProperties());
 
@@ -499,8 +499,6 @@ public class Server {
 
         convertLegacyPlayerData();
 
-        this.serverID = UUID.randomUUID();
-
         this.craftingManager = new CraftingManager();
         this.resourcePackManager = new ResourcePackManager(
                 new ZippedResourcePackLoader(new File(Nukkit.DATA_PATH, "resource_packs")),
@@ -571,10 +569,11 @@ public class Server {
         for (String name : this.getConfig("worlds", new HashMap<String, Object>()).keySet()) {
             if (!this.loadLevel(name)) {
                 long seed;
+                String seedString = String.valueOf(this.getConfig("worlds." + name + ".seed", System.currentTimeMillis()));
                 try {
-                    seed = ((Integer) this.getConfig("worlds." + name + ".seed")).longValue();
-                } catch (Exception e) {
-                    seed = System.currentTimeMillis();
+                    seed = Long.parseLong(seedString);
+                } catch (NumberFormatException e) {
+                    seed = seedString.hashCode();
                 }
 
                 Map<String, Object> options = new HashMap<>();
@@ -718,12 +717,16 @@ public class Server {
     }
 
     public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
+        packet.tryEncode();
+
         for (Player player : players) {
             player.dataPacket(packet);
         }
     }
 
     public static void broadcastPacket(Player[] players, DataPacket packet) {
+        packet.tryEncode();
+
         for (Player player : players) {
             player.dataPacket(packet);
         }
@@ -955,7 +958,7 @@ public class Server {
         this.forceShutdown();
     }
 
-    private static final byte[] PREFIX = {(byte) 0xfe, (byte) 0xfd};
+    private static final byte[] QUERY_PREFIX = {(byte) 0xfe, (byte) 0xfd};
 
     /**
      * Internal: Handle query
@@ -969,7 +972,7 @@ public class Server {
             }
             byte[] prefix = new byte[2];
             payload.readBytes(prefix);
-            if (Arrays.equals(prefix, PREFIX)) {
+            if (Arrays.equals(prefix, QUERY_PREFIX)) {
                 this.queryHandler.handle(address, payload);
             }
         } catch (Exception e) {
@@ -1085,9 +1088,7 @@ public class Server {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_REMOVE;
         pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid)};
-        for (Player player : players) {
-            player.dataPacket(pk);
-        }
+        Server.broadcastPacket(players, pk);
     }
 
     public void removePlayerListData(UUID uuid, Collection<Player> players) {
@@ -1851,7 +1852,7 @@ public class Server {
 
         File[] files = dataDirectory.listFiles(file -> {
             String name = file.getName();
-            return !uuidPattern.matcher(name).matches() && name.endsWith(".dat");
+            return !UUID_PATTERN.matcher(name).matches() && name.endsWith(".dat");
         });
 
         if (files == null) {
@@ -2625,7 +2626,7 @@ public class Server {
      *
      * @return true if the current thread matches the expected primary thread, false otherwise
      */
-    public boolean isPrimaryThread() {
+    public final boolean isPrimaryThread() {
         return Thread.currentThread() == currentThread;
     }
 
@@ -2819,6 +2820,10 @@ public class Server {
      */
     public void setPlayerDataSerializer(PlayerDataSerializer playerDataSerializer) {
         this.playerDataSerializer = Preconditions.checkNotNull(playerDataSerializer, "playerDataSerializer");
+    }
+
+    boolean isIgnoredPacket(Class<? extends DataPacket> clazz) {
+        return this.ignoredPackets.contains(clazz.getSimpleName());
     }
 
     /**

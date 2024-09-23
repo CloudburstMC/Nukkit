@@ -41,10 +41,6 @@ public class TypesGeneratorHelper {
 
             String name = field.getName();
 
-            if (name.startsWith("N_")) {
-                continue;
-            }
-
             int legacyId = field.getInt(null);
 
             types.computeIfAbsent(field.getInt(null), id -> new ArrayList<>())

@@ -28,15 +28,15 @@ public abstract class Command {
 
     private String[] activeAliases;
 
-    private CommandMap commandMap = null;
+    private CommandMap commandMap;
 
     protected String description;
 
     protected String usageMessage;
 
-    private String permission = null;
+    private String permission;
 
-    private String permissionMessage = null;
+    private String permissionMessage;
 
     protected Map<String, CommandParameter[]> commandParameters = new HashMap<>();
 
@@ -61,7 +61,7 @@ public abstract class Command {
         this.usageMessage = usageMessage == null ? '/' + name : usageMessage;
         this.aliases = aliases;
         this.activeAliases = aliases;
-        this.commandParameters.put("default", new CommandParameter[]{new CommandParameter("args", CommandParamType.RAWTEXT, true)});
+        this.commandParameters.put("default", new CommandParameter[]{CommandParameter.newType("args", true, CommandParamType.RAWTEXT)});
     }
 
     /**

@@ -14,7 +14,7 @@ public class BlockCoral extends BlockTransparentMeta {
     public static final int TYPE_FIRE = 3;
     public static final int TYPE_HORN = 4;
 
-    private static final String[] names = new String[] {
+    private static final String[] NAMES = {
             "Tube Coral",
             "Brain Coral",
             "Bubble Coral",
@@ -41,10 +41,10 @@ public class BlockCoral extends BlockTransparentMeta {
     @Override
     public String getName() {
         int variant = this.getDamage();
-        if (variant >= names.length) {
-            return names[0];
+        if (variant >= NAMES.length) {
+            return NAMES[0];
         }
-        return names[variant];
+        return NAMES[variant];
     }
 
     @Override

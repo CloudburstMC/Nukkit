@@ -9,7 +9,7 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockDoubleSlabWood extends BlockDoubleSlabBase  {
 
-    private static final String[] NAMES = new String[]{
+    private static final String[] NAMES = {
             "Oak",
             "Spruce",
             "Birch",

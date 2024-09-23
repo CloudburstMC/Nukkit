@@ -18,7 +18,7 @@ public class MeCommand extends VanillaCommand {
         this.setPermission("nukkit.command.me");
         this.commandParameters.clear();
         this.commandParameters.put("default", new CommandParameter[]{
-                new CommandParameter("action ...", CommandParamType.RAWTEXT, false)
+                CommandParameter.newType("message", CommandParamType.MESSAGE)
         });
     }
 

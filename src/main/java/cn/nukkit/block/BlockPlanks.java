@@ -49,7 +49,7 @@ public class BlockPlanks extends BlockSolidMeta {
         return 20;
     }
 
-    private static final String[] names = {
+    private static final String[] NAMES = {
             "Oak Planks",
             "Spruce Planks",
             "Birch Planks",
@@ -60,7 +60,7 @@ public class BlockPlanks extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        return names[this.getDamage() & 0x07];
+        return NAMES[this.getDamage() & 0x07];
     }
 
     @Override

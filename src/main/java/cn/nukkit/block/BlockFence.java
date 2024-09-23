@@ -48,7 +48,7 @@ public class BlockFence extends BlockTransparentMeta {
         return ItemTool.TYPE_AXE;
     }
 
-    private static final String[] names = {
+    private static final String[] NAMES = {
             "Oak Fence",
             "Spruce Fence",
             "Birch Fence",
@@ -61,7 +61,7 @@ public class BlockFence extends BlockTransparentMeta {
 
     @Override
     public String getName() {
-        return names[this.getDamage() & 0x07];
+        return NAMES[this.getDamage() & 0x07];
     }
 
     protected AxisAlignedBB recalculateBoundingBox() {

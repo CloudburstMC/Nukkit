@@ -2,8 +2,6 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.ByteTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
@@ -119,12 +117,6 @@ abstract public class ItemArmor extends Item implements ItemDurable {
         }
 
         return 0;
-    }
-
-    @Override
-    public boolean isUnbreakable() {
-        Tag tag = this.getNamedTagEntry("Unbreakable");
-        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
     }
 
     @Override

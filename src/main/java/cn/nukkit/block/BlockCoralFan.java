@@ -12,7 +12,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockCoralFan extends BlockCoral implements Faceable {
 
-    private static final String[] names = new String[] {
+    private static final String[] NAMES = {
             "Tube Coral Fan",
             "Brain Coral Fan",
             "Bubble Coral Fan",
@@ -138,10 +138,10 @@ public class BlockCoralFan extends BlockCoral implements Faceable {
     public String getName() {
         int variant = this.getType();
         String name;
-        if (variant >= names.length) {
-            name = names[0];
+        if (variant >= NAMES.length) {
+            name = NAMES[0];
         } else {
-            name = names[variant];
+            name = NAMES[variant];
         }
         return name;
     }

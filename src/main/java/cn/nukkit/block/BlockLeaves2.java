@@ -11,7 +11,7 @@ public class BlockLeaves2 extends BlockLeaves {
     public static final int ACACIA = 0;
     public static final int DARK_OAK = 1;
 
-    private static final String[] names = {
+    private static final String[] NAMES = {
             "Acacia Leaves",
             "Dark Oak Leaves"
     };
@@ -25,7 +25,7 @@ public class BlockLeaves2 extends BlockLeaves {
     }
 
     public String getName() {
-        return names[this.getDamage() & 0x01];
+        return NAMES[this.getDamage() & 0x01];
     }
 
     @Override

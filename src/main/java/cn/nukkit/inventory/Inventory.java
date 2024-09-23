@@ -76,7 +76,7 @@ public interface Inventory {
     int firstEmpty(Item item);
 
     void decreaseCount(int slot);
-    
+
     void remove(Item item);
 
     default boolean clear(int index) {

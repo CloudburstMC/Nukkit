@@ -45,7 +45,7 @@ public class BlockBuddingAmethyst extends BlockSolid {
         Block block = this.getSide(face);
 
         BlockAmethystBud targetBlock = null;
-        if (block.getId() == AIR || ((block.getId() == WATER || block.getId() == STILL_WATER) && block.getDamage() == 8)) {
+        if (block.getId() == AIR || (Block.isWater(block.getId()) && block.getDamage() == 8)) {
             targetBlock = (BlockAmethystBud) Block.get(SMALL_AMETHYST_BUD);
         } else if (block.getId() == SMALL_AMETHYST_BUD && ((BlockAmethystBud) block).getBlockFace() == face) {
             targetBlock = (BlockAmethystBud) Block.get(MEDIUM_AMETHYST_BUD);

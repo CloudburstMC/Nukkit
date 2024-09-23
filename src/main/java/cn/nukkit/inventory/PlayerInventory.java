@@ -22,7 +22,7 @@ import java.util.Collection;
  */
 public class PlayerInventory extends BaseInventory {
 
-    protected int itemInHandIndex = 0;
+    protected int itemInHandIndex;
 
     public PlayerInventory(EntityHumanType player) {
         super(player, InventoryType.PLAYER);
@@ -80,10 +80,12 @@ public class PlayerInventory extends BaseInventory {
         return slot >= 0 && slot < this.getHotbarSize();
     }
 
+    @Deprecated
     public int getHotbarSlotIndex(int index) {
         return index;
     }
 
+    @Deprecated
     public void setHotbarSlotIndex(int index, int slot) {
     }
 
@@ -129,6 +131,7 @@ public class PlayerInventory extends BaseInventory {
         return this.setItem(this.itemInHandIndex, item);
     }
 
+    @Deprecated
     public int getHeldItemSlot() {
         return this.itemInHandIndex;
     }

@@ -113,7 +113,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final int CREATIVE = 1;
     public static final int ADVENTURE = 2;
     public static final int SPECTATOR = 3;
-    public static final int VIEW = SPECTATOR;
 
     public static final int CRAFTING_SMALL = 0;
     public static final int CRAFTING_BIG = 1;
@@ -193,7 +192,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private boolean hasSpawnChunks;
     private final int loaderId;
-    private int chunksSent = 0;
+    private int chunksSent;
     protected int nextChunkOrderRun = 1;
     protected int chunkRadius;
     protected int viewDistance;
@@ -204,7 +203,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     protected Position spawnPosition;
 
-    protected int inAirTicks = 0;
+    protected int inAirTicks;
     protected int startAirTicks = 10;
 
     protected AdventureSettings adventureSettings;
@@ -218,8 +217,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Setter
     private boolean canTickShield = true;
 
-    private int exp = 0;
-    private int expLevel = 0;
+    private int exp;
+    private int expLevel;
 
     protected PlayerFood foodData;
 
@@ -237,10 +236,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private LoginChainData loginChainData;
 
-    public int pickedXPOrb = 0;
+    public int pickedXPOrb;
     private boolean canPickupXP = true;
 
-    protected int formWindowCount = 0;
+    protected int formWindowCount;
     protected Map<Integer, FormWindow> formWindows = new Int2ObjectOpenHashMap<>();
     protected Map<Integer, FormWindow> serverSettings = new Int2ObjectOpenHashMap<>();
 
@@ -257,7 +256,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected int lastChorusFruitTeleport = 20;
     protected int lastFireworkBoost = 20;
     public long lastSkinChange = -1;
-    private double lastRightClickTime = 0.0;
+    private double lastRightClickTime;
     public long lastBreak = -1; // When last block break was started
     private BlockVector3 lastBreakPosition = new BlockVector3();
     public Block breakingBlock; // Block player is breaking currently
@@ -410,6 +409,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * Please use getUniqueId() instead (IP + clientId + name combo, in the future it'll change to real UUID for online auth)
      * @return random client id
      */
+    @Deprecated
     public Long getClientId() {
         return randomClientId;
     }
@@ -494,6 +494,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * Set allow flight adventure setting
      * @param value allow flight enabled
      */
+    @Deprecated
     public void setAllowFlight(boolean value) {
         this.adventureSettings.set(Type.ALLOW_FLIGHT, value);
         this.adventureSettings.update();
@@ -503,6 +504,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * Check wether allow flight adventure setting is enabled
      * @return allow flight enabled
      */
+    @Deprecated
     public boolean getAllowFlight() {
         return this.adventureSettings.get(Type.ALLOW_FLIGHT);
     }
@@ -523,7 +525,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @param value can interact
      */
     public void setAllowInteract(boolean value) {
-        setAllowInteract(value, value);
+        this.setAllowInteract(value, value);
     }
 
     /**
@@ -542,6 +544,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * Set auto jump adventure setting
      * @param value auto jump enabled
      */
+    @Deprecated
     public void setAutoJump(boolean value) {
         this.adventureSettings.set(Type.AUTO_JUMP, value);
         this.adventureSettings.update();
@@ -551,6 +554,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * Check wether auto jump adventure setting is enabled
      * @return auto jump enabled
      */
+    @Deprecated
     public boolean hasAutoJump() {
         return this.adventureSettings.get(Type.AUTO_JUMP);
     }
@@ -797,7 +801,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.gamemode = this.server.getGamemode();
         this.setLevel(this.server.getDefaultLevel());
         this.viewDistance = this.server.getViewDistance();
-        this.chunkRadius = viewDistance;
+        this.chunkRadius = this.viewDistance;
         this.boundingBox = new SimpleAxisAlignedBB(0, 0, 0, 0, 0, 0);
     }
 
@@ -1315,6 +1319,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @param packet data packet
      * @return return value of dataPacket()
      */
+    @Deprecated
     public boolean batchDataPacket(DataPacket packet) {
         return this.dataPacket(packet);
     }
@@ -1337,7 +1342,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return false;
         }
 
-        if (Nukkit.DEBUG > 2 /*&& !server.isIgnoredPacket(packet.getClass())*/) {
+        if (Nukkit.DEBUG > 2 && !server.isIgnoredPacket(packet.getClass())) {
             log.trace("Outbound {}: {}", this.getName(), dataPacket);
         }
 
@@ -1350,14 +1355,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         return true;
     }
 
+    @Deprecated
     public int dataPacket(DataPacket packet, boolean needACK) {
         return this.dataPacket(packet) ? 1 : 0;
     }
 
+    @Deprecated
     public boolean directDataPacket(DataPacket packet) {
         return this.dataPacket(packet);
     }
 
+    @Deprecated
     public int directDataPacket(DataPacket packet, boolean needACK) {
         return this.directDataPacket(packet) ? 1 : 0;
     }
@@ -1369,7 +1377,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        if (Nukkit.DEBUG > 2 /*&& !server.isIgnoredPacket(packet.getClass())*/) {
+        if (Nukkit.DEBUG > 2 && !server.isIgnoredPacket(packet.getClass())) {
             log.trace("Outbound {}: {}", this.getName(), packet);
         }
 
@@ -1633,6 +1641,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     /**
      * Send adventure settings
      */
+    @Deprecated
     public void sendSettings() {
         this.adventureSettings.update();
     }
@@ -2829,7 +2838,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return;
         }
 
-        if (Nukkit.DEBUG > 2 /*&& !server.isIgnoredPacket(packet.getClass())*/) {
+        if (Nukkit.DEBUG > 2 && !server.isIgnoredPacket(packet.getClass())) {
             log.trace("Inbound {}: {}", this.getName(), packet);
         }
 
@@ -4690,9 +4699,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     this.getServer().getLogger().debug(username + " EmotePacket invalid emote id: " + emotePacket.emoteID);
                     return;
                 }
-                for (Player player : this.getViewers().values()) {
-                    player.dataPacket(emotePacket);
-                }
+                EmotePacket cleanEmotePacket = new EmotePacket();
+                cleanEmotePacket.runtimeId = emotePacket.runtimeId;
+                cleanEmotePacket.emoteID = emotePacket.emoteID;
+                Server.broadcastPacket(this.getViewers().values(), cleanEmotePacket);
                 return;
             case ProtocolInfo.LECTERN_UPDATE_PACKET:
                 if (!this.spawned) {
@@ -4842,8 +4852,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         this.setUsingItem(false);
 
+        Item handItem = this.inventory.getItemInHand();
         Block target = this.level.getBlock(chunk, blockPos.x, blockPos.y, blockPos.z, false);
-        PlayerInteractEvent playerInteractEvent = new PlayerInteractEvent(this, this.inventory.getItemInHand(), target, face, target.getId() == 0 ? Action.LEFT_CLICK_AIR : Action.LEFT_CLICK_BLOCK);
+        PlayerInteractEvent playerInteractEvent = new PlayerInteractEvent(this, handItem, target, face, target.getId() == 0 ? Action.LEFT_CLICK_AIR : Action.LEFT_CLICK_BLOCK);
         this.getServer().getPluginManager().callEvent(playerInteractEvent);
         if (playerInteractEvent.isCancelled()) {
             this.needSendHeldItem = true;
@@ -4886,7 +4897,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
 
         if (!this.isCreative()) {
-            double breakTime = target.getBreakTime(this.inventory.getItemInHandFast(), this);
+            double breakTime = target.getBreakTime(handItem, this);
             int breakTimeTicks = (int) (breakTime * 20 + 0.5);
             if (breakTimeTicks > 0) {
                 LevelEventPacket pk = new LevelEventPacket();
@@ -6185,36 +6196,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     /**
-     * Warning: Using teleportImmediate() may have unexpected side effects. Please use teleport() instead.
-     * Teleports the player immediately without calling PlayerTeleportEvent.
-     * @param location target location
+     * deprecated: use teleport() with null cause instead
      */
+    @Deprecated
     public void teleportImmediate(Location location) {
         this.teleportImmediate(location, TeleportCause.PLUGIN);
     }
 
     /**
-     * Warning: Using teleportImmediate() may have unexpected side effects. Please use teleport() instead.
-     * Teleports the player immediately without calling PlayerTeleportEvent.
-     * @param location target location
-     * @param cause teleport cause
+     * deprecated: use teleport() with null cause instead
      */
+    @Deprecated
     public void teleportImmediate(Location location, TeleportCause cause) {
-        // HACK: solve the client-side teleporting bug (inside into the block)
-        if (super.teleport(location.getY() == location.getFloorY() ? location.add(0, 0.00001, 0) : location, cause)) {
-            this.removeAllWindows();
-            this.formOpen = false;
-
-            this.forceMovement = this;
-            this.sendPosition(this, this.yaw, this.pitch, MovePlayerPacket.MODE_TELEPORT);
-
-            this.resetFallDistance();
-            this.orderChunks();
-            this.nextChunkOrderRun = 0;
-            this.resetClientMovement();
-
-            this.stopFishing(false);
-        }
+        this.teleport(location, null);
     }
 
     /**
@@ -6268,6 +6262,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @param length The BossBar percentage
      * @return bossBarId  The BossBar ID, you should store it if you want to remove or update the BossBar later
      */
+    @Deprecated
     public long createBossBar(String text, int length) {
         return this.createBossBar(new DummyBossBar.Builder(this).text(text).length(length).build());
     }
@@ -6314,6 +6309,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @param length    The new BossBar length
      * @param bossBarId The BossBar ID
      */
+    @Deprecated
     public void updateBossBar(String text, int length, long bossBarId) {
         if (this.dummyBossBars.containsKey(bossBarId)) {
             DummyBossBar bossBar = this.dummyBossBars.get(bossBarId);

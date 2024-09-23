@@ -11,7 +11,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
 public class BlockComposter extends BlockTransparentMeta implements ItemID {
 
-    private static final Int2IntOpenHashMap items = new Int2IntOpenHashMap();
+    private static final Int2IntOpenHashMap ITEMS = new Int2IntOpenHashMap();
 
     static {
         registerItems(30, KELP, BEETROOT_SEEDS, DRIED_KELP, MELON_SEEDS, PUMPKIN_SEEDS, SWEET_BERRIES, WHEAT_SEEDS);
@@ -165,7 +165,7 @@ public class BlockComposter extends BlockTransparentMeta implements ItemID {
     }
 
     public static void registerItem(int chance, int itemId, int meta) {
-        items.put(itemId << 6 | meta & 0x3F, chance);
+        ITEMS.put(itemId << 6 | meta & 0x3F, chance);
     }
 
     public static void registerItems(int chance, int... itemIds) {
@@ -196,9 +196,9 @@ public class BlockComposter extends BlockTransparentMeta implements ItemID {
     }
 
     public static int getChance(Item item) {
-        int chance = items.get(item.getId() << 6 | item.getDamage());
+        int chance = ITEMS.get(item.getId() << 6 | item.getDamage());
         if (chance == 0) {
-            chance = items.get(item.getId() << 6);
+            chance = ITEMS.get(item.getId() << 6);
         }
         return chance;
     }

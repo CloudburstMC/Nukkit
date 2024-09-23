@@ -2,7 +2,6 @@ package cn.nukkit.utils;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.Tag;
 import com.google.gson.JsonElement;
@@ -34,10 +33,6 @@ public class Utils {
      * A SplittableRandom you can use without having to create a new object every time.
      */
     public static final SplittableRandom random = new SplittableRandom();
-    /**
-     * A NukkitRandom you can use without having to create a new object every time.
-     */
-    public static final NukkitRandom nukkitRandom = new NukkitRandom();
 
     public static void writeFile(String fileName, String content) throws IOException {
         writeFile(fileName, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
@@ -419,7 +414,9 @@ public class Utils {
                 throw new AssertionError("Unable to load " + file);
             }
 
-            return NBTIO.readTag(new BufferedInputStream(new GZIPInputStream(stream)), ByteOrder.BIG_ENDIAN, false);
+            Tag tag = NBTIO.readTag(new BufferedInputStream(new GZIPInputStream(stream)), ByteOrder.BIG_ENDIAN, false);
+            stream.close();
+            return tag;
         } catch (Exception e) {
             throw new RuntimeException("Unable to load " + file, e);
         }

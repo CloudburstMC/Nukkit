@@ -40,15 +40,15 @@ public class EntityFishingHook extends EntityProjectile {
 
 	public int waitChance = 120;
 	public int waitTimer = 240;
-	public boolean attracted = false;
-	public int attractTimer = 0;
-	public boolean caught = false;
-	public int caughtTimer = 0;
+	public boolean attracted;
+	public int attractTimer;
+	public boolean caught;
+	public int caughtTimer;
 	public boolean canCollide = true;
-	public Entity caughtEntity = null;
-	private long target = 0;
-	public Vector3 fish = null;
-	public Item rod = null;
+	public Entity caughtEntity;
+	private long target;
+	public Vector3 fish;
+	public Item rod;
 
 	public EntityFishingHook(FullChunk chunk, CompoundTag nbt) {
 		this(chunk, nbt, null);
@@ -217,7 +217,7 @@ public class EntityFishingHook extends EntityProjectile {
 		return dist < 0.15;
 	}
 
-	private static final int[] rodEnchantments = {Enchantment.ID_LURE, Enchantment.ID_FORTUNE_FISHING, Enchantment.ID_DURABILITY, Enchantment.ID_MENDING, Enchantment.ID_VANISHING_CURSE};
+	private static final int[] ROD_ENCHANTMENTS = {Enchantment.ID_LURE, Enchantment.ID_FORTUNE_FISHING, Enchantment.ID_DURABILITY, Enchantment.ID_MENDING, Enchantment.ID_VANISHING_CURSE};
 
 	public void reelLine() {
 		if (this.shootingEntity instanceof Player && !this.closed) {
@@ -240,7 +240,7 @@ public class EntityFishingHook extends EntityProjectile {
 				} else if (item instanceof ItemFishingRod) {
 					if (Utils.rand(1, 3) == 2 && !item.hasEnchantments()) {
 						item = item.clone();
-						Enchantment enchantment = Enchantment.getEnchantment(rodEnchantments[Utils.rand(0, 4)]);
+						Enchantment enchantment = Enchantment.getEnchantment(ROD_ENCHANTMENTS[Utils.rand(0, 4)]);
 						if (Utils.random.nextDouble() < 0.3) {
 							enchantment.setLevel(Utils.rand(1, enchantment.getMaxLevel()));
 						}

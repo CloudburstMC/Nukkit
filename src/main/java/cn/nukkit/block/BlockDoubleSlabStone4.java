@@ -5,7 +5,7 @@ import cn.nukkit.utils.BlockColor;
 
 public class BlockDoubleSlabStone4 extends BlockDoubleSlabBase {
 
-    private static final String[] NAMES = new String[]{
+    private static final String[] NAMES = {
             "Mossy Stone Brick",
             "Smooth Quartz",
             "Stone",

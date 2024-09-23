@@ -19,7 +19,7 @@ public class BlockStone extends BlockSolidMeta {
     public static final int ANDESITE = 5;
     public static final int POLISHED_ANDESITE = 6;
 
-    private static final String[] names = {
+    private static final String[] NAMES = {
             "Stone",
             "Granite",
             "Polished Granite",
@@ -60,7 +60,7 @@ public class BlockStone extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        return names[this.getDamage() & 0x07];
+        return NAMES[this.getDamage() & 0x07];
     }
 
     @Override

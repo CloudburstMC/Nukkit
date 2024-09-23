@@ -209,9 +209,8 @@ public class BlockPointedDripstone extends BlockSolidMeta implements BlockProper
     }
 
     private boolean canGrow() {
-        Block up2;
         // TODO: grow from ground too
-        return this.down().getId() == AIR && this.up().getId() == DRIPSTONE_BLOCK && ((up2 = this.up(2)).getId() == WATER || up2.getId() == STILL_WATER);
+        return this.down().getId() == AIR && this.up().getId() == DRIPSTONE_BLOCK && Block.isWater(this.up(2).getId());
     }
 
     private void spawnFallingBlock(BlockPointedDripstone block) {

@@ -10,7 +10,6 @@ import cn.nukkit.utils.BinaryStream;
 import cn.nukkit.utils.Utils;
 import cn.nukkit.utils.Zlib;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -26,7 +25,6 @@ public class LevelDBChunkSection implements ChunkSection {
     protected byte[] skyLight;
     private byte[] compressedLight;
     protected boolean hasBlockLight;
-    @Setter
     protected boolean hasSkyLight;
 
     public LevelDBChunkSection(int y, StateBlockStorage[] storages, byte[] blockLight, byte[] skyLight, byte[] compressedLight, boolean hasBlockLight, boolean hasSkyLight) {
@@ -40,14 +38,7 @@ public class LevelDBChunkSection implements ChunkSection {
     }
 
     public LevelDBChunkSection(int y) {
-        this(y, new StateBlockStorage[]{new StateBlockStorage(), new StateBlockStorage()});
-    }
-
-    public LevelDBChunkSection(int y, StateBlockStorage[] storages) {
-        this.y = y;
-        this.storages = storages;
-        this.hasBlockLight = false;
-        this.hasSkyLight = false;
+        this(y, new StateBlockStorage[]{new StateBlockStorage(), new StateBlockStorage()}, null, null, null, false, true);
     }
 
     private StateBlockStorage computeStorage(BlockLayer layer) {
@@ -275,7 +266,9 @@ public class LevelDBChunkSection implements ChunkSection {
                 }
                 compressedLight = null;
             } else {
-                blockLight = new byte[2048];
+                if (blockLight == null) {
+                    blockLight = new byte[2048];
+                }
                 skyLight = new byte[2048];
                 if (hasSkyLight) {
                     Arrays.fill(skyLight, (byte) 0xFF);

@@ -27,7 +27,7 @@ public class BlockWood extends BlockSolidMeta {
             0b0100
     };
 
-    private static final int[] strippedIds = {
+    private static final int[] STRIPPED_IDS = {
             STRIPPED_OAK_LOG,
             STRIPPED_SPRUCE_LOG,
             STRIPPED_BIRCH_LOG,
@@ -57,7 +57,7 @@ public class BlockWood extends BlockSolidMeta {
         return 2;
     }
 
-    private static final String[] names = {
+    private static final String[] NAMES = {
             "Oak Wood",
             "Spruce Wood",
             "Birch Wood",
@@ -66,7 +66,7 @@ public class BlockWood extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        return names[this.getDamage() & 0x03];
+        return NAMES[this.getDamage() & 0x03];
     }
 
     @Override
@@ -137,7 +137,7 @@ public class BlockWood extends BlockSolidMeta {
             return WOOD_BARK;
         }
 
-        return strippedIds[damage & 0x03];
+        return STRIPPED_IDS[damage & 0x03];
     }
 
     protected int getStrippedDamage() {

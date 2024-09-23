@@ -11,106 +11,106 @@ public enum TextFormat {
     /**
      * Represents black.
      */
-    BLACK('0', 0x00),
+    BLACK('0'),
     /**
      * Represents dark blue.
      */
-    DARK_BLUE('1', 0x1),
+    DARK_BLUE('1'),
     /**
      * Represents dark green.
      */
-    DARK_GREEN('2', 0x2),
+    DARK_GREEN('2'),
     /**
      * Represents dark blue (aqua).
      */
-    DARK_AQUA('3', 0x3),
+    DARK_AQUA('3'),
     /**
      * Represents dark red.
      */
-    DARK_RED('4', 0x4),
+    DARK_RED('4'),
     /**
      * Represents dark purple.
      */
-    DARK_PURPLE('5', 0x5),
+    DARK_PURPLE('5'),
     /**
      * Represents gold.
      */
-    GOLD('6', 0x6),
+    GOLD('6'),
     /**
      * Represents gray.
      */
-    GRAY('7', 0x7),
+    GRAY('7'),
     /**
      * Represents dark gray.
      */
-    DARK_GRAY('8', 0x8),
+    DARK_GRAY('8'),
     /**
      * Represents blue.
      */
-    BLUE('9', 0x9),
+    BLUE('9'),
     /**
      * Represents green.
      */
-    GREEN('a', 0xA),
+    GREEN('a'),
     /**
      * Represents aqua.
      */
-    AQUA('b', 0xB),
+    AQUA('b'),
     /**
      * Represents red.
      */
-    RED('c', 0xC),
+    RED('c'),
     /**
      * Represents light purple.
      */
-    LIGHT_PURPLE('d', 0xD),
+    LIGHT_PURPLE('d'),
     /**
      * Represents yellow.
      */
-    YELLOW('e', 0xE),
+    YELLOW('e'),
     /**
      * Represents white.
      */
-    WHITE('f', 0xF),
+    WHITE('f'),
     /**
      * Represents minecoins gold.
      */
-    MINECOIN_GOLD('g', 0x16),
+    MINECOIN_GOLD('g'),
     /**
      * Makes the text obfuscated.
      */
-    OBFUSCATED('k', 0x10, true),
+    OBFUSCATED('k', true),
     /**
      * Makes the text bold.
      */
-    BOLD('l', 0x11, true),
+    BOLD('l', true),
     /**
      * Makes a line appear through the text.
      */
-    STRIKETHROUGH('m', 0x12, true),
+    STRIKETHROUGH('m', true),
     /**
      * Makes the text appear underlined.
      */
-    UNDERLINE('n', 0x13, true),
+    UNDERLINE('n', true),
     /**
      * Makes the text italic.
      */
-    ITALIC('o', 0x14, true),
+    ITALIC('o', true),
     /**
      * Resets all previous chat colors or formats.
      */
-    RESET('r', 0x15),
+    RESET('r'),
 
-    MATERIAL_QUARTZ('h', 0),
-    MATERIAL_IRON('i', 0),
-    MATERIAL_NETHERITE('j', 0),
-    MATERIAL_REDSTONE('m', 0),
-    MATERIAL_COPPER('n', 0),
-    MATERIAL_GOLD('p', 0),
-    MATERIAL_EMERALD('q', 0),
-    MATERIAL_DIAMOND('s', 0),
-    MATERIAL_LAPIS('t', 0),
-    MATERIAL_AMETHYST('u', 0);
+    MATERIAL_QUARTZ('h'),
+    MATERIAL_IRON('i'),
+    MATERIAL_NETHERITE('j'),
+    MATERIAL_REDSTONE('m'),
+    MATERIAL_COPPER('n'),
+    MATERIAL_GOLD('p'),
+    MATERIAL_EMERALD('q'),
+    MATERIAL_DIAMOND('s'),
+    MATERIAL_LAPIS('t'),
+    MATERIAL_AMETHYST('u');
 
     /**
      * The special character which prefixes all format codes. Use this if
@@ -131,11 +131,11 @@ public enum TextFormat {
     private final boolean isFormat;
     private final String toString;
 
-    TextFormat(char code, int intCode) {
-        this(code, intCode, false);
+    TextFormat(char code) {
+        this(code, false);
     }
 
-    TextFormat(char code, int intCode, boolean isFormat) {
+    TextFormat(char code, boolean isFormat) {
         this.code = code;
         this.isFormat = isFormat;
         this.toString = new String(new char[]{ESCAPE, code});

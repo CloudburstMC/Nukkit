@@ -27,9 +27,20 @@ public class FoodChorusFruit extends FoodNormal {
         int minX = player.getFloorX() - 8;
         int minY = player.getFloorY() - 8;
         int minZ = player.getFloorZ() - 8;
+
         int maxX = minX + 16;
-        int maxY = minY + 16;
+        int maxY;
         int maxZ = minZ + 16;
+
+        if (player.getLevel().getDimension() == Level.DIMENSION_NETHER) {
+            maxY = Math.min(minY + 16, 125);
+
+            if (minY > maxY) {
+                minY = maxY;
+            }
+        } else {
+            maxY = minY + 16;
+        }
 
         int minBlockY = player.getLevel().getMinBlockY();
 

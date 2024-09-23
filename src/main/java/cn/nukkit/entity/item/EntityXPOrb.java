@@ -164,7 +164,7 @@ public class EntityXPOrb extends Entity {
 
             if (this.isOnGround()) {
                 this.motionY = 0;
-            } else if (Block.hasWater(level.getBlockIdAt(this.chunk, this.getFloorX(), NukkitMath.floorDouble(this.y + 0.53), this.getFloorZ()))) {
+            } else if (Block.isWater(level.getBlockIdAt(this.chunk, this.getFloorX(), NukkitMath.floorDouble(this.y + 0.53), this.getFloorZ()))) {
                 this.motionY = this.getGravity() / 2;
             } else {
                 this.motionY -= this.getGravity();
