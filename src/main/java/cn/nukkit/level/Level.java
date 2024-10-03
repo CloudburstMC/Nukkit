@@ -1667,9 +1667,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             fullState = 0;
         }
 
-        Block block;
-        int blockId = fullState >> Block.DATA_BITS;
-        block = Block.fullList[fullState].clone();
+        Block block = Block.fullList[fullState].clone();
 
         block.x = x;
         block.y = y;
@@ -1697,9 +1695,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             fullState = 0;
         }
 
-        Block block;
-        int blockId = fullState >> Block.DATA_BITS;
-        block = Block.fullList[fullState].clone();
+        Block block = Block.fullList[fullState].clone();
 
         block.x = x;
         block.y = y;
@@ -1851,9 +1847,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             return;
         }
 
-        Block block;
-        int blockId = fullId >> Block.DATA_BITS;
-        block = Block.fullList[fullId];
+        Block block = Block.fullList[fullId];
 
         this.setBlock(x, y, z, layer, block, false, false);
     }

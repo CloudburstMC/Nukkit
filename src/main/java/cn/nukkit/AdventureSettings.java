@@ -166,9 +166,6 @@ public class AdventureSettings implements Cloneable {
         BUILD(PlayerAbility.BUILD, true),
         PRIVILEGED_BUILDER(PlayerAbility.PRIVILEGED_BUILDER, false),
 
-        // For backwards compatibility
-        @Deprecated
-        BUILD_AND_MINE(null, true),
         @Deprecated
         DEFAULT_LEVEL_PERMISSIONS(null, false);
 
