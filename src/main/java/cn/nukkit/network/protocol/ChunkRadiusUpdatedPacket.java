@@ -20,7 +20,7 @@ public class ChunkRadiusUpdatedPacket extends DataPacket {
 
     @Override
     public void encode() {
-        super.reset();
+        this.reset();
         this.putVarInt(this.radius);
     }
 

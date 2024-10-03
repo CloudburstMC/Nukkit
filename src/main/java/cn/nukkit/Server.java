@@ -18,7 +18,6 @@ import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
-import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.event.server.ServerStopEvent;
@@ -724,17 +723,7 @@ public class Server {
     }
 
     public void batchPackets(Player[] players, DataPacket[] packets) {
-        if (players == null || packets == null || players.length == 0 || packets.length == 0) {
-            return;
-        }
-
-        BatchPacketsEvent ev = new BatchPacketsEvent(players, packets, true);
-        pluginManager.callEvent(ev);
-        if (ev.isCancelled()) {
-            return;
-        }
-
-        this.batchingHelper.batchPackets(players, packets);
+        this.batchingHelper.batchPackets(this, players, packets);
     }
 
     /**

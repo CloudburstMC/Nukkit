@@ -51,11 +51,4 @@ public class InventoryContentPacket extends DataPacket {
         this.putBoolean(false); // fullContainerName.optional.present
         this.putUnsignedVarInt(0); // dynamicContainerSize
     }
-
-    @Override
-    public InventoryContentPacket clone() {
-        InventoryContentPacket pk = (InventoryContentPacket) super.clone();
-        pk.slots = this.slots.clone();
-        return pk;
-    }
 }

@@ -2,6 +2,7 @@ package cn.nukkit.network;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
+import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.network.protocol.DataPacket;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
@@ -19,16 +20,24 @@ public class BatchingHelper {
         this.threadedExecutor = Executors.newSingleThreadExecutor(builder.build());
     }
 
-    public void batchPackets(Player[] players, DataPacket[] packets) {
-        if (players.length > 0 && packets.length > 0) {
-            this.threadedExecutor.execute(() -> {
-                for (Player player : players) {
-                    for (DataPacket packet : packets) {
-                        player.getNetworkSession().sendPacket(packet);
-                    }
-                }
-            });
+    public void batchPackets(Server server, Player[] players, DataPacket[] packets) {
+        if (players == null || packets == null || players.length == 0 || packets.length == 0) {
+            return;
         }
+
+        BatchPacketsEvent ev = new BatchPacketsEvent(players, packets, true);
+        server.getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return;
+        }
+
+        this.threadedExecutor.execute(() -> { // Maybe players could have separate threads assigned to them?
+            for (Player player : players) {
+                for (DataPacket packet : packets) {
+                    player.getNetworkSession().sendPacket(packet);
+                }
+            }
+        });
     }
 
     public void shutdown() {

@@ -8,7 +8,6 @@ import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.DisconnectPacket;
-import cn.nukkit.network.protocol.ProtocolInfo;
 import cn.nukkit.utils.BinaryStream;
 import com.google.common.base.Preconditions;
 import com.nukkitx.natives.sha256.Sha256;
@@ -144,7 +143,7 @@ public class RakNetPlayerSession extends SimpleChannelInboundHandler<RakMessage>
             return;
         }
 
-        if (packet.pid() != ProtocolInfo.BATCH_PACKET) {
+        if (!(packet instanceof BatchPacket)) {
             packet.tryEncode();
         }
 

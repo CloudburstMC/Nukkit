@@ -28,4 +28,13 @@ public class BatchPacket extends DataPacket {
     public void trim() {
         setBuffer(null);
     }
+
+    @Override
+    public BatchPacket clone() {
+        BatchPacket packet = (BatchPacket) super.clone();
+        if (this.payload != null) {
+            packet.payload = this.payload.clone();
+        }
+        return packet;
+    }
 }

@@ -1,7 +1,5 @@
 package cn.nukkit.utils;
 
-import cn.nukkit.Server;
-
 import java.io.IOException;
 import java.util.zip.Deflater;
 
@@ -15,10 +13,6 @@ public abstract class Zlib {
 
     public static byte[] deflate(byte[] data, int level) throws Exception {
         return provider.deflate(data, level);
-    }
-
-    public static byte[] deflatePre16Packet(byte[] data, int level) throws Exception {
-        return provider.deflate(data, data.length < Server.getInstance().networkCompressionThreshold ? 0 : level);
     }
 
     public static byte[] deflate(byte[][] data, int level) throws Exception {

@@ -132,7 +132,6 @@ public class FastByteArrayOutputStream extends OutputStream {
     }
 
     public byte[] toByteArray() {
-        if (position == array.length) return array;
         return Arrays.copyOfRange(array, 0, position);
     }
 }
