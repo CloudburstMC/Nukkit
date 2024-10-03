@@ -1,7 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.block.custom.CustomBlockDefinition;
-import cn.nukkit.block.custom.CustomBlockManager;
 import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRules;
 import cn.nukkit.network.protocol.types.ExperimentData;
@@ -13,7 +11,6 @@ import lombok.ToString;
 import java.io.IOException;
 import java.util.UUID;
 
-import java.util.Collection;
 import java.util.List;
 
 @ToString
@@ -91,7 +88,6 @@ public class StartGamePacket extends DataPacket {
     public boolean disablePlayerInteractions;
     public boolean emoteChatMuted;
     public boolean hardcore;
-    public Collection<CustomBlockDefinition> blockDefinitions = CustomBlockManager.get().getBlockDefinitions();
     public final List<ExperimentData> experiments = new ObjectArrayList<>();
 
     @Override
@@ -174,15 +170,7 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(true); // isServerAuthoritativeBlockBreaking
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
-        if (this.blockDefinitions != null && !this.blockDefinitions.isEmpty()) {
-            this.putUnsignedVarInt(this.blockDefinitions.size());
-            for (CustomBlockDefinition definition : this.blockDefinitions) {
-                this.putString(definition.getIdentifier());
-                this.putNbtTag(definition.getNetworkData());
-            }
-        } else {
-            this.putUnsignedVarInt(0); // No custom blocks
-        }
+        this.putUnsignedVarInt(0); // No custom blocks
         this.put(RuntimeItems.getMapping().getItemPalette());
         this.putString(this.multiplayerCorrelationId);
         this.putBoolean(false); // isInventoryServerAuthoritative

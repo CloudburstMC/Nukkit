@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.*;
 import cn.nukkit.blockentity.BlockEntity;
-import cn.nukkit.block.custom.CustomBlockManager;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.custom.EntityDefinition;
 import cn.nukkit.entity.custom.EntityManager;
@@ -1677,11 +1676,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
         Block block;
         int blockId = fullState >> Block.DATA_BITS;
-        if (blockId >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            block = CustomBlockManager.get().getBlock(fullState);
-        } else {
-            block = Block.fullList[fullState].clone();
-        }
+        block = Block.fullList[fullState].clone();
 
         block.x = x;
         block.y = y;
@@ -1711,11 +1706,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
         Block block;
         int blockId = fullState >> Block.DATA_BITS;
-        if (blockId >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            block = CustomBlockManager.get().getBlock(fullState);
-        } else {
-            block = Block.fullList[fullState].clone();
-        }
+        block = Block.fullList[fullState].clone();
 
         block.x = x;
         block.y = y;
@@ -1869,11 +1860,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
         Block block;
         int blockId = fullId >> Block.DATA_BITS;
-        if (blockId >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            block = CustomBlockManager.get().getBlock(fullId);
-        } else {
-            block = Block.fullList[fullId];
-        }
+        block = Block.fullList[fullId];
 
         this.setBlock(x, y, z, layer, block, false, false);
     }

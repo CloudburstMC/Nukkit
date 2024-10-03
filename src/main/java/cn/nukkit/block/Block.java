@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.block.custom.CustomBlockManager;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
@@ -162,9 +161,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
             id = 255 - id;
         }
 
-        if (id >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            return CustomBlockManager.get().getBlock(id, 0);
-        }
         return fullList[id << DATA_BITS].clone();
     }
 
@@ -174,9 +170,6 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
 
         int fullId = meta == null ? (id << DATA_BITS ) : ((id << DATA_BITS) | meta);
-        if (id >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            return CustomBlockManager.get().getBlock(fullId);
-        }
 
         return fullList[fullId].clone();
     }
@@ -191,10 +184,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
 
         Block block;
-        if (id >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            int fullId = (meta != null && meta > DATA_SIZE) ? (id << DATA_BITS) : ((id << DATA_BITS) | (meta == null ? 0 : meta));
-            block = CustomBlockManager.get().getBlock(fullId);
-        } else if (meta != null && meta > DATA_SIZE) {
+        if (meta != null && meta > DATA_SIZE) {
             block = fullList[id << DATA_BITS].clone();
             block.setDamage(meta);
         } else {
@@ -217,9 +207,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         }
 
         int fullId = (id << DATA_BITS ) | data;
-        if (id >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            return CustomBlockManager.get().getBlock(fullId);
-        }
+
         return fullList[fullId].clone();
     }
 
@@ -228,12 +216,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public static Block get(int fullId, Level level, int x, int y, int z, BlockLayer layer) {
-        Block block;
-        if ((fullId >> DATA_BITS) >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            block = CustomBlockManager.get().getBlock(fullId);
-        } else {
-            block = fullList[fullId].clone();
-        }
+        Block block = fullList[fullId].clone();
 
         block.x = x;
         block.y = y;
@@ -244,30 +227,18 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     public static int getBlockLight(int blockId) {
-        if (blockId >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            return light[0]; // TODO: just temporary
-        }
         return light[blockId];
     }
 
     public static int getBlockLightFilter(int blockId) {
-        if (blockId >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            return lightFilter[0]; // TODO: just temporary
-        }
         return lightFilter[blockId];
     }
 
     public static boolean isBlockSolidById(int blockId) {
-        if (blockId >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            return solid[1]; // TODO: just temporary
-        }
         return solid[blockId];
     }
 
     public static boolean isBlockTransparentById(int blockId) {
-        if (blockId >= CustomBlockManager.LOWEST_CUSTOM_BLOCK_ID) {
-            return transparent[1]; // TODO: just temporary
-        }
         return transparent[blockId];
     }
 

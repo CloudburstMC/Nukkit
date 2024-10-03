@@ -4,7 +4,6 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.*;
 import cn.nukkit.command.*;
 import cn.nukkit.console.NukkitConsole;
-import cn.nukkit.block.custom.CustomBlockManager;
 import cn.nukkit.dispenser.DispenseBehaviorRegister;
 import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
@@ -482,7 +481,6 @@ public class Server {
         Potion.init();
         Attribute.init();
         DispenseBehaviorRegister.init();
-        CustomBlockManager.init(this);
         //noinspection ResultOfMethodCallIgnored
         EntityManager.get();
         //noinspection ResultOfMethodCallIgnored
@@ -534,13 +532,6 @@ public class Server {
         this.enablePlugins(PluginLoadOrder.STARTUP);
 
         boolean regenerateItemPalette = false;
-        try {
-            if (CustomBlockManager.get().closeRegistry()) {
-                regenerateItemPalette = true;
-            }
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to init custom blocks", e);
-        }
 
         if (CustomItemManager.get().closeRegistry()) {
             regenerateItemPalette = true;

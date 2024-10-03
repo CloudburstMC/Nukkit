@@ -9,7 +9,6 @@ import cn.nukkit.blockentity.BlockEntitySpawnable;
 import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandDataVersions;
-import cn.nukkit.block.custom.CustomBlockManager;
 import cn.nukkit.entity.*;
 import cn.nukkit.entity.custom.EntityManager;
 import cn.nukkit.entity.data.*;
@@ -2740,10 +2739,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
         }
 
-        if (!CustomBlockManager.get().getBlockDefinitions().isEmpty()) {
-            startGamePacket.experiments.add(new ExperimentData("data_driven_items", true));
-        }
-
         this.forceDataPacket(startGamePacket, null);
 
         this.loggedIn = true;
@@ -3041,9 +3036,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         ResourcePackStackPacket stackPacket = new ResourcePackStackPacket();
                         stackPacket.mustAccept = this.server.getForceResources() && !this.server.forceResourcesAllowOwnPacks; // Option not to disable client's own packs
                         stackPacket.resourcePackStack = this.server.getResourcePackManager().getResourceStack();
-                        if (!CustomBlockManager.get().getBlockDefinitions().isEmpty()) {
-                            stackPacket.experiments.add(new ExperimentData("data_driven_items", true));
-                        }
                         this.dataPacket(stackPacket);
                         return;
                     case ResourcePackClientResponsePacket.STATUS_COMPLETED:
