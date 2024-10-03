@@ -3,6 +3,7 @@ package cn.nukkit.level.generator.object.tree;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockWood;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.biome.Biome;
 import cn.nukkit.math.NukkitRandom;
 
 /**
@@ -49,6 +50,8 @@ public class ObjectSpruceTree extends ObjectTree {
         int maxR = 1;
         int minR = 0;
 
+        boolean createSnow = this.canCreateSnow && Biome.getBiome(level.getChunk(x >> 4, z >> 4).getBiomeId(x & 0x0f, z & 0x0f)).isFreezing();
+
         for (int yy = 0; yy <= topSize; ++yy) {
             int yyy = y + this.treeHeight - yy;
 
@@ -63,7 +66,7 @@ public class ObjectSpruceTree extends ObjectTree {
                     if (!Block.isBlockSolidById(level.getBlockIdAt(xx, yyy, zz))) {
                         level.setBlockAt(xx, yyy, zz, this.getLeafBlock(), this.getType());
 
-                        if (this.canCreateSnow) {
+                        if (createSnow) {
                             if (level.getBlockIdAt(xx, yyy + 1, zz) == Block.AIR && level.getBlockIdAt(xx, yyy + 2, zz) == Block.AIR) {
                                 level.setBlockAt(xx, yyy + 1, zz, Block.SNOW_LAYER, 0);
                             }

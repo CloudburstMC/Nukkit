@@ -292,7 +292,7 @@ public class ItemBucket extends Item {
                 player.setNeedSendInventory(true);
             }
         } else if (targetBlock instanceof BlockPowderSnow) {
-            if (player.getLevel().getProvider() instanceof Anvil) {
+            if (player.getLevel().getProvider() instanceof Anvil || !block.canBeReplaced()) {
                 return false;
             }
 

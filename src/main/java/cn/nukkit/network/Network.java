@@ -44,19 +44,23 @@ public class Network {
         this.server = server;
     }
 
+    @Deprecated
     public void addStatistics(double upload, double download) {
         this.upload += upload;
         this.download += download;
     }
 
+    @Deprecated
     public double getUpload() {
         return upload;
     }
 
+    @Deprecated
     public double getDownload() {
         return download;
     }
 
+    @Deprecated
     public void resetStatistics() {
         this.upload = 0;
         this.download = 0;

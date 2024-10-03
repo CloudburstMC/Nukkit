@@ -29,7 +29,7 @@ public class ShortTag extends NumberTag<Integer> {
     }
 
     @Override
-    public void write(NBTOutputStream dos) throws IOException {
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeShort(data);
     }
 

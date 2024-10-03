@@ -1,6 +1,5 @@
 package cn.nukkit;
 
-import cn.nukkit.network.protocol.AdventureSettingsPacket;
 import cn.nukkit.network.protocol.UpdateAbilitiesPacket;
 import cn.nukkit.network.protocol.UpdateAdventureSettingsPacket;
 import cn.nukkit.network.protocol.types.AbilityLayer;
@@ -147,49 +146,38 @@ public class AdventureSettings implements Cloneable {
      * List of adventure settings
      */
     public enum Type {
-        WORLD_IMMUTABLE(AdventureSettingsPacket.WORLD_IMMUTABLE, null, false),
-        NO_PVM(AdventureSettingsPacket.NO_PVM, null, false),
-        NO_MVP(AdventureSettingsPacket.NO_MVP, PlayerAbility.INVULNERABLE, false),
-        SHOW_NAME_TAGS(AdventureSettingsPacket.SHOW_NAME_TAGS, null, false),
-        AUTO_JUMP(AdventureSettingsPacket.AUTO_JUMP, null, true),
-        ALLOW_FLIGHT(AdventureSettingsPacket.ALLOW_FLIGHT, PlayerAbility.MAY_FLY, false),
-        NO_CLIP(AdventureSettingsPacket.NO_CLIP, PlayerAbility.NO_CLIP, false),
-        WORLD_BUILDER(AdventureSettingsPacket.WORLD_BUILDER, PlayerAbility.WORLD_BUILDER, false),
-        FLYING(AdventureSettingsPacket.FLYING, PlayerAbility.FLYING, false),
-        MUTED(AdventureSettingsPacket.MUTED, PlayerAbility.MUTED, false),
-        MINE(AdventureSettingsPacket.MINE, PlayerAbility.MINE, true),
-        DOORS_AND_SWITCHED(AdventureSettingsPacket.DOORS_AND_SWITCHES, PlayerAbility.DOORS_AND_SWITCHES, true),
-        OPEN_CONTAINERS(AdventureSettingsPacket.OPEN_CONTAINERS, PlayerAbility.OPEN_CONTAINERS, true),
-        ATTACK_PLAYERS(AdventureSettingsPacket.ATTACK_PLAYERS, PlayerAbility.ATTACK_PLAYERS, true),
-        ATTACK_MOBS(AdventureSettingsPacket.ATTACK_MOBS, PlayerAbility.ATTACK_MOBS, true),
-        OPERATOR(AdventureSettingsPacket.OPERATOR, PlayerAbility.OPERATOR_COMMANDS, false),
-        TELEPORT(AdventureSettingsPacket.TELEPORT, PlayerAbility.TELEPORT, false),
-        BUILD(AdventureSettingsPacket.BUILD, PlayerAbility.BUILD, true),
-        PRIVILEGED_BUILDER(0, PlayerAbility.PRIVILEGED_BUILDER, false),
+        WORLD_IMMUTABLE(null, false),
+        NO_PVM(null, false),
+        NO_MVP(PlayerAbility.INVULNERABLE, false),
+        SHOW_NAME_TAGS(null, false),
+        AUTO_JUMP(null, true),
+        ALLOW_FLIGHT(PlayerAbility.MAY_FLY, false),
+        NO_CLIP(PlayerAbility.NO_CLIP, false),
+        WORLD_BUILDER(PlayerAbility.WORLD_BUILDER, false),
+        FLYING(PlayerAbility.FLYING, false),
+        MUTED(PlayerAbility.MUTED, false),
+        MINE(PlayerAbility.MINE, true),
+        DOORS_AND_SWITCHED(PlayerAbility.DOORS_AND_SWITCHES, true),
+        OPEN_CONTAINERS(PlayerAbility.OPEN_CONTAINERS, true),
+        ATTACK_PLAYERS(PlayerAbility.ATTACK_PLAYERS, true),
+        ATTACK_MOBS(PlayerAbility.ATTACK_MOBS, true),
+        OPERATOR(PlayerAbility.OPERATOR_COMMANDS, false),
+        TELEPORT(PlayerAbility.TELEPORT, false),
+        BUILD(PlayerAbility.BUILD, true),
+        PRIVILEGED_BUILDER(PlayerAbility.PRIVILEGED_BUILDER, false),
 
         // For backwards compatibility
         @Deprecated
-        BUILD_AND_MINE(0, null, true),
+        BUILD_AND_MINE(null, true),
         @Deprecated
-        DEFAULT_LEVEL_PERMISSIONS(AdventureSettingsPacket.DEFAULT_LEVEL_PERMISSIONS, null, false);
+        DEFAULT_LEVEL_PERMISSIONS(null, false);
 
-        private final int id;
         private final PlayerAbility ability;
         private final boolean defaultValue;
 
-        Type(int id, PlayerAbility ability, boolean defaultValue) {
-            this.id = id;
+        Type(PlayerAbility ability, boolean defaultValue) {
             this.ability = ability;
             this.defaultValue = defaultValue;
-        }
-
-        /**
-         * Legacy: Get adventure setting ID if available
-         *
-         * @return adventure setting ID
-         */
-        public int getId() {
-            return this.id;
         }
 
         /**

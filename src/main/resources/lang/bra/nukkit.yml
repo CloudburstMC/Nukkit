@@ -22,7 +22,7 @@ network:
  #Coloque 0 para compactar tudo, -1 para desativar.
  batch-threshold: 256
  #Nível de compressão usado pelo Zlib ao enviar packets compactados. Maior = mais uso na CPU, menos bandwidth utilizado.
- compression-level: 4
+ compression-level: 5
  #Enable network encryption
  encryption: true
 

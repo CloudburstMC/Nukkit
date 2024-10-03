@@ -15,9 +15,6 @@ public class ItemCoal extends Item {
     }
 
     public ItemCoal(Integer meta, int count) {
-        super(COAL, meta, count, "Coal");
-        if (this.meta == 1) {
-            this.name = "Charcoal";
-        }
+        super(COAL, meta, count, meta != null && meta == 1 ? "Charcoal" : "Coal");
     }
 }

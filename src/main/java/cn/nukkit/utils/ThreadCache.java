@@ -9,18 +9,29 @@ import java.util.BitSet;
  */
 public class ThreadCache {
 
+    @Deprecated
+    public static void clean() {
+    }
+
+    @Deprecated
     public static final ThreadLocal<byte[][]> idArray = ThreadLocal.withInitial(() -> new byte[16][]);
 
+    @Deprecated
     public static final ThreadLocal<byte[][]> dataArray = ThreadLocal.withInitial(() -> new byte[16][]);
 
+    @Deprecated
     public static final ThreadLocal<byte[]> byteCache6144 = ThreadLocal.withInitial(() -> new byte[6144]);
 
+    @Deprecated
     public static final ThreadLocal<byte[]> byteCache256 = ThreadLocal.withInitial(() -> new byte[256]);
 
+    @Deprecated
     public static final ThreadLocal<BitSet> boolCache4096 = ThreadLocal.withInitial(() -> new BitSet(4096));
 
+    @Deprecated
     public static final ThreadLocal<char[]> charCache4096v2 = ThreadLocal.withInitial(() -> new char[4096]);
 
+    @Deprecated
     public static final ThreadLocal<char[]> charCache4096 = ThreadLocal.withInitial(() -> new char[4096]);
 
     public static final ThreadLocal<int[]> intCache256 = ThreadLocal.withInitial(() -> new int[256]);

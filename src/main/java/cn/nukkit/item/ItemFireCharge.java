@@ -35,7 +35,8 @@ public class ItemFireCharge extends Item {
 
         if (block.getId() == AIR && (target instanceof BlockSolid || target instanceof BlockSolidMeta || target instanceof BlockLeaves)) {
             if (target.getId() == OBSIDIAN) {
-                if (level.createPortal(target, true)) {
+                if (level.createPortal(target)) {
+                    level.addSound(target, Sound.MOB_GHAST_FIREBALL);
                     return true;
                 }
             }

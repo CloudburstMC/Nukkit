@@ -14,10 +14,11 @@ public class FlintAndSteelDispenseBehavior extends DefaultDispenseBehavior {
 
         if (target.getId() == BlockID.AIR) {
             Block down = target.down();
-            if (down.getId() != BlockID.OBSIDIAN || !down.level.createPortal(down, false)) {
+            if (down.getId() != BlockID.OBSIDIAN || !down.level.createPortal(down)) {
                 boolean soulFire = down.getId() == Block.SOUL_SAND || down.getId() == Block.SOUL_SOIL;
                 block.level.setBlock(target, Block.get(soulFire ? BlockID.SOUL_FIRE : BlockID.FIRE));
             }
+            down.level.addSound(down, cn.nukkit.level.Sound.MOB_GHAST_FIREBALL);
             item.useOn(target);
         } else if (target.getId() == BlockID.TNT) {
             target.onActivate(item);

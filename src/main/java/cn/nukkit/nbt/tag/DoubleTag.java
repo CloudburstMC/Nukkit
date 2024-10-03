@@ -29,7 +29,7 @@ public class DoubleTag extends NumberTag<Double> {
     }
 
     @Override
-    public void write(NBTOutputStream dos) throws IOException {
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeDouble(data);
     }
 

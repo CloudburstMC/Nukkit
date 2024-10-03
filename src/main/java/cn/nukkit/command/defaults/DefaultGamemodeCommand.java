@@ -8,6 +8,7 @@ import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.network.protocol.SetDefaultGameTypePacket;
+import cn.nukkit.utils.TextFormat;
 
 /**
  * Created on 2015/11/12 by xtypr.
@@ -47,7 +48,7 @@ public class DefaultGamemodeCommand extends VanillaCommand {
             gameTypePacket.gamemode = sender.getServer().getDefaultGamemode();
             Server.broadcastPacket(sender.getServer().getOnlinePlayers().values(), gameTypePacket);
         } else {
-            sender.sendMessage("Unknown game mode");
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.gamemode.fail.invalid", args[0]));
         }
         return true;
     }

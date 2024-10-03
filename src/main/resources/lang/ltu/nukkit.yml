@@ -22,7 +22,7 @@ network:
  #Nustatykite 0, jeigu norite suspausti visus paketus, -1, kad išjungti
  batch-threshold: 256
  #Suspaudimo lygis naudojant Zlib kai siunčiami suspausti paketai. Didesnė reikšmė = daugiau CPU, mažiau tinklo naudojimo
- compression-level: 4
+ compression-level: 5
  #Enable network encryption
  encryption: true
 

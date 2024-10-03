@@ -20,7 +20,7 @@ public class IntArrayTag extends Tag {
     }
 
     @Override
-    public void write(NBTOutputStream dos) throws IOException {
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeInt(data.length);
         for (int aData : data) {
             dos.writeInt(aData);

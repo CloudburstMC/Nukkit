@@ -372,7 +372,12 @@ public abstract class Entity extends Location implements Metadatable {
     public double lastPitch;
     public double lastHeadYaw;
 
-    public double entityCollisionReduction = 0; // Higher than 0.9 will result a fast collisions
+    @Deprecated
+    public double PitchDelta;
+    @Deprecated
+    public double YawDelta;
+
+    public double entityCollisionReduction; // Higher than 0.9 will result a fast collisions
     public AxisAlignedBB boundingBox;
     public boolean onGround;
     @Deprecated
@@ -381,25 +386,25 @@ public abstract class Entity extends Location implements Metadatable {
     public boolean positionChanged;
     @Deprecated
     public boolean motionChanged;
-    public int deadTicks = 0;
-    public int age = 0;
-    public int ticksLived = 0;
+    public int deadTicks;
+    public int age;
+    public int ticksLived;
     protected int airTicks = 400;
     protected boolean noFallDamage;
 
     protected float health = 20;
     protected int maxHealth = 20;
 
-    protected float absorption = 0;
+    protected float absorption;
 
-    protected float ySize = 0;
+    protected float ySize;
     public boolean keepMovement;
 
-    public float fallDistance = 0;
+    public float fallDistance;
     public int lastUpdate;
-    public int fireTicks = 0;
-    public int inPortalTicks = 0;
-    public int inEndPortalTicks = 0;
+    public int fireTicks;
+    public int inPortalTicks;
+    public int inEndPortalTicks;
     protected Position portalPos;
     public boolean noClip;
     public float scale = 1;
@@ -433,7 +438,8 @@ public abstract class Entity extends Location implements Metadatable {
 
     public boolean closed;
 
-    public final boolean isPlayer;
+    @Deprecated
+    public final boolean isPlayer = this instanceof Player;
 
     private volatile boolean init;
     private volatile boolean initEntity;
@@ -481,8 +487,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public Entity(FullChunk chunk, CompoundTag nbt) {
-        this.isPlayer = this instanceof Player;
-        if (!this.isPlayer) {
+        if (!(this instanceof Player)) {
             this.init(chunk, nbt);
         }
     }
@@ -1042,6 +1047,10 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         return entity;
+    }
+
+    public static boolean isKnown(String name) {
+        return knownEntities.containsKey(name);
     }
 
     public static boolean registerEntity(String name, Class<? extends Entity> clazz) {
@@ -2575,6 +2584,10 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean teleport(Location location, PlayerTeleportEvent.TeleportCause cause) {
+        if (!this.server.isPrimaryThread()) {
+            this.server.getLogger().warning("Entity teleported asynchronously: " + this.getClass().getSimpleName());
+        }
+
         double yaw = location.yaw;
         double pitch = location.pitch;
 
@@ -2843,23 +2856,6 @@ public abstract class Entity extends Location implements Metadatable {
     @Override
     public int hashCode() {
         return (int) (203 + this.id);
-    }
-
-    public static Entity create(Object type, Position source, Object... args) {
-        FullChunk chunk = source.getLevel().getChunk((int) source.x >> 4, (int) source.z >> 4, true);
-        if (!chunk.isGenerated()) {
-            chunk.setGenerated();
-        }
-        if (!chunk.isPopulated()) {
-            chunk.setPopulated();
-        }
-
-        CompoundTag nbt = new CompoundTag().putList(new ListTag<DoubleTag>("Pos").add(new DoubleTag("", source.x)).add(new DoubleTag("", source.y)).add(new DoubleTag("", source.z)))
-                .putList(new ListTag<DoubleTag>("Motion").add(new DoubleTag("", 0)).add(new DoubleTag("", 0)).add(new DoubleTag("", 0)))
-                .putList(new ListTag<FloatTag>("Rotation").add(new FloatTag("", source instanceof Location ? (float) ((Location) source).yaw : 0))
-                        .add(new FloatTag("", source instanceof Location ? (float) ((Location) source).pitch : 0)));
-
-        return Entity.createEntity(type.toString(), chunk, nbt, args);
     }
 
     public boolean isOnLadder() {

@@ -29,7 +29,7 @@ public class FloatTag extends NumberTag<Float> {
     }
 
     @Override
-    public void write(NBTOutputStream dos) throws IOException {
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeFloat(data);
     }
 

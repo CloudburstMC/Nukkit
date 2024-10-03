@@ -25,6 +25,7 @@ public enum LogLevel implements Comparable<LogLevel> {
     /**
      * Default logging level: INFO
      */
+    @Deprecated
     public static final LogLevel DEFAULT_LEVEL = INFO;
 
     private final BiConsumer<MainLogger, String> logTo;

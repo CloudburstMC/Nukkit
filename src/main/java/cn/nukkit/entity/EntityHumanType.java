@@ -54,6 +54,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
             for (CompoundTag item : inventoryList.getAll()) {
                 int slot = item.getByte("Slot");
                 if (slot >= 0 && slot < 9) {
+                    // Old hotbar saving stuff, remove it (useless now)
                     inventoryList.remove(item);
                 } else if (slot >= 100 && slot < 104) {
                     this.inventory.setItem(this.inventory.getSize() + slot - 100, NBTIO.getItemHelper(item));
@@ -96,7 +97,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                 );
             }
 
-            int slotCount = 45;
+            int slotCount = 45; // SURVIVAL_SLOTS + 9
             for (int slot = 9; slot < slotCount; ++slot) {
                 Item item = this.inventory.getItem(slot - 9);
                 inventoryTag.add(NBTIO.putItemHelper(item, slot));

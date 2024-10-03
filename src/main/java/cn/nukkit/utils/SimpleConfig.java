@@ -19,6 +19,7 @@ import java.util.List;
  * <p>
  * Added 11/02/2016 by fromgate
  */
+@SuppressWarnings("unused")
 public abstract class SimpleConfig {
 
     private final File configFile;

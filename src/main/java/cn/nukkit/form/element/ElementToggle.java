@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 public class ElementToggle extends Element {
 
     @SuppressWarnings("unused")
-    private final String type = "toggle";
+    private final String type = "toggle"; //This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String text;
     @SerializedName("default")
     private boolean defaultValue;

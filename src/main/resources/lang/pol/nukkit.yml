@@ -22,7 +22,7 @@ network:
  #Set to 0 to compress everything, -1 to disable.
  batch-threshold: 256
  #Compression level used of Zlib when sending batched packets. Higher = more CPU, less bandwidth usage
- compression-level: 4
+ compression-level: 5
  #Enable network encryption
  encryption: true
 

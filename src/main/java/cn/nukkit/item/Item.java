@@ -399,12 +399,12 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     public static void removeCreativeItem(Item item) {
         int index = getCreativeItemIndex(item);
         if (index != -1) {
-            getCreativeItems().remove(index);
+            Item.CREATIVE_ITEMS.remove(index);
         }
     }
 
     public static boolean isCreativeItem(Item item) {
-        for (Item aCreative : getCreativeItems()) {
+        for (Item aCreative : Item.CREATIVE_ITEMS) {
             if (item.equals(aCreative, !item.isTool())) {
                 return true;
             }
@@ -413,12 +413,12 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     }
 
     public static Item getCreativeItem(int index) {
-        ArrayList<Item> items = getCreativeItems();
+        List<Item> items = Item.CREATIVE_ITEMS;
         return (index >= 0 && index < items.size()) ? items.get(index) : null;
     }
 
     public static int getCreativeItemIndex(Item item) {
-        ArrayList<Item> items = getCreativeItems();
+        List<Item> items = Item.CREATIVE_ITEMS;
         for (int i = 0; i < items.size(); i++) {
             if (item.equals(items.get(i), !item.isTool())) {
                 return i;

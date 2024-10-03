@@ -22,7 +22,7 @@ network:
  #Ajustar a 0 para comprimir todo, -1 para desactivar.
  batch-threshold: 256
  #Nivel de compresion usada para el envió de paquetes. Alta = más CPU, menos banda ancha
- compression-level: 4
+ compression-level: 5
  #Enable network encryption
  encryption: true
 

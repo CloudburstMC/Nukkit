@@ -43,25 +43,6 @@ public class BlockPalette {
         this.legacyToRuntimeId.put(legacyId, runtimeId);
         this.runtimeIdToLegacy.putIfAbsent(runtimeId, legacyId);
         this.stateToLegacy.putIfAbsent(blockState, legacyId);
-
-        // Hack: Map IDs for item frame up & down states
-        if (blockId == BlockID.ITEM_FRAME_BLOCK || blockId == BlockID.GLOW_FRAME) {
-            if (data == 7) {
-                int offset = 5;
-
-                runtimeId = runtimeId + offset;
-                legacyId = blockId << 6 | 5; // Up
-                this.legacyToRuntimeId.put(legacyId, runtimeId);
-                this.runtimeIdToLegacy.putIfAbsent(runtimeId, legacyId);
-
-                int offset2 = 0;
-
-                runtimeId = runtimeId + offset + offset2;
-                legacyId = blockId << 6 | 4; // Down
-                this.legacyToRuntimeId.put(legacyId, runtimeId);
-                this.runtimeIdToLegacy.putIfAbsent(runtimeId, legacyId);
-            }
-        }
     }
 
     public void lock() {

@@ -12,7 +12,7 @@ import java.util.List;
 public class FormWindowCustom extends FormWindow {
 
     @SuppressWarnings("unused")
-    private final String type = "custom_form";
+    private final String type = "custom_form"; // This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String title = "";
     private ElementButtonImageData icon;
     @SuppressWarnings("FieldMayBeFinal")

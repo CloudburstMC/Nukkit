@@ -25,7 +25,7 @@ public class ListTag<T extends Tag> extends Tag {
     }
 
     @Override
-    public void write(NBTOutputStream dos) throws IOException {
+    void write(NBTOutputStream dos) throws IOException {
         if (!list.isEmpty()) type = list.get(0).getId();
         else type = 1;
 

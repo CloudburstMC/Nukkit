@@ -24,7 +24,7 @@ public class CompoundTag extends Tag implements Cloneable {
     }
 
     @Override
-    public void write(NBTOutputStream dos) throws IOException {
+    void write(NBTOutputStream dos) throws IOException {
         for (Map.Entry<String, Tag> entry : this.tags.entrySet()) {
             Tag.writeNamedTag(entry.getValue(), entry.getKey(), dos);
         }

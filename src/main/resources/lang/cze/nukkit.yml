@@ -23,7 +23,7 @@ network:
  #Nastavte na 0, chcete-li vše komprimovat, -1 zakázat
  batch-threshold: 256
  #Compression level používaný Zlib při odesílání dávkových paketů. Vyšší = více CPU, méně využití šířky pásma
- compression-level: 4
+ compression-level: 5
  #Enable network encryption
  encryption: true
 

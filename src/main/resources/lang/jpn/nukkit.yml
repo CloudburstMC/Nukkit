@@ -22,7 +22,7 @@ network:
  #0にするとすべてのパケットを圧縮します, -1 で無効です.
  batch-threshold: 256
  #バッチパケットを送信するときのzlibの圧縮レベルですす。 値を大きくするとcpuに多く負荷かけ、低くすると通信量が増えます。
- compression-level: 4
+ compression-level: 5
  #Enable network encryption
  encryption: true
 

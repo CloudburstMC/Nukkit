@@ -6,6 +6,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Position;
 import cn.nukkit.network.protocol.AddEntityPacket;
 import cn.nukkit.utils.TextFormat;
@@ -36,16 +37,23 @@ public class SummonCommand extends VanillaCommand {
         }
 
         if (args.length == 0 || (args.length == 1 && !(sender instanceof Player))) {
+            sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }
 
+        String mob = args[0];
+
         // Convert Minecraft format to the format what Nukkit uses
-        String mob = Character.toUpperCase(args[0].charAt(0)) + args[0].substring(1);
-        int max = mob.length() - 1;
-        for (int x = 2; x < max; x++) {
-            if (mob.charAt(x) == '_') {
-                mob = mob.substring(0, x) + Character.toUpperCase(mob.charAt(x + 1)) + mob.substring(x + 2);
+        if (!Entity.isKnown(mob)) {
+            mob = Character.toUpperCase(args[0].charAt(0)) + args[0].substring(1);
+            StringBuilder sb = new StringBuilder(mob);
+            for (int x = 2; x < sb.length() - 1; x++) {
+                if (sb.charAt(x) == '_') {
+                    sb.setCharAt(x + 1, Character.toUpperCase(sb.charAt(x + 1)));
+                    sb.deleteCharAt(x);
+                }
             }
+            mob = sb.toString();
         }
 
         Player playerThatSpawns;
@@ -57,16 +65,16 @@ public class SummonCommand extends VanillaCommand {
         }
 
         if (playerThatSpawns != null) {
-            Position pos = playerThatSpawns.getPosition().floor().add(0.5, 0, 0.5);
+            Position pos = playerThatSpawns.floor().add(0.5, 0, 0.5);
             Entity ent;
             if ((ent = Entity.createEntity(mob, pos)) != null) {
                 ent.spawnToAll();
-                sender.sendMessage("§6Spawned " + mob + " to " + playerThatSpawns.getName());
+                sender.sendMessage(new TranslationContainer("%commands.summon.success"));
             } else {
-                sender.sendMessage(TextFormat.RED + "Unable to spawn " + mob);
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.summon.failed"));
             }
         } else {
-            sender.sendMessage(TextFormat.RED + "Unknown player " + (args.length == 2 ? args[1] : sender.getName()));
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
         }
 
         return true;

@@ -20,7 +20,7 @@ public class StringTag extends Tag {
     }
 
     @Override
-    public void write(NBTOutputStream dos) throws IOException {
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeUTF(data);
     }
 

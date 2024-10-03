@@ -540,7 +540,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     /**
-     * Set auto jump adventure setting
+     * Set auto jump adventure setting (adventureSettings.set(Type.AUTO_JUMP) + adventureSettings.update())
      * @param value auto jump enabled
      */
     @Deprecated
@@ -550,7 +550,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     /**
-     * Check wether auto jump adventure setting is enabled
+     * Check whether auto jump adventure setting is enabled (adventureSettings.get(Type.AUTO_JUMP))
      * @return auto jump enabled
      */
     @Deprecated
@@ -1638,7 +1638,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     /**
-     * Send adventure settings
+     * Send adventure settings (adventureSettings.update())
      */
     @Deprecated
     public void sendSettings() {

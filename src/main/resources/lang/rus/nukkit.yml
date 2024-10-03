@@ -28,7 +28,7 @@ network:
  batch-threshold: 256
  #Уровень сжатия используется Zlib при отправке сжатых пакетов
  #Чем больше - тем больше нагрузка на процессор, но меньше нагрузка на сеть
- compression-level: 4
+ compression-level: 5
  #Enable network encryption
  encryption: true
 

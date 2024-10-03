@@ -129,11 +129,6 @@ public class BlockEntityShulkerBox extends BlockEntitySpawnable implements Inven
         return this.inventory;
     }
 
-    @Deprecated
-    public ShulkerBoxInventory getRealInventory() {
-        return (ShulkerBoxInventory) this.getInventory();
-    }
-
     @Override
     public String getName() {
         return this.hasName() ? this.namedTag.getString("CustomName") : "Shulker Box";

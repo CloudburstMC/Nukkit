@@ -22,7 +22,7 @@ network:
  #設為0，壓縮全部。設為-1，停用功能
  batch-threshold: 256
  #壓縮等級，等級越高，CPU佔用越高，佔用頻寬越少
- compression-level: 4
+ compression-level: 5
  #Enable network encryption
  encryption: true
 

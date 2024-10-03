@@ -66,7 +66,6 @@ import lombok.Setter;
 import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Predicate;
 
 
 /**
@@ -319,13 +318,13 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         this.raining = this.provider.isRaining();
         this.rainTime = this.provider.getRainTime();
         if (this.rainTime <= 0) {
-            setRainTime(Utils.random.nextInt(168000) + 12000);
+            setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
 
         this.thundering = this.provider.isThundering();
         this.thunderTime = this.provider.getThunderTime();
         if (this.thunderTime <= 0) {
-            setThunderTime(Utils.random.nextInt(168000) + 12000);
+            setThunderTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
 
         this.levelCurrentTick = this.provider.getCurrentTick();
@@ -808,9 +807,9 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             if (this.rainTime <= 0) {
                 if (!this.setRaining(!this.raining)) {
                     if (this.raining) {
-                        setRainTime(Utils.random.nextInt(12000) + 12000);
+                        setRainTime(ThreadLocalRandom.current().nextInt(12000) + 12000);
                     } else {
-                        setRainTime(Utils.random.nextInt(168000) + 12000);
+                        setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
                     }
                 }
             }
@@ -819,9 +818,9 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             if (this.thunderTime <= 0) {
                 if (!this.setThundering(!this.thundering)) {
                     if (this.thundering) {
-                        setThunderTime(Utils.random.nextInt(12000) + 3600);
+                        setThunderTime(ThreadLocalRandom.current().nextInt(12000) + 3600);
                     } else {
-                        setThunderTime(Utils.random.nextInt(168000) + 12000);
+                        setThunderTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
                     }
                 }
             }
@@ -1003,19 +1002,19 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             return;
         }
 
-        int players = 0;
-        int sleeping = 0;
+        int playerCount = 0;
+        int sleepingPlayerCount = 0;
         for (Player p : this.players.values()) {
             if (p.isSpectator()) {
                 continue;
             }
-            players++;
+            playerCount++;
             if (p.isSleeping()) {
-                sleeping++;
+                sleepingPlayerCount++;
             }
         }
 
-        if (players > 0 && sleeping / players * 100 >= gameRules.getInteger(GameRule.PLAYERS_SLEEPING_PERCENTAGE)) {
+        if (playerCount > 0 && sleepingPlayerCount / playerCount * 100 >= gameRules.getInteger(GameRule.PLAYERS_SLEEPING_PERCENTAGE)) {
             int time = this.getTime() % Level.TIME_FULL;
 
             if ((time >= Level.TIME_NIGHT && time < Level.TIME_SUNRISE) || this.isThundering()) {
@@ -1107,9 +1106,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                 throw new IllegalStateException("Unable to create BlockUpdatePacket at (" + b.x + ", " + b.y + ", " + b.z + ") in " + getName());
             }
 
-            for (Player player : target) {
-                player.dataPacket(packet);
-            }
+            Server.broadcastPacket(target, packet);
         }
     }
 
@@ -1419,10 +1416,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     }
 
     public Block[] getCollisionBlocks(Entity entity, AxisAlignedBB bb, boolean targetFirst) {
-        return getCollisionBlocks(entity, bb, targetFirst, block -> block.getId() != 0);
-    }
-
-    public Block[] getCollisionBlocks(Entity entity, AxisAlignedBB bb, boolean targetFirst, Predicate<Block> condition) {
         int minX = NukkitMath.floorDouble(bb.getMinX());
         int minY = NukkitMath.floorDouble(bb.getMinY());
         int minZ = NukkitMath.floorDouble(bb.getMinZ());
@@ -1437,7 +1430,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                 for (int x = minX; x <= maxX; ++x) {
                     for (int y = minY; y <= maxY; ++y) {
                         Block block = this.getBlock(entity == null ? null : entity.chunk, x, y, z, false);
-                        if (block != null && condition.test(block) && block.collidesWithBB(bb)) {
+                        if (block != null && block.getId() != 0 && block.collidesWithBB(bb)) {
                             return new Block[]{block};
                         }
                     }
@@ -1448,7 +1441,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                 for (int x = minX; x <= maxX; ++x) {
                     for (int y = minY; y <= maxY; ++y) {
                         Block block = this.getBlock(entity == null ? null : entity.chunk, x, y, z, false);
-                        if (block != null && condition.test(block) && block.collidesWithBB(bb)) {
+                        if (block != null && block.getId() != 0 && block.collidesWithBB(bb)) {
                             collides.add(block);
                         }
                     }
@@ -2821,14 +2814,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         this.getChunk(x >> 4, z >> 4, true).setHeightMap(x & 0x0f, z & 0x0f, value & 0x0f);
     }
 
-    public int getBiomeColor(int x, int z) {
-        return this.getChunk(x >> 4, z >> 4, true).getBiomeColor(x & 0x0f, z & 0x0f);
-    }
-
-    public void setBiomeColor(int x, int z, int R, int G, int B) {
-        this.getChunk(x >> 4, z >> 4, true).setBiomeColor(x & 0x0f, z & 0x0f, R, G, B);
-    }
-
     public Map<Long, ? extends FullChunk> getChunks() {
         return provider.getLoadedChunks();
     }
@@ -3765,9 +3750,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         pk.pitch = pitch;
         pk.onGround = entity.onGround;
 
-        for (Player p : entity.getViewers().values()) {
-            p.dataPacket(pk);
-        }
+        Server.broadcastPacket(entity.getViewers().values(), pk);
     }
 
     public boolean isRaining() {
@@ -3794,7 +3777,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             setRainTime(time);
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_RAIN;
-            setRainTime(Utils.random.nextInt(168000) + 12000);
+            setRainTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
 
         Server.broadcastPacket(this.getPlayers().values(), pk);
@@ -3837,7 +3820,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             setThunderTime(time);
         } else {
             pk.evid = LevelEventPacket.EVENT_STOP_THUNDER;
-            setThunderTime(Utils.random.nextInt(168000) + 12000);
+            setThunderTime(ThreadLocalRandom.current().nextInt(168000) + 12000);
         }
 
         Server.broadcastPacket(this.getPlayers().values(), pk);
@@ -4008,7 +3991,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         return time < 13184 || time > 22800;
     }
 
-    public boolean createPortal(Block target, boolean fireCharge) {
+    public boolean createPortal(Block target) {
         if (this.getDimension() == DIMENSION_THE_END) return false;
         final int maxPortalSize = 23;
         final int targX = target.getFloorX();
@@ -4135,11 +4118,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                 }
             }
 
-            if (fireCharge) {
-                this.addSound(target, cn.nukkit.level.Sound.MOB_GHAST_FIREBALL);
-            } else {
-                this.addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_IGNITE);
-            }
             return true;
         } else if (sizeZ >= 2 && sizeZ <= maxPortalSize) {
             //start scan from 1 block above base
@@ -4221,11 +4199,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                 }
             }
 
-            if (fireCharge) {
-                this.addSound(target, cn.nukkit.level.Sound.MOB_GHAST_FIREBALL);
-            } else {
-                this.addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_IGNITE);
-            }
             return true;
         }
 

@@ -232,19 +232,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     }
 
     @Override
-    public int getBiomeColor(int x, int z) {
-        return 0;
-    }
-
-    @Override
-    public void setBiomeIdAndColor(int x, int z, int idAndColor) {
-    }
-
-    @Override
-    public void setBiomeColor(int x, int z, int r, int g, int b) {
-    }
-
-    @Override
     public int getHeightMap(int x, int z) {
         return this.heightMap[(z << 4) | x] & 0xFF;
     }
@@ -513,11 +500,6 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public void setBiomeIdArray(byte[] biomeIdArray) {
         this.biomes = biomeIdArray;
-    }
-
-    @Override
-    public int[] getBiomeColorArray() {
-        return new int[0];
     }
 
     @Override

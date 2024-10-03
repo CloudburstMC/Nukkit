@@ -16,10 +16,7 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
 
-    protected final static int[] FACING = {4, 5, 3, 2, 1, 0};
-
-    private final static int FACING_BITMASK = 0b0111;
-    //private final static int MAP_BIT = 0b1000;
+    protected final static int[] FACING = {8, 9, 3, 2, 1, 0};
 
     public BlockItemFrame() {
         this(0);
@@ -142,22 +139,26 @@ public class BlockItemFrame extends BlockTransparentMeta implements Faceable {
     }
 
     public BlockFace getFacing() {
-        switch (this.getDamage() & FACING_BITMASK) {
+        switch (this.getDamage()) {
             case 0:
+            case 4:
                 return BlockFace.WEST;
             case 1:
+            case 5:
                 return BlockFace.EAST;
             case 2:
+            case 6:
                 return BlockFace.NORTH;
             case 3:
+            case 7:
                 return BlockFace.SOUTH;
-            case 4:
+            case 8:
                 return BlockFace.UP;
-            case 5:
+            case 9:
                 return BlockFace.DOWN;
         }
 
-        return null;
+        return BlockFace.UP;
     }
 
     @Override

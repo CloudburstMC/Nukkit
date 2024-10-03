@@ -26,6 +26,7 @@ public class ServerKiller extends Thread {
         try {
             sleep(sleepTime);
         } catch (InterruptedException ignored) {}
+        System.out.println("Took too long to stop, server was killed forcefully!");
         System.exit(1);
     }
 }

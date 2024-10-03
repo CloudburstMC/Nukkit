@@ -14,9 +14,6 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
 
     public volatile boolean isEncoded = false;
 
-    @Deprecated
-    private int channel;
-
     public abstract byte pid();
 
     public abstract void decode();
@@ -37,12 +34,11 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
 
     @Deprecated
     public void setChannel(int channel) {
-        this.channel = channel;
     }
 
     @Deprecated
     public int getChannel() {
-        return channel;
+        return 0;
     }
 
     public DataPacket clean() {

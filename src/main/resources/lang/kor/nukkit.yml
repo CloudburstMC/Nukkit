@@ -22,7 +22,7 @@ network:
  #모두 압축하려면 0으로 설정하고, 비활성화하려면 -1으로 설정하세요
  batch-threshold: 256
  #일괄 처리된 패킷을 전송할 때 Zlib에 사용되는 압축 수준입니다. 높을수록 더 많은 CPU 사용량으로, 적은 대역폭을 사용합니다
- compression-level: 4
+ compression-level: 5
  #Enable network encryption
  encryption: true
 

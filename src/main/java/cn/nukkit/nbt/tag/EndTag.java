@@ -16,7 +16,7 @@ public class EndTag extends Tag {
     }
 
     @Override
-    public void write(NBTOutputStream dos) throws IOException {
+    void write(NBTOutputStream dos) throws IOException {
     }
 
     @Override

@@ -2530,7 +2530,7 @@ public class Server {
      * @return is operator
      */
     public boolean isOp(String name) {
-        return this.operators.exists(name, true);
+        return name != null && this.operators.exists(name, true);
     }
 
     /**
@@ -2836,7 +2836,7 @@ public class Server {
         this.queryPlugins = this.getConfig("settings.query-plugins", true);
 
         this.networkCompressionThreshold = this.getConfig("network.batch-threshold", 256);
-        this.networkCompressionLevel = Math.max(Math.min(this.getConfig("network.compression-level", 4), 9), 0);
+        this.networkCompressionLevel = Math.max(Math.min(this.getConfig("network.compression-level", 5), 9), 0);
         this.encryptionEnabled = this.getConfig("network.encryption", false);
 
         this.autoTickRate = this.getConfig("level-settings.auto-tick-rate", true);

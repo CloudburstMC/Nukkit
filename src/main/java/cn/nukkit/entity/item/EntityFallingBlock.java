@@ -158,7 +158,7 @@ public class EntityFallingBlock extends Entity {
 
             if (onGround && !closed) {
                 close();
-                Block floorBlock = level.getBlock(this);
+                Block floorBlock = level.getBlock(this.add(0, 0.0001, 0));
                 if (this.getBlock() == Block.SNOW_LAYER && floorBlock.getId() == Block.SNOW_LAYER && (floorBlock.getDamage() & 0x7) != 0x7) {
                     int mergedHeight = (floorBlock.getDamage() & 0x7) + 1 + (this.getDamage() & 0x7) + 1;
                     if (mergedHeight > 8) {
@@ -188,7 +188,7 @@ public class EntityFallingBlock extends Entity {
                     if (this.getBlock() != Block.SNOW_LAYER ? this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS) : this.level.getGameRules().getBoolean(GameRule.DO_TILE_DROPS)) {
                         getLevel().dropItem(this, Item.get(this.blockId, this.damage, 1));
                     }
-                } else {
+                } else if (floorBlock.getId() == 0) {
                     EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, floorBlock, Block.get(blockId, damage));
                     server.getPluginManager().callEvent(event);
                     if (!event.isCancelled()) {

@@ -29,7 +29,7 @@ public class LongTag extends NumberTag<Long> {
     }
 
     @Override
-    public void write(NBTOutputStream dos) throws IOException {
+    void write(NBTOutputStream dos) throws IOException {
         dos.writeLong(data);
     }
 
