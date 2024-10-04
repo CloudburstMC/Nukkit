@@ -50,8 +50,10 @@ public class BlockBambooSapling extends BlockFlowable {
             }
             return type;
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            Block up = up();
-            if (getAge() == 0 && up.getId() == AIR && level.isAnimalSpawningAllowedByTime()/*level.getFullLight(up) >= BlockCrops.MINIMUM_LIGHT_LEVEL*/ && ThreadLocalRandom.current().nextInt(3) == 0) {
+            Block up;
+            int time = level.getTime() % Level.TIME_FULL;
+            boolean canGrow = time < 13184 || time > 22800;
+            if (getAge() == 0 && (up = this.up()).getId() == AIR && canGrow/*level.getFullLight(up) >= BlockCrops.MINIMUM_LIGHT_LEVEL*/ && ThreadLocalRandom.current().nextInt(3) == 0) {
                 BlockBamboo newState = (BlockBamboo) Block.get(Block.BAMBOO);
                 newState.setLeafSize(BlockBamboo.LEAF_SIZE_SMALL);
                 BlockGrowEvent blockGrowEvent = new BlockGrowEvent(up, newState);

@@ -46,8 +46,10 @@ public class BlockBamboo extends BlockTransparentMeta {
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             this.level.useBreakOn(this, null, null, true);
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            Block up = this.up();
-            if (this.getAge() == 0 && up.getId() == AIR && level.isAnimalSpawningAllowedByTime()/*this.level.getFullLight(up) >= BlockCrops.MINIMUM_LIGHT_LEVEL*/ && ThreadLocalRandom.current().nextInt(3) == 0) {
+            Block up;
+            int time = level.getTime() % Level.TIME_FULL;
+            boolean canGrow = time < 13184 || time > 22800;
+            if (this.getAge() == 0 && (up = this.up()).getId() == AIR && canGrow/*this.level.getFullLight(up) >= BlockCrops.MINIMUM_LIGHT_LEVEL*/ && ThreadLocalRandom.current().nextInt(3) == 0) {
                 this.grow(up);
             }
             return type;

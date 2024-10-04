@@ -62,7 +62,7 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     protected boolean isInit;
 
-    private BatchPacket chunkPacket;
+    protected BatchPacket chunkPacket;
 
     @Override
     public BaseFullChunk clone() {

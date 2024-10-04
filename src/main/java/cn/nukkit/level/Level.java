@@ -388,12 +388,8 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         return new Chunk.Entry(getHashX(hash), getHashZ(hash));
     }
 
-    public static int capWorldY(int y, DimensionData dimensionData) {
+    private static int capWorldY(int y, DimensionData dimensionData) {
         return Math.max(Math.min(y, dimensionData.getMaxHeight()), dimensionData.getMinHeight());
-    }
-
-    public int capWorldY(int y) {
-        return capWorldY(y, this.getDimensionData());
     }
 
     public static int generateChunkLoaderId(ChunkLoader loader) {
@@ -3978,11 +3974,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
     private int getUpdateLCG() {
         return (this.updateLCG = (this.updateLCG * 3) ^ LCG_CONSTANT);
-    }
-
-    public boolean isAnimalSpawningAllowedByTime() {
-        int time = this.getTime() % TIME_FULL;
-        return time < 13184 || time > 22800;
     }
 
     public boolean createPortal(Block target) {

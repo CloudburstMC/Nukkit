@@ -20,7 +20,7 @@ import java.util.Arrays;
 
 public abstract class BaseChunk extends BaseFullChunk implements Chunk {
 
-    public ChunkSection[] sections;
+    protected ChunkSection[] sections;
 
     @SuppressWarnings("MismatchedReadAndWriteOfArray")
     private static final byte[] emptyIdArray = new byte[4096];

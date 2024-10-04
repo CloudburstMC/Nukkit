@@ -17,7 +17,7 @@ import cn.nukkit.utils.TextFormat;
  * Created by Snake1999 and Pub4Game on 2016/1/23.
  * Package cn.nukkit.command.defaults in project nukkit.
  */
-public class EffectCommand extends Command {
+public class EffectCommand extends VanillaCommand {
 
     public EffectCommand(String name) {
         super(name, "%nukkit.command.effect.description", "%commands.effect.usage");

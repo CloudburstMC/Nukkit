@@ -109,7 +109,7 @@ public class SmithingRecipe extends ShapelessRecipe {
             haveInputs.add(item.clone());
         }
         List<Item> needInputs = new ArrayList<>();
-        if(multiplier != 1){
+        if (multiplier != 1) {
             for (Item item : ingredientsAggregate) {
                 if (item.isNull())
                     continue;
