@@ -293,6 +293,7 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
         this.getLevel().getServer().getPluginManager().callEvent(event);
 
         if (event.isCancelled()) {
+            getLevel().sendBlocks(new Player[] {player}, new Block[] {this.down()}); // fixes a client-prediction bug
             return false;
         }
 
