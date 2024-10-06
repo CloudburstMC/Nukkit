@@ -4,13 +4,17 @@ import cn.nukkit.blockentity.BlockEntityFurnace;
 import cn.nukkit.item.Item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class FurnaceInventory extends ContainerInventory {
 
     public FurnaceInventory(BlockEntityFurnace furnace) {
         super(furnace, InventoryType.FURNACE);
+    }
+
+    public FurnaceInventory(BlockEntityFurnace furnace, InventoryType type) {
+        super(furnace, type); // For blast furnace
     }
 
     @Override
@@ -47,5 +51,7 @@ public class FurnaceInventory extends ContainerInventory {
         super.onSlotChange(index, before, send);
 
         this.getHolder().scheduleUpdate();
+
+        this.getHolder().chunk.setChanged();
     }
 }

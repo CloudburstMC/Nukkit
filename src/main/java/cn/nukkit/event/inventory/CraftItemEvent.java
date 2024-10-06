@@ -9,7 +9,7 @@ import cn.nukkit.inventory.transaction.CraftingTransaction;
 import cn.nukkit.item.Item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class CraftItemEvent extends Event implements Cancellable {
@@ -20,7 +20,7 @@ public class CraftItemEvent extends Event implements Cancellable {
         return handlers;
     }
 
-    private Item[] input = new Item[0];
+    private final Item[] input;
 
     private final Recipe recipe;
 
@@ -30,7 +30,6 @@ public class CraftItemEvent extends Event implements Cancellable {
 
     public CraftItemEvent(CraftingTransaction transaction) {
         this.transaction = transaction;
-
         this.player = transaction.getSource();
         this.input = transaction.getInputList().toArray(new Item[0]);
         this.recipe = transaction.getRecipe();

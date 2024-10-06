@@ -44,14 +44,14 @@ public class GamemodeCommand extends VanillaCommand {
 
         int gameMode = Server.getGamemodeFromString(args[0]);
         if (gameMode == -1) {
-            sender.sendMessage("Unknown game mode");
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.gamemode.fail.invalid", args[0]));
             return true;
         }
 
         CommandSender target = sender;
         if (args.length > 1) {
             if (sender.hasPermission("nukkit.command.gamemode.other")) {
-                target = sender.getServer().getPlayer(args[1].replace("@s", sender.getName()));
+                target = sender.getServer().getPlayerExact(args[1].replace("@s", sender.getName()));
                 if (target == null) {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
                     return true;
@@ -79,7 +79,7 @@ public class GamemodeCommand extends VanillaCommand {
             if (target.equals(sender)) {
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(gameMode)));
             } else {
-                target.sendMessage(new TranslationContainer("gameMode.changed", Server.getGamemodeString(gameMode)));
+                target.sendMessage(new TranslationContainer("gameMode.changed"));
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", target.getName(), Server.getGamemodeString(gameMode)));
             }
         }

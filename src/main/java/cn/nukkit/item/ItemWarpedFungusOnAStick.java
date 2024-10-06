@@ -1,8 +1,5 @@
 package cn.nukkit.item;
 
-/**
- * @author PetteriM1
- */
 public class ItemWarpedFungusOnAStick extends ItemTool {
 
     public ItemWarpedFungusOnAStick() {

@@ -6,7 +6,7 @@ import cn.nukkit.nbt.tag.CompoundTag;
 /**
  * @author Erik Miller | EinBexiii
  */
-public class EntityPiglin extends EntityMob {
+public class EntityPiglin extends EntityWalkingMob {
 
     public final static int NETWORK_ID = 123;
 
@@ -20,9 +20,14 @@ public class EntityPiglin extends EntityMob {
     }
 
     @Override
+    public int getKillExperience() {
+        return 5;
+    }
+
+    @Override
     protected void initEntity() {
-        super.initEntity();
         this.setMaxHealth(16);
+        super.initEntity();
     }
 
     @Override
@@ -33,10 +38,5 @@ public class EntityPiglin extends EntityMob {
     @Override
     public float getHeight() {
         return 1.95f;
-    }
-
-    @Override
-    public String getName() {
-        return "Piglin";
     }
 }

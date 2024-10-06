@@ -164,7 +164,7 @@ public abstract class ItemBookWritable extends Item {
         return true;
     }
 
-     /**
+    /**
      * Switches the text of two pages with each other.
      * @return boolean indicating success
      */

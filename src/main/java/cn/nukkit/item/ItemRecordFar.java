@@ -21,4 +21,9 @@ public class ItemRecordFar extends ItemRecord {
     public String getSoundId() {
         return "record.far";
     }
+
+    @Override
+    public String getDiscName() {
+        return "C418 - far";
+    }
 }

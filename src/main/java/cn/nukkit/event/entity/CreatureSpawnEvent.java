@@ -65,7 +65,7 @@ public class CreatureSpawnEvent extends Event implements Cancellable {
          */
         EGG,
         /**
-         * When a creature spawns from a Spawner Egg
+         * When a creature spawns from a spawn egg
          */
         SPAWN_EGG,
         /**
@@ -159,7 +159,7 @@ public class CreatureSpawnEvent extends Event implements Cancellable {
          */
         CUSTOM,
         /**
-         * When an entity is missing a SpawnReason
+         * When SpawnReason is missing
          */
         DEFAULT
     }

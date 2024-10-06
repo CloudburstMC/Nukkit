@@ -1,7 +1,11 @@
 package cn.nukkit.level.generator.object.tree;
 
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockLeaves;
+import cn.nukkit.block.BlockWood;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
@@ -25,7 +29,10 @@ public class ObjectSwampTree extends TreeGenerator {
         int i = rand.nextBoundedInt(4) + 5;
         boolean flag = true;
 
-        if (position.getY() >= 1 && position.getY() + i + 1 <= 256) {
+        int maxY = worldIn instanceof Level ? ((Level) worldIn).getMaxBlockY() + 1 : 256;
+        int minBlockY = worldIn instanceof Level ? ((Level) worldIn).getMinBlockY() : 0;
+
+        if (position.getY() > minBlockY && position.getY() + i + 1 <= maxY) {
             for (int j = position.getY(); j <= position.getY() + 1 + i; ++j) {
                 int k = 1;
 
@@ -41,7 +48,7 @@ public class ObjectSwampTree extends TreeGenerator {
 
                 for (int l = position.getX() - k; l <= position.getX() + k && flag; ++l) {
                     for (int i1 = position.getZ() - k; i1 <= position.getZ() + k && flag; ++i1) {
-                        if (j >= 0 && j < 256) {
+                        if (j >= 0 && j < maxY) {
                             pos2.setComponents(l, j, i1);
                             if (!this.canGrowInto(worldIn.getBlockIdAt(pos2.x, pos2.y, pos2.z))) {
                                 flag = false;
@@ -59,12 +66,12 @@ public class ObjectSwampTree extends TreeGenerator {
                 BlockVector3 down = position.down();
                 int block = worldIn.getBlockIdAt(down.x, down.y, down.z);
 
-                if ((block == Block.GRASS || block == Block.DIRT) && position.getY() < 256 - i - 1) {
+                if ((block == Block.GRASS || block == Block.DIRT) && position.getY() < maxY - i - 1) {
                     this.setDirtAt(worldIn, down);
 
                     for (int k1 = position.getY() - 3 + i; k1 <= position.getY() + i; ++k1) {
                         int j2 = k1 - (position.getY() + i);
-                        int l2 = 2 - j2 / 2;
+                        int l2 = 2 - (j2 >> 1);
 
                         for (int j3 = position.getX() - l2; j3 <= position.getX() + l2; ++j3) {
                             int k3 = j3 - position.getX();
@@ -95,7 +102,7 @@ public class ObjectSwampTree extends TreeGenerator {
 
                     for (int i2 = position.getY() - 3 + i; i2 <= position.getY() + i; ++i2) {
                         int k2 = i2 - (position.getY() + i);
-                        int i3 = 2 - k2 / 2;
+                        int i3 = 2 - (k2 >> 1);
                         BlockVector3 pos2 = new BlockVector3();
 
                         for (int l3 = position.getX() - i3; l3 <= position.getX() + i3; ++l3) {

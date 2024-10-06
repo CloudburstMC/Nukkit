@@ -1,7 +1,7 @@
 package cn.nukkit.network.protocol;
 
+
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
 import java.util.UUID;
@@ -9,6 +9,7 @@ import java.util.UUID;
 /**
  * @author Nukkit Project Team
  */
+@Deprecated
 @ToString
 public class CraftingEventPacket extends DataPacket {
 
@@ -34,18 +35,26 @@ public class CraftingEventPacket extends DataPacket {
         this.type = (int) this.getUnsignedVarInt();
         this.id = this.getUUID();
 
-        this.input = this.getArray(Item.class, BinaryStream::getSlot);
-        this.output = this.getArray(Item.class, BinaryStream::getSlot);
+        int inputSize = (int) this.getUnsignedVarInt();
+        this.input = new Item[Math.min(inputSize, 128)];
+        for (int i = 0; i < this.input.length; ++i) {
+            this.input[i] = this.getSlot();
+        }
+
+        int outputSize = (int) this.getUnsignedVarInt();
+        this.output = new Item[Math.min(outputSize, 128)];
+        for (int i = 0; i < this.output.length; ++i) {
+            this.output[i] = this.getSlot();
+        }
     }
 
     @Override
     public void encode() {
-
+        this.encodeUnsupported();
     }
 
     @Override
     public byte pid() {
         return NETWORK_ID;
     }
-
 }

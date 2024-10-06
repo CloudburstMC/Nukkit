@@ -15,5 +15,4 @@ public abstract class PlayerMessageEvent extends PlayerEvent {
     public void setMessage(String message) {
         this.message = message;
     }
-
 }

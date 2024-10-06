@@ -11,15 +11,14 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
+import java.nio.file.Files;
 import java.util.regex.Pattern;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BanIpCommand extends VanillaCommand {
@@ -54,7 +53,7 @@ public class BanIpCommand extends VanillaCommand {
         String value = args[0];
         StringBuilder reason = new StringBuilder();
         for (int i = 1; i < args.length; i++) {
-            reason.append(args[i]).append(" ");
+            reason.append(args[i]).append(' ');
         }
 
         if (reason.length() > 0) {
@@ -62,13 +61,13 @@ public class BanIpCommand extends VanillaCommand {
         }
 
         if (Pattern.matches("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$", value)) {
-            this.processIPBan(value, sender, reason.toString());
+            processIPBan(value, sender, reason.toString());
 
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success", value));
         } else {
-            Player player = sender.getServer().getPlayer(value);
+            Player player = sender.getServer().getPlayerExact(value);
             if (player != null) {
-                this.processIPBan(player.getAddress(), sender, reason.toString());
+                processIPBan(player.getAddress(), sender, reason.toString());
 
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success.players", player.getAddress(), player.getName()));
             } else {
@@ -78,14 +77,14 @@ public class BanIpCommand extends VanillaCommand {
                 CompoundTag nbt = null;
                 if (file.exists()) {
                     try {
-                        nbt = NBTIO.readCompressed(new FileInputStream(file));
+                        nbt = NBTIO.readCompressed(Files.newInputStream(file.toPath()));
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
 
                 if (nbt != null && nbt.contains("lastIP") && Pattern.matches("^(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9])\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[1-9]|0)\\.(25[0-5]|2[0-4][0-9]|[0-1]{1}[0-9]{2}|[1-9]{1}[0-9]{1}|[0-9])$", (value = nbt.getString("lastIP")))) {
-                    this.processIPBan(value, sender, reason.toString());
+                    processIPBan(value, sender, reason.toString());
 
                     Command.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success", value));
                 } else {
@@ -98,19 +97,17 @@ public class BanIpCommand extends VanillaCommand {
         return true;
     }
 
-    private void processIPBan(String ip, CommandSender sender, String reason) {
+    private static void processIPBan(String ip, CommandSender sender, String reason) {
         sender.getServer().getIPBans().addBan(ip, reason, null, sender.getName());
 
-        for (Player player : new ArrayList<>(sender.getServer().getOnlinePlayers().values())) {
+        for (Player player : sender.getServer().getOnlinePlayers().values()) {
             if (player.getAddress().equals(ip)) {
-                player.kick(PlayerKickEvent.Reason.IP_BANNED, !reason.isEmpty() ? reason : "IP banned");
+                player.kick(PlayerKickEvent.Reason.IP_BANNED, !reason.isEmpty() ? reason : "IP banned", true);
             }
         }
 
         try {
-            sender.getServer().getNetwork().blockAddress(InetAddress.getByName(ip), -1);
-        } catch (UnknownHostException e) {
-            // ignore
-        }
+            sender.getServer().getNetwork().blockAddress(InetAddress.getByName(ip));
+        } catch (UnknownHostException ignore) {}
     }
 }

@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemString;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
@@ -32,28 +31,13 @@ public class BlockTripWire extends BlockFlowable {
     }
 
     @Override
-    public boolean canPassThrough() {
-        return true;
-    }
-
-    @Override
-    public double getResistance() {
-        return 0;
-    }
-
-    @Override
-    public double getHardness() {
-        return 0;
-    }
-
-    @Override
     public AxisAlignedBB getBoundingBox() {
         return null;
     }
 
     @Override
     public Item toItem() {
-        return new ItemString();
+        return Item.get(Item.STRING);
     }
 
     public boolean isPowered() {
@@ -115,7 +99,7 @@ public class BlockTripWire extends BlockFlowable {
                         hook.calculateState(false, true, i, this);
                     }
 
-                    /*if(scheduleUpdate) {
+                    /*if (scheduleUpdate) {
                         this.level.scheduleUpdate(hook, 10);
                     }*/
                     break;
@@ -136,7 +120,8 @@ public class BlockTripWire extends BlockFlowable {
             }
 
             boolean found = false;
-            for (Entity entity : this.level.getCollidingEntities(this.getCollisionBoundingBox())) {
+            Entity[] e = this.level.getCollidingEntities(this.getCollisionBoundingBox());
+            for (Entity entity : e) {
                 if (!entity.doesTriggerPressurePlate()) {
                     continue;
                 }
@@ -189,5 +174,20 @@ public class BlockTripWire extends BlockFlowable {
     @Override
     protected AxisAlignedBB recalculateCollisionBoundingBox() {
         return this;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.FLOW_INTO_BLOCK;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

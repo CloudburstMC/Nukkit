@@ -7,6 +7,7 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class EnchantmentTableParticle extends GenericParticle {
+
     public EnchantmentTableParticle(Vector3 pos) {
         super(pos, Particle.TYPE_ENCHANTMENT_TABLE);
     }

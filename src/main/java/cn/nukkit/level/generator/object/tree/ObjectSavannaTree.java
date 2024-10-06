@@ -5,11 +5,13 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockLeaves2;
 import cn.nukkit.block.BlockWood2;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 
 public class ObjectSavannaTree extends TreeGenerator {
+
     private static final Block TRUNK = Block.get(BlockID.WOOD2, BlockWood2.ACACIA);
     private static final Block LEAF = Block.get(BlockID.LEAVES2, BlockLeaves2.ACACIA);
 
@@ -17,7 +19,10 @@ public class ObjectSavannaTree extends TreeGenerator {
         int i = rand.nextBoundedInt(3) + rand.nextBoundedInt(3) + 5;
         boolean flag = true;
 
-        if (position.getY() >= 1 && position.getY() + i + 1 <= 256) {
+        int maxY = level instanceof Level ? ((Level) level).getMaxBlockY() + 1 : 256;
+        int minBlockY = level instanceof Level ? ((Level) level).getMinBlockY() : 0;
+
+        if (position.getY() > minBlockY && position.getY() + i + 1 <= maxY) {
             for (int j = (int) position.getY(); j <= position.getY() + 1 + i; ++j) {
                 int k = 1;
 
@@ -33,7 +38,7 @@ public class ObjectSavannaTree extends TreeGenerator {
 
                 for (int l = (int) position.getX() - k; l <= position.getX() + k && flag; ++l) {
                     for (int i1 = (int) position.getZ() - k; i1 <= position.getZ() + k && flag; ++i1) {
-                        if (j >= 0 && j < 256) {
+                        if (j >= 0 && j < maxY) {
 
                             vector3.setComponents(l, j, i1);
                             if (!this.canGrowInto(level.getBlockIdAt((int) vector3.x, (int) vector3.y, (int) vector3.z))) {
@@ -52,7 +57,7 @@ public class ObjectSavannaTree extends TreeGenerator {
                 Vector3 down = position.down();
                 int block = level.getBlockIdAt(down.getFloorX(), down.getFloorY(), down.getFloorZ());
 
-                if ((block == Block.GRASS || block == Block.DIRT) && position.getY() < 256 - i - 1) {
+                if ((block == Block.GRASS || block == Block.DIRT) && position.getY() < maxY - i - 1) {
                     this.setDirtAt(level, position.down());
                     BlockFace face = BlockFace.Plane.HORIZONTAL.random(rand);
                     int k2 = i - rand.nextBoundedInt(4) - 1;

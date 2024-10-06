@@ -6,18 +6,17 @@ import cn.nukkit.blockentity.BlockEntityJukebox;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemRecord;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.protocol.TextPacket;
 import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by CreeperFace on 7.8.2017.
  */
 public class BlockJukebox extends BlockSolid {
-
-    public BlockJukebox() {
-    }
 
     @Override
     public String getName() {
@@ -30,20 +29,35 @@ public class BlockJukebox extends BlockSolid {
     }
 
     @Override
+    public double getHardness() {
+        return 2;
+    }
+
+    @Override
+    public double getResistance() {
+        return 6;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_AXE;
+    }
+
+    @Override
     public boolean canBeActivated() {
         return true;
     }
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
     public boolean onActivate(Item item, Player player) {
         BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
         if (!(blockEntity instanceof BlockEntityJukebox)) {
-            blockEntity = this.createBlockEntity();
+            return false;
         }
 
         BlockEntityJukebox jukebox = (BlockEntityJukebox) blockEntity;
@@ -52,7 +66,18 @@ public class BlockJukebox extends BlockSolid {
         } else if (item instanceof ItemRecord) {
             jukebox.setRecordItem(item);
             jukebox.play();
-            player.getInventory().decreaseCount(player.getInventory().getHeldItemIndex());
+
+            if (player != null) {
+                TextPacket pk = new TextPacket();
+                pk.type = TextPacket.TYPE_JUKEBOX_POPUP;
+                pk.message = "%record.nowPlaying";
+                pk.parameters = new String[]{((ItemRecord) item).getDiscName()};
+                pk.isLocalized = true;
+                player.dataPacket(pk);
+
+                item.count--;
+                return true;
+            }
         }
 
         return false;
@@ -61,26 +86,27 @@ public class BlockJukebox extends BlockSolid {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (super.place(item, block, target, face, fx, fy, fz, player)) {
-            createBlockEntity();
+            CompoundTag nbt = new CompoundTag()
+                    .putList(new ListTag<>("Items"))
+                    .putString("id", BlockEntity.JUKEBOX)
+                    .putInt("x", getFloorX())
+                    .putInt("y", getFloorY())
+                    .putInt("z", getFloorZ());
+
+            BlockEntity.createBlockEntity(BlockEntity.JUKEBOX, this.getChunk(), nbt);
             return true;
         }
 
         return false;
     }
 
-    private BlockEntity createBlockEntity() {
-        CompoundTag nbt = new CompoundTag()
-                .putList(new ListTag<>("Items"))
-                .putString("id", BlockEntity.JUKEBOX)
-                .putInt("x", getFloorX())
-                .putInt("y", getFloorY())
-                .putInt("z", getFloorZ());
-
-        return BlockEntity.createBlockEntity(BlockEntity.JUKEBOX, this.level.getChunk(getFloorX() >> 4, getFloorZ() >> 4), nbt);
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.WOOD_BLOCK_COLOR;
     }
 
     @Override
-    public BlockColor getColor() {
-        return BlockColor.DIRT_BLOCK_COLOR;
+    public boolean canBePushed() {
+        return false;
     }
 }

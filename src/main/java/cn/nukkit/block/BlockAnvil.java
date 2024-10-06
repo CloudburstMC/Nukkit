@@ -6,15 +6,18 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 /**
  * Created by Pub4Game on 27.12.2015.
  */
-public class BlockAnvil extends BlockFallable implements Faceable {
+public class BlockAnvil extends BlockFallableMeta implements Faceable {
 
-    private static final String[] NAMES = new String[]{
+    private static final int[] FACES = {1, 2, 3, 0};
+
+    private static final String[] NAMES = {
             "Anvil",
             "Anvil",
             "Anvil",
@@ -29,29 +32,17 @@ public class BlockAnvil extends BlockFallable implements Faceable {
             "Very Damaged Anvil"
     };
 
-    private int meta;
-
     public BlockAnvil() {
         this(0);
     }
 
     public BlockAnvil(int meta) {
-        this.meta = meta;
+        super(meta);
     }
 
     @Override
     public int getFullId() {
-        return (getId() << 4) + getDamage();
-    }
-
-    @Override
-    public final int getDamage() {
-        return this.meta;
-    }
-
-    @Override
-    public final void setDamage(int meta) {
-        this.meta = meta;
+        return (getId() << DATA_BITS) + getDamage();
     }
 
     @Override
@@ -91,19 +82,16 @@ public class BlockAnvil extends BlockFallable implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!target.isTransparent() || target.getId() == Block.SNOW_LAYER) {
-            int damage = this.getDamage();
-            int[] faces = {1, 2, 3, 0};
-            this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
-            if (damage >= 4 && damage <= 7) {
-                this.setDamage(this.getDamage() | 0x04);
-            } else if (damage >= 8 && damage <= 11) {
-                this.setDamage(this.getDamage() | 0x08);
-            }
-            this.getLevel().setBlock(block, this, true);
-            return true;
+        int damage = this.getDamage();
+        this.setDamage(FACES[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        if (damage >= 4 && damage <= 7) {
+            this.setDamage(this.getDamage() | 0x04);
+        } else if (damage >= 8 && damage <= 11) {
+            this.setDamage(this.getDamage() | 0x08);
         }
-        return false;
+        this.getLevel().setBlock(this, this, true, true);
+        this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_ANVIL_FALL);
+        return true;
     }
 
     @Override
@@ -128,7 +116,7 @@ public class BlockAnvil extends BlockFallable implements Faceable {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     this.toItem()
             };
@@ -174,5 +162,10 @@ public class BlockAnvil extends BlockFallable implements Faceable {
     @Override
     public boolean isSolid() {
         return false;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

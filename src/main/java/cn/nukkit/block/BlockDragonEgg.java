@@ -4,13 +4,9 @@ import cn.nukkit.event.block.BlockFromToEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.utils.Utils;
 
 public class BlockDragonEgg extends BlockFallable {
-
-    public BlockDragonEgg() {
-    }
 
     @Override
     public String getName() {
@@ -29,7 +25,7 @@ public class BlockDragonEgg extends BlockFallable {
 
     @Override
     public double getResistance() {
-        return 45;
+        return 9;
     }
 
     @Override
@@ -39,7 +35,7 @@ public class BlockDragonEgg extends BlockFallable {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.OBSIDIAN_BLOCK_COLOR;
+        return BlockColor.BLACK_BLOCK_COLOR;
     }
 
     @Override
@@ -56,15 +52,13 @@ public class BlockDragonEgg extends BlockFallable {
     }
 
     public void teleport() {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int i = 0; i < 1000; ++i) {
-            Block to = this.getLevel().getBlock(this.add(random.nextInt(-16, 16), random.nextInt(-16, 16), random.nextInt(-16, 16)));
+            Block to = this.getLevel().getBlock(this.add(Utils.random.nextInt(-16, 16), Utils.random.nextInt(-16, 16), Utils.random.nextInt(-16, 16)));
             if (to.getId() == AIR) {
                 BlockFromToEvent event = new BlockFromToEvent(this, to);
                 this.level.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 to = event.getTo();
-
                 int diffX = this.getFloorX() - to.getFloorX();
                 int diffY = this.getFloorY() - to.getFloorY();
                 int diffZ = this.getFloorZ() - to.getFloorZ();
@@ -74,11 +68,26 @@ public class BlockDragonEgg extends BlockFallable {
                 pk.x = this.getFloorX();
                 pk.y = this.getFloorY();
                 pk.z = this.getFloorZ();
-                this.getLevel().addChunkPacket(this.getFloorX() >> 4, this.getFloorZ() >> 4, pk);
+                this.getLevel().addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
                 this.getLevel().setBlock(this, get(AIR), true);
                 this.getLevel().setBlock(to, this, true);
                 return;
             }
         }
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
+    }
+
+    @Override
+    public boolean alwaysDropsOnExplosion() {
+        return true;
     }
 }

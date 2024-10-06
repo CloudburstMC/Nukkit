@@ -9,7 +9,7 @@ import java.util.List;
 
 public abstract class FormWindow {
 
-    protected static final Gson GSON = new Gson();
+    static final Gson GSON = new Gson();
 
     protected transient boolean closed = false;
     protected final transient List<FormResponseHandler> handlers = new ObjectArrayList<>();
@@ -33,5 +33,4 @@ public abstract class FormWindow {
     public List<FormResponseHandler> getHandlers() {
         return handlers;
     }
-
 }

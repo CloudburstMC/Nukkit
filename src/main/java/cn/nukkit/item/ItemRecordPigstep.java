@@ -1,8 +1,5 @@
 package cn.nukkit.item;
 
-/**
- * @author PetteriM1
- */
 public class ItemRecordPigstep extends ItemRecord {
 
     public ItemRecordPigstep() {
@@ -20,5 +17,10 @@ public class ItemRecordPigstep extends ItemRecord {
     @Override
     public String getSoundId() {
         return "record.pigstep";
+    }
+
+    @Override
+    public String getDiscName() {
+        return "Lena Raine - Pigstep";
     }
 }

@@ -1,10 +1,9 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemSeedsPumpkin extends Item {
@@ -19,6 +18,6 @@ public class ItemSeedsPumpkin extends Item {
 
     public ItemSeedsPumpkin(Integer meta, int count) {
         super(PUMPKIN_SEEDS, 0, count, "Pumpkin Seeds");
-        this.block = Block.get(BlockID.PUMPKIN_STEM);
+        this.block = Block.get(PUMPKIN_STEM);
     }
 }

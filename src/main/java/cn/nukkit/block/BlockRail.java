@@ -59,11 +59,6 @@ public class BlockRail extends BlockFlowable implements Faceable {
     }
 
     @Override
-    public boolean canPassThrough() {
-        return true;
-    }
-
-    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }
@@ -72,23 +67,73 @@ public class BlockRail extends BlockFlowable implements Faceable {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             Optional<BlockFace> ascendingDirection = this.getOrientation().ascendingDirection();
-            Block down = this.down();
-            if ((down.isTransparent() && down.getId() != HOPPER_BLOCK) || (ascendingDirection.isPresent() && this.getSide(ascendingDirection.get()).isTransparent())) {
+            if (!canStayOnFullNonSolid(this.down()) || (ascendingDirection.isPresent() && this.getSide(ascendingDirection.get()).isTransparent())) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
+            }
+        } else if (type == Level.BLOCK_UPDATE_REDSTONE) {
+            if (this instanceof BlockRailPowered || this instanceof BlockRailDetector || this instanceof BlockRailActivator) {
+                return 0;
+            }
+            boolean power = level.isBlockPowered(this);
+            Map<BlockRail, BlockFace> railsAround = this.checkRailsAround(Arrays.asList(SOUTH, EAST, WEST, NORTH));
+            int railsAmount = railsAround.size();
+            if (railsAmount <= 2) {
+                return 0;
+            }
+            List<BlockRail> rails = new ArrayList<>(railsAround.keySet());
+            List<BlockFace> faces = new ArrayList<>(railsAround.values());
+            if (railsAmount == 4) {
+                if (this.isAbstract()) {
+                    if (power) {
+                        this.setDamage(this.connect(rails.get(faces.indexOf(NORTH)), NORTH, rails.get(faces.indexOf(WEST)), WEST).metadata());
+                    } else {
+                        this.setDamage(this.connect(rails.get(faces.indexOf(SOUTH)), SOUTH, rails.get(faces.indexOf(EAST)), EAST).metadata());
+                    }
+                } else {
+                    this.setDamage(this.connect(rails.get(faces.indexOf(EAST)), EAST, rails.get(faces.indexOf(WEST)), WEST).metadata());
+                }
+            } else if (!railsAround.isEmpty()) {
+                if (this.isAbstract()) {
+                    List<BlockFace> cd;
+                    if (power) {
+                        cd = Stream.of(CURVED_NORTH_WEST, CURVED_SOUTH_WEST, CURVED_NORTH_EAST)
+                                .filter(o -> faces.containsAll(o.connectingDirections()))
+                                .findFirst().get().connectingDirections();
+                    } else {
+                        cd = Stream.of(CURVED_SOUTH_EAST, CURVED_NORTH_EAST, CURVED_SOUTH_WEST)
+                                .filter(o -> faces.containsAll(o.connectingDirections()))
+                                .findFirst().get().connectingDirections();
+                    }
+                    BlockFace f1 = cd.get(0);
+                    BlockFace f2 = cd.get(1);
+                    this.setDamage(this.connect(rails.get(faces.indexOf(f1)), f1, rails.get(faces.indexOf(f2)), f2).metadata());
+                } else {
+                    BlockFace face = faces.stream().min((f1, f2) -> (f1.getIndex() < f2.getIndex()) ? 1 : ((x == y) ? 0 : -1)).get();
+                    BlockFace opposite = face.getOpposite();
+                    if (faces.contains(opposite)) {
+                        this.setDamage(this.connect(rails.get(faces.indexOf(face)), face, rails.get(faces.indexOf(opposite)), opposite).metadata());
+                    } else {
+                        this.setDamage(this.connect(rails.get(faces.indexOf(face)), face).metadata());
+                    }
+                }
+            }
+            this.level.setBlock(this, this, true, true);
+            if (!isAbstract()) {
+                level.scheduleUpdate(this, this, 0);
             }
         }
         return 0;
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.125;
+    public AxisAlignedBB recalculateBoundingBox() {
+        return this;
     }
 
     @Override
-    public AxisAlignedBB recalculateBoundingBox() {
-        return this;
+    public double getMaxY() {
+        return this.y + 0.125;
     }
 
     @Override
@@ -99,8 +144,7 @@ public class BlockRail extends BlockFlowable implements Faceable {
     //Information from http://minecraft.gamepedia.com/Rail
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = this.down();
-        if (down == null || (down.isTransparent() && down.getId() != HOPPER_BLOCK)) {
+        if (!canStayOnFullNonSolid(this.down())) {
             return false;
         }
         Map<BlockRail, BlockFace> railsAround = this.checkRailsAroundAffected();
@@ -139,7 +183,7 @@ public class BlockRail extends BlockFlowable implements Faceable {
                 }
             }
         }
-        this.level.setBlock(this, this, true, true);
+        this.getLevel().setBlock(this, this, true, true);
         if (!isAbstract()) {
             level.scheduleUpdate(this, this, 0);
         }
@@ -259,18 +303,28 @@ public class BlockRail extends BlockFlowable implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(Item.RAIL, 0, 1)
+                Item.get(Item.RAIL)
         };
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return false;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

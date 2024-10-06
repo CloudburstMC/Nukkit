@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.TerracottaColor;
 
 /**
@@ -10,12 +11,17 @@ import cn.nukkit.utils.TerracottaColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockTerracotta extends BlockSolidMeta {
+
     public BlockTerracotta() {
         this(0);
     }
 
     public BlockTerracotta(int meta) {
         super(0);
+    }
+
+    public BlockTerracotta(DyeColor dyeColor) {
+        this(dyeColor.getWoolData());
     }
 
     public BlockTerracotta(TerracottaColor dyeColor) {
@@ -49,7 +55,7 @@ public class BlockTerracotta extends BlockSolidMeta {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };

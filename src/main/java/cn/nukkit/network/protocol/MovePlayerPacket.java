@@ -3,9 +3,6 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
-/**
- * Created on 15-10-14.
- */
 @ToString
 public class MovePlayerPacket extends DataPacket {
 
@@ -14,7 +11,7 @@ public class MovePlayerPacket extends DataPacket {
     public static final int MODE_NORMAL = 0;
     public static final int MODE_RESET = 1;
     public static final int MODE_TELEPORT = 2;
-    public static final int MODE_PITCH = 3; //facepalm Mojang
+    public static final int MODE_PITCH = 3;
 
     public long eid;
     public float x;
@@ -26,8 +23,8 @@ public class MovePlayerPacket extends DataPacket {
     public int mode = MODE_NORMAL;
     public boolean onGround;
     public long ridingEid;
-    public int int1 = 0;
-    public int int2 = 0;
+    public int teleportCause = 0;
+    public int teleportItem = 0;
     public long frame;
 
     @Override
@@ -44,8 +41,8 @@ public class MovePlayerPacket extends DataPacket {
         this.onGround = this.getBoolean();
         this.ridingEid = this.getEntityRuntimeId();
         if (this.mode == MODE_TELEPORT) {
-            this.int1 = this.getLInt();
-            this.int2 = this.getLInt();
+            this.teleportCause = this.getLInt();
+            this.teleportItem = this.getLInt();
         }
         this.frame = this.getUnsignedVarLong();
     }
@@ -62,8 +59,8 @@ public class MovePlayerPacket extends DataPacket {
         this.putBoolean(this.onGround);
         this.putEntityRuntimeId(this.ridingEid);
         if (this.mode == MODE_TELEPORT) {
-            this.putLInt(this.int1);
-            this.putLInt(this.int2);
+            this.putLInt(this.teleportCause);
+            this.putLInt(this.teleportItem);
         }
         this.putUnsignedVarLong(this.frame);
     }
@@ -72,5 +69,4 @@ public class MovePlayerPacket extends DataPacket {
     public byte pid() {
         return NETWORK_ID;
     }
-
 }

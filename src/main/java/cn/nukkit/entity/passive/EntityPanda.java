@@ -1,9 +1,10 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.utils.Utils;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-public class EntityPanda extends EntityAnimal {
+public class EntityPanda extends EntityWalkingAnimal {
 
     public static final int NETWORK_ID = 113;
 
@@ -33,7 +34,12 @@ public class EntityPanda extends EntityAnimal {
 
     @Override
     public void initEntity() {
-        super.initEntity();
         this.setMaxHealth(20);
+        super.initEntity();
+    }
+
+    @Override
+    public int getKillExperience() {
+        return this.isBaby() ? 0 : Utils.rand(1, 3);
     }
 }

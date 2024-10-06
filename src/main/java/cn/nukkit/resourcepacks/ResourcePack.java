@@ -4,7 +4,6 @@ import java.util.UUID;
 
 public interface ResourcePack {
 
-
     ResourcePack[] EMPTY_ARRAY = new ResourcePack[0];
 
     String getPackName();
@@ -19,7 +18,7 @@ public interface ResourcePack {
 
     byte[] getPackChunk(int off, int len);
 
-    default String getEncryptionKey() {
+    default String getEncryptionKey() { // Default for backwards compatibility
         return "";
     }
 }

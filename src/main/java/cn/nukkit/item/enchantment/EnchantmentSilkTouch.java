@@ -3,10 +3,11 @@ package cn.nukkit.item.enchantment;
 import cn.nukkit.item.Item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentSilkTouch extends Enchantment {
+
     protected EnchantmentSilkTouch() {
         super(ID_SILK_TOUCH, "untouching", Rarity.VERY_RARE, EnchantmentType.DIGGER);
     }

@@ -5,13 +5,17 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * Event for Block being burned.
+ * @author MagicDroidX
  */
 public class BlockBurnEvent extends BlockEvent implements Cancellable {
 
     private static final HandlerList handlers = new HandlerList();
 
+    /**
+     * This event is called when a block is burned.
+     * @param block Block that is burned.
+     */
     public BlockBurnEvent(Block block) {
         super(block);
     }
@@ -19,5 +23,4 @@ public class BlockBurnEvent extends BlockEvent implements Cancellable {
     public static HandlerList getHandlers() {
         return handlers;
     }
-
 }

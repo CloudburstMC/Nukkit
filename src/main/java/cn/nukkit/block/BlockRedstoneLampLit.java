@@ -10,9 +10,6 @@ import cn.nukkit.level.Level;
  */
 public class BlockRedstoneLampLit extends BlockRedstoneLamp {
 
-    public BlockRedstoneLampLit() {
-    }
-
     @Override
     public String getName() {
         return "Lit Redstone Lamp";
@@ -30,13 +27,12 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(Block.get(BlockID.REDSTONE_LAMP));
+        return new ItemBlock(Block.get(REDSTONE_LAMP));
     }
 
     @Override
     public int onUpdate(int type) {
-        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && !this.level.isBlockPowered(this.getLocation())) {
-            // Redstone event
+        if ((type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE) && !this.level.isBlockPowered(this)) {
             RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
             getLevel().getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
@@ -46,8 +42,8 @@ public class BlockRedstoneLampLit extends BlockRedstoneLamp {
             return 1;
         }
 
-        if (type == Level.BLOCK_UPDATE_SCHEDULED && !this.level.isBlockPowered(this.getLocation())) {
-            this.level.setBlock(this, Block.get(BlockID.REDSTONE_LAMP), false, false);
+        if (type == Level.BLOCK_UPDATE_SCHEDULED && !this.level.isBlockPowered(this)) {
+            this.level.setBlock(this, Block.get(REDSTONE_LAMP), false, false);
         }
         return 0;
     }

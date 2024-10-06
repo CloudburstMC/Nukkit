@@ -1,16 +1,18 @@
 package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockLayer;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.LevelException;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class Position extends Vector3 {
+
     public Level level;
 
     public Position() {
@@ -78,7 +80,7 @@ public class Position extends Vector3 {
 
     @Override
     public String toString() {
-        return "Position(level=" + (this.isValid() ? this.getLevel().getName() : "null") + ",x=" + this.x + ",y=" + this.y + ",z=" + this.z + ")";
+        return "Position(level=" + (this.isValid() ? this.level.getName() : "null") + ",x=" + this.x + ",y=" + this.y + ",z=" + this.z + ')';
     }
 
     @Override
@@ -90,7 +92,12 @@ public class Position extends Vector3 {
     }
 
     public Block getLevelBlock() {
-        if (this.isValid()) return this.level.getBlock(this);
+        if (this.isValid()) return this.level.getBlock(this, BlockLayer.NORMAL, true);
+        else throw new LevelException("Undefined Level reference");
+    }
+
+    public Block getLevelBlock(BlockLayer layer) {
+        if (this.isValid()) return this.level.getBlock(this, layer, true);
         else throw new LevelException("Undefined Level reference");
     }
 

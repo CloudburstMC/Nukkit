@@ -5,8 +5,8 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * Event for Leaves decay.
+ * @author MagicDroidX
  */
 public class LeavesDecayEvent extends BlockEvent implements Cancellable {
 
@@ -16,8 +16,11 @@ public class LeavesDecayEvent extends BlockEvent implements Cancellable {
         return handlers;
     }
 
+    /**
+     * Event for leaves decaying / disappearing.
+     * @param block Leaves block.
+     */
     public LeavesDecayEvent(Block block) {
         super(block);
     }
-
 }

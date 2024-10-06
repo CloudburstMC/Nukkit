@@ -1,28 +1,21 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-/**
- * @author PikyCZ
- */
-public class EntityBlaze extends EntityMob {
+public class EntityBlaze extends EntityFlyingMob {
 
     public static final int NETWORK_ID = 43;
-
-    @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
-    }
 
     public EntityBlaze(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
     @Override
-    protected void initEntity() {
-        super.initEntity();
-        this.setMaxHealth(20);
+    public int getNetworkId() {
+        return NETWORK_ID;
     }
 
     @Override
@@ -36,7 +29,19 @@ public class EntityBlaze extends EntityMob {
     }
 
     @Override
-    public String getName() {
-        return "Blaze";
+    public void initEntity() {
+        this.setMaxHealth(20);
+        super.initEntity();
+        this.fireProof = true;
+    }
+
+    @Override
+    public Item[] getDrops() {
+        return new Item[]{Item.get(Item.BLAZE_ROD, 0, Utils.rand(0, 1))};
+    }
+
+    @Override
+    public int getKillExperience() {
+        return 10;
     }
 }

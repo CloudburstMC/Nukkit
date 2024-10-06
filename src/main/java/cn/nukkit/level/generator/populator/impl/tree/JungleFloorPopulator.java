@@ -20,15 +20,11 @@ public class JungleFloorPopulator extends Populator {
     private int randomAmount;
     private int baseAmount;
 
-    private final int type;
-
     public JungleFloorPopulator() {
         this(BlockSapling.JUNGLE);
     }
 
-    public JungleFloorPopulator(int type) {
-        this.type = type;
-    }
+    public JungleFloorPopulator(int type) {}
 
     public void setRandomAmount(int randomAmount) {
         this.randomAmount = randomAmount;

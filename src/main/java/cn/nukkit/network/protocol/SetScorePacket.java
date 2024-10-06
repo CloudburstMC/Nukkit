@@ -22,6 +22,7 @@ public class SetScorePacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.decodeUnsupported();
     }
 
     @Override
@@ -72,8 +73,8 @@ public class SetScorePacket extends DataPacket {
 
         /**
          * Score info for fake player
-         * @param scoreboardId
-         * @param objectiveId
+         * @param scoreboardId scoreboard id
+         * @param objectiveId objective id
          * @param score score
          * @param name line text
          */
@@ -88,8 +89,8 @@ public class SetScorePacket extends DataPacket {
 
         /**
          * Score info for player/entity
-         * @param scoreboardId
-         * @param objectiveId
+         * @param scoreboardId scoreboard id
+         * @param objectiveId objective id
          * @param type entity type; PLAYER or ENTITY
          * @param score score
          * @param entityId entity id

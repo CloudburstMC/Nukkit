@@ -4,7 +4,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.LevelException;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class Location extends Position {
@@ -26,19 +26,19 @@ public class Location extends Position {
     }
 
     public Location(double x, double y, double z) {
-        this(x, y, z, 0);
+        this(x, y, z, 0, 0, 0, null);
     }
 
     public Location(double x, double y, double z, Level level) {
-        this(x, y, z, 0, 0, level);
+        this(x, y, z, 0, 0, 0, level);
     }
 
     public Location(double x, double y, double z, double yaw) {
-        this(x, y, z, yaw, 0);
+        this(x, y, z, yaw, 0, 0, null);
     }
 
     public Location(double x, double y, double z, double yaw, double pitch) {
-        this(x, y, z, yaw, pitch, null);
+        this(x, y, z, yaw, pitch, 0, null);
     }
 
     public Location(double x, double y, double z, double yaw, double pitch, Level level) {
@@ -60,19 +60,19 @@ public class Location extends Position {
     }
 
     public static Location fromObject(Vector3 pos) {
-        return fromObject(pos, null, 0.0f, 0.0f);
+        return fromObject(pos, null, 0.0f, 0.0f, 0.0f);
     }
 
     public static Location fromObject(Vector3 pos, Level level) {
-        return fromObject(pos, level, 0.0f, 0.0f);
+        return fromObject(pos, level, 0.0f, 0.0f, 0.0f);
     }
 
     public static Location fromObject(Vector3 pos, Level level, double yaw) {
-        return fromObject(pos, level, yaw, 0.0f);
+        return fromObject(pos, level, yaw, 0.0f, 0.0f);
     }
 
     public static Location fromObject(Vector3 pos, Level level, double yaw, double pitch) {
-        return new Location(pos.x, pos.y, pos.z, yaw, pitch, (level == null) ? ((pos instanceof Position) ? ((Position) pos).level : null) : level);
+        return fromObject(pos, level, yaw, pitch, 0.0f);
     }
 
     public static Location fromObject(Vector3 pos, Level level, double yaw, double pitch, double headYaw) {
@@ -91,9 +91,30 @@ public class Location extends Position {
         return this.headYaw;
     }
 
+    public Location setYaw(double yaw) {
+        this.yaw = yaw;
+        return this;
+    }
+
+    public Location setBothYaw(double yaw) {
+        this.yaw = yaw;
+        this.headYaw = yaw;
+        return this;
+    }
+
+    public Location setPitch(double pitch) {
+        this.pitch = pitch;
+        return this;
+    }
+
+    public Location setHeadYaw(double headYaw) {
+        this.headYaw = headYaw;
+        return this;
+    }
+
     @Override
     public String toString() {
-        return "Location (level=" + (this.isValid() ? this.getLevel().getName() : "null") + ", x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", yaw=" + this.yaw + ", pitch=" + this.pitch + ", headYaw=" + this.headYaw + ")";
+        return "Location(level=" + (this.isValid() ? this.getLevel().getName() : "null") + ", x=" + this.x + ", y=" + this.y + ", z=" + this.z + ", yaw=" + this.yaw + ", pitch=" + this.pitch + ", headYaw=" + this.headYaw + ')';
     }
 
     @Override
@@ -178,8 +199,8 @@ public class Location extends Position {
     }
 
     public Vector3 getDirectionVector() {
-        double pitch = ((getPitch() + 90) * Math.PI) / 180;
-        double yaw = ((getYaw() + 90) * Math.PI) / 180;
+        double pitch = ((this.pitch + 90) * Math.PI) / 180;
+        double yaw = ((this.yaw + 90) * Math.PI) / 180;
         double x = Math.sin(pitch) * Math.cos(yaw);
         double z = Math.sin(pitch) * Math.sin(yaw);
         double y = Math.cos(pitch);

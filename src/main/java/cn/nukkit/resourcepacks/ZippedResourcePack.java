@@ -16,13 +16,11 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class ZippedResourcePack extends AbstractResourcePack {
-    protected File file;
 
-
+    protected final File file;
     protected ByteBuffer byteBuffer;
     protected byte[] sha256;
     protected String encryptionKey = "";
-
 
     public ZippedResourcePack(File file) {
         if (!file.exists()) {
@@ -127,6 +125,6 @@ public class ZippedResourcePack extends AbstractResourcePack {
 
     @Override
     public String getEncryptionKey() {
-        return encryptionKey;
+        return this.encryptionKey;
     }
 }

@@ -85,10 +85,6 @@ public class ServerScheduler {
         return asyncPool.getCorePoolSize();
     }
 
-    public void increaseAsyncTaskPoolSize(int newSize) {
-        throw new UnsupportedOperationException("Cannot increase a working pool size."); //wtf?
-    }
-
     public TaskHandler scheduleDelayedTask(Task task, int delay) {
         return this.addTask(task, delay, 0, false);
     }
@@ -205,7 +201,7 @@ public class ServerScheduler {
             // It is only there for backwards compatibility!
             if (taskHandler.getPlugin() == null || plugin.equals(taskHandler.getPlugin())) {
                 try {
-                    taskHandler.cancel(); /* It will remove from task map automatic in next main heartbeat. */
+                    taskHandler.cancel(); // It will remove from task map automatic in next main heartbeat
                 } catch (RuntimeException ex) {
                     Server.getInstance().getLogger().critical("Exception while invoking onCancel", ex);
                 }
@@ -291,14 +287,12 @@ public class ServerScheduler {
                 } else if (taskHandler.isAsynchronous()) {
                     asyncPool.execute(taskHandler.getTask());
                 } else {
-                    taskHandler.timing.startTiming();
                     try {
                         taskHandler.run(currentTick);
                     } catch (Throwable e) {
-                        Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskId() + ": " + e.getMessage());
-                        Server.getInstance().getLogger().logException(e instanceof Exception ? (Exception) e : new RuntimeException(e));
+                        Server.getInstance().getLogger().critical("Could not execute taskHandler " + taskHandler.getTaskId() + ": " + e.getMessage(),
+                                e instanceof Exception ? e : new RuntimeException(e));
                     }
-                    taskHandler.timing.stopTiming();
                 }
                 if (taskHandler.isRepeating()) {
                     taskHandler.setNextRunTick(currentTick + taskHandler.getPeriod());
@@ -326,5 +320,4 @@ public class ServerScheduler {
     private int nextTaskId() {
         return currentTaskId.incrementAndGet();
     }
-
 }

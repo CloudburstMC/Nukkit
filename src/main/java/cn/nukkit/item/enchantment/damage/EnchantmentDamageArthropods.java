@@ -4,11 +4,10 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityArthropod;
 import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.potion.Effect;
-
-import java.util.concurrent.ThreadLocalRandom;
+import cn.nukkit.utils.Utils;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentDamageArthropods extends EnchantmentDamage {
@@ -19,7 +18,7 @@ public class EnchantmentDamageArthropods extends EnchantmentDamage {
 
     @Override
     public int getMinEnchantAbility(int level) {
-        return 5 + (level - 1) * 8;
+        return 5 + ((level - 1) << 3);
     }
 
     @Override
@@ -39,9 +38,8 @@ public class EnchantmentDamageArthropods extends EnchantmentDamage {
     @Override
     public void doPostAttack(Entity attacker, Entity entity) {
         if (entity instanceof EntityArthropod) {
-            int duration = 20 + ThreadLocalRandom.current().nextInt(10 * this.level);
             entity.addEffect(
-                    Effect.getEffect(Effect.SLOWNESS).setDuration(duration).setAmplifier(3),
+                    Effect.getEffect(Effect.SLOWNESS).setDuration(20 + Utils.random.nextInt(10 * this.level)).setAmplifier(3),
                     EntityPotionEffectEvent.Cause.ATTACK);
         }
     }

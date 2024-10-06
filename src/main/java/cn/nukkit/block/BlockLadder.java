@@ -1,10 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.entity.Entity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
@@ -15,13 +15,23 @@ import cn.nukkit.utils.Faceable;
  */
 public class BlockLadder extends BlockTransparentMeta implements Faceable {
 
+    private static final int[] FACES = {
+            0, //never use
+            1, //never use
+            3,
+            2,
+            5,
+            4
+    };
+
     public BlockLadder() {
         this(0);
     }
 
     public BlockLadder(int meta) {
         super(meta);
-        calculateOffsets();
+
+        this.calculateOffsets();
     }
 
     @Override
@@ -94,17 +104,11 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
                 break;
             default:
                 this.offMinX = 0;
-                this.offMinZ = 1 ;
+                this.offMinZ = 1;
                 this.offMaxX = 1;
                 this.offMaxZ = 1;
                 break;
         }
-    }
-
-    @Override
-    public void setDamage(int meta) {
-        super.setDamage(meta);
-        calculateOffsets();
     }
 
     @Override
@@ -128,16 +132,11 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return super.recalculateBoundingBox();
-    }
-
-    @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (!target.isTransparent()) {
             if (face.getIndex() >= 2 && face.getIndex() <= 5) {
                 this.setDamage(face.getIndex());
-                this.getLevel().setBlock(block, this, true, true);
+                this.getLevel().setBlock(this, this, true, true);
                 return true;
             }
         }
@@ -147,15 +146,7 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            int[] faces = {
-                    0, //never use
-                    1, //never use
-                    3,
-                    2,
-                    5,
-                    4
-            };
-            if (!this.getSide(BlockFace.fromIndex(faces[this.getDamage()])).isSolid()) {
+            if (!this.getSide(BlockFace.fromIndex(FACES[this.getDamage()])).isSolid()) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -172,16 +163,31 @@ public class BlockLadder extends BlockTransparentMeta implements Faceable {
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
     }
-    
+
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-            Item.get(Item.LADDER, 0, 1)
+                Item.get(Item.LADDER)
         };
     }
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public void onEntityCollide(Entity entity) {
+        entity.resetFallDistance();
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

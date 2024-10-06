@@ -1,22 +1,24 @@
 package cn.nukkit.level.biome.type;
 
-import cn.nukkit.level.generator.populator.impl.WaterIcePopulator;
+import cn.nukkit.block.Block;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  */
 public abstract class SnowyBiome extends GrassyBiome {
     public SnowyBiome() {
         super();
-
-        WaterIcePopulator waterIce = new WaterIcePopulator();
-        this.addPopulator(waterIce);
     }
 
     @Override
     public int getCoverId(int x, int z) {
-        return SNOW_LAYER << 4;
+        return Block.SNOW_LAYER << Block.DATA_BITS;
+    }
+
+    @Override
+    public boolean isFreezing() {
+        return true;
     }
 
     @Override

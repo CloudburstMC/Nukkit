@@ -3,10 +3,11 @@ package cn.nukkit.lang;
 import cn.nukkit.Server;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class TextContainer implements Cloneable {
+
     protected String text;
 
     public TextContainer(String text) {
@@ -23,7 +24,7 @@ public class TextContainer implements Cloneable {
 
     @Override
     public String toString() {
-        return this.getText();
+        return this.text;
     }
 
     @Override

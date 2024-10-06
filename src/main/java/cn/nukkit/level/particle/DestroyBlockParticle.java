@@ -21,13 +21,14 @@ public class DestroyBlockParticle extends Particle {
 
     @Override
     public DataPacket[] encode() {
-        LevelEventPacket pk = new LevelEventPacket();
-        pk.evid = LevelEventPacket.EVENT_PARTICLE_DESTROY;
-        pk.x = (float) this.x;
-        pk.y = (float) this.y;
-        pk.z = (float) this.z;
-        pk.data = this.data;
+        LevelEventPacket packet = new LevelEventPacket();
+        packet.evid = LevelEventPacket.EVENT_PARTICLE_DESTROY;
+        packet.x = (float) this.x;
+        packet.y = (float) this.y;
+        packet.z = (float) this.z;
 
-        return new DataPacket[]{pk};
+        packet.data = this.data;
+        packet.tryEncode();
+        return new DataPacket[]{packet};
     }
 }

@@ -1,12 +1,14 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
+import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.InventorySlotPacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
 
 import java.util.HashMap;
 
 public class PlayerUIInventory extends BaseInventory {
+
     private final Player player;
 
     private final PlayerCursorInventory cursorInventory;
@@ -14,7 +16,7 @@ public class PlayerUIInventory extends BaseInventory {
     private final BigCraftingGrid bigCraftingGrid;
 
     public PlayerUIInventory(Player player) {
-        super(player, InventoryType.UI, new HashMap<>(), 51);
+        super(player, InventoryType.UI, new HashMap<>(), 54);
         this.player = player;
 
         this.cursorInventory = new PlayerCursorInventory(this);
@@ -41,11 +43,12 @@ public class PlayerUIInventory extends BaseInventory {
 
     @Override
     public void sendSlot(int index, Player... target) {
-        InventorySlotPacket pk = new InventorySlotPacket();
-        pk.slot = index;
-        pk.item = this.getItem(index);
+        Item item = this.getItem(index);
 
         for (Player p : target) {
+            InventorySlotPacket pk = new InventorySlotPacket();
+            pk.slot = index;
+            pk.item = item;
             if (p == this.getHolder()) {
                 pk.inventoryId = ContainerIds.UI;
             } else {
@@ -63,7 +66,7 @@ public class PlayerUIInventory extends BaseInventory {
 
     @Override
     public void sendContents(Player... target) {
-        //doesn't work here
+
     }
 
     @Override

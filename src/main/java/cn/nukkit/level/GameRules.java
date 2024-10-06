@@ -12,14 +12,11 @@ import java.util.Optional;
 
 import static cn.nukkit.level.GameRule.*;
 
-@SuppressWarnings({"unchecked"})
+@SuppressWarnings("unchecked")
 public class GameRules {
+
     private final EnumMap<GameRule, Value> gameRules = new EnumMap<>(GameRule.class);
     private boolean stale;
-
-    private GameRules() {
-    }
-
 
     public static GameRules getDefault() {
         GameRules gameRules = new GameRules();
@@ -107,9 +104,9 @@ public class GameRules {
 
         switch (getGameRuleType(gameRule)) {
             case BOOLEAN:
-                if (value.equalsIgnoreCase("true")) {
+                if (value.equalsIgnoreCase("true") || value.equals("1")) {
                     setGameRule(gameRule, true);
-                } else if (value.equalsIgnoreCase("false")) {
+                } else if (value.equalsIgnoreCase("false") || value.equals("0")) {
                     setGameRule(gameRule, false);
                 } else {
                     throw new IllegalArgumentException("Was not a boolean");
@@ -128,22 +125,18 @@ public class GameRules {
     }
 
     public int getInteger(GameRule gameRule) {
-        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).getValueAsInteger();
     }
 
     public float getFloat(GameRule gameRule) {
-        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).getValueAsFloat();
     }
 
     public String getString(GameRule gameRule) {
-        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).value.toString();
     }
 
     public Type getGameRuleType(GameRule gameRule) {
-        Preconditions.checkNotNull(gameRule, "gameRule");
         return gameRules.get(gameRule).getType();
     }
 
@@ -155,7 +148,6 @@ public class GameRules {
         return gameRules.keySet().toArray(new GameRule[0]);
     }
 
-    // TODO: This needs to be moved out since there is not a separate compound tag in the LevelDB format for Game Rules.
     public CompoundTag writeNBT() {
         CompoundTag nbt = new CompoundTag();
 
@@ -167,7 +159,7 @@ public class GameRules {
     }
 
     public void readNBT(CompoundTag nbt) {
-        Preconditions.checkNotNull(nbt);
+        Preconditions.checkNotNull(nbt, "nbt");
         for (String key : nbt.getTags().keySet()) {
             Optional<GameRule> gameRule = GameRule.parseString(key);
             if (!gameRule.isPresent()) {
@@ -256,10 +248,10 @@ public class GameRules {
             return (Float) value;
         }
 
-        public void write(BinaryStream stream) {
-            stream.putBoolean(this.canBeChanged);
-            stream.putUnsignedVarInt(type.ordinal());
-            type.write(stream, this);
+        public void write(BinaryStream pk) {
+            pk.putBoolean(this.canBeChanged);
+            pk.putUnsignedVarInt(type.ordinal());
+            type.write(pk, this);
         }
     }
 }

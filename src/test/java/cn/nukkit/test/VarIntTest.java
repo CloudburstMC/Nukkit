@@ -118,5 +118,5 @@ class VarIntTest {
 		write.accept(os);
 		ByteArrayInputStream is = new ByteArrayInputStream(os.toByteArray());
 		assertEquals(size, is.available());
-	};
+	}
 }

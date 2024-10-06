@@ -2,28 +2,31 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.data.ByteEntityData;
-import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.DyeColor;
+import cn.nukkit.utils.Utils;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Author: BeYkeRYkt Nukkit Project
- */
-public class EntitySheep extends EntityAnimal {
+public class EntitySheep extends EntityWalkingAnimal {
 
     public static final int NETWORK_ID = 13;
 
-    public boolean sheared = false;
-    public int color = 0;
+    private boolean sheared = false;
+    private int color;
 
     public EntitySheep(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
+
+    @Override
+    public int getNetworkId() {
+        return NETWORK_ID;
     }
 
     @Override
@@ -43,18 +46,9 @@ public class EntitySheep extends EntityAnimal {
     }
 
     @Override
-    public String getName() {
-        return "Sheep";
-    }
-
-    @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
-    }
-
-    @Override
     public void initEntity() {
         this.setMaxHealth(8);
+        super.initEntity();
 
         if (!this.namedTag.contains("Color")) {
             this.setColor(randomColor());
@@ -63,74 +57,98 @@ public class EntitySheep extends EntityAnimal {
         }
 
         if (!this.namedTag.contains("Sheared")) {
-            this.namedTag.putByte("Sheared", 0);
-        } else {
-            this.sheared = this.namedTag.getBoolean("Sheared");
+            this.namedTag.putBoolean("Sheared", false);
         }
-
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, this.sheared);
     }
 
-    @Override
     public void saveNBT() {
         super.saveNBT();
 
         this.namedTag.putByte("Color", this.color);
-        this.namedTag.putBoolean("Sheared", this.sheared);
+        this.namedTag.putBoolean("Sheared", this.isSheared());
     }
 
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         if (item.getId() == Item.DYE) {
-            this.setColor(((ItemDye) item).getDyeColor().getWoolData());
+            switch (item.getDamage()) {
+                case ItemDye.BONE_MEAL:
+                case ItemDye.LAPIS_LAZULI:
+                    return false;
+                case ItemDye.WHITE_NEW:
+                    this.setColor(DyeColor.WHITE.getWoolData());
+                    break;
+                case ItemDye.BLUE_NEW:
+                    this.setColor(DyeColor.BLUE.getWoolData());
+                    break;
+                case ItemDye.BROWN_NEW:
+                    this.setColor(DyeColor.BROWN.getWoolData());
+                    break;
+                case ItemDye.BLACK_NEW:
+                    this.setColor(DyeColor.BLACK.getWoolData());
+                    break;
+                default:
+                    this.setColor(((ItemDye) item).getDyeColor().getWoolData());
+            }
             return true;
         }
-
-        return item.getId() == Item.SHEARS && shear();
+        return super.onInteract(player, item, clickedPos);
     }
 
-    public boolean shear() {
-        if (sheared) {
-            return false;
+    public void shear(boolean shear) {
+        this.sheared = shear;
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, shear);
+        if (shear) {
+            this.level.dropItem(this, Item.get(Item.WOOL, getColor(), Utils.rand(1, 3)));
         }
-
-        this.sheared = true;
-        this.setDataFlag(DATA_FLAGS, DATA_FLAG_SHEARED, true);
-
-        this.level.dropItem(this, Item.get(Item.WOOL, getColor(), ThreadLocalRandom.current().nextInt(2) + 1));
-        return true;
     }
 
     @Override
     public Item[] getDrops() {
-        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
-            return new Item[]{Item.get(((this.isOnFire()) ? Item.COOKED_MUTTON : Item.RAW_MUTTON)), Item.get(Item.WOOL, getColor(), 1)};
+        List<Item> drops = new ArrayList<>();
+
+        if (!this.isBaby()) {
+            if (!this.sheared) drops.add(Item.get(Item.WOOL, this.getColor(), 1));
+
+            for (int i = 0; i < Utils.rand(1, 2); i++) {
+                drops.add(Item.get(this.isOnFire() ? Item.COOKED_MUTTON : Item.RAW_MUTTON, 0, 1));
+            }
         }
-        return new Item[0];
+
+        return drops.toArray(new Item[0]);
     }
 
-    public void setColor(int color) {
-        this.color = color;
-        this.setDataProperty(new ByteEntityData(DATA_COLOUR, color));
-        this.namedTag.putByte("Color", this.color);
+
+    public void setColor(int woolColor) {
+        this.color = woolColor;
+        this.namedTag.putByte("Color", woolColor);
+        this.setDataProperty(new ByteEntityData(DATA_COLOR, woolColor));
     }
 
     public int getColor() {
-        return namedTag.getByte("Color");
+        return this.color;
     }
 
     private int randomColor() {
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        double rand = random.nextDouble(1, 100);
+        int rand = Utils.rand(1, 200);
 
-        if (rand <= 0.164) {
-            return DyeColor.PINK.getWoolData();
-        }
+        if (rand == 1) return DyeColor.PINK.getWoolData();
+        else if (rand < 8) return DyeColor.BROWN.getWoolData();
+        else if (rand < 18) return DyeColor.GRAY.getWoolData();
+        else if (rand < 28) return DyeColor.LIGHT_GRAY.getWoolData();
+        else if (rand < 38) return DyeColor.BLACK.getWoolData();
+        else return DyeColor.WHITE.getWoolData();
+    }
 
-        if (rand <= 15) {
-            return random.nextBoolean() ? DyeColor.BLACK.getWoolData() : random.nextBoolean() ? DyeColor.GRAY.getWoolData() : DyeColor.LIGHT_GRAY.getWoolData();
-        }
+    @Override
+    public int getKillExperience() {
+        return this.isBaby() ? 0 : Utils.rand(1, 3);
+    }
 
-        return DyeColor.WHITE.getWoolData();
+    /**
+     * @return whether the sheep is sheared
+     */
+    public boolean isSheared() {
+        return this.sheared;
     }
 }

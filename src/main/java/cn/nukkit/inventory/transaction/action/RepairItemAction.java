@@ -1,11 +1,12 @@
 package cn.nukkit.inventory.transaction.action;
 
 import cn.nukkit.Player;
+import cn.nukkit.inventory.AnvilInventory;
 import cn.nukkit.item.Item;
 
 public class RepairItemAction extends InventoryAction {
 
-    private int type;
+    private final int type;
 
     public RepairItemAction(Item sourceItem, Item targetItem, int type) {
         super(sourceItem, targetItem);
@@ -14,7 +15,7 @@ public class RepairItemAction extends InventoryAction {
 
     @Override
     public boolean isValid(Player source) {
-        return source.getWindowById(Player.ANVIL_WINDOW_ID) != null;
+        return source.getWindowById(Player.ANVIL_WINDOW_ID) instanceof AnvilInventory;
     }
 
     @Override

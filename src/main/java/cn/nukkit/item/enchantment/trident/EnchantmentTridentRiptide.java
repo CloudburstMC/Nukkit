@@ -3,6 +3,7 @@ package cn.nukkit.item.enchantment.trident;
 import cn.nukkit.item.enchantment.Enchantment;
 
 public class EnchantmentTridentRiptide extends EnchantmentTrident {
+
     public EnchantmentTridentRiptide() {
         super(Enchantment.ID_TRIDENT_RIPTIDE, "tridentRiptide", Rarity.RARE);
     }

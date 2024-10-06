@@ -1,7 +1,9 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Rail;
 
@@ -36,25 +38,20 @@ public class BlockRailPowered extends BlockRail {
 
     @Override
     public int onUpdate(int type) {
-        // Warning: I din't recommended this on slow networks server or slow client
-        //          Network below 86Kb/s. This will became unresponsive to clients 
-        //          When updating the block state. Espicially on the world with many rails. 
-        //          Trust me, I tested this on my server.
         if (type == Level.BLOCK_UPDATE_NORMAL || type == Level.BLOCK_UPDATE_REDSTONE || type == Level.BLOCK_UPDATE_SCHEDULED) {
             if (super.onUpdate(type) == Level.BLOCK_UPDATE_NORMAL) {
                 return 0; // Already broken
             }
-            boolean wasPowered = isActive();
-            boolean isPowered = level.isBlockPowered(this.getLocation())
+
+            boolean isPowered = level.isBlockPowered(this)
                     || checkSurrounding(this, true, 0)
                     || checkSurrounding(this, false, 0);
 
-            // Avoid Block minstake
-            if (wasPowered != isPowered) {
+            if (isActive() != isPowered) {
                 setActive(isPowered);
-                level.updateAround(down());
+                level.updateAround(this.getSideVec(BlockFace.DOWN));
                 if (getOrientation().isAscending()) {
-                    level.updateAround(up());
+                    level.updateAround(this.getSideVec(BlockFace.UP));
                 }
             }
             return type;
@@ -81,7 +78,7 @@ public class BlockRailPowered extends BlockRail {
         int dz = pos.getFloorZ();
         // First: get the base block
         BlockRail block;
-        Block block2 = level.getBlock(new Vector3(dx, dy, dz));
+        Block block2 = level.getBlock(dx, dy, dz);
 
         // Second: check if the rail is Powered rail
         if (Rail.isRailBlock(block2)) {
@@ -155,12 +152,12 @@ public class BlockRailPowered extends BlockRail {
                 return false;
         }
         // Next check the if rail is on power state
-        return canPowered(new Vector3(dx, dy, dz), base, power, relative)
-                || onStraight && canPowered(new Vector3(dx, dy - 1, dz), base, power, relative);
+        return canPowered(dx, dy, dz, base, power, relative)
+                || onStraight && canPowered(dx, dy - 1, dz, base, power, relative);
     }
 
-    protected boolean canPowered(Vector3 pos, Rail.Orientation state, int power, boolean relative) {
-        Block block = level.getBlock(pos);
+    protected boolean canPowered(int x, int y, int z, Rail.Orientation state, int power, boolean relative) {
+        Block block = level.getBlock(x, y, z);
         // What! My block is air??!! Impossible! XD
         if (!(block instanceof BlockRailPowered)) {
             return false;
@@ -179,13 +176,18 @@ public class BlockRailPowered extends BlockRail {
                 || base != Rail.Orientation.STRAIGHT_EAST_WEST
                 && base != Rail.Orientation.ASCENDING_EAST
                 && base != Rail.Orientation.ASCENDING_WEST)
-                && (level.isBlockPowered(pos) || checkSurrounding(pos, relative, power + 1));
+                && (level.isBlockPowered(block) || checkSurrounding(block, relative, power + 1));
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-                Item.get(Item.POWERED_RAIL, 0, 1)
+                toItem()
         };
     }
 }
