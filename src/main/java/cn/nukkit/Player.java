@@ -279,6 +279,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private int fireworkBoostTicks;
     private int fireworkBoostLevel;
 
+    @Setter
     private boolean needSendData;
     private boolean needSendAdventureSettings;
     private boolean needSendFoodLevel;
@@ -368,6 +369,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.lastFireworkBoost = this.server.getTick();
         this.fireworkBoostLevel = boostLevel;
         this.fireworkBoostTicks = boostLevel == 3 ? 44 : boostLevel == 2 ? 29 : 23;
+    }
+
+    /**
+     * Set last spin attack tick to current tick
+     */
+    public void onSpinAttack(int riptideLevel) {
+        this.riptideTicks = 50 + (riptideLevel << 5);
     }
 
     /**
@@ -3415,64 +3423,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         break stopItemHold;
                     case PlayerActionPacket.ACTION_STOP_SWIMMING:
                         return;
-                    case PlayerActionPacket.ACTION_START_SPIN_ATTACK:
-                        if (this.inventory == null) {
-                            break stopItemHold;
-                        }
-
-                        PlayerToggleSpinAttackEvent playerToggleSpinAttackEvent = new PlayerToggleSpinAttackEvent(this, true);
-
-                        int riptideLevel = 0;
-                        Item hand;
-                        if ((hand = this.inventory.getItemInHandFast()).getId() != ItemID.TRIDENT) {
-                            playerToggleSpinAttackEvent.setCancelled(true);
-                            this.getServer().getLogger().debug(username + ": got ACTION_START_SPIN_ATTACK but hand item is not a trident");
-                        } else {
-                            Enchantment riptide = hand.getEnchantment(Enchantment.ID_TRIDENT_RIPTIDE);
-                            if (riptide == null) {
-                                playerToggleSpinAttackEvent.setCancelled(true);
-                            } else {
-                                riptideLevel = riptide.getLevel();
-                                if (riptideLevel < 1) {
-                                    playerToggleSpinAttackEvent.setCancelled(true);
-                                } else {
-                                    boolean inWater = false;
-                                    for (Block block : this.getCollisionBlocks()) {
-                                        if (block instanceof BlockWater) {
-                                            inWater = true;
-                                            break;
-                                        }
-                                    }
-                                    if (!(inWater || (this.getLevel().isRaining() && this.canSeeSky()))) {
-                                        playerToggleSpinAttackEvent.setCancelled(true);
-                                    }
-                                }
-                            }
-                        }
-
-                        this.server.getPluginManager().callEvent(playerToggleSpinAttackEvent);
-
-                        if (playerToggleSpinAttackEvent.isCancelled()) {
-                            this.needSendData = true;
-                        } else {
-                            this.setSpinAttack(true);
-                            this.resetFallDistance();
-
-                            this.riptideTicks = 50 + (riptideLevel << 5);
-
-                            int riptideSound;
-                            if (riptideLevel >= 3) {
-                                riptideSound = LevelSoundEventPacket.SOUND_ITEM_TRIDENT_RIPTIDE_3;
-                            } else if (riptideLevel == 2) {
-                                riptideSound = LevelSoundEventPacket.SOUND_ITEM_TRIDENT_RIPTIDE_2;
-                            } else {
-                                riptideSound = LevelSoundEventPacket.SOUND_ITEM_TRIDENT_RIPTIDE_1;
-                            }
-                            this.level.addLevelSoundEvent(this, riptideSound);
-                        }
-                        break stopItemHold;
                     case PlayerActionPacket.ACTION_STOP_SPIN_ATTACK:
-                        playerToggleSpinAttackEvent = new PlayerToggleSpinAttackEvent(this, false);
+                        PlayerToggleSpinAttackEvent  playerToggleSpinAttackEvent = new PlayerToggleSpinAttackEvent(this, false);
                         this.server.getPluginManager().callEvent(playerToggleSpinAttackEvent);
                         if (playerToggleSpinAttackEvent.isCancelled()) {
                             this.needSendData = true;
