@@ -23,7 +23,8 @@ public enum InventoryType {
     BEACON(1, "Beacon", 13),
     OFFHAND(1, "Offhand", -1),
     MINECART_CHEST(27, "Minecart with Chest", 0),
-    MINECART_HOPPER(5, "Minecart with Hopper", 8);
+    MINECART_HOPPER(5, "Minecart with Hopper", 8),
+    TRADING(3, "Villager Trade", 15);
 
     private final int size;
     private final String title;
