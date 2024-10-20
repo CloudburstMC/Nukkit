@@ -5,13 +5,12 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.network.CompressionProvider;
 import cn.nukkit.network.RakNetInterface;
+import cn.nukkit.network.encryption.Sha256;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.DisconnectPacket;
 import cn.nukkit.utils.BinaryStream;
 import com.google.common.base.Preconditions;
-import com.nukkitx.natives.sha256.Sha256;
-import com.nukkitx.natives.util.Natives;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
@@ -319,7 +318,7 @@ public class RakNetPlayerSession extends SimpleChannelInboundHandler<RakMessage>
         return -1;
     }
 
-    private static final ThreadLocal<Sha256> HASH_LOCAL = ThreadLocal.withInitial(Natives.SHA_256);
+    private static final ThreadLocal<Sha256> HASH_LOCAL = ThreadLocal.withInitial(Sha256::new);
 
     private byte[] generateTrailer(ByteBuf buf) {
         Sha256 hash = HASH_LOCAL.get();

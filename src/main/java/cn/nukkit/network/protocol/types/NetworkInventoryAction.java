@@ -7,8 +7,6 @@ import cn.nukkit.inventory.transaction.action.*;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.network.protocol.InventoryTransactionPacket;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
 import lombok.ToString;
 
 import java.util.Optional;
@@ -68,7 +66,6 @@ public class NetworkInventoryAction {
     public int inventorySlot;
     public Item oldItem;
     public Item newItem;
-    public int stackNetworkId;
 
     public NetworkInventoryAction read(InventoryTransactionPacket packet) {
         this.sourceType = (int) packet.getUnsignedVarInt();
@@ -135,10 +132,6 @@ public class NetworkInventoryAction {
         packet.putSlot(this.newItem);
     }
 
-    private static final IntSet VALID_SMITHING_EQUIPMENT = new IntOpenHashSet(new int[]{
-            Item.AIR, ItemID.DIAMOND_SWORD, ItemID.DIAMOND_SHOVEL, ItemID.DIAMOND_PICKAXE, ItemID.DIAMOND_AXE, ItemID.DIAMOND_HOE, ItemID.DIAMOND_HELMET, ItemID.DIAMOND_CHESTPLATE, ItemID.DIAMOND_LEGGINGS, ItemID.DIAMOND_BOOTS
-    });
-
     public InventoryAction createInventoryAction(Player player) {
         switch (this.sourceType) {
             case SOURCE_CONTAINER:
@@ -200,10 +193,6 @@ public class NetworkInventoryAction {
                         case SmithingInventory.SMITHING_EQUIPMENT_UI_SLOT:
                             if (!(player.getWindowById(Player.SMITHING_WINDOW_ID) instanceof SmithingInventory)) {
                                 player.getServer().getLogger().debug(player.getName() + " does not have smithing table window open");
-                                return null;
-                            }
-                            if (!(this.oldItem == null || VALID_SMITHING_EQUIPMENT.contains(this.oldItem.getId())) || !(this.newItem == null || VALID_SMITHING_EQUIPMENT.contains(this.oldItem.getId()))) {
-                                player.getServer().getLogger().debug(player.getName() + " had invalid smithing equipment");
                                 return null;
                             }
                             this.windowId = Player.SMITHING_WINDOW_ID;

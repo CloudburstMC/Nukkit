@@ -16,7 +16,15 @@ import java.util.TreeMap;
  */
 public class EntityMetadata {
 
-    private Int2ObjectMap<EntityData> map = new Int2ObjectOpenHashMap<>();
+    private final Int2ObjectMap<EntityData> map;
+
+    public EntityMetadata() {
+        this.map = new Int2ObjectOpenHashMap<>();
+    }
+
+    private EntityMetadata(Int2ObjectMap<EntityData> map) {
+        this.map = map;
+    }
 
     public EntityData get(int id) {
         return this.getOrDefault(id, null);
@@ -123,12 +131,7 @@ public class EntityMetadata {
         return new TreeMap<>(this.map); // Ordered
     }
 
-    private EntityMetadata replace(Int2ObjectMap<EntityData> map) {
-        this.map = map;
-        return this;
-    }
-
     public EntityMetadata clone() {
-        return new EntityMetadata().replace(new Int2ObjectOpenHashMap<>(this.map));
+        return new EntityMetadata(new Int2ObjectOpenHashMap<>(this.map));
     }
 }

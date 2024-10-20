@@ -2,7 +2,6 @@ package cn.nukkit.level.format.leveldb.structure;
 
 import cn.nukkit.Nukkit;
 import cn.nukkit.block.Block;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.format.leveldb.BlockStateMapping;
 import cn.nukkit.level.util.BitArray;
 import cn.nukkit.level.util.BitArrayVersion;
@@ -21,7 +20,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.function.Function;
 
 public class StateBlockStorage {
     private static final Logger log = LogManager.getLogger("LevelDB-Logger");
@@ -211,10 +209,6 @@ public class StateBlockStorage {
     }
 
     public void writeTo(BinaryStream stream) {
-        this.writeTo(stream, state -> GlobalBlockPalette.getOrCreateRuntimeId(state.getLegacyId(), state.getLegacyData()));
-    }
-
-    private void writeTo(BinaryStream stream, Function<BlockStateSnapshot, Integer> mapping) {
         BitArray bitArray = this.bitArray;
 
         stream.putByte((byte) this.getPaletteHeader(bitArray.getVersion(), true));
@@ -226,7 +220,7 @@ public class StateBlockStorage {
         }
 
         for (BlockStateSnapshot state : this.palette) {
-            stream.putVarInt(mapping.apply(state));
+            stream.putVarInt(state.getRuntimeIdNetworkProtocol());
         }
     }
 

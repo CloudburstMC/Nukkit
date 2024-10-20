@@ -41,15 +41,6 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
         return this;
     }
 
-    @Deprecated
-    public void setChannel(int channel) {
-    }
-
-    @Deprecated
-    public int getChannel() {
-        return 0;
-    }
-
     public DataPacket clean() {
         this.setBuffer(null);
         this.setOffset(0);

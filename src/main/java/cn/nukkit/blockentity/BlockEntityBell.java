@@ -54,6 +54,10 @@ public class BlockEntityBell extends BlockEntitySpawnable {
 
     @Override
     public boolean onUpdate() {
+        if (this.closed) {
+            return false;
+        }
+
         if (ringing) {
             if (ticks == 0) {
                 this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_BELL_HIT);
@@ -79,10 +83,6 @@ public class BlockEntityBell extends BlockEntitySpawnable {
     }
 
     private void spawnToAllWithExceptions() {
-        if (this.closed) {
-            return;
-        }
-
         for (Player player : this.getLevel().getChunkPlayers(this.chunk.getX(), this.chunk.getZ()).values()) {
             if (player.spawned && !spawnExceptions.contains(player.getId())) {
                 this.spawnTo(player);

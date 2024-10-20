@@ -15,8 +15,6 @@ public class ClientboundMapItemDataPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.CLIENTBOUND_MAP_ITEM_DATA_PACKET;
 
-    public long[] eids = new long[0];
-
     public long mapId;
     public int update;
     public byte scale;
@@ -25,14 +23,19 @@ public class ClientboundMapItemDataPacket extends DataPacket {
     public int height;
     public int offsetX;
     public int offsetZ;
-
     public byte dimensionId;
-    public BlockVector3 origin = new BlockVector3();
+    public BlockVector3 origin = EMPTY_BlockVector3;
+    public MapDecorator[] decorators = EMPTY_MapDecorator;
+    public MapTrackedObject[] trackedEntities = EMPTY_MapTrackedObject;
+    public long[] eids = EMPTY_long;
+    public int[] colors = EMPTY_int;
+    public BufferedImage image;
 
-    public MapDecorator[] decorators = new MapDecorator[0];
-    public MapTrackedObject[] trackedEntities = new MapTrackedObject[0];
-    public int[] colors = new int[0];
-    public BufferedImage image = null;
+    private static final BlockVector3 EMPTY_BlockVector3 = new BlockVector3();
+    private static final MapDecorator[] EMPTY_MapDecorator = new MapDecorator[0];
+    private static final MapTrackedObject[] EMPTY_MapTrackedObject = new MapTrackedObject[0];
+    private static final long[] EMPTY_long = new long[0];
+    private static final int[] EMPTY_int = new int[0];
 
     public static final int TEXTURE_UPDATE = 0x02;
     public static final int DECORATIONS_UPDATE = 0x04;
@@ -68,7 +71,6 @@ public class ClientboundMapItemDataPacket extends DataPacket {
         this.putUnsignedVarInt(update);
         this.putByte(this.dimensionId);
         this.putBoolean(this.isLocked);
-
         this.putSignedBlockPosition(origin);
 
         if ((update & ENTITIES_UPDATE) != 0) {
@@ -102,7 +104,7 @@ public class ClientboundMapItemDataPacket extends DataPacket {
                 this.putByte(decorator.offsetX);
                 this.putByte(decorator.offsetZ);
                 this.putString(decorator.label);
-                this.putUnsignedVarInt(decorator.color.getRGB()); //toABGR?
+                this.putUnsignedVarInt(decorator.color.getRGB());
             }
         }
 
@@ -122,9 +124,9 @@ public class ClientboundMapItemDataPacket extends DataPacket {
                 }
 
                 image.flush();
-            } else if (colors.length > 0) {
+            } else {
                 for (int color : colors) {
-                    this.putUnsignedVarInt(color); //toABGR?
+                    this.putUnsignedVarInt(color);
                 }
             }
         }

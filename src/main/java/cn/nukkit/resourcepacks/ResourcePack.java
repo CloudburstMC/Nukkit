@@ -18,7 +18,27 @@ public interface ResourcePack {
 
     byte[] getPackChunk(int off, int len);
 
-    default String getEncryptionKey() { // Default for backwards compatibility
+    default String getEncryptionKey() {
+        return "";
+    }
+
+    default String getSubPackName() {
+        return "";
+    }
+
+    default boolean usesScripting() {
+        return false;
+    }
+
+    default boolean isAddonPack() {
+        return false;
+    }
+
+    default boolean isRaytracingCapable() {
+        return false;
+    }
+
+    default String getCDNUrl() {
         return "";
     }
 }

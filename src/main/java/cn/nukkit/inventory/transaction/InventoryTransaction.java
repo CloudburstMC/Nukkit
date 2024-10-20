@@ -84,7 +84,7 @@ public class InventoryTransaction {
 
             if (!slotChangeAction.getInventory().allowedToAdd(targetItem)) {
                 invalid = true;
-                Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": " + slotChangeAction.getInventory().getTitle() + " inventory doesn't allow item " + targetItem.getId());
+                Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": " + slotChangeAction.getInventory().getName() + " inventory doesn't allow item " + targetItem.getId());
                 return;
             }
 

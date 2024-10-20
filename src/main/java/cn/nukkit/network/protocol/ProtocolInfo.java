@@ -14,11 +14,11 @@ public interface ProtocolInfo {
      * Actual Minecraft protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("729"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("748"); // DO NOT REMOVE BOXING
 
     List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION_NETWORK = "1.21.30";
+    String MINECRAFT_VERSION_NETWORK = "1.21.40";
     String MINECRAFT_VERSION = 'v' + MINECRAFT_VERSION_NETWORK;
 
     byte BATCH_PACKET = (byte) 0xff;
@@ -236,4 +236,6 @@ public interface ProtocolInfo {
     byte __INTERNAL__SERVERBOUND_DIAGNOSTICS_PACKET = (byte) 215;
     byte __INTERNAL__CAMERA_AIM_ASSIST_PACKET = (byte) 216;
     byte __INTERNAL__CONTAINER_REGISTRY_CLEANUP_PACKET = (byte) 217;
+    byte __INTERNAL__MOVEMENT_EFFECT_PACKET = (byte) 218;
+    byte __INTERNAL__SET_MOVEMENT_AUTHORITY_PACKET = (byte) 219;
 }

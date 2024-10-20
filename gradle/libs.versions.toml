@@ -7,7 +7,6 @@ fastutilmaps = "8.5.13-SNAPSHOT"
 [libraries]
 network = { group = "org.cloudburstmc.netty", name = "netty-transport-raknet", version = "1.0.0.CR3-SNAPSHOT" }
 epoll = { group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.101.Final" }
-natives = { group = "com.nukkitx", name = "natives", version = "1.0.3" }
 fastutil = { group = "com.nukkitx", name = "fastutil-lite", version = "8.1.1" }
 fastutil-long-long-maps = { group = "org.cloudburstmc.fastutil.maps", name = "long-long-maps", version.ref = "fastutilmaps" }
 fastutil-int-short-maps = { group = "org.cloudburstmc.fastutil.maps", name = "int-short-maps", version.ref = "fastutilmaps" }
@@ -16,7 +15,7 @@ fastutil-object-object-maps = { group = "org.cloudburstmc.fastutil.maps", name =
 guava = { group = "com.google.guava", name = "guava", version = "33.2.1-jre" }
 gson = { group = "com.google.code.gson", name = "gson", version = "2.10.1" }
 snakeyaml = { group = "org.yaml", name = "snakeyaml", version = "1.33" }
-leveldb = { group = "org.iq80.leveldb", name = "leveldb", version = "0.11-SNAPSHOT" }
+leveldb = { group = "org.iq80.leveldb", name = "leveldb", version = "0.11.1-SNAPSHOT" }
 leveldbjni = { group = "net.daporkchop", name = "leveldb-mcpe-jni", version = "0.0.10-SNAPSHOT" }
 snappy = { group = "org.xerial.snappy", name = "snappy-java", version = "1.1.10.7" }
 jwt = { group = "com.nimbusds", name = "nimbus-jose-jwt", version = "9.23" }

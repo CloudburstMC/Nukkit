@@ -182,6 +182,6 @@ public class InventoryTransactionPacket extends DataPacket {
     }
 
     private Vector3 getVector3fAsVector3() {
-        return new Vector3(this.getLFloat(4), this.getLFloat(4), this.getLFloat(4));
+        return new Vector3(this.getLFloat(), this.getLFloat(), this.getLFloat());
     }
 }

@@ -1,11 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.resourcepacks.ResourcePack;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.ToString;
-import lombok.Value;
-
-import java.util.List;
 
 @ToString
 public class ResourcePacksInfoPacket extends DataPacket {
@@ -14,12 +10,9 @@ public class ResourcePacksInfoPacket extends DataPacket {
 
     public boolean mustAccept;
     public boolean scripting;
-    @Deprecated
-    public boolean forceServerPacks; // pre 1.21.30
     public boolean hasAddonPacks;
     public ResourcePack[] behaviourPackEntries = ResourcePack.EMPTY_ARRAY;
     public ResourcePack[] resourcePackEntries = ResourcePack.EMPTY_ARRAY;
-    public List<CDNEntry> CDNEntries = new ObjectArrayList<>();
 
     @Override
     public void decode() {
@@ -34,12 +27,6 @@ public class ResourcePacksInfoPacket extends DataPacket {
         this.putBoolean(this.scripting);
 
         this.encodeResourcePacks(this.resourcePackEntries);
-
-        this.putUnsignedVarInt(this.CDNEntries.size());
-        this.CDNEntries.forEach((entry) -> {
-            this.putString(entry.getPackId());
-            this.putString(entry.getRemoteUrl());
-        });
     }
 
     private void encodeResourcePacks(ResourcePack[] packs) {
@@ -49,22 +36,17 @@ public class ResourcePacksInfoPacket extends DataPacket {
             this.putString(entry.getPackVersion());
             this.putLLong(entry.getPackSize());
             this.putString(entry.getEncryptionKey());
-            this.putString(""); // sub-pack name
+            this.putString(entry.getSubPackName());
             this.putString(!entry.getEncryptionKey().isEmpty() ? entry.getPackId().toString() : "");
-            this.putBoolean(false); // scripting
-            this.putBoolean(false); // isAddonPack
-            this.putBoolean(false); // raytracing capable
+            this.putBoolean(entry.usesScripting());
+            this.putBoolean(entry.isAddonPack());
+            this.putBoolean(entry.isRaytracingCapable());
+            this.putString(entry.getCDNUrl());
         }
     }
 
     @Override
     public byte pid() {
         return NETWORK_ID;
-    }
-
-    @Value
-    public static class CDNEntry {
-        String packId;
-        String remoteUrl;
     }
 }

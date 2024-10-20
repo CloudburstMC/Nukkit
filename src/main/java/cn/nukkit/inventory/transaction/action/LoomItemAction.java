@@ -25,16 +25,17 @@ public class LoomItemAction extends InventoryAction {
 
     @Override
     public void onExecuteSuccess(Player source) {
-        Item first = inventory.getFirstItem();
-        Item second = inventory.getSecondItem();
-        if (first != null && !first.isNull()) {
-            first.count--;
-            inventory.setFirstItem(first);
+        Item banner = inventory.getBanner();
+        Item dye = inventory.getDye();
+        if (banner != null && !banner.isNull()) {
+            banner.count -= sourceItem.getCount();
+            inventory.setBanner(banner);
         }
-        if (second != null && !second.isNull()) {
-            second.count--;
-            inventory.setSecondItem(second);
+        if (dye != null && !dye.isNull()) {
+            dye.count -= sourceItem.getCount();
+            inventory.setDye(dye);
         }
+        // Pattern not consumed
     }
 
     @Override

@@ -22,19 +22,19 @@ public class PlayerAuthInputPacket extends DataPacket {
     private float pitch;
     private float headYaw;
     private Vector3f position;
-    private Vector2 motion;
+    private Vector2 motion; // Vector2 for backwards compatibility
     private final Set<AuthInputAction> inputData = EnumSet.noneOf(AuthInputAction.class);
     private InputMode inputMode;
     private ClientPlayMode playMode;
     private AuthInteractionModel interactionModel;
-    private Vector3f vrGazeDirection;
     private long tick;
     private Vector3f delta;
-    private Vector2 analogMoveVector;
-    //private ItemStackRequest itemStackRequest;
     private final Map<PlayerActionType, PlayerBlockActionData> blockActionData = new EnumMap<>(PlayerActionType.class);
     private long predictedVehicle;
+    private Vector2f analogMoveVector;
     private Vector2f vehicleRotation;
+    private Vector2f interactRotation;
+    private Vector3f cameraOrientation;
 
     @Override
     public byte pid() {
@@ -61,17 +61,10 @@ public class PlayerAuthInputPacket extends DataPacket {
 
         this.interactionModel = AuthInteractionModel.fromOrdinal((int) this.getUnsignedVarInt());
 
-        if (this.playMode == ClientPlayMode.REALITY) {
-            this.vrGazeDirection = this.getVector3f();
-        }
+        this.interactRotation = this.getVector2f();
 
         this.tick = this.getUnsignedVarLong();
         this.delta = this.getVector3f();
-
-        //if (this.inputData.contains(AuthInputAction.PERFORM_ITEM_STACK_REQUEST)) {
-            // TODO: this.itemStackRequest = readItemStackRequest(buf, protocolVersion);
-            // We are safe to leave this for later, since it is only sent with ServerAuthInventories
-        //}
 
         if (this.inputData.contains(AuthInputAction.PERFORM_BLOCK_ACTIONS)) {
             int arraySize = this.getVarInt();
@@ -93,11 +86,12 @@ public class PlayerAuthInputPacket extends DataPacket {
         }
 
         if (this.inputData.contains(AuthInputAction.IN_CLIENT_PREDICTED_IN_VEHICLE)) {
-            this.vehicleRotation = new Vector2f(this.getLFloat(), this.getLFloat());
+            this.vehicleRotation = this.getVector2f();
             this.predictedVehicle = this.getVarLong();
         }
 
-        this.analogMoveVector = new Vector2(this.getLFloat(), this.getLFloat());
+        this.analogMoveVector = this.getVector2f();
+        this.cameraOrientation = this.getVector3f();
     }
 
     @Override

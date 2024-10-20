@@ -3290,6 +3290,16 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                 }
 
+                if (authPacket.getInputData().contains(AuthInputAction.STOP_SPIN_ATTACK)) {
+                    PlayerToggleSpinAttackEvent playerToggleSpinAttackEvent = new PlayerToggleSpinAttackEvent(this, false);
+                    this.server.getPluginManager().callEvent(playerToggleSpinAttackEvent);
+                    if (playerToggleSpinAttackEvent.isCancelled()) {
+                        this.needSendData = true;
+                    } else {
+                        this.setSpinAttack(false);
+                    }
+                }
+
                 if (authPacket.getInputData().contains(AuthInputAction.START_FLYING)) {
                     if (!server.getAllowFlight() && !this.adventureSettings.get(Type.ALLOW_FLIGHT)) {
                         this.kick(PlayerKickEvent.Reason.FLYING_DISABLED, MSG_FLYING_NOT_ENABLED, true);
@@ -3422,15 +3432,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     case PlayerActionPacket.ACTION_START_SWIMMING:
                         break stopItemHold;
                     case PlayerActionPacket.ACTION_STOP_SWIMMING:
-                        return;
-                    case PlayerActionPacket.ACTION_STOP_SPIN_ATTACK:
-                        PlayerToggleSpinAttackEvent  playerToggleSpinAttackEvent = new PlayerToggleSpinAttackEvent(this, false);
-                        this.server.getPluginManager().callEvent(playerToggleSpinAttackEvent);
-                        if (playerToggleSpinAttackEvent.isCancelled()) {
-                            this.needSendData = true;
-                        } else {
-                            this.setSpinAttack(false);
-                        }
                         return;
                 }
 
@@ -4832,7 +4833,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 break;
         }
 
-        int bid = this.level.getBlockIdAt(blockPos.x + face.getXOffset(), blockPos.y + face.getYOffset(), blockPos.z + face.getZOffset());
+        int bid = this.level.getBlockIdAt(this.chunk, blockPos.x + face.getXOffset(), blockPos.y + face.getYOffset(), blockPos.z + face.getZOffset());
         if (bid == Block.FIRE || bid == Block.SOUL_FIRE) {
             Vector3 block = this.temporalVector.setComponents(blockPos.x + face.getXOffset(), blockPos.y + face.getYOffset(), blockPos.z + face.getZOffset());
             this.level.setBlock(block, Block.get(BlockID.AIR), true);

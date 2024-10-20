@@ -86,6 +86,9 @@ public class BlockCoral extends BlockTransparentMeta {
         if (this.down().isTransparent()) {
             return false;
         }
+        if (!(block instanceof BlockWater || block.level.isBlockWaterloggedAt(block.getChunk(), (int) block.x, (int) block.y, (int) block.z))) {
+            this.setDamage(8 + this.getDamage()); // Dead
+        }
         if (this.getLevel().setBlock(this, this, true, true)) {
             if (block instanceof BlockWater) {
                 this.getLevel().setBlock((int) this.x, (int) this.y, (int) this.z, Block.LAYER_WATERLOGGED, Block.get(Block.STILL_WATER), true, true);

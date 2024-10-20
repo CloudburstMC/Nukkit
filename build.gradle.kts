@@ -25,7 +25,6 @@ repositories {
 dependencies {
     api(libs.network)
     api(libs.epoll)
-    api(libs.natives)
     api(libs.fastutil)
     api(libs.bundles.fastutilmaps)
     api(libs.guava)

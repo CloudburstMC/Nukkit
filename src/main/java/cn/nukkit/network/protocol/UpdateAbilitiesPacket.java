@@ -52,7 +52,7 @@ public class UpdateAbilitiesPacket extends DataPacket {
     private long entityId;
     private PlayerPermission playerPermission;
     private CommandPermission commandPermission;
-    private final List<AbilityLayer> abilityLayers = new ObjectArrayList<>();
+    private final List<AbilityLayer> abilityLayers = new ObjectArrayList<>(2);
 
     @Override
     public void decode() {

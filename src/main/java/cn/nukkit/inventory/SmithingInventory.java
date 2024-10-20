@@ -3,7 +3,10 @@ package cn.nukkit.inventory;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Position;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
+import it.unimi.dsi.fastutil.ints.IntSet;
 
 /**
  * @author joserobjr
@@ -19,6 +22,11 @@ public class SmithingInventory extends FakeBlockUIComponent {
 
     private Item currentResult = Item.get(0);
 
+    private static final IntSet ITEMS = new IntOpenHashSet(new int[]{
+            Item.AIR, ItemID.NETHERITE_INGOT, ItemID.DIAMOND_SWORD, ItemID.DIAMOND_SHOVEL, ItemID.DIAMOND_PICKAXE, ItemID.DIAMOND_AXE,
+            ItemID.DIAMOND_HOE, ItemID.DIAMOND_HELMET, ItemID.DIAMOND_CHESTPLATE, ItemID.DIAMOND_LEGGINGS, ItemID.DIAMOND_BOOTS,
+            ItemID.NETHERITE_SWORD, ItemID.NETHERITE_SHOVEL, ItemID.NETHERITE_PICKAXE, ItemID.NETHERITE_AXE, ItemID.NETHERITE_HOE,
+            ItemID.NETHERITE_HELMET, ItemID.NETHERITE_CHESTPLATE, ItemID.NETHERITE_LEGGINGS, ItemID.NETHERITE_BOOTS});
 
     public SmithingInventory(PlayerUIInventory playerUI, Position position) {
         super(playerUI, InventoryType.SMITHING_TABLE, 51, position);
@@ -83,5 +91,10 @@ public class SmithingInventory extends FakeBlockUIComponent {
 
     public Item getCurrentResult() {
         return currentResult;
+    }
+
+    @Override
+    public boolean allowedToAdd(Item item) {
+        return ITEMS.contains(item.getId());
     }
 }

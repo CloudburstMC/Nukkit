@@ -88,7 +88,7 @@ public class StartGamePacket extends DataPacket {
     public boolean disablePlayerInteractions;
     public boolean emoteChatMuted;
     public boolean hardcore;
-    public final List<ExperimentData> experiments = new ObjectArrayList<>();
+    public final List<ExperimentData> experiments = new ObjectArrayList<>(1);
 
     @Override
     public void decode() {

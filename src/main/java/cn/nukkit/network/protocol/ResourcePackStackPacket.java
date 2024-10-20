@@ -12,12 +12,11 @@ public class ResourcePackStackPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_STACK_PACKET;
 
-    public boolean mustAccept = false;
-    @Deprecated
-    public String gameVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK; // For plugin compatibility
+    public boolean mustAccept;
+    public String gameVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
     public ResourcePack[] behaviourPackStack = ResourcePack.EMPTY_ARRAY;
     public ResourcePack[] resourcePackStack = ResourcePack.EMPTY_ARRAY;
-    public final List<ExperimentData> experiments = new ObjectArrayList<>();
+    public final List<ExperimentData> experiments = new ObjectArrayList<>(1);
 
     @Override
     public void decode() {
@@ -40,7 +39,7 @@ public class ResourcePackStackPacket extends DataPacket {
             this.putString(entry.getPackVersion());
             this.putString("");
         }
-        this.putString(ProtocolInfo.MINECRAFT_VERSION_NETWORK);
+        this.putString(this.gameVersion);
         this.putExperiments(this.experiments);
         this.putBoolean(false); // Has editor packs
     }

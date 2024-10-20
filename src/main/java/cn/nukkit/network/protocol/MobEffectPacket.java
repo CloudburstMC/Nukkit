@@ -42,6 +42,6 @@ public class MobEffectPacket extends DataPacket {
         this.putVarInt(this.amplifier);
         this.putBoolean(this.particles);
         this.putVarInt(this.duration);
-        this.putLLong(this.tick);
+        this.putUnsignedVarLong(this.tick);
     }
 }

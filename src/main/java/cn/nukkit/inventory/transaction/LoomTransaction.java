@@ -7,6 +7,7 @@ import cn.nukkit.inventory.LoomInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.LoomItemAction;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 
 import java.util.List;
 
@@ -29,26 +30,32 @@ public class LoomTransaction extends InventoryTransaction {
 
     @Override
     public boolean canExecute() {
+        if (!super.canExecute()) {
+            return false;
+        }
+
         Inventory inventory = getSource().getWindowById(Player.LOOM_WINDOW_ID);
         if (!(inventory instanceof LoomInventory)) {
             return false;
         }
-        LoomInventory loomInventory = (LoomInventory) inventory;
 
         if (outputItem == null) {
             return false;
         }
 
-        Item first = loomInventory.getFirstItem();
-        Item second = loomInventory.getSecondItem();
-        if (first.getId() != Item.BANNER || second.getId() != Item.DYE || first.getDamage() != outputItem.getDamage()) {
+        LoomInventory loomInventory = (LoomInventory) inventory;
+        Item banner = loomInventory.getBanner();
+        Item dye = loomInventory.getDye();
+        if (banner.getId() != Item.BANNER || dye.getId() != Item.DYE || banner.getDamage() != outputItem.getDamage()) {
             return false;
         }
+
         if (!outputItem.hasCompoundTag()) {
             return false;
         }
+
         int patternCount = outputItem.getNamedTag().getList("Patterns").size();
-        if (first.getNamedTag() == null) {
+        if (banner.getNamedTag() == null) {
             return patternCount == 1;
         }
 
@@ -56,34 +63,31 @@ public class LoomTransaction extends InventoryTransaction {
             return false;
         }
 
-        return first.getNamedTag().getList("Patterns").size() + 1 == patternCount;
-    }
-
-    @Override
-    public boolean execute() {
-        if (this.hasExecuted() || !this.canExecute()) {
-            this.source.removeAllWindows(false);
-            this.sendInventories();
+        Item pattern = loomInventory.getPattern();
+        if (pattern.getId() != 0 && pattern.getId() != ItemID.BANNER_PATTERN) {
             return false;
         }
 
+        return banner.getNamedTag().getList("Patterns").size() + 1 == patternCount;
+    }
+
+    @Override
+    protected boolean callExecuteEvent() {
         LoomInventory inventory = (LoomInventory) getSource().getWindowById(Player.LOOM_WINDOW_ID);
         LoomItemEvent event = new LoomItemEvent(inventory, this.outputItem, this.source);
         this.source.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             this.source.removeAllWindows(false);
             this.sendInventories();
-            return true;
-        }
-
-        for (InventoryAction action : this.actions) {
-            if (action.execute(this.source)) {
-                action.onExecuteSuccess(this.source);
-            } else {
-                action.onExecuteFail(this.source);
-            }
+            return false;
         }
         return true;
+    }
+
+    @Override
+    protected void sendInventories() {
+        this.source.removeAllWindows(false);
+        super.sendInventories();
     }
 
     public Item getOutputItem() {

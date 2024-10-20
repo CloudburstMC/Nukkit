@@ -63,7 +63,7 @@ public class ItemTrident extends ItemTool {
             } else {
                 boolean inWater = false;
                 for (Block block : player.getCollisionBlocks()) {
-                    if (block instanceof BlockWater) {
+                    if (block instanceof BlockWater || block.level.isBlockWaterloggedAt(player.chunk, (int) block.x, (int) block.y, (int) block.z)) {
                         inWater = true;
                         break;
                     }

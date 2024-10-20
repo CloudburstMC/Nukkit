@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.leveldb.structure;
 
+import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.format.leveldb.BlockStateMapping;
 import org.cloudburstmc.nbt.NbtMap;
 import lombok.Builder;
@@ -21,6 +22,9 @@ public class BlockStateSnapshot {
     private int legacyId = -1;
     @Builder.Default
     private int legacyData = -1;
+
+    @Builder.Default
+    private int runtimeIdNetworkProtocol = -1;
 
     public int getLegacyId() {
         if (this.legacyId != -1) {
@@ -47,5 +51,13 @@ public class BlockStateSnapshot {
             this.legacyData = data;
         }
         return data;
+    }
+
+    int getRuntimeIdNetworkProtocol() {
+        if (this.runtimeIdNetworkProtocol == -1) {
+            this.runtimeIdNetworkProtocol = GlobalBlockPalette.getOrCreateRuntimeId(this.getLegacyId(), this.getLegacyData());
+        }
+
+        return this.runtimeIdNetworkProtocol;
     }
 }

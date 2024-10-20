@@ -71,6 +71,7 @@ public class BlockSeaPickle extends BlockTransparentMeta {
                 }
             } else if (!this.isDead()) {
                 BlockFadeEvent event = new BlockFadeEvent(this, Block.get(SEA_PICKLE, this.getDamage() ^ 0x4));
+                level.getServer().getPluginManager().callEvent(event);
                 if (!event.isCancelled()) {
                     this.getLevel().setBlock(this, event.getNewState(), true, true);
                 }
