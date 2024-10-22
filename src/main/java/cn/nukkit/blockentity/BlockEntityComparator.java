@@ -1,6 +1,6 @@
 package cn.nukkit.blockentity;
 
-import cn.nukkit.block.BlockRedstoneComparator;
+import cn.nukkit.block.Block;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -23,7 +23,8 @@ public class BlockEntityComparator extends BlockEntity {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.getLevelBlock() instanceof BlockRedstoneComparator;
+        int blockID = level.getBlockIdAt(chunk, (int) x, (int) y, (int) z);
+        return blockID == Block.POWERED_COMPARATOR || blockID == Block.UNPOWERED_COMPARATOR;
     }
 
     public int getOutputSignal() {
@@ -31,7 +32,10 @@ public class BlockEntityComparator extends BlockEntity {
     }
 
     public void setOutputSignal(int outputSignal) {
-        this.outputSignal = outputSignal;
+        if (this.outputSignal != outputSignal) {
+            this.outputSignal = outputSignal;
+            setDirty();
+        }
     }
 
     @Override

@@ -2,18 +2,17 @@ package cn.nukkit.network.protocol;
 
 import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRules;
+import cn.nukkit.network.protocol.types.ExperimentData;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.ToString;
-import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
 import java.util.UUID;
 
-/**
- * Created on 15-10-13.
- */
-@Log4j2
+import java.util.List;
+
 @ToString
 public class StartGamePacket extends DataPacket {
 
@@ -48,36 +47,36 @@ public class StartGamePacket extends DataPacket {
     public int spawnZ;
     public boolean hasAchievementsDisabled = true;
     public boolean worldEditor;
-    public int dayCycleStopTime = -1; //-1 = not stopped, any positive value = stopped at that time
+    public int dayCycleStopTime = -1; // -1 = not stopped, any positive value = stopped
     public int eduEditionOffer = 0;
-    public boolean hasEduFeaturesEnabled = false;
+    public boolean hasEduFeaturesEnabled;
     public float rainLevel;
     public float lightningLevel;
-    public boolean hasConfirmedPlatformLockedContent = false;
+    public boolean hasConfirmedPlatformLockedContent;
     public boolean multiplayerGame = true;
     public boolean broadcastToLAN = true;
     public int xblBroadcastIntent = GAME_PUBLISH_SETTING_PUBLIC;
     public int platformBroadcastIntent = GAME_PUBLISH_SETTING_PUBLIC;
     public boolean commandsEnabled;
-    public boolean isTexturePacksRequired = false;
+    public boolean isTexturePacksRequired;
     public GameRules gameRules;
-    public boolean bonusChest = false;
-    public boolean hasStartWithMapEnabled = false;
+    public boolean bonusChest;
+    public boolean hasStartWithMapEnabled;
     public int permissionLevel = 1;
     public int serverChunkTickRange = 4;
-    public boolean hasLockedBehaviorPack = false;
-    public boolean hasLockedResourcePack = false;
-    public boolean isFromLockedWorldTemplate = false;
-    public boolean isUsingMsaGamertagsOnly = false;
-    public boolean isFromWorldTemplate = false;
-    public boolean isWorldTemplateOptionLocked = false;
-    public boolean isOnlySpawningV1Villagers = false;
+    public boolean hasLockedBehaviorPack;
+    public boolean hasLockedResourcePack;
+    public boolean isFromLockedWorldTemplate;
+    public boolean isUsingMsaGamertagsOnly;
+    public boolean isFromWorldTemplate;
+    public boolean isWorldTemplateOptionLocked;
+    public boolean isOnlySpawningV1Villagers;
     public String vanillaVersion = ProtocolInfo.MINECRAFT_VERSION_NETWORK;
-    public String levelId = ""; //base64 string, usually the same as world folder name in vanilla
+    public String levelId = ""; // base64 string, usually the same as world folder name in vanilla
     public String worldName;
     public String premiumWorldTemplateId = "";
-    public boolean isTrial = false;
-    public boolean isMovementServerAuthoritative;
+    public boolean isTrial;
+    public boolean isMovementServerAuthoritative = true;
     public boolean isInventoryServerAuthoritative;
     public long currentTick;
     public int enchantmentSeed;
@@ -89,10 +88,11 @@ public class StartGamePacket extends DataPacket {
     public boolean disablePlayerInteractions;
     public boolean emoteChatMuted;
     public boolean hardcore;
+    public final List<ExperimentData> experiments = new ObjectArrayList<>(1);
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -132,8 +132,7 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.commandsEnabled);
         this.putBoolean(this.isTexturePacksRequired);
         this.putGameRules(this.gameRules);
-        this.putLInt(0); // Experiment count
-        this.putBoolean(false); // Were experiments previously toggled
+        this.putExperiments(this.experiments);
         this.putBoolean(this.bonusChest);
         this.putBoolean(this.hasStartWithMapEnabled);
         this.putVarInt(this.permissionLevel);
@@ -148,12 +147,13 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.isDisablingPersonas);
         this.putBoolean(this.isDisablingCustomSkins);
         this.putBoolean(this.emoteChatMuted);
-        this.putString(this.vanillaVersion);
+        this.putString(ProtocolInfo.MINECRAFT_VERSION_NETWORK);
         this.putLInt(16); // Limited world width
         this.putLInt(16); // Limited world height
         this.putBoolean(false); // Nether type
-        this.putString(""); // EduSharedUriResource buttonName
-        this.putString(""); // EduSharedUriResource linkUri
+        // EduSharedUriResource
+        this.putString(""); // buttonName
+        this.putString(""); // linkUri
         this.putBoolean(false); // Experimental Gameplay
         this.putByte(this.chatRestrictionLevel);
         this.putBoolean(this.disablePlayerInteractions);
@@ -170,11 +170,11 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(true); // isServerAuthoritativeBlockBreaking
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
-        this.putUnsignedVarInt(0); // Custom blocks
+        this.putUnsignedVarInt(0); // No custom blocks
         this.put(RuntimeItems.getMapping().getItemPalette());
         this.putString(this.multiplayerCorrelationId);
-        this.putBoolean(this.isInventoryServerAuthoritative);
-        this.putString(""); // Server Engine
+        this.putBoolean(false); // isInventoryServerAuthoritative
+        this.putString(""); // serverEngine
         try {
             this.put(NBTIO.writeNetwork(new CompoundTag(""))); // playerPropertyData
         } catch (IOException e) {
@@ -184,6 +184,6 @@ public class StartGamePacket extends DataPacket {
         this.putUUID(new UUID(0, 0)); // worldTemplateId
         this.putBoolean(this.clientSideGenerationEnabled);
         this.putBoolean(false); // blockIdsAreHashed
-        this.putBoolean(false); // serverAuthSounds
+        this.putBoolean(true); // isServerAuthSounds
     }
 }

@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 @Deprecated
 public final class BiomePalette {
+
     private int biome;
     private BitArray256 encodedData;
     private IntPalette palette;
@@ -77,15 +78,12 @@ public final class BiomePalette {
                     raw[i] = palette.getKey(raw[i]);
                 }
 
-                int oldRaw = raw[4];
-
                 raw[index] = value;
 
                 palette.add(value);
 
-                int oldBits = MathHelper.log2(palette.length() - 2);
                 int newBits = MathHelper.log2(palette.length() - 1);
-                if (oldBits != newBits) {
+                if (MathHelper.log2(palette.length() - 2) != newBits) {
                     encodedData = new BitArray256(newBits);
                 }
 
@@ -96,7 +94,6 @@ public final class BiomePalette {
                 encodedData.fromRaw(raw);
             }
         }
-
     }
 
     public synchronized int[] toRaw() {

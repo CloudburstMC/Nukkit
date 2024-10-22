@@ -36,6 +36,6 @@ public class ItemHelmetNetherite extends ItemArmor {
 
     @Override
     public int getToughness() {
-        return 2;
+        return 3;
     }
 }

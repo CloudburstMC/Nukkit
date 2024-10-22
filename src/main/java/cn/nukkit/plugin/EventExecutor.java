@@ -5,7 +5,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.utils.EventException;
 
 /**
- * author: iNevet
+ * @author iNevet
  * Nukkit Project
  */
 public interface EventExecutor {

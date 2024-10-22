@@ -10,9 +10,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockNetherrack extends BlockSolid {
 
-    public BlockNetherrack() {
-    }
-
     @Override
     public int getId() {
         return NETHERRACK;
@@ -40,7 +37,7 @@ public class BlockNetherrack extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };
@@ -58,5 +55,4 @@ public class BlockNetherrack extends BlockSolid {
     public boolean canHarvestWithHand() {
         return false;
     }
-
 }

@@ -1,7 +1,6 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemDoorAcacia;
 import cn.nukkit.utils.BlockColor;
 
 public class BlockDoorAcacia extends BlockDoorWood {
@@ -26,7 +25,7 @@ public class BlockDoorAcacia extends BlockDoorWood {
 
     @Override
     public Item toItem() {
-        return new ItemDoorAcacia();
+        return Item.get(Item.ACACIA_DOOR);
     }
 
     @Override

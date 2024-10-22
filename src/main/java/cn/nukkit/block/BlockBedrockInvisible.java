@@ -1,16 +1,12 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemBlock;
 import cn.nukkit.utils.BlockColor;
 
 /**
  * Created by Pub4Game on 03.01.2016.
  */
 public class BlockBedrockInvisible extends BlockSolid {
-
-    public BlockBedrockInvisible() {
-    }
 
     @Override
     public int getId() {
@@ -49,6 +45,11 @@ public class BlockBedrockInvisible extends BlockSolid {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(Block.get(BlockID.AIR));
+        return Item.get(0);
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.FLOW_INTO_BLOCK;
     }
 }

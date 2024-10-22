@@ -13,4 +13,9 @@ public class ItemNautilusShell extends Item {
     public ItemNautilusShell(Integer meta, int count) {
         super(NAUTILUS_SHELL, meta, count, "Nautilus Shell");
     }
+
+    @Override
+    public boolean allowOffhand() {
+        return true;
+    }
 }

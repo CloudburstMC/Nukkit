@@ -5,6 +5,7 @@ package cn.nukkit.block;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockPumpkinLit extends BlockPumpkin {
+
     public BlockPumpkinLit() {
         this(0);
     }
@@ -28,4 +29,8 @@ public class BlockPumpkinLit extends BlockPumpkin {
         return 15;
     }
 
+    @Override
+    public boolean canBeActivated() {
+        return false;
+    }
 }

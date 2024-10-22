@@ -20,5 +20,4 @@ public class ItemFlowerPot extends Item {
         super(FLOWER_POT, meta, count, "Flower Pot");
         this.block = Block.get(Block.FLOWER_POT_BLOCK);
     }
-
 }

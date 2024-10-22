@@ -14,12 +14,9 @@ import java.util.Map;
 public class PluginsCommand extends VanillaCommand {
 
     public PluginsCommand(String name) {
-        super(name,
-                "%nukkit.command.plugins.description",
-                "%nukkit.command.plugins.usage",
-                new String[]{"pl"}
-        );
+        super(name, "%nukkit.command.plugins.description", "%nukkit.command.plugins.usage");
         this.setPermission("nukkit.command.plugins");
+        this.setAliases(new String[]{"pl"});
         this.commandParameters.clear();
     }
 
@@ -29,18 +26,18 @@ public class PluginsCommand extends VanillaCommand {
             return true;
         }
 
-        this.sendPluginList(sender);
+        sendPluginList(sender);
         return true;
     }
 
-    private void sendPluginList(CommandSender sender) {
+    private static void sendPluginList(CommandSender sender) {
         StringBuilder list = new StringBuilder();
         Map<String, Plugin> plugins = sender.getServer().getPluginManager().getPlugins();
         for (Plugin plugin : plugins.values()) {
             if (list.length() > 0) {
                 list.append(TextFormat.WHITE + ", ");
             }
-            list.append(plugin.isEnabled() ? TextFormat.GREEN : TextFormat.RED);
+            list.append(plugin.isEnabled() ? TextFormat.GREEN : TextFormat.RED + "*");
             list.append(plugin.getDescription().getFullName());
         }
 

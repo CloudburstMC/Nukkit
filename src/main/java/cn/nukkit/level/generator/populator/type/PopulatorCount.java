@@ -11,6 +11,7 @@ import cn.nukkit.math.NukkitRandom;
  * This prevents the exact same code from being repeated in nearly every single populator
  */
 public abstract class PopulatorCount extends Populator {
+
     private int randomAmount;
     private int baseAmount;
 

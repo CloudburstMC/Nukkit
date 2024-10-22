@@ -1,12 +1,10 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemMelon;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.Random;
+import cn.nukkit.utils.Utils;
 
 /**
  * Created on 2015/12/11 by Pub4Game.
@@ -14,9 +12,6 @@ import java.util.Random;
  */
 
 public class BlockMelon extends BlockSolid {
-
-    public BlockMelon() {
-    }
 
     @Override
     public int getId() {
@@ -38,16 +33,19 @@ public class BlockMelon extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        Random random = new Random();
-        int count = 3 + random.nextInt(5);
+        if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
+            return new Item[]{this.toItem()};
+        }
+
+        int count = 3 + Utils.random.nextInt(5);
 
         Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
         if (fortune != null && fortune.getLevel() >= 1) {
-            count += random.nextInt(fortune.getLevel() + 1);
+            count += Utils.random.nextInt(fortune.getLevel() + 1);
         }
 
         return new Item[]{
-                new ItemMelon(0, Math.min(9, count))
+                Item.get(Item.MELON, 0, Math.min(9, count))
         };
     }
 
@@ -60,9 +58,14 @@ public class BlockMelon extends BlockSolid {
     public BlockColor getColor() {
         return BlockColor.LIME_BLOCK_COLOR;
     }
-
+    
     @Override
     public boolean canSilkTouch() {
+        return true;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
         return true;
     }
 }

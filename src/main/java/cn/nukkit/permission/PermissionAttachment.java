@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class PermissionAttachment {
@@ -17,9 +17,9 @@ public class PermissionAttachment {
 
     private final Map<String, Boolean> permissions = new HashMap<>();
 
-    private Permissible permissible;
+    private final Permissible permissible;
 
-    private Plugin plugin;
+    private final Plugin plugin;
 
     public PermissionAttachment(Plugin plugin, Permissible permissible) {
         if (!plugin.isEnabled()) {
@@ -95,5 +95,4 @@ public class PermissionAttachment {
     public void remove() {
         this.permissible.removeAttachment(this);
     }
-
 }

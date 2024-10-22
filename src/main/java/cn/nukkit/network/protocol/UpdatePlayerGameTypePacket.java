@@ -4,6 +4,7 @@ import lombok.ToString;
 
 @ToString
 public class UpdatePlayerGameTypePacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.UPDATE_PLAYER_GAME_TYPE_PACKET;
 
     public GameType gameType;
@@ -17,8 +18,7 @@ public class UpdatePlayerGameTypePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.gameType = GameType.from(this.getVarInt());
-        this.entityId = this.getVarLong();
+        this.decodeUnsupported();
     }
 
     @Override

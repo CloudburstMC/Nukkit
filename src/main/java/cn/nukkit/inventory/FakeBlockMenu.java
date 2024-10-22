@@ -3,7 +3,7 @@ package cn.nukkit.inventory;
 import cn.nukkit.level.Position;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class FakeBlockMenu extends Position implements InventoryHolder {

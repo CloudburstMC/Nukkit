@@ -35,7 +35,7 @@ public class VersionCommand extends VanillaCommand {
         if (!this.testPermission(sender)) {
             return true;
         }
-        if (args.length == 0) {
+        if (args.length == 0 || !sender.hasPermission("nukkit.command.version.plugins")) {
             sender.sendMessage(new TranslationContainer("nukkit.server.info.extended", sender.getServer().getName(),
                     sender.getServer().getNukkitVersion(),
                     sender.getServer().getCodename(),
@@ -44,7 +44,7 @@ public class VersionCommand extends VanillaCommand {
                     String.valueOf(ProtocolInfo.CURRENT_PROTOCOL)));
         } else {
             StringBuilder pluginName = new StringBuilder();
-            for (String arg : args) pluginName.append(arg).append(" ");
+            for (String arg : args) pluginName.append(arg).append(' ');
             pluginName = new StringBuilder(pluginName.toString().trim());
             final boolean[] found = {false};
             final Plugin[] exactPlugin = {sender.getServer().getPluginManager().getPlugin(pluginName.toString())};

@@ -15,4 +15,9 @@ public class EnchantmentSoulSpeed extends Enchantment {
     public int getMaxLevel() {
         return 3;
     }
+
+    @Override
+    public boolean isTreasure() {
+        return true;
+    }
 }

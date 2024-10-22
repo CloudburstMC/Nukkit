@@ -15,7 +15,7 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
 /**
- * author: Justin
+ * @author Justin
  */
 public class BlockSkull extends BlockTransparentMeta implements Faceable {
 
@@ -73,7 +73,7 @@ public class BlockSkull extends BlockTransparentMeta implements Faceable {
             default:
                 return false;
         }
-        this.getLevel().setBlock(block, this, true, true);
+        this.getLevel().setBlock(this, this, true, true);
 
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.SKULL)
@@ -90,9 +90,6 @@ public class BlockSkull extends BlockTransparentMeta implements Faceable {
 
         BlockEntitySkull blockEntity = (BlockEntitySkull) BlockEntity.createBlockEntity(BlockEntity.SKULL, this.getChunk(), nbt);
         blockEntity.spawnToAll();
-
-        // TODO: 2016/2/3 SPAWN WITHER
-
         return true;
     }
 
@@ -123,7 +120,6 @@ public class BlockSkull extends BlockTransparentMeta implements Faceable {
     public BlockColor getColor() {
         return BlockColor.AIR_BLOCK_COLOR;
     }
-
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromIndex(this.getDamage() & 0x7);
@@ -143,5 +139,25 @@ public class BlockSkull extends BlockTransparentMeta implements Faceable {
                 return bb.offset(-0.25, 0.25, 0);
         }
         return bb;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean canBeFlowedInto() {
+        return true;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
+    }
+
+    @Override
+    public boolean alwaysDropsOnExplosion() {
+        return true;
     }
 }

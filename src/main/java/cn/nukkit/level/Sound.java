@@ -4,6 +4,7 @@ package cn.nukkit.level;
  * @author CreeperFace
  */
 public enum Sound {
+
     AMBIENT_BASALT_DELTAS_ADDITIONS("ambient.basalt_deltas.additions"),
     AMBIENT_BASALT_DELTAS_LOOP("ambient.basalt_deltas.loop"),
     AMBIENT_BASALT_DELTAS_MOOD("ambient.basalt_deltas.mood"),

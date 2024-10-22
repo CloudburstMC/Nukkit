@@ -9,8 +9,6 @@ import cn.nukkit.utils.BlockColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockCoal extends BlockSolid {
-    public BlockCoal() {
-    }
 
     @Override
     public int getId() {
@@ -49,7 +47,7 @@ public class BlockCoal extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };

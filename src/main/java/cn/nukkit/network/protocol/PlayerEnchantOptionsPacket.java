@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.ToString;
 import lombok.Value;
 
@@ -9,6 +8,7 @@ import java.util.List;
 
 @ToString
 public class PlayerEnchantOptionsPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_ENCHANT_OPTIONS_PACKET;
 
     public final List<EnchantOptionData> options = new ArrayList<>();
@@ -20,36 +20,7 @@ public class PlayerEnchantOptionsPacket extends DataPacket {
 
     @Override
     public void decode() {
-        int size = (int) this.getUnsignedVarInt();
-        for (int i = 0; i < size; i++) {
-            int minLevel = this.getVarInt();
-            int slot = this.getInt();
-
-            int eSize = (int) this.getUnsignedVarInt();
-            List<EnchantData> list1 = new ObjectArrayList<>();
-            for (int j = 0; j < eSize; j++) {
-                EnchantData data = new EnchantData(this.getByte(), this.getByte());
-                list1.add(data);
-            }
-
-            eSize = (int) this.getUnsignedVarInt();
-            List<EnchantData> list2 = new ObjectArrayList<>();
-            for (int j = 0; j < eSize; j++) {
-                EnchantData data = new EnchantData(this.getByte(), this.getByte());
-                list2.add(data);
-            }
-
-            eSize = (int) this.getUnsignedVarInt();
-            List<EnchantData> list3 = new ObjectArrayList<>();
-            for (int j = 0; j < eSize; j++) {
-                EnchantData data = new EnchantData(this.getByte(), this.getByte());
-                list3.add(data);
-            }
-            String enchantName = this.getString();
-            int eNetId = (int) this.getUnsignedVarInt();
-            this.options.add(new EnchantOptionData(minLevel, slot, list1, list2, list3, enchantName, eNetId));
-        }
-
+        this.decodeUnsupported();
     }
 
     @Override

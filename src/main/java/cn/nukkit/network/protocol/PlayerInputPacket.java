@@ -26,12 +26,11 @@ public class PlayerInputPacket extends DataPacket {
 
     @Override
     public void encode() {
-
+        this.encodeUnsupported();
     }
 
     @Override
     public byte pid() {
         return NETWORK_ID;
     }
-
 }

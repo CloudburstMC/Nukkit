@@ -3,20 +3,28 @@ package cn.nukkit.level.biome.impl.swamp;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFlower;
 import cn.nukkit.level.biome.type.GrassyBiome;
-import cn.nukkit.level.generator.populator.impl.MushroomPopulator;
-import cn.nukkit.level.generator.populator.impl.PopulatorFlower;
-import cn.nukkit.level.generator.populator.impl.PopulatorLilyPad;
-import cn.nukkit.level.generator.populator.impl.PopulatorSmallMushroom;
+import cn.nukkit.level.generator.populator.impl.*;
 import cn.nukkit.level.generator.populator.impl.tree.SwampTreePopulator;
 
+import java.util.Arrays;
+
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class SwampBiome extends GrassyBiome {
 
     public SwampBiome() {
         super();
+
+        PopulatorUnderwaterFloor underwaterFloorClay = new PopulatorUnderwaterFloor(1.0, CLAY_BLOCK, 1, 2, 1, Arrays.asList(DIRT, CLAY_BLOCK));
+        underwaterFloorClay.setBaseAmount(1);
+        addPopulator(underwaterFloorClay);
+
+        PopulatorSeagrass populatorSeagrass = new PopulatorSeagrass();
+        populatorSeagrass.setBaseAmount(24);
+        populatorSeagrass.setRandomAmount(24);
+        addPopulator(populatorSeagrass);
 
         PopulatorLilyPad lilypad = new PopulatorLilyPad();
         lilypad.setBaseAmount(4);
@@ -38,7 +46,6 @@ public class SwampBiome extends GrassyBiome {
         this.addPopulator(mushroom);
 
         PopulatorSmallMushroom smallMushroom = new PopulatorSmallMushroom();
-        smallMushroom.setBaseAmount(0);
         smallMushroom.setRandomAmount(2);
         this.addPopulator(smallMushroom);
 

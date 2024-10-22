@@ -2,12 +2,9 @@ package cn.nukkit.entity.passive;
 
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-/**
- * @author Kaooot
- * @version 1.0
- */
-public class EntityFox extends EntityAnimal {
+public class EntityFox extends EntityWalkingAnimal {
 
     public static final int NETWORK_ID = 121;
 
@@ -31,13 +28,13 @@ public class EntityFox extends EntityAnimal {
     }
 
     @Override
-    protected void initEntity() {
-        super.initEntity();
+    public void initEntity() {
         this.setMaxHealth(20);
+        super.initEntity();
     }
 
     @Override
-    public String getName() {
-        return "Fox";
+    public int getKillExperience() {
+        return this.isBaby() ? 0 : Utils.rand(1, 2);
     }
 }

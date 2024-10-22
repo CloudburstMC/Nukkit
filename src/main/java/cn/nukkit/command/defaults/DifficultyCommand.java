@@ -9,8 +9,6 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.network.protocol.SetDifficultyPacket;
 
-import java.util.ArrayList;
-
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -25,7 +23,7 @@ public class DifficultyCommand extends VanillaCommand {
                 CommandParameter.newType("difficulty", CommandParamType.INT)
         });
         this.commandParameters.put("byString", new CommandParameter[]{
-                CommandParameter.newEnum("difficulty", new CommandEnum("Difficulty", "peaceful", "p", "easy", "e", "normal", "n", "hard", "h"))
+                CommandParameter.newEnum("difficulty", CommandEnum.ENUM_DIFFICULTY)
         });
     }
 
@@ -51,7 +49,7 @@ public class DifficultyCommand extends VanillaCommand {
 
             SetDifficultyPacket pk = new SetDifficultyPacket();
             pk.difficulty = sender.getServer().getDifficulty();
-            Server.broadcastPacket(new ArrayList<>(sender.getServer().getOnlinePlayers().values()), pk);
+            Server.broadcastPacket(sender.getServer().getOnlinePlayers().values(), pk);
 
             Command.broadcastCommandMessage(sender, new TranslationContainer("commands.difficulty.success", String.valueOf(difficulty)));
         } else {

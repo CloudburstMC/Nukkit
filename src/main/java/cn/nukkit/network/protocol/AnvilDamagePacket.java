@@ -6,6 +6,8 @@ import lombok.ToString;
 @ToString
 public class AnvilDamagePacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.ANVIL_DAMAGE_PACKET;
+
     public int damage;
     public int x;
     public int y;
@@ -13,7 +15,7 @@ public class AnvilDamagePacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.ANVIL_DAMAGE_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
@@ -27,6 +29,6 @@ public class AnvilDamagePacket extends DataPacket {
 
     @Override
     public void encode() {
-
+        this.encodeUnsupported();
     }
 }

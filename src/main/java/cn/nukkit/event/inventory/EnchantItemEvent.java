@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EnchantItemEvent extends InventoryEvent implements Cancellable {
+
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {

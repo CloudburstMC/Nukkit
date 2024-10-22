@@ -1,5 +1,6 @@
 package cn.nukkit.plugin;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.command.PluginCommand;
 import cn.nukkit.command.SimpleCommandMap;
@@ -9,19 +10,25 @@ import cn.nukkit.permission.Permission;
 import cn.nukkit.utils.MainLogger;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.Utils;
-import co.aikar.timings.Timing;
-import co.aikar.timings.Timings;
+import com.google.common.reflect.TypeToken;
+import org.lanternpowered.lmbda.LambdaFactory;
+import org.lanternpowered.lmbda.LambdaType;
 
 import java.io.File;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
 /**
  * @author MagicDroidX
  */
 public class PluginManager {
+    private static final MethodHandles.Lookup CALLER = MethodHandles.lookup();
+    private static final LambdaType<BiConsumer<Listener, Event>> EVENT_EXECUTOR_TYPE = LambdaType.of(new TypeToken<BiConsumer<Listener, Event>>(){}.getType());
 
     private final Server server;
 
@@ -29,17 +36,17 @@ public class PluginManager {
 
     protected final Map<String, Plugin> plugins = new LinkedHashMap<>();
 
-    protected final Map<String, Permission> permissions = new HashMap<>();
+    protected final Map<String, Permission> permissions = new ConcurrentHashMap<>();
 
-    protected final Map<String, Permission> defaultPerms = new HashMap<>();
+    protected final Map<String, Permission> defaultPerms = new ConcurrentHashMap<>();
 
-    protected final Map<String, Permission> defaultPermsOp = new HashMap<>();
+    protected final Map<String, Permission> defaultPermsOp = new ConcurrentHashMap<>();
 
-    protected final Map<String, Set<Permissible>> permSubs = new HashMap<>();
+    protected final Map<String, Set<Permissible>> permSubs = new ConcurrentHashMap<>();
 
-    protected final Set<Permissible> defSubs = Collections.newSetFromMap(new WeakHashMap<>());
+    protected final Set<Permissible> defSubs = ConcurrentHashMap.newKeySet();
 
-    protected final Set<Permissible> defSubsOp = Collections.newSetFromMap(new WeakHashMap<>());
+    protected final Set<Permissible> defSubsOp = ConcurrentHashMap.newKeySet();
 
     protected final Map<String, PluginLoader> fileAssociations = new HashMap<>();
 
@@ -49,10 +56,7 @@ public class PluginManager {
     }
 
     public Plugin getPlugin(String name) {
-        if (this.plugins.containsKey(name)) {
-            return this.plugins.get(name);
-        }
-        return null;
+        return this.plugins.get(name);
     }
 
     public boolean registerInterface(Class<? extends PluginLoader> loaderClass) {
@@ -223,8 +227,7 @@ public class PluginManager {
                             }
                         }
                     } catch (Exception e) {
-                        this.server.getLogger().error(this.server.getLanguage().translateString("nukkit.plugin" +
-                                ".fileError", file.getName(), dictionary.toString(), Utils
+                        this.server.getLogger().error(this.server.getLanguage().translateString("nukkit.plugin.fileError", file.getName(), dictionary.toString(), Utils
                                 .getExceptionMessage(e)));
                         MainLogger logger = this.server.getLogger();
                         if (logger != null) {
@@ -243,8 +246,7 @@ public class PluginManager {
                             if (loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null) {
                                 dependencies.get(name).remove(dependency);
                             } else if (!plugins.containsKey(dependency)) {
-                                this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit" +
-                                        ".plugin.loadError", new String[]{name, "%nukkit.plugin.unknownDependency"}) + ": " + dependency);
+                                this.server.getLogger().critical(this.server.getLanguage().translateString("nukkit.plugin.loadError", new String[]{name, "%nukkit.plugin.unknownDependency"}) + ' ' + dependency);
                                 break;
                             }
                         }
@@ -255,8 +257,11 @@ public class PluginManager {
                     }
 
                     if (softDependencies.containsKey(name)) {
-                        softDependencies.get(name).removeIf(dependency ->
-                                loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null);
+                        for (String dependency : new ArrayList<>(softDependencies.get(name))) {
+                            if (loadedPlugins.containsKey(dependency) || this.getPlugin(dependency) != null) {
+                                softDependencies.get(name).remove(dependency);
+                            }
+                        }
 
                         if (softDependencies.get(name).isEmpty()) {
                             softDependencies.remove(name);
@@ -307,10 +312,7 @@ public class PluginManager {
     }
 
     public Permission getPermission(String name) {
-        if (this.permissions.containsKey(name)) {
-            return this.permissions.get(name);
-        }
-        return null;
+        return this.permissions.get(name);
     }
 
     public boolean addPermission(Permission permission) {
@@ -349,7 +351,6 @@ public class PluginManager {
     }
 
     private void calculatePermissionDefault(Permission permission) {
-        Timings.permissionDefaultTimer.startTiming();
         if (permission.getDefault().equals(Permission.DEFAULT_OP) || permission.getDefault().equals(Permission.DEFAULT_TRUE)) {
             this.defaultPermsOp.put(permission.getName(), permission);
             this.dirtyPermissibles(true);
@@ -359,7 +360,6 @@ public class PluginManager {
             this.defaultPerms.put(permission.getName(), permission);
             this.dirtyPermissibles(false);
         }
-        Timings.permissionDefaultTimer.startTiming();
     }
 
     private void dirtyPermissibles(boolean op) {
@@ -370,7 +370,7 @@ public class PluginManager {
 
     public void subscribeToPermission(String permission, Permissible permissible) {
         if (!this.permSubs.containsKey(permission)) {
-            this.permSubs.put(permission, Collections.newSetFromMap(new WeakHashMap<>()));
+            this.permSubs.put(permission, ConcurrentHashMap.newKeySet());
         }
         this.permSubs.get(permission).add(permissible);
     }
@@ -378,7 +378,7 @@ public class PluginManager {
     public void unsubscribeFromPermission(String permission, Permissible permissible) {
         if (this.permSubs.containsKey(permission)) {
             this.permSubs.get(permission).remove(permissible);
-            if (this.permSubs.get(permission).size() == 0) {
+            if (this.permSubs.get(permission).isEmpty()) {
                 this.permSubs.remove(permission);
             }
         }
@@ -444,6 +444,7 @@ public class PluginManager {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected List<PluginCommand> parseYamlCommands(Plugin plugin) {
         List<PluginCommand> pluginCmds = new ArrayList<>();
 
@@ -497,7 +498,7 @@ public class PluginManager {
     }
 
     public void disablePlugins() {
-        ListIterator<Plugin> plugins = new ArrayList<>(this.getPlugins().values()).listIterator(this.getPlugins().size());
+        ListIterator<Plugin> plugins = new ArrayList<>(this.plugins.values()).listIterator(this.plugins.size());
 
         while (plugins.hasPrevious()) {
             this.disablePlugin(plugins.previous());
@@ -534,7 +535,12 @@ public class PluginManager {
 
     public void callEvent(Event event) {
         try {
-            for (RegisteredListener registration : getEventListeners(event.getClass()).getRegisteredListeners()) {
+            RegisteredListener[] listeners = this.getEventListeners(event.getClass()).getRegisteredListeners();
+            if (listeners == null) {
+                return;
+            }
+
+            for (RegisteredListener registration : listeners) {
                 if (!registration.getPlugin().isEnabled()) {
                     continue;
                 }
@@ -556,7 +562,6 @@ public class PluginManager {
             throw new PluginException("Plugin attempted to register " + listener.getClass().getName() + " while not enabled");
         }
 
-        Map<Class<? extends Event>, Set<RegisteredListener>> ret = new HashMap<>();
         Set<Method> methods;
         try {
             Method[] publicMethods = listener.getClass().getMethods();
@@ -585,16 +590,21 @@ public class PluginManager {
             final Class<? extends Event> eventClass = checkClass.asSubclass(Event.class);
             method.setAccessible(true);
 
-            for (Class<?> clazz = eventClass; Event.class.isAssignableFrom(clazz); clazz = clazz.getSuperclass()) {
-                // This loop checks for extending deprecated events
-                if (clazz.getAnnotation(Deprecated.class) != null) {
-                    if (Boolean.parseBoolean(String.valueOf(this.server.getConfig("settings.deprecated-verbose", true)))) {
+            if (Nukkit.DEBUG > 1) {
+                for (Class<?> clazz = eventClass; Event.class.isAssignableFrom(clazz); clazz = clazz.getSuperclass()) {
+                    if (clazz.getAnnotation(Deprecated.class) != null) {
                         this.server.getLogger().warning(this.server.getLanguage().translateString("nukkit.plugin.deprecatedEvent", plugin.getName(), clazz.getName(), listener.getClass().getName() + "." + method.getName() + "()"));
+                        break;
                     }
-                    break;
                 }
             }
-            this.registerEvent(eventClass, listener, eh.priority(), new MethodEventExecutor(method), plugin, eh.ignoreCancelled());
+
+            try {
+                BiConsumer<Listener, Event> consumer = LambdaFactory.create(EVENT_EXECUTOR_TYPE, CALLER.unreflect(method));
+                this.registerEvent(eventClass, listener, eh.priority(), new LambdaEventExecutor(eventClass, consumer), plugin, eh.ignoreCancelled());
+            } catch (IllegalAccessException e) {
+                plugin.getLogger().error(plugin.getDescription().getFullName() + " attempted to register an invalid EventHandler method signature \"" + method.toGenericString() + "\" in " + listener.getClass());
+            }
         }
     }
 
@@ -608,23 +618,34 @@ public class PluginManager {
         }
 
         try {
-            Timing timing = Timings.getPluginEventTiming(event, listener, executor, plugin);
-            this.getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled, timing));
+            this.getEventListeners(event).register(new RegisteredListener(listener, executor, priority, plugin, ignoreCancelled));
         } catch (IllegalAccessException e) {
             Server.getInstance().getLogger().logException(e);
         }
     }
 
     private HandlerList getEventListeners(Class<? extends Event> type) throws IllegalAccessException {
+        HandlerList handlerList = HandlerList.getCachedHandlerList(type);
+        if (handlerList != null) {
+            return handlerList;
+        }
+
         try {
             Method method = getRegistrationClass(type).getDeclaredMethod("getHandlers");
             method.setAccessible(true);
-            return (HandlerList) method.invoke(null);
+            handlerList = (HandlerList) method.invoke(null);
         } catch (NullPointerException e) {
-            throw new IllegalArgumentException("getHandlers method in " + type.getName() + " was not static!");
+            if (Nukkit.DEBUG > 1) {
+                Server.getInstance().getLogger().debug("Static getHandlers method in " + type.getName() + " was not found. Creating HandlerList dynamically.");
+            }
         } catch (Exception e) {
             throw new IllegalAccessException(Utils.getExceptionMessage(e));
         }
+
+        if (handlerList == null) { // do not require user to create static HandlerList anymore
+            HandlerList.putCachedHandlerList(type, handlerList = new HandlerList());
+        }
+        return handlerList;
     }
 
     private Class<? extends Event> getRegistrationClass(Class<? extends Event> clazz) throws IllegalAccessException {
@@ -633,7 +654,7 @@ public class PluginManager {
             return clazz;
         } catch (NoSuchMethodException e) {
             if (clazz.getSuperclass() != null
-                    && !clazz.getSuperclass().equals(Event.class)
+                    && clazz.getSuperclass() != Event.class
                     && Event.class.isAssignableFrom(clazz.getSuperclass())) {
                 return getRegistrationClass(clazz.getSuperclass().asSubclass(Event.class));
             } else {

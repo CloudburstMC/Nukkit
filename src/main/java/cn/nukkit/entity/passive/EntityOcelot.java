@@ -1,18 +1,20 @@
 package cn.nukkit.entity.passive;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-/**
- * Author: BeYkeRYkt Nukkit Project
- */
-public class EntityOcelot extends EntityAnimal {
+public class EntityOcelot extends EntityTameableAnimal {
 
     public static final int NETWORK_ID = 22;
 
     public EntityOcelot(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
+    }
+
+    @Override
+    public int getNetworkId() {
+        return NETWORK_ID;
     }
 
     @Override
@@ -32,23 +34,14 @@ public class EntityOcelot extends EntityAnimal {
     }
 
     @Override
-    public String getName() {
-        return "Ocelot";
-    }
-
-    @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
-    }
-
-    @Override
-    public void initEntity() {
+    protected void initEntity() {
+        this.setMaxHealth(10);
         super.initEntity();
-        setMaxHealth(10);
+        this.noFallDamage = true;
     }
 
     @Override
-    public boolean isBreedingItem(Item item) {
-        return item.getId() == Item.RAW_FISH;
+    public int getKillExperience() {
+        return this.isBaby() ? 0 : Utils.rand(1, 3);
     }
 }

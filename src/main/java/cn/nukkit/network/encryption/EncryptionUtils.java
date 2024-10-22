@@ -5,16 +5,9 @@ import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
 import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.crypto.ECDSASigner;
-import com.nimbusds.jose.crypto.ECDSAVerifier;
 import com.nimbusds.jose.jwk.Curve;
-import com.nimbusds.jose.shaded.json.JSONArray;
-import com.nimbusds.jose.shaded.json.JSONObject;
-import com.nimbusds.jose.shaded.json.JSONValue;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.nukkitx.natives.aes.AesFactory;
-import com.nukkitx.natives.util.Natives;
-import com.nukkitx.network.util.Preconditions;
 import lombok.experimental.UtilityClass;
 
 import javax.crypto.Cipher;
@@ -30,10 +23,8 @@ import java.security.interfaces.ECPublicKey;
 import java.security.spec.ECGenParameterSpec;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
-import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Base64;
-import java.util.Iterator;
 
 /**
  * <a href="https://github.com/CloudburstMC/Protocol/blob/6b48673067d5c0e60f5e0a5a7e889dbf2aafa1a1/bedrock/bedrock-common/src/main/java/com/nukkitx/protocol/bedrock/util/EncryptionUtils.java">...</a>
@@ -41,7 +32,6 @@ import java.util.Iterator;
 @UtilityClass
 public class EncryptionUtils {
 
-    private static final AesFactory AES_FACTORY;
     private static final ECPublicKey MOJANG_PUBLIC_KEY;
     private static final SecureRandom SECURE_RANDOM = new SecureRandom();
     private static final String MOJANG_PUBLIC_KEY_BASE64 =
@@ -53,14 +43,6 @@ public class EncryptionUtils {
         // Since Java 8u231, secp384r1 is deprecated and will throw an exception.
         String namedGroups = System.getProperty("jdk.tls.namedGroups");
         System.setProperty("jdk.tls.namedGroups", namedGroups == null || namedGroups.isEmpty() ? "secp384r1" : ", secp384r1");
-
-        AesFactory aesFactory;
-        try {
-            aesFactory = Natives.AES_CFB8.get();
-        } catch (NullPointerException | IllegalStateException e) {
-            aesFactory = null;
-        }
-        AES_FACTORY = aesFactory;
 
         try {
             KEY_PAIR_GEN = KeyPairGenerator.getInstance("EC");
@@ -84,15 +66,6 @@ public class EncryptionUtils {
     }
 
     /**
-     * Create EC key pair to be used for handshake and encryption
-     *
-     * @return EC KeyPair
-     */
-    public static KeyPair createKeyPair() {
-        return KEY_PAIR_GEN.generateKeyPair();
-    }
-
-    /**
      * Sign JWS object with a given private key.
      *
      * @param jws object to be signed
@@ -101,73 +74,6 @@ public class EncryptionUtils {
      */
     public static void signJwt(JWSObject jws, ECPrivateKey key) throws JOSEException {
         jws.sign(new ECDSASigner(key, Curve.P_384));
-    }
-
-    /**
-     * Check whether a JWS object is valid for a given public key.
-     *
-     * @param jws object to be verified
-     * @param key key to verify object with
-     * @return true if the JWS object is valid
-     * @throws JOSEException invalid key provided
-     */
-    public static boolean verifyJwt(JWSObject jws, ECPublicKey key) throws JOSEException {
-        return jws.verify(new ECDSAVerifier(key));
-    }
-
-    /**
-     * Verify the validity of the login chain data from the LoginPacket
-     *
-     * @param chain array of JWS objects
-     * @return chain validity
-     * @throws JOSEException            invalid JWS algorithm used
-     * @throws ParseException           invalid JWS object
-     * @throws InvalidKeySpecException  invalid EC key provided
-     * @throws NoSuchAlgorithmException runtime does not support EC spec
-     */
-    public static boolean verifyChain(JSONArray chain) throws JOSEException, ParseException, InvalidKeySpecException, NoSuchAlgorithmException {
-        ECPublicKey lastKey = null;
-        boolean validChain = false;
-        Iterator<Object> iterator = chain.iterator();
-        while (iterator.hasNext()) {
-            Object node = iterator.next();
-            Preconditions.checkArgument(node instanceof String, "Chain node is not a string");
-            JWSObject jwt = JWSObject.parse((String) node);
-
-            // x509 cert is expected in every claim
-            URI x5u = jwt.getHeader().getX509CertURL();
-            if (x5u == null) {
-                return false;
-            }
-
-            ECPublicKey expectedKey = EncryptionUtils.generateKey(jwt.getHeader().getX509CertURL().toString());
-            // First key is self-signed
-            if (lastKey == null) {
-                lastKey = expectedKey;
-            } else if (!lastKey.equals(expectedKey)) {
-                return false;
-            }
-
-            if (!verifyJwt(jwt, lastKey)) {
-                return false;
-            }
-
-            if (validChain) {
-                return !iterator.hasNext();
-            }
-
-            if (lastKey.equals(EncryptionUtils.getMojangPublicKey())) {
-                validChain = true;
-            }
-
-            Object payload = JSONValue.parse(jwt.getPayload().toString());
-            Preconditions.checkArgument(payload instanceof JSONObject, "Payload is not a object");
-
-            Object identityPublicKey = ((JSONObject) payload).get("identityPublicKey");
-            Preconditions.checkArgument(identityPublicKey instanceof String, "identityPublicKey node is missing in chain");
-            lastKey = generateKey((String) identityPublicKey);
-        }
-        return validChain;
     }
 
     /**
@@ -237,15 +143,6 @@ public class EncryptionUtils {
         byte[] token = new byte[16];
         SECURE_RANDOM.nextBytes(token);
         return token;
-    }
-
-    /**
-     * Check whether java supports the encryption required to authenticate sessions.
-     *
-     * @return can use encryption
-     */
-    public static boolean canUseEncryption() {
-        return AES_FACTORY != null;
     }
 
     /**

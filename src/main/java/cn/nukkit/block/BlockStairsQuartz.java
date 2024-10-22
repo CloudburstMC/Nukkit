@@ -8,6 +8,7 @@ import cn.nukkit.utils.BlockColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockStairsQuartz extends BlockStairs {
+
     public BlockStairsQuartz() {
         this(0);
     }
@@ -23,12 +24,12 @@ public class BlockStairsQuartz extends BlockStairs {
 
     @Override
     public double getHardness() {
-        return 0.8;
+        return 2;
     }
 
     @Override
     public double getResistance() {
-        return 4;
+        return 6;
     }
 
     @Override

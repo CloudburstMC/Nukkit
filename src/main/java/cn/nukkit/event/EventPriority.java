@@ -1,7 +1,7 @@
 package cn.nukkit.event;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public enum EventPriority {

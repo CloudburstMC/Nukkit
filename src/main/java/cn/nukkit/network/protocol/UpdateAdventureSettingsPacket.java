@@ -8,6 +8,9 @@ import lombok.ToString;
 @Getter
 @Setter
 public class UpdateAdventureSettingsPacket extends DataPacket {
+
+    public static final byte NETWORK_ID = ProtocolInfo.UPDATE_ADVENTURE_SETTINGS_PACKET;
+
     private boolean noPvM;
     private boolean noMvP;
     private boolean immutableWorld;
@@ -16,7 +19,7 @@ public class UpdateAdventureSettingsPacket extends DataPacket {
 
     @Override
     public void decode() {
-        throw new UnsupportedOperationException();
+        this.decodeUnsupported();
     }
 
     @Override
@@ -31,6 +34,6 @@ public class UpdateAdventureSettingsPacket extends DataPacket {
 
     @Override
     public byte pid() {
-        return ProtocolInfo.UPDATE_ADVENTURE_SETTINGS_PACKET;
+        return NETWORK_ID;
     }
 }

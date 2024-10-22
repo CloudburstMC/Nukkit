@@ -4,7 +4,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntitySmite;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentDamageSmite extends EnchantmentDamage {
@@ -15,7 +15,7 @@ public class EnchantmentDamageSmite extends EnchantmentDamage {
 
     @Override
     public int getMinEnchantAbility(int level) {
-        return 5 + (level - 1) * 8;
+        return 5 + ((level - 1) << 3);
     }
 
     @Override
@@ -25,7 +25,7 @@ public class EnchantmentDamageSmite extends EnchantmentDamage {
 
     @Override
     public double getDamageBonus(Entity entity) {
-        if(entity instanceof EntitySmite) {
+        if (entity instanceof EntitySmite) {
             return getLevel() * 2.5;
         }
 

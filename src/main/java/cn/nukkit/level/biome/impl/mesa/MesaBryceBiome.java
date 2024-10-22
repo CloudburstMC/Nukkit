@@ -4,9 +4,6 @@ package cn.nukkit.level.biome.impl.mesa;
  * @author DaPorkchop_
  */
 public class MesaBryceBiome extends MesaBiome {
-    public MesaBryceBiome() {
-        super();
-    }
 
     @Override
     public String getName() {
@@ -15,7 +12,7 @@ public class MesaBryceBiome extends MesaBiome {
 
     @Override
     protected float getMoundFrequency() {
-        return 1 / 16f;
+        return 0.0625f;
     }
 
     @Override

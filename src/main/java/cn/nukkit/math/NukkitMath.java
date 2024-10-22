@@ -1,7 +1,7 @@
 package cn.nukkit.math;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class NukkitMath {
@@ -65,4 +65,7 @@ public class NukkitMath {
         return Math.max(diffX, diffZ);
     }
 
+    public static double lerp(double a, double b, double t) {
+        return a + (b - a) * t;
+    }
 }

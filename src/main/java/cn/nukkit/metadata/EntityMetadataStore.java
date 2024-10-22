@@ -3,7 +3,7 @@ package cn.nukkit.metadata;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EntityMetadataStore extends MetadataStore {

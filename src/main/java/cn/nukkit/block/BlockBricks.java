@@ -9,9 +9,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockBricks extends BlockSolid {
 
-    public BlockBricks() {
-    }
-
     @Override
     public String getName() {
         return "Bricks";
@@ -39,7 +36,7 @@ public class BlockBricks extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     Item.get(Item.BRICKS_BLOCK, 0, 1)
             };
@@ -49,12 +46,12 @@ public class BlockBricks extends BlockSolid {
     }
 
     @Override
-    public BlockColor getColor() {
-        return BlockColor.RED_BLOCK_COLOR;
+    public boolean canHarvestWithHand() {
+        return false;
     }
 
     @Override
-    public boolean canHarvestWithHand() {
-        return false;
+    public BlockColor getColor() {
+        return BlockColor.RED_BLOCK_COLOR;
     }
 }

@@ -5,7 +5,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.Vector3;
 
 /**
  * Created by CreeperFace on 10.4.2017.
@@ -36,18 +35,8 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
     }
 
     @Override
-    public int getWeakPower(BlockFace side) {
-        return 0;
-    }
-
-    @Override
-    public int getStrongPower(BlockFace side) {
-        return 0;
-    }
-
-    @Override
     public Item toItem() {
-        return new ItemBlock(Block.get(BlockID.REDSTONE_TORCH));
+        return new ItemBlock(Block.get(REDSTONE_TORCH));
     }
 
     @Override
@@ -73,17 +62,16 @@ public class BlockRedstoneTorchUnlit extends BlockTorch {
 
     protected boolean checkState() {
         BlockFace face = getBlockFace().getOpposite();
-        Vector3 pos = getLocation();
 
-        if (!this.level.isSidePowered(pos.getSide(face), face)) {
-            this.level.setBlock(pos, Block.get(BlockID.REDSTONE_TORCH, getDamage()), false, true);
+        if (!this.level.isSidePowered(this.getSideVec(face), face)) {
+            this.level.setBlock(this, Block.get(REDSTONE_TORCH, getDamage()), false, true);
 
             for (BlockFace side : BlockFace.values()) {
                 if (side == face) {
                     continue;
                 }
 
-                this.level.updateAroundRedstone(pos.getSide(side), null);
+                this.level.updateAroundRedstone(this.getSideVec(side), null);
             }
             return true;
         }

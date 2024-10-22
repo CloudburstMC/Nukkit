@@ -1,10 +1,11 @@
 package cn.nukkit.item.enchantment;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentWaterBreath extends Enchantment {
+
     protected EnchantmentWaterBreath() {
         super(ID_WATER_BREATHING, "oxygen", Rarity.RARE, EnchantmentType.ARMOR_HEAD);
     }

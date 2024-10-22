@@ -8,8 +8,11 @@ public class MultiRecipe implements Recipe {
 
     private final UUID id;
 
+    private final int networkId;
+
     public MultiRecipe(UUID id) {
         this.id = id;
+        this.networkId = ++CraftingManager.NEXT_NETWORK_ID;
     }
 
     @Override
@@ -29,5 +32,9 @@ public class MultiRecipe implements Recipe {
 
     public UUID getId() {
         return this.id;
+    }
+
+    public int getNetworkId() {
+        return this.networkId;
     }
 }

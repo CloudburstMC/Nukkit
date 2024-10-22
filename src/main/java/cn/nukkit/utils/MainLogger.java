@@ -1,19 +1,20 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.Nukkit;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 /**
- * author: MagicDroidX
+ * Main logger
+ *
+ * @author MagicDroidX
  * Nukkit
  */
-/*
-We need to keep this class for backwards compatibility
- */
+//We need to keep this class for backwards compatibility
 @Log4j2
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class MainLogger extends ThreadedLogger {
+public class MainLogger extends Thread implements Logger {
 
     private static final MainLogger logger = new MainLogger();
 
@@ -58,11 +59,9 @@ public class MainLogger extends ThreadedLogger {
 
     @Override
     public void debug(String message) {
-        log.debug(message);
-    }
-
-    public void setLogDebug(Boolean logDebug) {
-        throw new UnsupportedOperationException();
+        if (Nukkit.DEBUG > 1) {
+            log.debug(message);
+        }
     }
 
     public void logException(Throwable t) {
@@ -72,10 +71,6 @@ public class MainLogger extends ThreadedLogger {
     @Override
     public void log(LogLevel level, String message) {
         level.log(this, message);
-    }
-
-    public void shutdown() {
-        throw new UnsupportedOperationException();
     }
 
     @Override

@@ -6,10 +6,13 @@ import cn.nukkit.level.ChunkManager;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class ObjectTree {
+
+    public static final int SNOWY_TREE = 100;
+
     protected boolean overridable(int id) {
         switch (id) {
             case Block.AIR:
@@ -51,6 +54,9 @@ public abstract class ObjectTree {
             case BlockSapling.SPRUCE:
                 tree = new ObjectSpruceTree();
                 break;
+            case BlockSapling.SPRUCE + SNOWY_TREE:
+                tree = new ObjectSpruceTree(true);
+                break;
             case BlockSapling.BIRCH:
                 tree = new ObjectBirchTree();
                 break;
@@ -78,6 +84,7 @@ public abstract class ObjectTree {
         for (int yy = 0; yy < this.getTreeHeight() + 3; ++yy) {
             if (yy == 1 || yy == this.getTreeHeight()) {
                 ++radiusToCheck;
+                continue;
             }
             for (int xx = -radiusToCheck; xx < (radiusToCheck + 1); ++xx) {
                 for (int zz = -radiusToCheck; zz < (radiusToCheck + 1); ++zz) {
@@ -105,7 +112,7 @@ public abstract class ObjectTree {
                     if (xOff == mid && zOff == mid && (yOff == 0 || random.nextBoundedInt(2) == 0)) {
                         continue;
                     }
-                    if (!Block.solid[level.getBlockIdAt(xx, yy, zz)]) {
+                    if (!Block.isBlockSolidById(level.getBlockIdAt(xx, yy, zz))) {
                         level.setBlockAt(xx, yy, zz, this.getLeafBlock(), this.getType());
                     }
                 }

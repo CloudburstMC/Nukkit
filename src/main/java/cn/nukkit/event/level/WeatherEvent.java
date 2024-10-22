@@ -4,7 +4,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.level.Level;
 
 /**
- * author: funcraft
+ * @author funcraft
  * Nukkit Project
  */
 public abstract class WeatherEvent extends Event {

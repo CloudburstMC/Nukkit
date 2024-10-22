@@ -9,9 +9,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockGlassPane extends BlockThin {
 
-    public BlockGlassPane() {
-    }
-
     @Override
     public String getName() {
         return "Glass Pane";
@@ -45,5 +42,10 @@ public class BlockGlassPane extends BlockThin {
     @Override
     public boolean canSilkTouch() {
         return true;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

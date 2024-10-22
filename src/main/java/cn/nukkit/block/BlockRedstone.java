@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
@@ -9,15 +10,7 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/11 by Pub4Game.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockRedstone extends BlockSolidMeta {
-
-    public BlockRedstone() {
-        this(0);
-    }
-
-    public BlockRedstone(int meta) {
-        super(0);
-    }
+public class BlockRedstone extends BlockSolid {
 
     @Override
     public int getId() {
@@ -41,14 +34,30 @@ public class BlockRedstone extends BlockSolidMeta {
 
     @Override
     public String getName() {
-        return "Redstone Block";
+        return "Block of Redstone";
     }
 
-    //TODO: redstone
+    @Override
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (!super.place(item, block, target, face, fx, fy, fz, player)) {
+            return false;
+        }
+        this.level.updateAroundRedstone(this, null);
+        return true;
+    }
+
+    @Override
+    public boolean onBreak(Item item) {
+        if (!super.onBreak(item)) {
+            return false;
+        }
+        this.level.updateAroundRedstone(this, null);
+        return true;
+    }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };
@@ -75,5 +84,10 @@ public class BlockRedstone extends BlockSolidMeta {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public boolean canBePushed() {
+        return false; // TODO: remove when crash issue fixed
     }
 }

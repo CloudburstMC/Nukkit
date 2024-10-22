@@ -15,4 +15,8 @@ public abstract class ItemRecord extends Item {
     }
 
     public abstract String getSoundId();
+
+    public String getDiscName() {
+        return "Unknown";
+    }
 }

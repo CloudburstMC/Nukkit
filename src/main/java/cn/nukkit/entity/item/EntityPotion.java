@@ -1,6 +1,8 @@
 package cn.nukkit.entity.item;
 
+import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.data.IntEntityData;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.potion.PotionCollideEvent;
 import cn.nukkit.level.format.FullChunk;
@@ -18,12 +20,10 @@ public class EntityPotion extends EntityProjectile {
 
     public static final int NETWORK_ID = 86;
 
-    public static final int DATA_POTION_ID = 37;
-
     public int potionId;
 
     public EntityPotion(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
+        this(chunk, nbt, null);
     }
 
     public EntityPotion(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
@@ -38,9 +38,9 @@ public class EntityPotion extends EntityProjectile {
 
         this.dataProperties.putShort(DATA_POTION_AUX_VALUE, this.potionId);
 
-        /*Effect effect = Potion.getEffect(potionId, true); TODO: potion color
+        Effect effect = Potion.getEffect(potionId, true);
 
-        if(effect != null) {
+        if (effect != null) {
             int count = 0;
             int[] c = effect.getColor();
             count += effect.getAmplifier() + 1;
@@ -49,8 +49,8 @@ public class EntityPotion extends EntityProjectile {
             int g = ((c[1] * (effect.getAmplifier() + 1)) / count) & 0xff;
             int b = ((c[2] * (effect.getAmplifier() + 1)) / count) & 0xff;
 
-            this.setDataProperty(new IntEntityData(Entity.DATA_UNKNOWN, (r << 16) + (g << 8) + b));
-        }*/
+            this.setDataProperty(new IntEntityData(Entity.DATA_POTION_COLOR, (r << 16) + (g << 8) + b));
+        }
     }
 
     @Override
@@ -83,12 +83,7 @@ public class EntityPotion extends EntityProjectile {
         return 0.01f;
     }
 
-    @Override
-    public void onCollideWithEntity(Entity entity) {
-        this.splash(entity);
-    }
-
-    private void splash(Entity collidedWith) {
+    protected void splash(Entity collidedWith) {
         Potion potion = Potion.getPotion(this.potionId);
         PotionCollideEvent event = new PotionCollideEvent(potion, this);
         this.server.getPluginManager().callEvent(event);
@@ -129,8 +124,11 @@ public class EntityPotion extends EntityProjectile {
         this.getLevel().addParticle(particle);
         this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_GLASS);
 
-        Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(4.125, 2.125, 4.125));
+        Entity[] entities = this.getLevel().getNearbyEntities(this.getBoundingBox().grow(4.125, 2.125, 4.125), this);
         for (Entity anEntity : entities) {
+            if (anEntity == null || anEntity.closed || !anEntity.isAlive() || anEntity instanceof Player && ((Player) anEntity).isSpectator()) {
+                continue;
+            }
             double distance = anEntity.distanceSquared(this);
             if (distance < 16) {
                 double d = anEntity.equals(collidedWith) ? 1 : 1 - Math.sqrt(distance) / 4;
@@ -140,24 +138,27 @@ public class EntityPotion extends EntityProjectile {
     }
 
     @Override
+    public void onCollideWithEntity(Entity entity) {
+        this.splash(entity);
+        this.close();
+    }
+
+    @Override
     public boolean onUpdate(int currentTick) {
+        boolean update = super.onUpdate(currentTick);
+
         if (this.closed) {
             return false;
         }
 
-        this.timing.startTiming();
-
-        boolean hasUpdate = super.onUpdate(currentTick);
-
-        if (this.age > 1200) {
-            this.kill();
-            hasUpdate = true;
-        } else if (this.isCollided) {
+        if (this.isCollided) {
             this.splash(null);
-            hasUpdate = true;
         }
 
-        this.timing.stopTiming();
-        return hasUpdate;
+        if (this.age > 1200 || this.isCollided) {
+            this.close();
+            return false;
+        }
+        return update;
     }
 }

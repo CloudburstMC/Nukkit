@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class FormattedCommandAlias extends Command {
@@ -55,13 +55,13 @@ public class FormattedCommandAlias extends Command {
     }
 
     private String buildCommand(String formatString, String[] args) {
-        int index = formatString.indexOf("$");
+        int index = formatString.indexOf('$');
         while (index != -1) {
             int start = index;
 
             if (index > 0 && formatString.charAt(start - 1) == '\\') {
                 formatString = formatString.substring(0, start - 1) + formatString.substring(start);
-                index = formatString.indexOf("$", index);
+                index = formatString.indexOf('$', index);
                 continue;
             }
 
@@ -120,12 +120,12 @@ public class FormattedCommandAlias extends Command {
                 replacement.append(args[position]);
             }
 
-            formatString = formatString.substring(0, start) + replacement.toString() + formatString.substring(end);
+            formatString = formatString.substring(0, start) + replacement + formatString.substring(end);
             // Move index past the replaced data so we don't process it again
             index = start + replacement.length();
 
             // Move to the next replacement token
-            index = formatString.indexOf("$", index);
+            index = formatString.indexOf('$', index);
         }
 
         return formatString;
@@ -134,5 +134,4 @@ public class FormattedCommandAlias extends Command {
     private static boolean inRange(int i, int j, int k) {
         return i >= j && i <= k;
     }
-
 }
