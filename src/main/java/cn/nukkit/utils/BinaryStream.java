@@ -11,6 +11,7 @@ import cn.nukkit.level.GameRules;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
+import cn.nukkit.math.Vector2f;
 import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -725,7 +726,7 @@ public class BinaryStream {
     }
 
     public Vector3f getVector3f() {
-        return new Vector3f(this.getLFloat(4), this.getLFloat(4), this.getLFloat(4));
+        return new Vector3f(this.getLFloat(), this.getLFloat(), this.getLFloat());
     }
 
     public void putVector3f(Vector3f v) {
@@ -736,6 +737,10 @@ public class BinaryStream {
         this.putLFloat(x);
         this.putLFloat(y);
         this.putLFloat(z);
+    }
+
+    public Vector2f getVector2f() {
+        return new Vector2f(this.getLFloat(), this.getLFloat());
     }
 
     public void putGameRules(GameRules gameRules) {

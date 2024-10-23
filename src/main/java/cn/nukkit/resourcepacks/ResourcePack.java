@@ -22,4 +22,24 @@ public interface ResourcePack {
     default String getEncryptionKey() {
         return "";
     }
+
+    default String getSubPackName() {
+        return "";
+    }
+
+    default boolean usesScripting() {
+        return false;
+    }
+
+    default boolean isAddonPack() {
+        return false;
+    }
+
+    default boolean isRaytracingCapable() {
+        return false;
+    }
+
+    default String getCDNUrl() {
+        return "";
+    }
 }
