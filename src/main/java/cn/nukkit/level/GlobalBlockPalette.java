@@ -57,6 +57,11 @@ public class GlobalBlockPalette {
         int runtimeId = state.getInt("runtimeId");
         boolean stateOverload = state.getBoolean("stateOverload");
 
+        // DO NOT MERGE!
+        if (meta > 15) { // Not supported here
+            return true; // Not an overload
+        }
+
         if (stateOverload && !force) {
             return false;
         }

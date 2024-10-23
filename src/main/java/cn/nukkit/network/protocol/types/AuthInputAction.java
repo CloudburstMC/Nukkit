@@ -101,7 +101,27 @@ public enum AuthInputAction {
     /**
      * @since v729
      */
-    DOWN_RIGHT;
+    DOWN_RIGHT,
+    /**
+     * @since v748
+     */
+    START_USING_ITEM,
+    /**
+     * @since v748
+     */
+    IS_CAMERA_RELATIVE_MOVEMENT_ENABLED,
+    /**
+     * @since v748
+     */
+    IS_ROT_CONTROLLED_BY_MOVE_DIRECTION,
+    /**
+     * @since v748
+     */
+    START_SPIN_ATTACK,
+    /**
+     * @since v748
+     */
+    STOP_SPIN_ATTACK;
 
     private static final AuthInputAction[] VALUES = values();
 

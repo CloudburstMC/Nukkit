@@ -23,6 +23,8 @@ public class InventoryContentPacket extends DataPacket {
     public static final int SPECIAL_HOTBAR = 0x7a;
     public static final int SPECIAL_FIXED_INVENTORY = 0x7b;
 
+    private static final Item EMPTY_STORAGE_ITEM = Item.get(Item.AIR);
+
     public int inventoryId;
     public Item[] slots = new Item[0];
 
@@ -47,7 +49,7 @@ public class InventoryContentPacket extends DataPacket {
         }
         this.putByte((byte) 0); // fullContainerName.id
         this.putBoolean(false); // fullContainerName.optional.present
-        this.putUnsignedVarInt(0); // dynamicContainerSize
+        this.putSlot(EMPTY_STORAGE_ITEM);
     }
 
     @Override
