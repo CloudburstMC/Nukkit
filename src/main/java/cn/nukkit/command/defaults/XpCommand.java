@@ -12,7 +12,7 @@ import cn.nukkit.utils.TextFormat;
  * Created by Snake1999 on 2016/1/22.
  * Package cn.nukkit.command.defaults in project nukkit.
  */
-public class XpCommand extends Command {
+public class XpCommand extends VanillaCommand {
     public XpCommand(String name) {
         super(name, "%nukkit.command.xp.description", "%commands.xp.usage");
         this.setPermission("nukkit.command.xp");
