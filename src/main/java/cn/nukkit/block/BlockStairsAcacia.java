@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockStairsAcacia extends BlockStairsWood {
@@ -23,12 +23,11 @@ public class BlockStairsAcacia extends BlockStairsWood {
 
     @Override
     public String getName() {
-        return "Acacia Wood Stairs";
+        return "Acacia Stairs";
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.ORANGE_BLOCK_COLOR;
     }
-
 }

@@ -4,17 +4,17 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockPlanks extends BlockSolidMeta {
+
     public static final int OAK = 0;
     public static final int SPRUCE = 1;
     public static final int BIRCH = 2;
     public static final int JUNGLE = 3;
     public static final int ACACIA = 4;
     public static final int DARK_OAK = 5;
-
 
     public BlockPlanks() {
         this(0);
@@ -49,18 +49,18 @@ public class BlockPlanks extends BlockSolidMeta {
         return 20;
     }
 
+    private static final String[] NAMES = {
+            "Oak Planks",
+            "Spruce Planks",
+            "Birch Planks",
+            "Jungle Planks",
+            "Acacia Planks",
+            "Dark Oak Planks",
+    };
+
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Oak Wood Planks",
-                "Spruce Wood Planks",
-                "Birch Wood Planks",
-                "Jungle Wood Planks",
-                "Acacia Wood Planks",
-                "Dark Oak Wood Planks",
-        };
-
-        return this.getDamage() < 0 ? "Unknown" : names[this.getDamage() % 6];
+        return NAMES[this.getDamage() & 0x07];
     }
 
     @Override
@@ -70,7 +70,7 @@ public class BlockPlanks extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        switch(getDamage() & 0x07){
+        switch (getDamage() & 0x07) {
             default:
             case OAK:
                 return BlockColor.WOOD_BLOCK_COLOR;

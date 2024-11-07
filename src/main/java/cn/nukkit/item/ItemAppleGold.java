@@ -1,10 +1,7 @@
 package cn.nukkit.item;
 
-import cn.nukkit.Player;
-import cn.nukkit.math.Vector3;
-
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemAppleGold extends ItemEdible {
@@ -22,7 +19,7 @@ public class ItemAppleGold extends ItemEdible {
     }
 
     @Override
-    public boolean onClickAir(Player player, Vector3 directionVector) {
+    public boolean canAlwaysEat() {
         return true;
     }
 }

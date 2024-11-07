@@ -15,9 +15,11 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
         IP_BANNED,
         NAME_BANNED,
         INVALID_PVE,
+        INVALID_PVP,
         LOGIN_TIMEOUT,
         SERVER_FULL,
         FLYING_DISABLED,
+        INVALID_PACKET,
         UNKNOWN;
 
         @Override
@@ -57,7 +59,7 @@ public class PlayerKickEvent extends PlayerEvent implements Cancellable {
         this.player = player;
         this.quitMessage = quitMessage;
         this.reason = reason;
-        this.reasonString = reasonString;
+        this.reasonString = reason.name();
     }
 
     public String getReason() {

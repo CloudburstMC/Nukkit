@@ -3,18 +3,22 @@ package cn.nukkit.event.entity;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
+import cn.nukkit.item.Item;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.EventException;
 import com.google.common.collect.ImmutableMap;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EntityDamageEvent extends EntityEvent implements Cancellable {
+
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {
@@ -27,19 +31,18 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
     private final Map<DamageModifier, Float> modifiers;
     private final Map<DamageModifier, Float> originals;
 
+    @Getter
+    @Setter
+    private Item weapon;
+
     public EntityDamageEvent(Entity entity, DamageCause cause, float damage) {
-        this(entity, cause, new EnumMap<DamageModifier, Float>(DamageModifier.class) {
-            {
-                put(DamageModifier.BASE, damage);
-            }
-        });
+        this(entity, cause, new DamageModifierFloatEnumMap(damage));
     }
 
     public EntityDamageEvent(Entity entity, DamageCause cause, Map<DamageModifier, Float> modifiers) {
         this.entity = entity;
         this.cause = cause;
         this.modifiers = new EnumMap<>(modifiers);
-
         this.originals = ImmutableMap.copyOf(this.modifiers);
 
         if (!this.modifiers.containsKey(DamageModifier.BASE)) {
@@ -99,13 +102,13 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
             }
         }
 
-        return damage;
+        return Math.max(damage, 0);
     }
-    
+
     public int getAttackCooldown() {
         return this.attackCooldown;
     }
-    
+
     public void setAttackCooldown(int attackCooldown) {
         this.attackCooldown = attackCooldown;
     }
@@ -151,9 +154,13 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
          */
         ABSORPTION,
         /**
-         * Damage reduction caused by the armor enchantments worn.
+         * Damage reduction caused by armor's enchantments
          */
-        ARMOR_ENCHANTMENTS
+        ARMOR_ENCHANTMENTS,
+        /**
+         * Additional damage caused by critical hit
+         */
+        CRITICAL
     }
 
     public enum DamageCause {
@@ -190,6 +197,10 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
          */
         LAVA,
         /**
+         * Damage caused by standing on magma block
+         */
+        MAGMA,
+        /**
          * Damage caused by running out of air underwater
          */
         DROWNING,
@@ -224,6 +235,18 @@ public class EntityDamageEvent extends EntityEvent implements Cancellable {
         /**
          * Damage caused by hunger
          */
-        HUNGER
+        HUNGER,
+        /**
+         * Damage caused by thorns enchantment
+         */
+        THORNS
+    }
+
+    private static class DamageModifierFloatEnumMap extends EnumMap<DamageModifier, Float> {
+
+        public DamageModifierFloatEnumMap(float damage) {
+            super(DamageModifier.class);
+            put(DamageModifier.BASE, damage);
+        }
     }
 }

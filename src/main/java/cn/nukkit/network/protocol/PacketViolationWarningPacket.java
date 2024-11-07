@@ -2,8 +2,11 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
+import java.nio.charset.StandardCharsets;
+
 @ToString
 public class PacketViolationWarningPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET;
 
     public PacketViolationType type;
@@ -21,16 +24,23 @@ public class PacketViolationWarningPacket extends DataPacket {
         this.type = PacketViolationType.values()[this.getVarInt() + 1];
         this.severity = PacketViolationSeverity.values()[this.getVarInt()];
         this.packetId = this.getVarInt();
-        this.context = this.getString();
+
+        // BinaryStream::getString()
+        int contextLength = (int) this.getUnsignedVarInt();
+        String context;
+
+        if (contextLength > 1024) {
+            context = "Context too long: " + contextLength;
+        } else {
+            context = new String(this.get(contextLength), StandardCharsets.UTF_8);
+        }
+
+        this.context = context;
     }
 
     @Override
     public void encode() {
-        this.reset();
-        this.putVarInt(this.type.ordinal() - 1);
-        this.putVarInt(this.severity.ordinal());
-        this.putVarInt(this.packetId);
-        this.putString(this.context);
+        this.encodeUnsupported();
     }
 
     public enum PacketViolationType {

@@ -4,11 +4,12 @@ import cn.nukkit.item.Item;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
 public class MobEquipmentPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.MOB_EQUIPMENT_PACKET;
 
     @Override
@@ -24,7 +25,7 @@ public class MobEquipmentPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.eid = this.getEntityRuntimeId(); //EntityRuntimeID
+        this.eid = this.getEntityRuntimeId();
         this.item = this.getSlot();
         this.inventorySlot = this.getByte();
         this.hotbarSlot = this.getByte();
@@ -34,7 +35,7 @@ public class MobEquipmentPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putEntityRuntimeId(this.eid); //EntityRuntimeID
+        this.putEntityRuntimeId(this.eid);
         this.putSlot(this.item);
         this.putByte((byte) this.inventorySlot);
         this.putByte((byte) this.hotbarSlot);

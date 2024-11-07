@@ -4,11 +4,12 @@ import cn.nukkit.item.Item;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
 public class InventoryContentPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.INVENTORY_CONTENT_PACKET;
 
     @Override
@@ -26,6 +27,7 @@ public class InventoryContentPacket extends DataPacket {
     private static final Item EMPTY_STORAGE_ITEM = Item.get(Item.AIR);
 
     public int inventoryId;
+    public int networkId;
     public Item[] slots = new Item[0];
 
     @Override
@@ -36,7 +38,7 @@ public class InventoryContentPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
@@ -50,12 +52,5 @@ public class InventoryContentPacket extends DataPacket {
         this.putByte((byte) 0); // fullContainerName.id
         this.putBoolean(false); // fullContainerName.optional.present
         this.putSlot(EMPTY_STORAGE_ITEM);
-    }
-
-    @Override
-    public InventoryContentPacket clone() {
-        InventoryContentPacket pk = (InventoryContentPacket) super.clone();
-        pk.slots = this.slots.clone();
-        return pk;
     }
 }

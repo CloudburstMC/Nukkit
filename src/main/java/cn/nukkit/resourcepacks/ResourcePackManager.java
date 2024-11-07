@@ -3,23 +3,28 @@ package cn.nukkit.resourcepacks;
 import cn.nukkit.Server;
 import cn.nukkit.resourcepacks.loader.ResourcePackLoader;
 import cn.nukkit.resourcepacks.loader.ZippedResourcePackLoader;
+import cn.nukkit.utils.MainLogger;
 import com.google.common.collect.Sets;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.File;
 import java.util.*;
 
 public class ResourcePackManager {
 
-    private int maxChunkSize = 1024 * 32;// 32kb is default
-    
+    @Getter
+    @Setter
+    private int maxChunkSize = 32768; // 32kb is default
+
     private final Map<UUID, ResourcePack> resourcePacksById = new HashMap<>();
     private final Set<ResourcePack> resourcePacks = new HashSet<>();
     private final Set<ResourcePackLoader> loaders;
 
-
     public ResourcePackManager(Set<ResourcePackLoader> loaders) {
         this.loaders = loaders;
-        reloadPacks();
+
+        this.reloadPacks();
     }
 
     public ResourcePackManager(ResourcePackLoader... loaders) {
@@ -38,19 +43,13 @@ public class ResourcePackManager {
         return this.resourcePacksById.get(id);
     }
 
-    public int getMaxChunkSize() {
-        return this.maxChunkSize;
-    }
-
-    public void setMaxChunkSize(int size) {
-        this.maxChunkSize = size;
-    }
-
     public void registerPackLoader(ResourcePackLoader loader) {
         this.loaders.add(loader);
     }
 
     public void reloadPacks() {
+        MainLogger.getLogger().debug("Loading resource packs...");
+
         this.resourcePacksById.clear();
         this.resourcePacks.clear();
         this.loaders.forEach(loader -> {

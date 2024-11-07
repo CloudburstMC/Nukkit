@@ -3,7 +3,7 @@ package cn.nukkit.inventory;
 import cn.nukkit.item.Item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public interface Recipe {

@@ -1,7 +1,9 @@
 package cn.nukkit.utils;
 
 /**
- * author: MagicDroidX
+ * Logger
+ *
+ * @author MagicDroidX
  * Nukkit Project
  */
 public interface Logger {

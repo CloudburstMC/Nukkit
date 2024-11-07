@@ -3,20 +3,16 @@ package cn.nukkit.level.format.anvil.palette;
 import java.util.Arrays;
 
 /**
- * @author https://github.com/boy0001/
+ * @author <a href="https://github.com/boy0001/">...</a>
  */
 public class IntPalette {
-    private static int[] INT0 = new int[0];
+
+    private static final int[] INT0 = new int[0];
     private int[] keys = INT0;
     private int lastIndex = Integer.MIN_VALUE;
 
     public void add(int key) {
         keys = insert(key);
-        lastIndex = Integer.MIN_VALUE;
-    }
-
-    protected void set(int[] keys) {
-        this.keys = keys;
         lastIndex = Integer.MIN_VALUE;
     }
 

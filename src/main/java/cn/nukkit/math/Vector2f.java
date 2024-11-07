@@ -1,10 +1,11 @@
 package cn.nukkit.math;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class Vector2f {
+
     public final float x;
     public final float y;
 
@@ -46,7 +47,7 @@ public class Vector2f {
     }
 
     public Vector2f add(Vector2f x) {
-        return this.add(x.getX(), x.getY());
+        return this.add(x.x, x.y);
     }
 
     public Vector2f subtract(float x) {
@@ -58,7 +59,7 @@ public class Vector2f {
     }
 
     public Vector2f subtract(Vector2f x) {
-        return this.add(-x.getX(), -x.getY());
+        return this.add(-x.x, -x.y);
     }
 
     public Vector2f ceil() {
@@ -94,7 +95,7 @@ public class Vector2f {
     }
 
     public double distance(Vector2f vector) {
-        return Math.sqrt(this.distanceSquared(vector.getX(), vector.getY()));
+        return Math.sqrt(this.distanceSquared(vector.x, vector.y));
     }
 
     public double distanceSquared(float x) {
@@ -106,7 +107,7 @@ public class Vector2f {
     }
 
     public double distanceSquared(Vector2f vector) {
-        return this.distanceSquared(vector.getX(), vector.getY());
+        return this.distanceSquared(vector.x, vector.y);
     }
 
     public double length() {
@@ -131,7 +132,6 @@ public class Vector2f {
 
     @Override
     public String toString() {
-        return "Vector2(x=" + this.x + ",y=" + this.y + ")";
+        return "Vector2f(x=" + this.x + ",y=" + this.y + ')';
     }
-
 }

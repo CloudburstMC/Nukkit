@@ -5,7 +5,7 @@ import cn.nukkit.Server;
 import java.util.*;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class Permission {
@@ -47,7 +47,7 @@ public class Permission {
 
     private String description;
 
-    private Map<String, Boolean> children = new HashMap<>();
+    private final Map<String, Boolean> children;
 
     private String defaultValue;
 
@@ -114,7 +114,7 @@ public class Permission {
     }
 
     public void addParent(Permission permission, boolean value) {
-        this.getChildren().put(this.getName(), value);
+        this.children.put(this.name, value);
         permission.recalculatePermissibles();
     }
 
@@ -173,9 +173,7 @@ public class Permission {
                     Object v = entry.getValue();
                     if (v instanceof Map) {
                         Permission permission = loadPermission(k, (Map<String, Object>) v, defaultValue, output);
-                        if (permission != null) {
-                            output.add(permission);
-                        }
+                        output.add(permission);
                     }
                     children.put(k, true);
                 }
@@ -190,5 +188,4 @@ public class Permission {
 
         return new Permission(name, desc, defaultValue, children);
     }
-
 }

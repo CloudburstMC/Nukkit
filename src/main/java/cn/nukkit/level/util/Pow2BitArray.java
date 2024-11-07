@@ -38,8 +38,10 @@ public class Pow2BitArray implements BitArray {
      */
     public void set(int index, int value) {
         Preconditions.checkElementIndex(index, this.size);
-        Preconditions.checkArgument(value >= 0 && value <= this.version.maxEntryValue,
-                "Max value: %s. Received value", this.version.maxEntryValue, value);
+        if (value < 0 || value > this.version.maxEntryValue) {
+            throw new IllegalArgumentException(String.format("Max value: %s. Received value %s", this.version.maxEntryValue, value));
+        }
+
         int bitIndex = index * this.version.bits;
         int arrayIndex = bitIndex >> 5;
         int offset = bitIndex & 31;

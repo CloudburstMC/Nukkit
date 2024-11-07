@@ -23,12 +23,11 @@ public class BlockStairsJungle extends BlockStairsWood {
 
     @Override
     public String getName() {
-        return "Jungle Wood Stairs";
+        return "Jungle Stairs";
     }
 
     @Override
     public BlockColor getColor() {
         return BlockColor.DIRT_BLOCK_COLOR;
     }
-
 }

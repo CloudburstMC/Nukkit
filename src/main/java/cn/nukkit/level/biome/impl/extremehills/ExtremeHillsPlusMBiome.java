@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.impl.extremehills;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  * <p>
  * make sure this is touching another extreme hills type or it'll look dumb
@@ -20,10 +20,5 @@ public class ExtremeHillsPlusMBiome extends ExtremeHillsMBiome {
     @Override
     public String getName() {
         return "Extreme Hills+ M";
-    }
-
-    @Override
-    public boolean doesOverhang() {
-        return false;
     }
 }

@@ -6,7 +6,7 @@ import lombok.ToString;
 import java.util.UUID;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
@@ -28,6 +28,7 @@ public class CommandRequestPacket extends DataPacket {
 
     public String command;
     public CommandOriginData data;
+    public boolean internal;
 
     @Override
     public byte pid() {
@@ -46,10 +47,12 @@ public class CommandRequestPacket extends DataPacket {
             varLong = this.getVarLong();
         }
         this.data = new CommandOriginData(type, uuid, requestId, varLong);
+        this.internal = this.getBoolean();
+        this.getVarInt(); // version
     }
 
     @Override
     public void encode() {
+        this.encodeUnsupported();
     }
-
 }

@@ -1,7 +1,7 @@
 package cn.nukkit.item.food;
 
 import cn.nukkit.Player;
-import cn.nukkit.item.ItemBowl;
+import cn.nukkit.item.Item;
 
 /**
  * Created by Snake1999 on 2016/1/14.
@@ -17,8 +17,7 @@ public class FoodInBowl extends Food {
     @Override
     protected boolean onEatenBy(Player player) {
         super.onEatenBy(player);
-        player.getInventory().addItem(new ItemBowl());
+        player.getInventory().addItem(Item.get(Item.BOWL)); // TODO: set to same slot but don't have it replaced
         return true;
     }
-
 }

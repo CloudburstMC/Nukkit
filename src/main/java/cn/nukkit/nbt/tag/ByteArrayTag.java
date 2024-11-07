@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 public class ByteArrayTag extends Tag {
+
     public byte[] data;
 
     public ByteArrayTag(String name) {
@@ -30,7 +31,7 @@ public class ByteArrayTag extends Tag {
     }
 
     @Override
-    void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis) throws IOException {
         int length = dis.readInt();
         data = new byte[length];
         dis.readFully(data);

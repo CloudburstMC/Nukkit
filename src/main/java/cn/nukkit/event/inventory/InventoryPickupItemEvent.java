@@ -6,7 +6,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.Inventory;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class InventoryPickupItemEvent extends InventoryEvent implements Cancellable {

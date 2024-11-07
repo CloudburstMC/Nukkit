@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol.types;
 
 public enum AuthInteractionModel {
+
     TOUCH,
     CROSSHAIR,
     CLASSIC;

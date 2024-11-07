@@ -9,8 +9,7 @@ import cn.nukkit.item.Item;
  */
 public abstract class InventoryAction {
 
-
-    private long creationTime;
+    //private long creationTime;
 
     protected Item sourceItem;
 
@@ -20,11 +19,21 @@ public abstract class InventoryAction {
         this.sourceItem = sourceItem;
         this.targetItem = targetItem;
 
-        this.creationTime = System.currentTimeMillis();
+        //this.creationTime = System.currentTimeMillis();
     }
 
+    @Deprecated
     public long getCreationTime() {
-        return creationTime;
+        return 0; //creationTime;
+    }
+
+    /**
+     * Returns a clone of the item that was present before the action took place.
+     *
+     * @return clone of the source item
+     */
+    public Item getSourceItem() {
+        return sourceItem.clone();
     }
 
     /**
@@ -32,8 +41,17 @@ public abstract class InventoryAction {
      *
      * @return source item
      */
-    public Item getSourceItem() {
-        return sourceItem.clone();
+    public Item getSourceItemUnsafe() {
+        return sourceItem;
+    }
+
+    /**
+     * Returns a clone of the item that the action attempted to replace the source item with.
+     *
+     * @return clone of the target item
+     */
+    public Item getTargetItem() {
+        return targetItem.clone();
     }
 
     /**
@@ -41,8 +59,8 @@ public abstract class InventoryAction {
      *
      * @return target item
      */
-    public Item getTargetItem() {
-        return targetItem.clone();
+    public Item getTargetItemUnsafe() {
+        return targetItem;
     }
 
     /**
@@ -70,7 +88,6 @@ public abstract class InventoryAction {
      * @param transaction to add
      */
     public void onAddToTransaction(InventoryTransaction transaction) {
-
     }
 
     /**

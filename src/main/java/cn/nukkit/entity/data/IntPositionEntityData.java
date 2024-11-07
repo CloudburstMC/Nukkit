@@ -5,10 +5,11 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.Vector3;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class IntPositionEntityData extends EntityData<BlockVector3> {
+
     public int x;
     public int y;
     public int z;

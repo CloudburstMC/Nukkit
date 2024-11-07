@@ -1,7 +1,6 @@
 package cn.nukkit.event.vehicle;
 
-
-import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.item.EntityVehicle;
 import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
@@ -13,8 +12,7 @@ public class VehicleCreateEvent extends VehicleEvent implements Cancellable {
         return handlers;
     }
 
-    public VehicleCreateEvent(Entity vehicle) {
+    public VehicleCreateEvent(EntityVehicle vehicle) {
         super(vehicle);
     }
-
 }

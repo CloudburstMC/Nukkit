@@ -6,15 +6,14 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class PluginClassLoader extends URLClassLoader {
 
-    private JavaPluginLoader loader;
+    private final JavaPluginLoader loader;
 
     private final Map<String, Class> classes = new HashMap<>();
 
@@ -53,9 +52,4 @@ public class PluginClassLoader extends URLClassLoader {
 
         return result;
     }
-
-    Set<String> getClasses() {
-        return classes.keySet();
-    }
-
 }

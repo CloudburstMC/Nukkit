@@ -25,11 +25,9 @@ public class DropItemAction extends InventoryAction {
     public boolean onPreExecute(Player source) {
         PlayerDropItemEvent ev;
         source.getServer().getPluginManager().callEvent(ev = new PlayerDropItemEvent(source, this.targetItem));
-
-        if(ev.isCancelled()) {
+        if (ev.isCancelled()) {
             source.stopAction();
         }
-
         return !ev.isCancelled();
     }
 
@@ -41,10 +39,8 @@ public class DropItemAction extends InventoryAction {
     }
 
     public void onExecuteSuccess(Player source) {
-
     }
 
     public void onExecuteFail(Player source) {
-
     }
 }

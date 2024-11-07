@@ -1,14 +1,14 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.math.Vector3f;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
 public class LevelEventPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.LEVEL_EVENT_PACKET;
 
     public static final int EVENT_SOUND_CLICK = 1000;
@@ -152,12 +152,7 @@ public class LevelEventPacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.evid = this.getVarInt();
-        Vector3f v = this.getVector3f();
-        this.x = v.x;
-        this.y = v.y;
-        this.z = v.z;
-        this.data = this.getVarInt();
+        this.decodeUnsupported();
     }
 
     @Override

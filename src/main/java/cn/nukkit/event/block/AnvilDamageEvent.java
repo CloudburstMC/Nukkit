@@ -15,9 +15,17 @@ public class AnvilDamageEvent extends BlockEvent implements Cancellable {
 
     private final int oldDamage;
     private int newDamage;
-    private DamageCause cause;
+    private final DamageCause cause;
     private final Player player;
 
+    /**
+     * This event is called when an anvil is damaged.
+     * @param block The block (anvil) that has been damaged.
+     * @param oldDamage Old damage value.
+     * @param newDamage New damage value.
+     * @param cause Cause of the anvil being damaged.
+     * @param player The player who used the anvil.
+     */
     public AnvilDamageEvent(Block block, int oldDamage, int newDamage, DamageCause cause, Player player) {
         super(block);
         this.oldDamage = oldDamage;

@@ -19,19 +19,20 @@ public class BlockSlabWood extends BlockSlab {
         super(meta, DOUBLE_WOODEN_SLAB);
     }
 
+    private static final String[] NAMES = {
+            "Oak",
+            "Spruce",
+            "Birch",
+            "Jungle",
+            "Acacia",
+            "Dark Oak",
+            "",
+            ""
+    };
+
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Oak",
-                "Spruce",
-                "Birch",
-                "Jungle",
-                "Acacia",
-                "Dark Oak",
-                "",
-                ""
-        };
-        return (((this.getDamage() & 0x08) == 0x08) ? "Upper " : "") + names[this.getDamage() & 0x07] + " Wooden Slab";
+        return (((this.getDamage() & 0x08) == 0x08) ? "Upper " : "") + NAMES[this.getDamage() & 0x07] + " Slab";
     }
 
     @Override
@@ -63,12 +64,13 @@ public class BlockSlabWood extends BlockSlab {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage() & 0x07);
+        int damage = this.getDamage() & 0x07;
+        return new ItemBlock(Block.get(this.getId(), damage), damage);
     }
 
     @Override
     public BlockColor getColor() {
-        switch(getDamage() & 0x07){
+        switch (getDamage() & 0x07) {
             default:
             case 0: //OAK
                 return BlockColor.WOOD_BLOCK_COLOR;

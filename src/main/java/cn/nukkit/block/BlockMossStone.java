@@ -9,9 +9,6 @@ import cn.nukkit.item.ItemTool;
  */
 public class BlockMossStone extends BlockSolid {
 
-    public BlockMossStone() {
-    }
-
     @Override
     public String getName() {
         return "Mossy Cobblestone";
@@ -39,7 +36,7 @@ public class BlockMossStone extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };

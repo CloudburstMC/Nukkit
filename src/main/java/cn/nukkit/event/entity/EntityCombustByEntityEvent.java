@@ -3,7 +3,7 @@ package cn.nukkit.event.entity;
 import cn.nukkit.entity.Entity;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EntityCombustByEntityEvent extends EntityCombustEvent {

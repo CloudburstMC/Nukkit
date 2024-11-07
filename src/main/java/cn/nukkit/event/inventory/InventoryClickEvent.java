@@ -7,7 +7,7 @@ import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
 
 /**
- * author: boybook
+ * @author boybook
  * Nukkit Project
  */
 public class InventoryClickEvent extends InventoryEvent implements Cancellable {

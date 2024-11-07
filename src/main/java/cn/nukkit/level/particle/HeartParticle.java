@@ -7,6 +7,7 @@ import cn.nukkit.math.Vector3;
  * Package cn.nukkit.level.particle in project Nukkit .
  */
 public class HeartParticle extends GenericParticle {
+
     public HeartParticle(Vector3 pos) {
         this(pos, 0);
     }

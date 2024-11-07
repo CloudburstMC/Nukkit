@@ -11,7 +11,7 @@ import cn.nukkit.utils.Faceable;
 /**
  * @author CreeperFace
  */
-public class BlockBone extends BlockSolidMeta implements Faceable {
+public class BlockBone extends BlockSolid implements Faceable {
 
     private static final int[] FACES = {
             0,
@@ -21,14 +21,6 @@ public class BlockBone extends BlockSolidMeta implements Faceable {
             0b0100,
             0b0100
     };
-
-    public BlockBone() {
-        this(0);
-    }
-
-    public BlockBone(int meta) {
-        super(meta);
-    }
 
     @Override
     public int getId() {
@@ -57,7 +49,7 @@ public class BlockBone extends BlockSolidMeta implements Faceable {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{new ItemBlock(this)};
         }
 

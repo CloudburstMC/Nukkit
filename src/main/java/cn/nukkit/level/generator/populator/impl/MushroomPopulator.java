@@ -12,6 +12,7 @@ import cn.nukkit.math.Vector3;
  * @author DaPorkchop_
  */
 public class MushroomPopulator extends PopulatorCount {
+
     private final int type;
 
     public MushroomPopulator() {
@@ -39,7 +40,7 @@ public class MushroomPopulator extends PopulatorCount {
         z &= 0xF;
         for (y = 254; y > 0; --y) {
             int b = chunk.getBlockId(x, y, z);
-            if (b == Block.DIRT || b == Block.GRASS) {
+            if (b == Block.DIRT || b == Block.GRASS || b == Block.MYCELIUM) {
                 break;
             } else if (b != Block.AIR && b != Block.SNOW_LAYER) {
                 return -1;

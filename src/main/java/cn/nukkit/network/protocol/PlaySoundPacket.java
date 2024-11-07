@@ -21,14 +21,14 @@ public class PlaySoundPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putString(this.name);
-        this.putBlockVector3(this.x * 8, this.y * 8, this.z * 8);
+        this.putBlockVector3(this.x << 3, this.y << 3, this.z << 3);
         this.putLFloat(this.volume);
         this.putLFloat(this.pitch);
     }

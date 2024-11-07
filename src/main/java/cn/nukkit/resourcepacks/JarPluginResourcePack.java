@@ -18,7 +18,9 @@ import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 public class JarPluginResourcePack extends AbstractResourcePack {
+
     public static final String RESOURCE_PACK_PATH = "assets/resource_pack/";
+
     protected File jarPluginFile;
     protected ByteBuffer zippedByteBuffer;
     protected byte[] sha256;
@@ -148,18 +150,19 @@ public class JarPluginResourcePack extends AbstractResourcePack {
         return chunk;
     }
 
-    private byte[] readAllBytes(ZipFile jar, ZipEntry encryptionKeyEntry) {
+    private static byte[] readAllBytes(ZipFile jar, ZipEntry encryptionKeyEntry) {
         byte[] data = null;
         try (InputStream is = jar.getInputStream(encryptionKeyEntry)) {
             ByteArrayOutputStream buffer = new ByteArrayOutputStream();
             int nRead;
-            byte[] temp = new byte[1024];
+            byte[] temp = new byte[2048];
             while ((nRead = is.read(temp, 0, temp.length)) != -1) {
                 buffer.write(temp, 0, nRead);
             }
             data = buffer.toByteArray();
+            buffer.close();
         } catch (IOException e) {
-            Server.getInstance().getLogger().error("An error occurred while reading the data", e);
+            Server.getInstance().getLogger().error("An error occurred while reading ZipFile", e);
         }
         return data;
     }

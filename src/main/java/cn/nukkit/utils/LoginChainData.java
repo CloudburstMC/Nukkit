@@ -5,6 +5,8 @@ import com.google.gson.JsonObject;
 import java.util.UUID;
 
 /**
+ * Login chain data
+ *
  * @author CreeperFace
  */
 public interface LoginChainData {
@@ -44,4 +46,6 @@ public interface LoginChainData {
     int getUIProfile();
 
     JsonObject getRawData();
+
+    String getTitleId();
 }

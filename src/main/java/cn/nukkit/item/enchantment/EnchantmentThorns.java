@@ -9,10 +9,11 @@ import cn.nukkit.item.Item;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class EnchantmentThorns extends Enchantment {
+
     protected EnchantmentThorns() {
         super(ID_THORNS, "thorns", Rarity.RARE, EnchantmentType.ARMOR);
     }
@@ -34,7 +35,7 @@ public class EnchantmentThorns extends Enchantment {
 
     @Override
     public void doPostAttack(Entity attacker, Entity entity) {
-        if (!(entity instanceof EntityHumanType)) {
+        if (!(entity instanceof EntityHumanType) || attacker == entity) {
             return;
         }
 
@@ -52,7 +53,7 @@ public class EnchantmentThorns extends Enchantment {
         ThreadLocalRandom random = ThreadLocalRandom.current();
 
         if (shouldHit(random, thornsLevel)) {
-            attacker.attack(new EntityDamageByEntityEvent(entity, attacker, EntityDamageEvent.DamageCause.ENTITY_ATTACK, getDamage(random, level), 0f));
+            attacker.attack(new EntityDamageByEntityEvent(entity, attacker, EntityDamageEvent.DamageCause.THORNS, getDamage(random, level), 0f));
         }
     }
 

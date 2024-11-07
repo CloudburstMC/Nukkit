@@ -5,13 +5,13 @@ import com.google.common.primitives.Ints;
 import java.util.List;
 
 /**
- * author: MagicDroidX &amp; iNevet
+ * @author MagicDroidX &amp; iNevet
  * Nukkit Project
  */
 public interface ProtocolInfo {
 
     /**
-     * Actual Minecraft: PE protocol version
+     * Actual Minecraft protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
     int CURRENT_PROTOCOL = Integer.valueOf("748"); // DO NOT REMOVE BOXING
@@ -136,7 +136,6 @@ public interface ProtocolInfo {
     byte SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET = 0x71;
     byte UPDATE_SOFT_ENUM_PACKET = 0x72;
     byte NETWORK_STACK_LATENCY_PACKET = 0x73;
-
     byte SCRIPT_CUSTOM_EVENT_PACKET = 0x75;
     byte SPAWN_PARTICLE_EFFECT_PACKET = 0x76;
     byte AVAILABLE_ENTITY_IDENTIFIERS_PACKET = 0x77;
@@ -147,8 +146,8 @@ public interface ProtocolInfo {
     byte LEVEL_EVENT_GENERIC_PACKET = 0x7c;
     byte LECTERN_UPDATE_PACKET = 0x7d;
     byte VIDEO_STREAM_CONNECT_PACKET = 0x7e;
-    //byte ADD_ENTITY_PACKET = 0x7f;
-    //byte REMOVE_ENTITY_PACKET = 0x80;
+    byte ADD_ENTITY_PACKET_2 = 0x7f;
+    byte REMOVE_ENTITY_PACKET_2 = (byte) 0x80;
     byte CLIENT_CACHE_STATUS_PACKET = (byte) 0x81;
     byte ON_SCREEN_TEXTURE_ANIMATION_PACKET = (byte) 0x82;
     byte MAP_CREATE_LOCKED_COPY_PACKET = (byte) 0x83;
@@ -219,7 +218,7 @@ public interface ProtocolInfo {
     byte UNLOCKED_RECIPES_PACKET = (byte) 0xc7;
     // MC packet IDs continue from 300 (0x12c)
     // Hack: 100 is added to the IDs below on encode
-    // TODO: New pid() function (int) while trying not to break too many plugins
+    // TODO: New pid() function (int) that calls the old one by default
     byte __INTERNAL__CAMERA_INSTRUCTION_PACKET = (byte) 200;
     byte __INTERNAL__COMPRESSED_BIOME_DEFINITIONS_LIST_PACKET = (byte) 201;
     byte __INTERNAL__TRIM_DATA_PACKET = (byte) 202;

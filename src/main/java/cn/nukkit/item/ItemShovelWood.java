@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemShovelWood extends ItemTool {
@@ -31,10 +31,5 @@ public class ItemShovelWood extends ItemTool {
     @Override
     public int getTier() {
         return ItemTool.TIER_WOODEN;
-    }
-
-    @Override
-    public int getAttackDamage() {
-        return 1;
     }
 }

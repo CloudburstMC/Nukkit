@@ -7,6 +7,7 @@ import java.util.Set;
 
 @Data
 public class AbilityLayer {
+
     private Type layerType;
     private final Set<PlayerAbility> abilitiesSet = EnumSet.noneOf(PlayerAbility.class);
     private final Set<PlayerAbility> abilityValues = EnumSet.noneOf(PlayerAbility.class);

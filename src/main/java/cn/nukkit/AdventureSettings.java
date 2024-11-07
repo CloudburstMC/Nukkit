@@ -9,8 +9,10 @@ import java.util.EnumMap;
 import java.util.Map;
 
 /**
+ * Adventure settings
+ *
+ * @author MagicDroidX
  * Nukkit Project
- * Author: MagicDroidX
  */
 public class AdventureSettings implements Cloneable {
 
@@ -20,7 +22,7 @@ public class AdventureSettings implements Cloneable {
     public static final int PERMISSION_AUTOMATION = 3;
     public static final int PERMISSION_ADMIN = 4;
 
-    private Map<Type, Boolean> values = new EnumMap<>(Type.class);
+    private final Map<Type, Boolean> values = new EnumMap<>(Type.class);
 
     private Player player;
 
@@ -38,11 +40,24 @@ public class AdventureSettings implements Cloneable {
         }
     }
 
+    /**
+     * Set an adventure setting value
+     *
+     * @param type adventure setting
+     * @param value new value
+     * @return AdventureSettings
+     */
     public AdventureSettings set(Type type, boolean value) {
         this.values.put(type, value);
         return this;
     }
 
+    /**
+     * Get an adventure setting value
+     *
+     * @param type adventure setting
+     * @return value
+     */
     public boolean get(Type type) {
         Boolean value = this.values.get(type);
         return value == null ? type.getDefaultValue() : value;
@@ -63,7 +78,7 @@ public class AdventureSettings implements Cloneable {
         UpdateAbilitiesPacket packet = new UpdateAbilitiesPacket();
         packet.setEntityId(player.getId());
         packet.setCommandPermission(player.isOp() ? UpdateAbilitiesPacket.CommandPermission.OPERATOR : UpdateAbilitiesPacket.CommandPermission.NORMAL);
-        packet.setPlayerPermission(player.isOp() && !player.isSpectator() ? UpdateAbilitiesPacket.PlayerPermission.OPERATOR : UpdateAbilitiesPacket.PlayerPermission.MEMBER);
+        packet.setPlayerPermission(player.isOp() && !player.isSpectator() ? UpdateAbilitiesPacket.PlayerPermission.OPERATOR : UpdateAbilitiesPacket.PlayerPermission.MEMBER); // Spectator: fix operators being able to break blocks on spectator mode
 
         AbilityLayer layer = new AbilityLayer();
         layer.setLayerType(AbilityLayer.Type.BASE);
@@ -91,17 +106,25 @@ public class AdventureSettings implements Cloneable {
         layer.setFlySpeed(Player.DEFAULT_FLY_SPEED);
         packet.getAbilityLayers().add(layer);
 
-        if (this.get(Type.NO_CLIP)) {
-            AbilityLayer layer2 = new AbilityLayer();
-            layer2.setLayerType(AbilityLayer.Type.SPECTATOR);
+        if (player.isSpectator()) {
+            AbilityLayer spectator = new AbilityLayer();
+            spectator.setLayerType(AbilityLayer.Type.SPECTATOR);
 
-            layer2.getAbilitiesSet().addAll(PlayerAbility.VALUES);
-            layer2.getAbilitiesSet().remove(PlayerAbility.FLY_SPEED);
-            layer2.getAbilitiesSet().remove(PlayerAbility.WALK_SPEED);
+            spectator.getAbilitiesSet().addAll(PlayerAbility.VALUES);
+            spectator.getAbilitiesSet().remove(PlayerAbility.FLY_SPEED);
+            spectator.getAbilitiesSet().remove(PlayerAbility.WALK_SPEED);
 
-            layer2.getAbilityValues().add(PlayerAbility.FLYING);
-            layer2.getAbilityValues().add(PlayerAbility.NO_CLIP);
-            packet.getAbilityLayers().add(layer2);
+            for (Type type : Type.values()) {
+                if (type.isAbility() && this.get(type)) {
+                    spectator.getAbilityValues().add(type.getAbility());
+                }
+            }
+
+            if (player.isOp()) {
+                layer.getAbilityValues().add(PlayerAbility.OPERATOR_COMMANDS);
+            }
+
+            packet.getAbilityLayers().add(spectator);
         }
 
         UpdateAdventureSettingsPacket adventurePacket = new UpdateAdventureSettingsPacket();
@@ -113,17 +136,21 @@ public class AdventureSettings implements Cloneable {
 
         player.dataPacket(packet);
         player.dataPacket(adventurePacket);
+
         if (reset) {
             player.resetInAirTicks();
         }
     }
 
+    /**
+     * List of adventure settings
+     */
     public enum Type {
-        WORLD_IMMUTABLE(false),
-        NO_PVM(false),
+        WORLD_IMMUTABLE(null, false),
+        NO_PVM(null, false),
         NO_MVP(PlayerAbility.INVULNERABLE, false),
-        SHOW_NAME_TAGS(false),
-        AUTO_JUMP(true),
+        SHOW_NAME_TAGS(null, false),
+        AUTO_JUMP(null, true),
         ALLOW_FLIGHT(PlayerAbility.MAY_FLY, false),
         NO_CLIP(PlayerAbility.NO_CLIP, false),
         WORLD_BUILDER(PlayerAbility.WORLD_BUILDER, false),
@@ -145,24 +172,34 @@ public class AdventureSettings implements Cloneable {
         private final PlayerAbility ability;
         private final boolean defaultValue;
 
-        Type(boolean defaultValue) {
-            this.defaultValue = defaultValue;
-            this.ability = null;
-        }
-
         Type(PlayerAbility ability, boolean defaultValue) {
             this.ability = ability;
             this.defaultValue = defaultValue;
         }
 
+        /**
+         * Get default value
+         *
+         * @return default value
+         */
         public boolean getDefaultValue() {
             return this.defaultValue;
         }
 
+        /**
+         * Get player ability type
+         *
+         * @return player ability type
+         */
         public PlayerAbility getAbility() {
             return this.ability;
         }
 
+        /**
+         * Check whether adventure setting is a valid player ability
+         *
+         * @return is a valid player ability
+         */
         public boolean isAbility() {
             return this.ability != null;
         }

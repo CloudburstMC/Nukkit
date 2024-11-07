@@ -14,6 +14,7 @@ import java.util.Iterator;
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class BanListCommand extends VanillaCommand {
+
     public BanListCommand(String name) {
         super(name, "%nukkit.command.banlist.description", "%commands.banlist.usage");
         this.setPermission("nukkit.command.ban.list");

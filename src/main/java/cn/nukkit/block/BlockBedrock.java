@@ -3,13 +3,10 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
 public class BlockBedrock extends BlockSolid {
-
-    public BlockBedrock() {
-    }
 
     @Override
     public int getId() {

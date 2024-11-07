@@ -1,9 +1,14 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-public class EntityCat extends EntityAnimal {
+import java.util.ArrayList;
+import java.util.List;
+
+public class EntityCat extends EntityWalkingAnimal {
 
     public static final int NETWORK_ID = 75;
 
@@ -34,7 +39,26 @@ public class EntityCat extends EntityAnimal {
 
     @Override
     public void initEntity() {
-        super.initEntity();
         this.setMaxHealth(10);
+        super.initEntity();
+        this.noFallDamage = true;
+    }
+
+    @Override
+    public Item[] getDrops() {
+        List<Item> drops = new ArrayList<>();
+
+        if (!this.isBaby()) {
+            for (int i = 0; i < Utils.rand(0, 2); i++) {
+                drops.add(Item.get(Item.STRING, 0, 1));
+            }
+        }
+
+        return drops.toArray(new Item[0]);
+    }
+
+    @Override
+    public int getKillExperience() {
+        return this.isBaby() ? 0 : Utils.rand(1, 3);
     }
 }

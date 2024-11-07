@@ -4,7 +4,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.level.format.FullChunk;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ChunkPopulateEvent extends ChunkEvent {
@@ -18,5 +18,4 @@ public class ChunkPopulateEvent extends ChunkEvent {
     public ChunkPopulateEvent(FullChunk chunk) {
         super(chunk);
     }
-
 }

@@ -18,4 +18,9 @@ public class ItemRecordRelic extends ItemRecord {
     public String getSoundId() {
         return "record.relic";
     }
+
+    @Override
+    public String getDiscName() {
+        return "Aaron Cherof - Relic";
+    }
 }

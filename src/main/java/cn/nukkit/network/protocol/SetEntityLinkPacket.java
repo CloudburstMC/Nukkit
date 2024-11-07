@@ -2,9 +2,6 @@ package cn.nukkit.network.protocol;
 
 import lombok.ToString;
 
-/**
- * Created on 15-10-22.
- */
 @ToString
 public class SetEntityLinkPacket extends DataPacket {
 
@@ -14,8 +11,8 @@ public class SetEntityLinkPacket extends DataPacket {
     public static final byte TYPE_RIDE = 1;
     public static final byte TYPE_PASSENGER = 2;
 
-    public long vehicleUniqueId; //from
-    public long riderUniqueId; //to
+    public long vehicleUniqueId;
+    public long riderUniqueId;
     public byte type;
     public byte immediate;
     public boolean riderInitiated;
@@ -23,7 +20,11 @@ public class SetEntityLinkPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.vehicleUniqueId = this.getEntityUniqueId();
+        this.riderUniqueId = this.getEntityUniqueId();
+        this.type = (byte) this.getByte();
+        this.immediate = (byte) this.getByte();
+        this.riderInitiated = this.getBoolean();
     }
 
     @Override

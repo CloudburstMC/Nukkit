@@ -6,6 +6,7 @@ import cn.nukkit.inventory.EnchantInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.EnchantingAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
+import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.Getter;
@@ -16,24 +17,49 @@ import java.util.List;
 @Getter
 @Setter
 public class EnchantTransaction extends InventoryTransaction {
+
     private Item inputItem;
     private Item outputItem;
+    private Item outputItemCheck;
+
     private int cost = -1;
 
     public EnchantTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
+
+        for (InventoryAction action : actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                if (slotChangeAction.getInventory() instanceof EnchantInventory && slotChangeAction.getSlot() == 0) {
+                    this.outputItemCheck = slotChangeAction.getTargetItem();
+                }
+            }
+        }
     }
 
     @Override
     public boolean canExecute() {
         Inventory inv = getSource().getWindowById(Player.ENCHANT_WINDOW_ID);
-        if (inv == null) return false;
+        if (!(inv instanceof EnchantInventory)) {
+            return false;
+        }
         EnchantInventory eInv = (EnchantInventory) inv;
         if (!getSource().isCreative()) {
-            if (cost == -1 || !eInv.getReagentSlot().equals(Item.get(Item.DYE, 4), true, false) || eInv.getReagentSlot().count < cost)
+            if (this.cost < 1) {
                 return false;
+            } else {
+                Item reagent = eInv.getReagentSlot();
+                if (reagent.count < this.cost || !reagent.equals(Item.get(Item.DYE, 4), true, false)) {
+                    return false;
+                }
+            }
         }
-        return (inputItem != null && outputItem != null && inputItem.equals(eInv.getInputSlot(), true, true));
+        return this.inputItem != null && this.outputItem != null
+                && this.inputItem.equals(eInv.getInputSlot(), true, true)
+                && (this.outputItemCheck == null || this.inputItem.getId() == this.outputItemCheck.getId() ||
+                (this.inputItem.getId() == Item.BOOK && this.outputItemCheck.getId() == Item.ENCHANTED_BOOK))
+                && (this.outputItemCheck == null || this.inputItem.getCount() == this.outputItemCheck.getCount() ||
+                (this.outputItemCheck.getId() == Item.ENCHANTED_BOOK && this.outputItemCheck.getCount() == 1));
     }
 
     @Override
@@ -50,7 +76,6 @@ public class EnchantTransaction extends InventoryTransaction {
         if (ev.isCancelled()) {
             source.removeAllWindows(false);
             this.sendInventories();
-
             // Cancelled by plugin, means handled OK
             return true;
         }
@@ -87,10 +112,10 @@ public class EnchantTransaction extends InventoryTransaction {
                     this.outputItem = action.getSourceItem(); // Output sent as oldItem
                     break;
                 case NetworkInventoryAction.SOURCE_TYPE_ENCHANT_MATERIAL:
-                    if (action.getTargetItem().equals(Item.get(Item.AIR), false, false)) {
-                        this.cost = action.getSourceItem().count;
+                    if (action.getTargetItemUnsafe().getId() == Item.AIR) {
+                        this.cost = action.getSourceItemUnsafe().count;
                     } else {
-                        this.cost = action.getSourceItem().count - action.getTargetItem().count;
+                        this.cost = action.getSourceItemUnsafe().count - action.getTargetItemUnsafe().count;
                     }
                     break;
             }

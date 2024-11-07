@@ -5,8 +5,8 @@ import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
@@ -104,8 +104,8 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.setDamage(player != null ? player.getDirection().getHorizontalIndex() : 0);
-        this.getLevel().setBlock(block, this, true, true);
 
+        this.getLevel().setBlock(this, this, true, true);
         return true;
     }
 
@@ -119,7 +119,12 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
             return false;
         }
 
-        this.getLevel().addLevelEvent(this.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_DOOR);
+        this.getLevel().setBlock(this, this, true);
+        if (this.isOpen()) {
+            this.level.addSound(this, Sound.RANDOM_DOOR_OPEN);
+        } else {
+            this.level.addSound(this, Sound.RANDOM_DOOR_CLOSE);
+        }
         return true;
     }
 
@@ -174,7 +179,12 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         }
 
         this.setDamage(direction | ((~this.getDamage()) & 0x04));
-        this.level.setBlock(this, this, false, false);
+        this.level.setBlock(this, this, true, false);
+        if (this.isOpen()) {
+            this.level.addSound(this, Sound.RANDOM_DOOR_OPEN);
+        } else {
+            this.level.addSound(this, Sound.RANDOM_DOOR_CLOSE);
+        }
         return true;
     }
 
@@ -185,7 +195,8 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_REDSTONE) {
-            if ((!isOpen() && this.level.isBlockPowered(this.getLocation())) || (isOpen() && !this.level.isBlockPowered(this.getLocation()))) {
+            boolean powered = this.level.isBlockPowered(this);
+            if ((!isOpen() && powered) || (isOpen() && !powered)) {
                 this.toggle(null);
                 return type;
             }
@@ -193,7 +204,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
         return 0;
     }
-
+    
     @Override
     public Item toItem() {
         return Item.get(Item.FENCE_GATE, 0, 1);
@@ -201,6 +212,16 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
     @Override
     public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    }
+
+    @Override
+    public boolean canPassThrough() {
+        return this.isOpen();
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

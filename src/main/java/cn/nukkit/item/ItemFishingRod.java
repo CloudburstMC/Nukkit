@@ -3,10 +3,6 @@ package cn.nukkit.item;
 import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
 
-/**
- * Created by Snake1999 on 2016/1/14.
- * Package cn.nukkit.item in project nukkit.
- */
 public class ItemFishingRod extends ItemTool {
 
     public ItemFishingRod() {
@@ -29,11 +25,17 @@ public class ItemFishingRod extends ItemTool {
     @Override
     public boolean onClickAir(Player player, Vector3 directionVector) {
         if (player.fishing != null) {
+            if (player.fishing.getTarget() > 0) {
+                this.meta = this.meta + 2;
+            } else {
+                this.meta++;
+            }
+
             player.stopFishing(true);
-        } else {
-            player.startFishing(this);
-            this.meta++;
+		} else {
+			player.startFishing(this);
         }
+
         return true;
     }
 
@@ -49,6 +51,11 @@ public class ItemFishingRod extends ItemTool {
 
     @Override
     public boolean noDamageOnBreak() {
+        return true;
+    }
+
+    @Override
+    public boolean onUse(Player player, int ticksUsed) {
         return true;
     }
 }

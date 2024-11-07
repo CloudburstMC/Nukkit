@@ -58,11 +58,10 @@ public class JavaPluginLoader implements PluginLoader {
 
                     return plugin;
                 } catch (ClassCastException e) {
-                    throw new PluginException("Error whilst initializing main class `" + description.getMain() + "'", e);
+                    throw new PluginException("Error whilst initializing main class `" + description.getMain() + '\'', e);
                 } catch (InstantiationException | IllegalAccessException e) {
                     Server.getInstance().getLogger().logException(e);
                 }
-
             } catch (ClassNotFoundException e) {
                 throw new PluginException("Couldn't load plugin " + description.getName() + ": main class not found");
             }
@@ -99,9 +98,11 @@ public class JavaPluginLoader implements PluginLoader {
         return this.getPluginDescription(new File(filename));
     }
 
+    private static final Pattern[] FILTERS = new Pattern[]{Pattern.compile("^.+\\.jar$")};
+
     @Override
     public Pattern[] getPluginFilters() {
-        return new Pattern[]{Pattern.compile("^.+\\.jar$")};
+        return FILTERS;
     }
 
     private void initPlugin(PluginBase plugin, PluginDescription description, File dataFolder, File file) {
@@ -143,8 +144,7 @@ public class JavaPluginLoader implements PluginLoader {
 
                 try {
                     cachedClass = loader.findClass(name, false);
-                } catch (ClassNotFoundException e) {
-                    //ignore
+                } catch (ClassNotFoundException ignored) {
                 }
                 if (cachedClass != null) {
                     return cachedClass;
@@ -158,9 +158,5 @@ public class JavaPluginLoader implements PluginLoader {
         if (!classes.containsKey(name)) {
             classes.put(name, clazz);
         }
-    }
-
-    private void removeClass(String name) {
-        Class<?> clazz = classes.remove(name);
     }
 }

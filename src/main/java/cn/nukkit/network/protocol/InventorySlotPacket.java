@@ -4,7 +4,7 @@ import cn.nukkit.item.Item;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
@@ -25,6 +25,7 @@ public class InventorySlotPacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.decodeUnsupported();
     }
 
     @Override

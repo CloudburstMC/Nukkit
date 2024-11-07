@@ -7,7 +7,7 @@ import cn.nukkit.event.level.WeatherEvent;
 import cn.nukkit.level.Level;
 
 /**
- * author: funcraft
+ * @author funcraft
  * Nukkit Project
  */
 public class LightningStrikeEvent extends WeatherEvent implements Cancellable {
@@ -31,5 +31,4 @@ public class LightningStrikeEvent extends WeatherEvent implements Cancellable {
     public EntityLightningStrike getLightning() {
         return bolt;
     }
-
 }

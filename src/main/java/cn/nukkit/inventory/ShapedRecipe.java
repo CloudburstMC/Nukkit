@@ -6,7 +6,7 @@ import io.netty.util.collection.CharObjectHashMap;
 import java.util.*;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ShapedRecipe implements CraftingRecipe {
@@ -17,16 +17,21 @@ public class ShapedRecipe implements CraftingRecipe {
 
     private final List<Item> ingredientsAggregate;
 
-    private long least,most;
+    private long least, most;
 
     private final String[] shape;
     private final int priority;
 
     private final CharObjectHashMap<Item> ingredients = new CharObjectHashMap<>();
 
+    private final int networkId;
 
     public ShapedRecipe(Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults) {
         this(null, 1, primaryResult, shape, ingredients, extraResults);
+    }
+
+    public ShapedRecipe(String recipeId, int priority, Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults) {
+        this(recipeId, priority, primaryResult, shape, ingredients, extraResults, null);
     }
 
     /**
@@ -41,10 +46,11 @@ public class ShapedRecipe implements CraftingRecipe {
      *                         array MUST have a corresponding item in this list. Space character is automatically treated as air.
      * @param extraResults<br> List of additional result items to leave in the crafting grid afterwards. Used for things like cake recipe
      *                         empty buckets.
-     *                         <p>
+     * @param networkId        Unique network id of this recipe. If null, a new networkId will be assigned to this recipe.
+     *
      *                         Note: Recipes **do not** need to be square. Do NOT add padding for empty rows/columns.
      */
-    public ShapedRecipe(String recipeId, int priority, Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults) {
+    public ShapedRecipe(String recipeId, int priority, Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults, Integer networkId) {
         this.recipeId = recipeId;
         this.priority = priority;
         int rowCount = shape.length;
@@ -58,17 +64,16 @@ public class ShapedRecipe implements CraftingRecipe {
         }
 
 
-        //for($shape as $y => $row) {
         for (String row : shape) {
             if (row.length() != columnCount) {
-                throw new RuntimeException("Shaped recipe rows must all have the same length (expected " + columnCount + ", got " + row.length() + ")");
+                throw new RuntimeException("Shaped recipe rows must all have the same length (expected " + columnCount + ", got " + row.length() + ')');
             }
 
             for (int x = 0; x < columnCount; ++x) {
                 char c = row.charAt(x);
 
                 if (c != ' ' && !ingredients.containsKey(c)) {
-                    throw new RuntimeException("No item specified for symbol '" + c + "'");
+                    throw new RuntimeException("No item specified for symbol '" + c + '\'');
                 }
             }
         }
@@ -84,8 +89,9 @@ public class ShapedRecipe implements CraftingRecipe {
 
         this.ingredientsAggregate = new ArrayList<>();
         for (char c : String.join("", this.shape).toCharArray()) {
-            if (c == ' ')
+            if (c == ' ') {
                 continue;
+            }
             Item ingredient = this.ingredients.get(c).clone();
             for (Item existingIngredient : this.ingredientsAggregate) {
                 if (existingIngredient.equals(ingredient, ingredient.hasMeta(), ingredient.hasCompoundTag())) {
@@ -94,10 +100,12 @@ public class ShapedRecipe implements CraftingRecipe {
                     break;
                 }
             }
-            if (ingredient != null)
+            if (ingredient != null) {
                 this.ingredientsAggregate.add(ingredient);
+            }
         }
         this.ingredientsAggregate.sort(CraftingManager.recipeComparator);
+        this.networkId = networkId != null ? networkId : ++CraftingManager.NEXT_NETWORK_ID;
     }
 
     public int getWidth() {
@@ -127,6 +135,7 @@ public class ShapedRecipe implements CraftingRecipe {
     public void setId(UUID uuid) {
         this.least = uuid.getLeastSignificantBits();
         this.most = uuid.getMostSignificantBits();
+
         if (this.recipeId == null) {
             this.recipeId = getId().toString();
         }
@@ -218,7 +227,7 @@ public class ShapedRecipe implements CraftingRecipe {
             haveInputs.add(item.clone());
         }
         List<Item> needInputs = new ArrayList<>();
-        if(multiplier != 1){
+        if (multiplier != 1) {
             for (Item item : ingredientsAggregate) {
                 if (item.isNull())
                     continue;
@@ -246,7 +255,7 @@ public class ShapedRecipe implements CraftingRecipe {
         }
         haveOutputs.sort(CraftingManager.recipeComparator);
         List<Item> needOutputs = new ArrayList<>();
-        if(multiplier != 1){
+        if (multiplier != 1) {
             for (Item item : getExtraResults()) {
                 if (item.isNull())
                     continue;
@@ -263,7 +272,7 @@ public class ShapedRecipe implements CraftingRecipe {
         }
         needOutputs.sort(CraftingManager.recipeComparator);
 
-        return this.matchItemList(haveOutputs, needOutputs);
+        return matchItemList(haveOutputs, needOutputs);
     }
 
     /**
@@ -279,7 +288,7 @@ public class ShapedRecipe implements CraftingRecipe {
         return matchItems(inputList, extraOutputList, 1);
     }
 
-    private boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
+    private static boolean matchItemList(List<Item> haveItems, List<Item> needItems) {
         for (Item needItem : new ArrayList<>(needItems)) {
             for (Item haveItem : new ArrayList<>(haveItems)) {
                 if (needItem.equals(haveItem, needItem.hasMeta(), needItem.hasCompoundTag())) {
@@ -303,7 +312,7 @@ public class ShapedRecipe implements CraftingRecipe {
     public String toString() {
         StringJoiner joiner = new StringJoiner(", ");
 
-        ingredients.forEach((character, item) -> joiner.add(item.getName() + ":" + item.getDamage()));
+        ingredients.forEach((character, item) -> joiner.add(item.getName() + ':' + item.getDamage()));
         return joiner.toString();
     }
 
@@ -315,6 +324,10 @@ public class ShapedRecipe implements CraftingRecipe {
     @Override
     public List<Item> getIngredientsAggregate() {
         return ingredientsAggregate;
+    }
+
+    public int getNetworkId() {
+        return this.networkId;
     }
 
     public static class Entry {

@@ -8,10 +8,8 @@ import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.math.SimpleAxisAlignedBB;
-import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -47,14 +45,9 @@ public class BlockCactus extends BlockTransparentMeta {
         return true;
     }
 
-    @Override
+    /*@Override
     public double getMinX() {
         return this.x + 0.0625;
-    }
-
-    @Override
-    public double getMinY() {
-        return this.y;
     }
 
     @Override
@@ -68,18 +61,17 @@ public class BlockCactus extends BlockTransparentMeta {
     }
 
     @Override
-    public double getMaxY() {
-        return this.y + 0.9375;
-    }
-
-    @Override
     public double getMaxZ() {
         return this.z + 0.9375;
-    }
+    }*/
+
+    // Hack: Fix entity collisions
+    // No need for separate collision box
+    // Y-collisions need another fix anyway
 
     @Override
-    protected AxisAlignedBB recalculateCollisionBoundingBox() {
-        return new SimpleAxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 1, this.z + 1);
+    public double getMaxY() {
+        return this.y + 0.9375;
     }
 
     @Override
@@ -104,13 +96,14 @@ public class BlockCactus extends BlockTransparentMeta {
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             if (down().getId() != CACTUS) {
                 if (this.getDamage() == 0x0F) {
+                    FullChunk chunk = this.level.getChunk((int) x >> 4, (int) z >> 4);
                     for (int y = 1; y < 3; ++y) {
-                        Block b = this.getLevel().getBlock(new Vector3(this.x, this.y + y, this.z));
+                        Block b = this.getLevel().getBlock(chunk, (int) this.x, (int) this.y + y, (int) this.z, true);
                         if (b.getId() == AIR) {
-                            BlockGrowEvent event = new BlockGrowEvent(b, Block.get(BlockID.CACTUS));
+                            BlockGrowEvent event = new BlockGrowEvent(b, Block.get(CACTUS));
                             Server.getInstance().getPluginManager().callEvent(event);
                             if (!event.isCancelled()) {
-                                this.getLevel().setBlock(b, event.getNewState(), true);
+                                this.getLevel().setBlock(b, event.getNewState(), true, true);
                             }
                             break;
                         }
@@ -119,7 +112,7 @@ public class BlockCactus extends BlockTransparentMeta {
                 } else {
                     this.setDamage(this.getDamage() + 1);
                 }
-                this.getLevel().setBlock(this, this);
+                this.level.setBlock((int) this.x, (int) this.y, (int) this.z, BlockLayer.NORMAL, this, false, true, false); // No need to send this to client
             }
         }
 
@@ -135,8 +128,7 @@ public class BlockCactus extends BlockTransparentMeta {
             Block block2 = west();
             Block block3 = east();
             if (block0.canBeFlowedInto() && block1.canBeFlowedInto() && block2.canBeFlowedInto() && block3.canBeFlowedInto()) {
-                this.getLevel().setBlock(this, this, true);
-
+                this.getLevel().setBlock(this, this, true, true);
                 return true;
             }
         }
@@ -152,11 +144,21 @@ public class BlockCactus extends BlockTransparentMeta {
     public BlockColor getColor() {
         return BlockColor.FOLIAGE_BLOCK_COLOR;
     }
-    
+
     @Override
     public Item[] getDrops(Item item) {
         return new Item[]{
-            Item.get(Item.CACTUS, 0, 1)
+                Item.get(Item.CACTUS, 0, 1)
         };
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

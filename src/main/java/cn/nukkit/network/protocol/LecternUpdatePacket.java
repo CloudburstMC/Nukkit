@@ -11,6 +11,7 @@ public class LecternUpdatePacket extends DataPacket {
     public int page;
     public int totalPages;
     public BlockVector3 blockPosition;
+    public boolean dropBook;
 
     @Override
     public byte pid() {
@@ -26,5 +27,6 @@ public class LecternUpdatePacket extends DataPacket {
 
     @Override
     public void encode() {
+        this.encodeUnsupported();
     }
 }

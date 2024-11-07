@@ -11,7 +11,7 @@ import cn.nukkit.network.protocol.ContainerOpenPacket;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class ContainerInventory extends BaseInventory {
@@ -45,6 +45,7 @@ public abstract class ContainerInventory extends BaseInventory {
         } else {
             pk.x = pk.y = pk.z = 0;
         }
+
         if (holder instanceof Entity) {
             pk.entityId = ((Entity) holder).getId();
         }

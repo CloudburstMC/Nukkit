@@ -6,13 +6,13 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockWall extends BlockTransparentMeta {
+
     public static final int NONE_MOSSY_WALL = 0;
     public static final int MOSSY_WALL = 1;
-
 
     public BlockWall() {
         this(0);
@@ -44,16 +44,42 @@ public class BlockWall extends BlockTransparentMeta {
 
     @Override
     public String getName() {
-        if (this.getDamage() == 0x01) {
-            return "Mossy Cobblestone Wall";
+        switch (this.getDamage()) {
+            case 0:
+                return "Cobblestone Wall";
+            case 1:
+                return "Mossy Cobblestone Wall";
+            case 2:
+                return "Granite Wall";
+            case 3:
+                return "Diorite Wall";
+            case 4:
+                return "Andesite Wall";
+            case 5:
+                return "Sandstone Wall";
+            case 6:
+                return "Brick Wall";
+            case 7:
+                return "Stone Brick Wall";
+            case 8:
+                return "Mossy Stone Brick Wall";
+            case 9:
+                return "Nether Brick Wall";
+            case 10:
+                return "End Stone Brick Wall";
+            case 11:
+                return "Prismarine Wall";
+            case 12:
+                return "Red Sandstone Wall";
+            case 13:
+                return "Red Nether Brick Wall";
         }
 
-        return "Cobblestone Wall";
+        return "Wall";
     }
 
     @Override
     protected AxisAlignedBB recalculateBoundingBox() {
-
         boolean north = this.canConnect(this.getSide(BlockFace.NORTH));
         boolean south = this.canConnect(this.getSide(BlockFace.SOUTH));
         boolean west = this.canConnect(this.getSide(BlockFace.WEST));
@@ -94,5 +120,10 @@ public class BlockWall extends BlockTransparentMeta {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

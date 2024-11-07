@@ -9,9 +9,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockDiamond extends BlockSolid {
 
-    public BlockDiamond() {
-    }
-
     @Override
     public double getHardness() {
         return 5;
@@ -34,7 +31,7 @@ public class BlockDiamond extends BlockSolid {
 
     @Override
     public String getName() {
-        return "Diamond Block";
+        return "Block of Diamond";
     }
 
     @Override

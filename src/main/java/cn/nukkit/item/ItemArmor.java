@@ -2,12 +2,10 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.nbt.tag.ByteTag;
-import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 abstract public class ItemArmor extends Item implements ItemDurable {
@@ -98,7 +96,7 @@ abstract public class ItemArmor extends Item implements ItemDurable {
             }
         }
 
-        return this.getCount() == 0;
+        return false; // We already use setItem & clear here
     }
 
     @Override
@@ -114,14 +112,15 @@ abstract public class ItemArmor extends Item implements ItemDurable {
                 return 25;
             case TIER_IRON:
                 return 9;
+            case TIER_NETHERITE:
+                return 10; //TODO
         }
 
         return 0;
     }
 
     @Override
-    public boolean isUnbreakable() {
-        Tag tag = this.getNamedTagEntry("Unbreakable");
-        return tag instanceof ByteTag && ((ByteTag) tag).data > 0;
+    public boolean canBePutInHelmetSlot() {
+        return this.isHelmet();
     }
 }

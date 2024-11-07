@@ -16,8 +16,6 @@ public class PlayerFormRespondedEvent extends PlayerEvent {
     protected int formID;
     protected FormWindow window;
 
-    protected boolean closed = false;
-
     public PlayerFormRespondedEvent(Player player, int formID, FormWindow window) {
         this.player = player;
         this.formID = formID;
@@ -49,5 +47,4 @@ public class PlayerFormRespondedEvent extends PlayerEvent {
     public boolean wasClosed() {
         return window.wasClosed();
     }
-
 }

@@ -27,5 +27,4 @@ public class ItemExpBottle extends ProjectileItem {
     public float getThrowForce() {
         return 1f;
     }
-
 }

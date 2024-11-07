@@ -17,5 +17,4 @@ public class ItemSalmonCooked extends ItemFish {
     public ItemSalmonCooked(Integer meta, int count) {
         super(COOKED_SALMON, meta, count, "Cooked Salmon");
     }
-
 }

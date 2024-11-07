@@ -9,7 +9,7 @@ import cn.nukkit.level.generator.populator.impl.PopulatorOre;
 import cn.nukkit.level.generator.populator.impl.PopulatorTree;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  * <p>
  * make sure this is touching another extreme hills type or it'll look dumb

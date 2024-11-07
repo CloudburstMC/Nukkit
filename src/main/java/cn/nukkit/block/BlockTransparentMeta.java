@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.utils.BlockColor;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class BlockTransparentMeta extends BlockMeta {
@@ -25,5 +25,4 @@ public abstract class BlockTransparentMeta extends BlockMeta {
     public BlockColor getColor() {
         return BlockColor.TRANSPARENT_BLOCK_COLOR;
     }
-
 }

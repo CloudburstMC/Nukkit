@@ -11,7 +11,7 @@ public class PlayerUIComponent extends BaseInventory {
 
     public static final int CREATED_ITEM_OUTPUT_UI_SLOT = 50;
 
-    private final PlayerUIInventory playerUI;
+    private  final PlayerUIInventory playerUI;
     private final int offset;
     private final int size;
 
@@ -46,6 +46,11 @@ public class PlayerUIComponent extends BaseInventory {
     @Override
     public Item getItem(int index) {
         return this.playerUI.getItem(index + this.offset);
+    }
+
+    @Override
+    public Item getItemFast(int index) {
+        return this.playerUI.getItemFast(index + this.offset);
     }
 
     @Override

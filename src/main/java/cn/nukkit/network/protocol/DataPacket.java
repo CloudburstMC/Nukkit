@@ -1,20 +1,18 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
-import cn.nukkit.network.Network;
 import cn.nukkit.utils.BinaryStream;
-import com.nukkitx.network.raknet.RakNetReliability;
+import cn.nukkit.utils.SnappyCompression;
+import cn.nukkit.utils.Zlib;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class DataPacket extends BinaryStream implements Cloneable {
 
     public volatile boolean isEncoded = false;
-    private int channel = 0;
-
-    public RakNetReliability reliability = RakNetReliability.RELIABLE_ORDERED;
 
     public abstract byte pid();
 
@@ -43,14 +41,6 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
         return this;
     }
 
-    public void setChannel(int channel) {
-        this.channel = channel;
-    }
-
-    public int getChannel() {
-        return channel;
-    }
-
     public DataPacket clean() {
         this.setBuffer(null);
         this.setOffset(0);
@@ -72,20 +62,38 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
     }
 
     public BatchPacket compress() {
-        return compress(Server.getInstance().networkCompressionLevel);
+        return this.compress(Server.getInstance().networkCompressionLevel);
     }
 
     public BatchPacket compress(int level) {
-        BinaryStream stream = new BinaryStream();
         byte[] buf = this.getBuffer();
+        BinaryStream stream = new BinaryStream(new byte[5 + buf.length]).reset();
         stream.putUnsignedVarInt(buf.length);
         stream.put(buf);
         try {
+            byte[] bytes = stream.getBuffer();
             BatchPacket batched = new BatchPacket();
-            batched.payload = Network.deflateRaw(stream.getBuffer(), level);
+            if (Server.getInstance().useSnappy) {
+                batched.payload = SnappyCompression.compress(bytes);
+            } else {
+                batched.payload = Zlib.deflateRaw(bytes, level);
+            }
             return batched;
         } catch (Exception e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    void decodeUnsupported() {
+        if (Nukkit.DEBUG > 1) {
+            Server.getInstance().getLogger().debug("Warning: decode() not implemented for " + this.getClass().getName());
+        }
+    }
+
+    void encodeUnsupported() {
+        if (Nukkit.DEBUG > 1) {
+            Server.getInstance().getLogger().debug("Warning: encode() not implemented for " + this.getClass().getName());
+            Thread.dumpStack();
         }
     }
 }

@@ -8,10 +8,11 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 
 /**
- * author: Box
+ * @author Box
  * Nukkit Project
  */
 public class EntityShootBowEvent extends EntityEvent implements Cancellable {
+
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {
@@ -48,8 +49,7 @@ public class EntityShootBowEvent extends EntityEvent implements Cancellable {
 
     public void setProjectile(Entity projectile) {
         if (projectile != this.projectile) {
-            if (this.projectile.getViewers().size() == 0) {
-                this.projectile.kill();
+            if (this.projectile.getViewers().isEmpty()) {
                 this.projectile.close();
             }
             this.projectile = (EntityProjectile) projectile;

@@ -3,7 +3,7 @@ package cn.nukkit.entity.mob;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-public class EntityRavager extends EntityMob {
+public class EntityRavager extends EntityWalkingMob {
 
     public static final int NETWORK_ID = 59;
 
@@ -18,22 +18,22 @@ public class EntityRavager extends EntityMob {
 
     @Override
     protected void initEntity() {
-        super.initEntity();
         this.setMaxHealth(100);
+        super.initEntity();
     }
 
     @Override
     public float getHeight() {
-        return 1.9f;
+        return 2.2f;
     }
 
     @Override
     public float getWidth() {
-        return 1.2f;
+        return 1.95f;
     }
 
     @Override
-    public String getName() {
-        return "Ravager";
+    public int getKillExperience() {
+        return 0;
     }
 }

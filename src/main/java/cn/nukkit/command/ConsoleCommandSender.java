@@ -12,7 +12,7 @@ import cn.nukkit.utils.MainLogger;
 import java.util.Map;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ConsoleCommandSender implements CommandSender {
@@ -107,6 +107,5 @@ public class ConsoleCommandSender implements CommandSender {
 
     @Override
     public void setOp(boolean value) {
-
     }
 }

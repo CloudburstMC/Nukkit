@@ -1,13 +1,13 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
-import cn.nukkit.utils.BlockColor;
 
 /**
  * Created on 2015/11/25 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockStairsCobblestone extends BlockStairs {
+
     public BlockStairsCobblestone() {
         this(0);
     }
@@ -39,11 +39,6 @@ public class BlockStairsCobblestone extends BlockStairs {
     @Override
     public String getName() {
         return "Cobblestone Stairs";
-    }
-
-    @Override
-    public BlockColor getColor() {
-        return BlockColor.STONE_BLOCK_COLOR;
     }
 
     @Override

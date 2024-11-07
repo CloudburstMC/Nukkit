@@ -20,11 +20,6 @@ public class ItemHoeNetherite extends ItemTool {
     }
 
     @Override
-    public int getAttackDamage() {
-        return 6;
-    }
-
-    @Override
     public int getTier() {
         return ItemTool.TIER_NETHERITE;
     }

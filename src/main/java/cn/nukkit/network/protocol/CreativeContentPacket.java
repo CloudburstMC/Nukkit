@@ -5,9 +5,10 @@ import lombok.ToString;
 
 @ToString
 public class CreativeContentPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.CREATIVE_CONTENT_PACKET;
 
-    public Item[] entries = new Item[0];
+    public Item[] entries;
 
     @Override
     public byte pid() {
@@ -16,16 +17,17 @@ public class CreativeContentPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putUnsignedVarInt(entries.length);
-        for (int i = 0; i < entries.length; i++) {
-            this.putUnsignedVarInt(i + 1);
-            this.putSlot(entries[i], true);
+        int i = 1; //HACK around since 0 is not indexed by client
+        for (Item entry : entries) {
+            this.putUnsignedVarInt(i++);
+            this.putSlot(entry, true);
         }
     }
 }

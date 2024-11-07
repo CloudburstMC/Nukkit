@@ -4,26 +4,24 @@ import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import cn.nukkit.utils.PluginException;
 import cn.nukkit.utils.ServerException;
-import co.aikar.timings.Timings;
 
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class PermissibleBase implements Permissible {
 
-    ServerOperator opable = null;
+    private final ServerOperator opable;
 
     private Permissible parent = null;
 
-    private final Set<PermissionAttachment> attachments = new HashSet<>();
+    private final Set<PermissionAttachment> attachments = ConcurrentHashMap.newKeySet();
 
-    private final Map<String, PermissionAttachmentInfo> permissions = new HashMap<>();
+    private final Map<String, PermissionAttachmentInfo> permissions = new ConcurrentHashMap<>();
 
     public PermissibleBase(ServerOperator opable) {
         this.opable = opable;
@@ -58,8 +56,9 @@ public class PermissibleBase implements Permissible {
 
     @Override
     public boolean hasPermission(String name) {
-        if (this.isPermissionSet(name)) {
-            return this.permissions.get(name).getValue();
+        PermissionAttachmentInfo isPermissionSet = this.permissions.get(name);
+        if (isPermissionSet != null) {
+            return isPermissionSet.getValue();
         }
 
         Permission perm = Server.getInstance().getPluginManager().getPermission(name);
@@ -67,9 +66,11 @@ public class PermissibleBase implements Permissible {
         if (perm != null) {
             String permission = perm.getDefault();
 
-            return Permission.DEFAULT_TRUE.equals(permission) || (this.isOp() && Permission.DEFAULT_OP.equals(permission)) || (!this.isOp() && Permission.DEFAULT_NOT_OP.equals(permission));
+            boolean op;
+            return Permission.DEFAULT_TRUE.equals(permission) || ((op = this.isOp()) && Permission.DEFAULT_OP.equals(permission)) || (!op && Permission.DEFAULT_NOT_OP.equals(permission));
         } else {
-            return Permission.DEFAULT_TRUE.equals(Permission.DEFAULT_PERMISSION) || (this.isOp() && Permission.DEFAULT_OP.equals(Permission.DEFAULT_PERMISSION)) || (!this.isOp() && Permission.DEFAULT_NOT_OP.equals(Permission.DEFAULT_PERMISSION));
+            return this.isOp();
+            //return Permission.DEFAULT_TRUE.equals(Permission.DEFAULT_PERMISSION) || ((op = this.isOp()) && Permission.DEFAULT_OP.equals(Permission.DEFAULT_PERMISSION)) || (!op && Permission.DEFAULT_NOT_OP.equals(Permission.DEFAULT_PERMISSION));
         }
     }
 
@@ -118,8 +119,6 @@ public class PermissibleBase implements Permissible {
 
     @Override
     public void recalculatePermissions() {
-        Timings.permissibleCalculationTimer.startTiming();
-
         this.clearPermissions();
         Map<String, Permission> defaults = Server.getInstance().getPluginManager().getDefaultPermissions(this.isOp());
         Server.getInstance().getPluginManager().subscribeToDefaultPerms(this.isOp(), this.parent != null ? this.parent : this);
@@ -134,14 +133,12 @@ public class PermissibleBase implements Permissible {
         for (PermissionAttachment attachment : this.attachments) {
             this.calculateChildPermissions(attachment.getPermissions(), false, attachment);
         }
-        Timings.permissibleCalculationTimer.stopTiming();
     }
 
     public void clearPermissions() {
         for (String name : this.permissions.keySet()) {
             Server.getInstance().getPluginManager().unsubscribeFromPermission(name, this.parent != null ? this.parent : this);
         }
-
 
         Server.getInstance().getPluginManager().unsubscribeFromDefaultPerms(false, this.parent != null ? this.parent : this);
         Server.getInstance().getPluginManager().unsubscribeFromDefaultPerms(true, this.parent != null ? this.parent : this);

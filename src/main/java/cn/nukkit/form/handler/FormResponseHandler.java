@@ -11,5 +11,4 @@ public interface FormResponseHandler {
     }
 
     void handle(Player player, int formID);
-
 }

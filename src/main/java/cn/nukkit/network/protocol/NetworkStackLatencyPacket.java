@@ -5,23 +5,26 @@ import lombok.ToString;
 @ToString
 public class NetworkStackLatencyPacket extends DataPacket {
 
+    public static final byte NETWORK_ID = ProtocolInfo.NETWORK_STACK_LATENCY_PACKET;
+
     public long timestamp;
-    public boolean unknownBool;
+    public boolean needResponse;
 
     @Override
     public byte pid() {
-        return ProtocolInfo.NETWORK_STACK_LATENCY_PACKET;
+        return NETWORK_ID;
     }
 
     @Override
     public void decode() {
         timestamp = this.getLLong();
+        needResponse = this.getBoolean();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putLLong(timestamp);
-        this.putBoolean(unknownBool);
+        this.putBoolean(needResponse);
     }
 }

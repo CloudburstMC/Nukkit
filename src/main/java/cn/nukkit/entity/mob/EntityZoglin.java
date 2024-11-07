@@ -1,12 +1,14 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
 /**
  * @author Erik Miller | EinBexiii
  */
-public class EntityZoglin extends EntityMob {
+public class EntityZoglin extends EntityWalkingMob implements EntitySmite {
 
     public final static int NETWORK_ID = 126;
 
@@ -20,9 +22,14 @@ public class EntityZoglin extends EntityMob {
     }
 
     @Override
+    public int getKillExperience() {
+        return this.isBaby() ? 1 : Utils.rand(1, 3);
+    }
+
+    @Override
     protected void initEntity() {
-        super.initEntity();
         this.setMaxHealth(40);
+        super.initEntity();
     }
 
     @Override
@@ -33,10 +40,5 @@ public class EntityZoglin extends EntityMob {
     @Override
     public float getHeight() {
         return 0.9f;
-    }
-
-    @Override
-    public String getName() {
-        return "Zoglin";
     }
 }

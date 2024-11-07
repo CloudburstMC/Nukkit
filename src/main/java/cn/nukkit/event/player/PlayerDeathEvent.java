@@ -7,7 +7,11 @@ import cn.nukkit.event.entity.EntityDeathEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.lang.TextContainer;
 
+/**
+ * Called when a Player dies. Notice that cancelling the event will not revert player's health if the player is already dead.
+ */
 public class PlayerDeathEvent extends EntityDeathEvent implements Cancellable {
+
     private static final HandlerList handlers = new HandlerList();
 
     public static HandlerList getHandlers() {

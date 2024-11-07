@@ -1,7 +1,7 @@
 package cn.nukkit.level.biome.impl.taiga;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  */
 public class ColdTaigaHillsBiome extends ColdTaigaBiome {

@@ -1,6 +1,5 @@
 package cn.nukkit.plugin.service;
 
-
 import cn.nukkit.Server;
 import cn.nukkit.plugin.Plugin;
 import com.google.common.base.Preconditions;
@@ -8,18 +7,15 @@ import com.google.common.collect.ImmutableList;
 
 import java.util.*;
 
-/**
- * Created on 16-11-20.
- */
 public class NKServiceManager implements ServiceManager {
 
     private final Map<Class<?>, List<RegisteredServiceProvider<?>>> handle = new HashMap<>();
 
     @Override
     public <T> boolean register(Class<T> service, T provider, Plugin plugin, ServicePriority priority) {
-        Preconditions.checkNotNull(provider);
-        Preconditions.checkNotNull(priority);
-        Preconditions.checkNotNull(service);
+        Preconditions.checkNotNull(provider, "provider");
+        Preconditions.checkNotNull(priority, "priority");
+        Preconditions.checkNotNull(service, "service");
 
         // build-in service provider needn't plugin param
         if (plugin == null && provider.getClass().getClassLoader() != Server.class.getClassLoader()) {
@@ -63,7 +59,6 @@ public class NKServiceManager implements ServiceManager {
                         builder.add(registered);
                     }
                 }
-
             }
         }
 
@@ -71,6 +66,7 @@ public class NKServiceManager implements ServiceManager {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> RegisteredServiceProvider<T> cancel(Class<T> service, T provider) {
         RegisteredServiceProvider<T> result = null;
 
@@ -85,13 +81,13 @@ public class NKServiceManager implements ServiceManager {
                     result = next;
                 }
             }
-
         }
 
         return result;
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <T> RegisteredServiceProvider<T> getProvider(Class<T> service) {
         synchronized (handle) {
             List<RegisteredServiceProvider<?>> list = handle.get(service);
@@ -126,8 +122,7 @@ public class NKServiceManager implements ServiceManager {
         synchronized (handle) {
             List<RegisteredServiceProvider<?>> registered = handle.get(service);
             if (registered == null) {
-                ImmutableList<RegisteredServiceProvider<T>> empty = ImmutableList.of();
-                return empty;
+                return ImmutableList.of();
             }
             for (RegisteredServiceProvider<?> provider : registered) {
                 builder.add((RegisteredServiceProvider<T>)provider);

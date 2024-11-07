@@ -1,8 +1,5 @@
 package cn.nukkit.utils.bugreport;
 
-/**
- * Project nukkit
- */
 public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
 
     public static void registerExceptionHandler() {
@@ -23,5 +20,4 @@ public class ExceptionHandler implements Thread.UncaughtExceptionHandler {
             // Fail Safe
         }
     }
-
 }

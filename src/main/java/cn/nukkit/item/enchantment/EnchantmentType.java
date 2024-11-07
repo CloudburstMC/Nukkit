@@ -1,15 +1,10 @@
 package cn.nukkit.item.enchantment;
 
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemArmor;
-import cn.nukkit.item.ItemBow;
-import cn.nukkit.item.ItemCrossbow;
-import cn.nukkit.item.ItemFishingRod;
-import cn.nukkit.item.ItemSkull;
-import cn.nukkit.item.ItemTrident;
+import cn.nukkit.block.BlockID;
+import cn.nukkit.item.*;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public enum EnchantmentType {
@@ -52,11 +47,10 @@ public enum EnchantmentType {
                 default:
                     return false;
             }
-
         } else {
             switch (this) {
                 case SWORD:
-                    return item.isSword();
+                    return item.isSword() && item.getId() != ItemID.TRIDENT;
                 case DIGGER:
                     return item.isPickaxe() || item.isShovel() || item.isAxe() || item.isHoe();
                 case BOW:
@@ -64,7 +58,7 @@ public enum EnchantmentType {
                 case FISHING_ROD:
                     return item instanceof ItemFishingRod;
                 case WEARABLE:
-                    return item instanceof ItemSkull;
+                    return item instanceof ItemSkull || item.getId() == (255 - BlockID.CARVED_PUMPKIN);
                 case TRIDENT:
                     return item instanceof ItemTrident;
                 case CROSSBOW:

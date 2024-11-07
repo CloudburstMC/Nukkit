@@ -3,9 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 
-/**
- * Created by PetteriM1
- */
 public class BlockWallBanner extends BlockBanner {
 
     public BlockWallBanner() {

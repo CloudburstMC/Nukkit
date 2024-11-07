@@ -9,9 +9,6 @@ import cn.nukkit.utils.BlockColor;
  */
 public class BlockEndGateway extends BlockSolid {
 
-    public BlockEndGateway() {
-    }
-
     @Override
     public String getName() {
         return "End Gateway";
@@ -62,4 +59,13 @@ public class BlockEndGateway extends BlockSolid {
         return new ItemBlock(Block.get(BlockID.AIR));
     }
 
+    @Override
+    public boolean canBePushed() {
+        return false;
+    }
+
+    @Override
+    public boolean isSolid() {
+        return false;
+    }
 }

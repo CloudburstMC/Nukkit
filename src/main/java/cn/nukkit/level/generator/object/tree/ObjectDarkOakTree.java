@@ -5,6 +5,7 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockLeaves2;
 import cn.nukkit.block.BlockWood2;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
@@ -13,6 +14,7 @@ import cn.nukkit.math.Vector3;
  * Created by CreeperFace on 23. 10. 2016.
  */
 public class ObjectDarkOakTree extends TreeGenerator {
+
     private static final Block DARK_OAK_LOG = Block.get(BlockID.WOOD2, BlockWood2.DARK_OAK);
     private static final Block DARK_OAK_LEAVES = Block.get(BlockID.LEAVES2, BlockLeaves2.DARK_OAK);
 
@@ -23,7 +25,8 @@ public class ObjectDarkOakTree extends TreeGenerator {
         int k = position.getFloorY();
         int l = position.getFloorZ();
 
-        if (k >= 1 && k + i + 1 < 256) {
+        int maxY = level instanceof Level ? ((Level) level).getMaxBlockY() + 1 : 256;
+        if (k >= 1 && k + i + 1 < maxY) {
             Vector3 blockpos = position.down();
             int block = level.getBlockIdAt(blockpos.getFloorX(), blockpos.getFloorY(), blockpos.getFloorZ());
 

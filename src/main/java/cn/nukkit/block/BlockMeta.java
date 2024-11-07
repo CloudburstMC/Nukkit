@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 public abstract class BlockMeta extends Block {
+
     private int meta;
 
     protected BlockMeta(int meta) {
@@ -9,7 +10,7 @@ public abstract class BlockMeta extends Block {
 
     @Override
     public int getFullId() {
-        return (getId() << 4) + getDamage();
+        return (getId() << DATA_BITS) + getDamage();
     }
 
     @Override
@@ -21,5 +22,4 @@ public abstract class BlockMeta extends Block {
     public void setDamage(int meta) {
         this.meta = meta;
     }
-
 }

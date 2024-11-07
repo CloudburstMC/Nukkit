@@ -2,14 +2,16 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.utils.Faceable;
+import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.DyeColor;
 
 /**
  * Created by CreeperFace on 2.6.2017.
  */
-public abstract class BlockTerracottaGlazed extends BlockSolidMeta implements Faceable {
+public abstract class BlockTerracottaGlazed extends BlockSolidMeta {
 
     public BlockTerracottaGlazed() {
         this(0);
@@ -41,8 +43,7 @@ public abstract class BlockTerracottaGlazed extends BlockSolidMeta implements Fa
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setDamage(Block.FACES2534[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         return this.getLevel().setBlock(block, this, true, true);
     }
 
@@ -52,7 +53,16 @@ public abstract class BlockTerracottaGlazed extends BlockSolidMeta implements Fa
     }
 
     @Override
-    public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x07);
+    public BlockColor getColor() {
+        return DyeColor.getByDyeData(getDyeColor().getDyeData()).getColor();
+    }
+
+    public DyeColor getDyeColor() {
+        return DyeColor.BLACK;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 }

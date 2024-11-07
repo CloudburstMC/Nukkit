@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -23,21 +22,21 @@ public class BlockRedSandstone extends BlockSandstone {
         return RED_SANDSTONE;
     }
 
+    private static final String[] NAMES = {
+            "Red Sandstone",
+            "Chiseled Red Sandstone",
+            "Cut Red Sandstone",
+            "Smooth Red Sandstone"
+    };
+
     @Override
     public String getName() {
-        String[] names = new String[]{
-                "Red Sandstone",
-                "Chiseled Red Sandstone",
-                "Smooth Red Sandstone",
-                ""
-        };
-
-        return names[this.getDamage() & 0x03];
+        return NAMES[this.getDamage() & 0x03];
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };
@@ -49,11 +48,6 @@ public class BlockRedSandstone extends BlockSandstone {
     @Override
     public Item toItem() {
         return new ItemBlock(this, this.getDamage() & 0x03);
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
     }
 
     @Override

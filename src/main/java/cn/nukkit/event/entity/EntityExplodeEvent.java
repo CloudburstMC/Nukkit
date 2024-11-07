@@ -9,7 +9,7 @@ import cn.nukkit.level.Position;
 import java.util.List;
 
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
 public class EntityExplodeEvent extends EntityEvent implements Cancellable {
@@ -50,5 +50,4 @@ public class EntityExplodeEvent extends EntityEvent implements Cancellable {
     public void setYield(double yield) {
         this.yield = yield;
     }
-
 }

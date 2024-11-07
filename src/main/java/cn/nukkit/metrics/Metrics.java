@@ -20,10 +20,11 @@ import java.util.zip.GZIPOutputStream;
 
 /**
  * bStats collects some data for plugin authors.
- *
- * Check out https://bStats.org/ to learn more about bStats!
+ * <p>
+ * Check out <a href="https://bStats.org/">...</a> to learn more about bStats!
  */
 public class Metrics {
+
     public static final int B_STATS_VERSION = 1;
 
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
@@ -529,5 +530,4 @@ public class Metrics {
         }
 
     }
-
 }

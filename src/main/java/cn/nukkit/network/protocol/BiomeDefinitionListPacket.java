@@ -4,28 +4,31 @@ import cn.nukkit.Nukkit;
 import com.google.common.io.ByteStreams;
 import lombok.ToString;
 
-import java.io.InputStream;
+import java.util.zip.Deflater;
 
 @ToString(exclude = "tag")
 public class BiomeDefinitionListPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.BIOME_DEFINITION_LIST_PACKET;
 
-    private static final byte[] TAG;
+    private static final BatchPacket CACHED_PACKET;
+
+    private byte[] tag;
 
     static {
         try {
-            InputStream inputStream = Nukkit.class.getClassLoader().getResourceAsStream("biome_definitions.dat");
-            if (inputStream == null) {
-                throw new AssertionError("Could not find biome_definitions.dat");
-            }
-            //noinspection UnstableApiUsage
-            TAG = ByteStreams.toByteArray(inputStream);
+            BiomeDefinitionListPacket pk = new BiomeDefinitionListPacket();
+            pk.tag = ByteStreams.toByteArray(Nukkit.class.getClassLoader().getResourceAsStream("biome_definitions.dat"));
+            pk.tryEncode();
+            CACHED_PACKET = pk.compress(Deflater.BEST_COMPRESSION);
         } catch (Exception e) {
-            throw new AssertionError("Error whilst loading biome_definitions.dat", e);
+            throw new AssertionError("Error whilst loading biome definitions", e);
         }
     }
 
-    public byte[] tag = TAG;
+    public static BatchPacket getCachedPacket() {
+        return CACHED_PACKET;
+    }
 
     @Override
     public byte pid() {
@@ -34,11 +37,16 @@ public class BiomeDefinitionListPacket extends DataPacket {
 
     @Override
     public void decode() {
+        this.decodeUnsupported();
     }
 
     @Override
     public void encode() {
+        if (this.tag == null) {
+            throw new RuntimeException("tag == null, use getCachedPacket!");
+        }
+
         this.reset();
-        this.put(tag);
+        this.put(this.tag);
     }
 }

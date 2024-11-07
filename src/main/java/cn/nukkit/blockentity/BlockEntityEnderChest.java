@@ -12,7 +12,7 @@ public class BlockEntityEnderChest extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.getBlock().getId() == Block.ENDER_CHEST;
+        return level.getBlockIdAt(chunk, (int) x, (int) y, (int) z) == Block.ENDER_CHEST;
     }
 
     @Override

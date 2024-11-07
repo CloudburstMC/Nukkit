@@ -1,7 +1,11 @@
 package cn.nukkit.level.generator.object.tree;
 
-import cn.nukkit.block.*;
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockLeaves;
+import cn.nukkit.block.BlockWood;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitRandom;
@@ -17,6 +21,9 @@ public class NewJungleTree extends TreeGenerator {
      */
     private final int minTreeHeight;
 
+    /**
+     * The maxium height of a generated tree.
+     */
     private final int maxTreeHeight;
 
     /**
@@ -28,6 +35,10 @@ public class NewJungleTree extends TreeGenerator {
      * The metadata value of the leaves to use in tree generation.
      */
     private final Block metaLeaves = Block.get(BlockID.LEAVES, BlockLeaves.JUNGLE);
+
+    public NewJungleTree(int minTreeHeight) {
+        this(minTreeHeight, 3);
+    }
 
     public NewJungleTree(int minTreeHeight, int maxTreeHeight) {
         this.minTreeHeight = minTreeHeight;
@@ -41,7 +52,10 @@ public class NewJungleTree extends TreeGenerator {
         int i = rand.nextBoundedInt(maxTreeHeight) + this.minTreeHeight;
         boolean flag = true;
 
-        if (position.getY() >= 1 && position.getY() + i + 1 <= 256) {
+        int maxY = worldIn instanceof Level ? ((Level) worldIn).getMaxBlockY() + 1 : 256;
+        int minBlockY = worldIn instanceof Level ? ((Level) worldIn).getMinBlockY() : 0;
+
+        if (position.getY() > minBlockY && position.getY() + i + 1 <= maxY) {
             for (int j = position.getY(); j <= position.getY() + 1 + i; ++j) {
                 int k = 1;
 
@@ -57,7 +71,7 @@ public class NewJungleTree extends TreeGenerator {
 
                 for (int l = position.getX() - k; l <= position.getX() + k && flag; ++l) {
                     for (int i1 = position.getZ() - k; i1 <= position.getZ() + k && flag; ++i1) {
-                        if (j >= 0 && j < 256) {
+                        if (j >= 0 && j < maxY) {
                             pos2.setComponents(l, j, i1);
                             if (!this.canGrowInto(worldIn.getBlockIdAt(pos2.x, pos2.y, pos2.z))) {
                                 flag = false;
@@ -75,14 +89,12 @@ public class NewJungleTree extends TreeGenerator {
                 BlockVector3 down = position.down();
                 int block = worldIn.getBlockIdAt(down.x, down.y, down.z);
 
-                if ((block == Block.GRASS || block == Block.DIRT || block == Block.FARMLAND) && position.getY() < 256 - i - 1) {
+                if ((block == Block.GRASS || block == Block.DIRT || block == Block.FARMLAND) && position.getY() < maxY - i - 1) {
                     this.setDirtAt(worldIn, down);
-                    int k2 = 3;
-                    int l2 = 0;
 
                     for (int i3 = position.getY() - 3 + i; i3 <= position.getY() + i; ++i3) {
                         int i4 = i3 - (position.getY() + i);
-                        int j1 = 1 - i4 / 2;
+                        int j1 = 1 - (i4 >> 1);
 
                         for (int k1 = position.getX() - j1; k1 <= position.getX() + j1; ++k1) {
                             int l1 = k1 - position.getX();
@@ -131,7 +143,7 @@ public class NewJungleTree extends TreeGenerator {
 
                     for (int k3 = position.getY() - 3 + i; k3 <= position.getY() + i; ++k3) {
                         int j4 = k3 - (position.getY() + i);
-                        int k4 = 2 - j4 / 2;
+                        int k4 = 2 - (j4 >> 1);
                         BlockVector3 pos2 = new BlockVector3();
 
                         for (int l4 = position.getX() - k4; l4 <= position.getX() + k4; ++l4) {
@@ -169,7 +181,7 @@ public class NewJungleTree extends TreeGenerator {
                             for (BlockFace enumfacing : BlockFace.Plane.HORIZONTAL) {
                                 if (rand.nextBoundedInt(4 - l3) == 0) {
                                     BlockFace enumfacing1 = enumfacing.getOpposite();
-                                    this.placeCocoa(worldIn, rand.nextBoundedInt(3), position.add(enumfacing1.getXOffset(), i - 5 + l3, enumfacing1.getZOffset()), enumfacing);
+                                    this.placeCocoa(worldIn, /*rand.nextBoundedInt(3),*/ position.add(enumfacing1.getXOffset(), i - 5 + l3, enumfacing1.getZOffset()), enumfacing);
                                 }
                             }
                         }
@@ -185,10 +197,8 @@ public class NewJungleTree extends TreeGenerator {
         }
     }
 
-    private void placeCocoa(ChunkManager worldIn, int age, BlockVector3 pos, BlockFace side) {
-        int meta = getCocoaMeta(age, side.getIndex());
-
-        this.setBlockAndNotifyAdequately(worldIn, pos, new BlockUnknown(127, meta));
+    private void placeCocoa(ChunkManager worldIn, /*int age,*/ BlockVector3 pos, BlockFace side) {
+        this.setBlockAndNotifyAdequately(worldIn, pos, Block.get(BlockID.COCOA_BLOCK, getCocoaMeta(side.getIndex())));
     }
 
     private void addVine(ChunkManager worldIn, BlockVector3 pos, int meta) {
@@ -205,12 +215,12 @@ public class NewJungleTree extends TreeGenerator {
         }
     }
 
-    private boolean isAirBlock(ChunkManager level, BlockVector3 v) {
+    private static boolean isAirBlock(ChunkManager level, BlockVector3 v) {
         return level.getBlockIdAt(v.x, v.y, v.z) == 0;
     }
 
-    private int getCocoaMeta(int age, int side) {
-        int meta = age * 4;
+    private static int getCocoaMeta(int side) {
+        int meta = 0;
 
         //3 4 2 5
         switch (side) {

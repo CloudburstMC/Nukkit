@@ -1,15 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemPrismarineCrystals;
+import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.BlockColor;
-
-import java.util.concurrent.ThreadLocalRandom;
-
+import cn.nukkit.utils.Utils;
 
 public class BlockSeaLantern extends BlockTransparent {
-    public BlockSeaLantern() {
-    }
 
     @Override
     public String getName() {
@@ -38,8 +34,11 @@ public class BlockSeaLantern extends BlockTransparent {
 
     @Override
     public Item[] getDrops(Item item) {
+        if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
+            return new Item[]{this.toItem()};
+        }
         return new Item[]{
-                new ItemPrismarineCrystals(0, ThreadLocalRandom.current().nextInt(2, 4))
+                Item.get(Item.PRISMARINE_CRYSTALS, 0, Utils.random.nextInt(2, 4))
         };
     }
 
@@ -47,7 +46,7 @@ public class BlockSeaLantern extends BlockTransparent {
     public BlockColor getColor() {
         return BlockColor.QUARTZ_BLOCK_COLOR;
     }
-
+    
     @Override
     public boolean canSilkTouch() {
         return true;

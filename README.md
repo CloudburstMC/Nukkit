@@ -7,29 +7,24 @@
 Introduction
 -------------
 
-Nukkit is nuclear-powered server software for Minecraft: Pocket Edition.
+Nukkit is nuclear-powered server software for Minecraft Bedrock Edition.
 It has a few key advantages over other server software:
 
 * Written in Java, Nukkit is faster and more stable.
 * Having a friendly structure, it's easy to contribute to Nukkit's development and rewrite plugins from other platforms into Nukkit plugins.
 
-Nukkit is **under improvement** yet, we welcome contributions.
+Nukkit is under improvement yet, we welcome contributions.
 
 Links
 --------------------
 
-* __[News](https://nukkitx.com)__
-* __[Forums](https://nukkitx.com/forums)__
+* __[Forums](https://cloudburstmc.org/forums/)__
 * __[Discord](https://discord.gg/5PzMkyK)__
-* __[Download](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master)__
-* __[Plugins](https://nukkitx.com/resources/categories/nukkit-plugins.1)__
-* __[Wiki](https://nukkitx.com/wiki/nukkit)__
+* __[Wiki](https://cloudburstmc.org/wiki/nukkit)__
+* __[Download Nukkit](https://ci.opencollab.dev/job/NukkitX/job/Nukkit/job/master/)__
+* __[Download Plugins](https://cloudburstmc.org/resources/categories/nukkit-plugins.1/)__
 
-Contributing
--------------
-Please read the [CONTRIBUTING](.github/CONTRIBUTING.md) guide before submitting any issue. Issues with insufficient information or in the wrong format will be closed and will not be reviewed.
-
-Build JAR file
+Compile Nukkit
 -------------
 - `git clone https://github.com/CloudburstMC/Nukkit`
 - `cd Nukkit`
@@ -37,6 +32,8 @@ Build JAR file
 - `./gradlew shadowJar`
 
 The compiled JAR can be found in the `target/` directory.
+
+Note: You don't need to compile Nukkit yourself if you don't intend to modify the code. You can find precompiled JARs on Jenkins. 
 
 Running
 -------------
@@ -114,3 +111,8 @@ Testing after deployment:
 Completely remove the chart:
 
 `helm uninstall nukkit`
+
+Pterodactyl Panel
+-------------
+
+[Download the official egg](https://raw.githubusercontent.com/parkervcp/eggs/master/game_eggs/minecraft/bedrock/nukkit/egg-nukkit.json)

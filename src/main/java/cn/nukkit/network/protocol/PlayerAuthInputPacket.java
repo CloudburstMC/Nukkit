@@ -15,13 +15,14 @@ import java.util.Set;
 @ToString
 @Getter
 public class PlayerAuthInputPacket extends DataPacket {
+
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_AUTH_INPUT_PACKET;
 
     private float yaw;
     private float pitch;
     private float headYaw;
     private Vector3f position;
-    private Vector2 motion;
+    private Vector2 motion; // Vector2 for backwards compatibility
     private final Set<AuthInputAction> inputData = EnumSet.noneOf(AuthInputAction.class);
     private InputMode inputMode;
     private ClientPlayMode playMode;
@@ -57,6 +58,7 @@ public class PlayerAuthInputPacket extends DataPacket {
 
         this.inputMode = InputMode.fromOrdinal((int) this.getUnsignedVarInt());
         this.playMode = ClientPlayMode.fromOrdinal((int) this.getUnsignedVarInt());
+
         this.interactionModel = AuthInteractionModel.fromOrdinal((int) this.getUnsignedVarInt());
 
         this.interactRotation = this.getVector2f();
@@ -94,6 +96,6 @@ public class PlayerAuthInputPacket extends DataPacket {
 
     @Override
     public void encode() {
-        // Noop
+        this.encodeUnsupported();
     }
 }

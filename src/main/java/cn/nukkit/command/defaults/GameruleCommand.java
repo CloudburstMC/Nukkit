@@ -9,16 +9,12 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GameRules;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.StringJoiner;
+import java.util.*;
 
 public class GameruleCommand extends VanillaCommand {
 
     public GameruleCommand(String name) {
-        super(name, "%nukkit.command.gamerule.description", "%nukkit.command.gamerule.usage");
+        super(name, "%nukkit.command.gamerule.description", "%commands.gamerule.usage");
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
 
@@ -79,16 +75,26 @@ public class GameruleCommand extends VanillaCommand {
         }
 
         if (!sender.isPlayer()) {
-            sender.sendMessage(new TranslationContainer("%commands.generic.ingame"));
+            sender.sendMessage(new TranslationContainer("commands.generic.ingame"));
             return true;
         }
         GameRules rules = ((Player) sender).getLevel().getGameRules();
 
         switch (args.length) {
             case 0:
-                StringJoiner rulesJoiner = new StringJoiner(", ");
+                int splitCounter = 0;
+                StringJoiner rulesJoiner = new StringJoiner("\n");
                 for (GameRule rule: rules.getRules()) {
-                    rulesJoiner.add(rule.getName().toLowerCase());
+                    rulesJoiner.add(rule.getName().toLowerCase() + " = " + rules.getString(rule));
+
+                    // 1.21 disconnects on too long message
+                    // TODO: do this the same way as on vanilla
+                    if (splitCounter++ > 15) {
+                        rulesJoiner.add("");
+                        sender.sendMessage(rulesJoiner.toString());
+                        splitCounter = 0;
+                        rulesJoiner = new StringJoiner("\n");
+                    }
                 }
                 sender.sendMessage(rulesJoiner.toString());
                 return true;
@@ -99,14 +105,13 @@ public class GameruleCommand extends VanillaCommand {
                     return true;
                 }
 
-                sender.sendMessage(gameRule.get().getName() .toLowerCase()+ " = " + rules.getString(gameRule.get()));
+                sender.sendMessage(gameRule.get().getName().toLowerCase() + " = " + rules.getString(gameRule.get()));
                 return true;
             default:
                 Optional<GameRule> optionalRule = GameRule.parseString(args[0]);
 
                 if (!optionalRule.isPresent()) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax",
-                            "/gamerule ", args[0], " " + String.join(" ", Arrays.copyOfRange(args, 1, args.length))));
+                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule ", args[0], ' ' + String.join(" ", Arrays.copyOfRange(args, 1, args.length))));
                     return true;
                 }
 
@@ -114,7 +119,7 @@ public class GameruleCommand extends VanillaCommand {
                     rules.setGameRules(optionalRule.get(), args[1]);
                     sender.sendMessage(new TranslationContainer("commands.gamerule.success", optionalRule.get().getName().toLowerCase(), args[1]));
                 } catch (IllegalArgumentException e) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule "  + args[0] + " ", args[1], " " + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
+                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule "  + args[0] + ' ', args[1], ' ' + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
                 }
                 return true;
         }

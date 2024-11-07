@@ -5,6 +5,7 @@ import java.util.zip.Deflater;
 import java.util.zip.DeflaterOutputStream;
 
 public class PGZIPState {
+
     protected final DeflaterOutputStream str;
     protected final ByteArrayOutputStream buf;
     protected final Deflater def;
@@ -14,6 +15,4 @@ public class PGZIPState {
         this.buf = new ByteArrayOutputStream(PGZIPBlock.SIZE);
         this.str = PGZIPOutputStream.newDeflaterOutputStream(buf, def);
     }
-
-
 }

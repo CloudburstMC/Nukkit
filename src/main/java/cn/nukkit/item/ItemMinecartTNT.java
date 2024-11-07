@@ -40,8 +40,8 @@ public class ItemMinecartTNT extends Item {
             if (type.isAscending()) {
                 adjacent = 0.5D;
             }
-            EntityMinecartTNT minecart = (EntityMinecartTNT) Entity.createEntity("MinecartTnt",
-                    level.getChunk(target.getFloorX() >> 4, target.getFloorZ() >> 4), new CompoundTag("")
+            Entity.createEntity(EntityMinecartTNT.NETWORK_ID,
+                    level.getChunk(target.getChunkX(), target.getChunkZ()), new CompoundTag("")
                     .putList(new ListTag<>("Pos")
                             .add(new DoubleTag("", target.getX() + 0.5))
                             .add(new DoubleTag("", target.getY() + 0.0625D + adjacent))
@@ -53,19 +53,8 @@ public class ItemMinecartTNT extends Item {
                     .putList(new ListTag<>("Rotation")
                             .add(new FloatTag("", 0))
                             .add(new FloatTag("", 0)))
-            );
-
-            if(minecart == null) {
-                return false;
-            }
-
-            if (player.isAdventure() || player.isSurvival()) {
-                Item item = player.getInventory().getItemInHand();
-                item.setCount(item.getCount() - 1);
-                player.getInventory().setItemInHand(item);
-            }
-
-            minecart.spawnToAll();
+            ).spawnToAll();
+            count -= 1;
             return true;
         }
         return false;

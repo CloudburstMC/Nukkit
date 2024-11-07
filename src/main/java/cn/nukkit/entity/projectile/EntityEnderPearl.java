@@ -10,10 +10,13 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelEventPacket;
+import cn.nukkit.network.protocol.LevelSoundEventPacket;
 
 public class EntityEnderPearl extends EntityProjectile {
+
     public static final int NETWORK_ID = 87;
+
+    private int currentLevel;
 
     @Override
     public int getNetworkId() {
@@ -51,59 +54,65 @@ public class EntityEnderPearl extends EntityProjectile {
 
     public EntityEnderPearl(FullChunk chunk, CompoundTag nbt, Entity shootingEntity) {
         super(chunk, nbt, shootingEntity);
+
+        if (this.shootingEntity != null) {
+            this.currentLevel = this.shootingEntity.getLevel().getId();
+        }
     }
 
     @Override
     public boolean onUpdate(int currentTick) {
+        boolean hasUpdate = super.onUpdate(currentTick);
+
         if (this.closed) {
             return false;
         }
-
-        this.timing.startTiming();
-
-        boolean hasUpdate = super.onUpdate(currentTick);
 
         if (this.isCollided && this.shootingEntity instanceof Player) {
             boolean portal = false;
             for (Block collided : this.getCollisionBlocks()) {
                 if (collided.getId() == Block.NETHER_PORTAL) {
                     portal = true;
+                    break;
                 }
             }
+
+            this.close();
+
             if (!portal) {
                 teleport();
             }
+
+            return false;
         }
 
-        if (this.age > 1200 || this.isCollided) {
-            this.kill();
-            hasUpdate = true;
+        if (this.isCollided || this.hadCollision || (this.shootingEntity instanceof Player && !((Player) this.shootingEntity).isOnline())) {
+            this.close();
+            return false;
         }
-
-        this.timing.stopTiming();
 
         return hasUpdate;
     }
-
+    
     @Override
     public void onCollideWithEntity(Entity entity) {
-        if (this.shootingEntity instanceof Player) {
-            teleport();
-        }
+        teleport();
+
         super.onCollideWithEntity(entity);
     }
 
     private void teleport() {
-        if (!this.level.equals(this.shootingEntity.getLevel())) {
+        if (!(this.shootingEntity instanceof Player) || this.shootingEntity.getLevel().getId() != this.currentLevel || !((Player) this.shootingEntity).isOnline()) {
             return;
         }
 
-        this.level.addLevelEvent(this.shootingEntity.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_PORTAL);
         this.shootingEntity.teleport(new Vector3(NukkitMath.floorDouble(this.x) + 0.5, this.y, NukkitMath.floorDouble(this.z) + 0.5), TeleportCause.ENDER_PEARL);
-        if ((((Player) this.shootingEntity).getGamemode() & 0x01) == 0) {
-            this.shootingEntity.attack(new EntityDamageByEntityEvent(this, shootingEntity, EntityDamageEvent.DamageCause.PROJECTILE, 5f, 0f));
+
+        int gamemode = ((Player) this.shootingEntity).getGamemode();
+        if (gamemode == 0 || gamemode == 2) {
+            this.shootingEntity.attack(new EntityDamageByEntityEvent(this, shootingEntity, EntityDamageEvent.DamageCause.FALL, 5f, 0f));
         }
-        this.level.addLevelEvent(this, LevelEventPacket.EVENT_PARTICLE_ENDERMAN_TELEPORT);
-        this.level.addLevelEvent(this.shootingEntity.add(0.5, 0.5, 0.5), LevelEventPacket.EVENT_SOUND_PORTAL);
+
+        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_TELEPORT);
     }
 }

@@ -1,12 +1,11 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-/**
- * Created by PetteriM1
- */
-public class EntitySalmon extends EntityAnimal {
+public class EntitySalmon extends EntityFish {
 
     public static final int NETWORK_ID = 109;
 
@@ -15,12 +14,13 @@ public class EntitySalmon extends EntityAnimal {
     }
 
     @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
+    int getBucketMeta() {
+        return 3;
     }
 
-    public String getName() {
-        return "Salmon";
+    @Override
+    public int getNetworkId() {
+        return NETWORK_ID;
     }
 
     @Override
@@ -35,7 +35,12 @@ public class EntitySalmon extends EntityAnimal {
 
     @Override
     public void initEntity() {
-        super.initEntity();
         this.setMaxHealth(3);
+        super.initEntity();
+    }
+
+    @Override
+    public Item[] getDrops() {
+        return new Item[]{Item.get(Item.RAW_SALMON, 0, 1), Item.get(Item.BONE, 0, Utils.rand(0, 2))};
     }
 }

@@ -9,7 +9,6 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
@@ -34,11 +33,6 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     }
 
     @Override
-    public boolean canPassThrough() {
-        return true;
-    }
-
-    @Override
     public boolean canHarvestWithHand() {
         return false;
     }
@@ -54,11 +48,6 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     }
 
     @Override
-    public double getMinY() {
-        return this.y + 0;
-    }
-
-    @Override
     public double getMaxX() {
         return this.x + 0.9375;
     }
@@ -70,7 +59,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
     @Override
     public double getMaxY() {
-        return isActivated() ? this.y + 0.03125 : this.y + 0.0625;
+        return this.isActivated() ? this.y + 0.03125 : this.y + 0.0625;
     }
 
     @Override
@@ -85,8 +74,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            Block down = this.down();
-            if (down.isTransparent() && !(down instanceof BlockFence)) {
+            if (!isSupportValid(this.down())) {
                 this.level.useBreakOn(this, Item.get(Item.WOODEN_PICKAXE));
             }
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED) {
@@ -102,13 +90,16 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        Block down = block.down();
-        if (down.isTransparent() && !(down instanceof BlockFence)) {
+        if (!isSupportValid(this.down())) {
             return false;
         }
 
-        this.level.setBlock(block, this, true, true);
+        this.getLevel().setBlock(this, this, true, true);
         return true;
+    }
+
+    private static boolean isSupportValid(Block block) {
+        return !block.isTransparent() || block.isNarrowSurface() || Block.canStayOnFullSolid(block);
     }
 
     @Override
@@ -147,7 +138,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
             this.level.setBlock(this, this, false, false);
 
             this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.getLocation().down(), null);
+            this.level.updateAroundRedstone(this.getSideVec(BlockFace.DOWN), null);
 
             if (!isPowered && wasPowered) {
                 this.playOffSound();
@@ -169,7 +160,7 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
 
         if (this.getRedstonePower() > 0) {
             this.level.updateAroundRedstone(this, null);
-            this.level.updateAroundRedstone(this.getLocation().down(), null);
+            this.level.updateAroundRedstone(this.getSideVec(BlockFace.DOWN), null);
         }
 
         return true;
@@ -194,17 +185,22 @@ public abstract class BlockPressurePlateBase extends BlockFlowable {
     }
 
     protected void playOnSound() {
-        this.level.addLevelSoundEvent(this.add(0.5, 0.1, 0.5), LevelSoundEventPacket.SOUND_POWER_ON, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
+        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_ON);
     }
 
     protected void playOffSound() {
-        this.level.addLevelSoundEvent(this.add(0.5, 0.1, 0.5), LevelSoundEventPacket.SOUND_POWER_OFF, GlobalBlockPalette.getOrCreateRuntimeId(this.getId(), this.getDamage()));
+        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_OFF);
     }
 
     protected abstract int computeRedstoneStrength();
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, 0, 1);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }

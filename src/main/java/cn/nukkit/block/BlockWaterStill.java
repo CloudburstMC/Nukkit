@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
 public class BlockWaterStill extends BlockWater {
@@ -26,7 +26,6 @@ public class BlockWaterStill extends BlockWater {
 
     @Override
     public BlockLiquid getBlock(int meta) {
-        return (BlockLiquid) Block.get(BlockID.STILL_WATER, meta);
+        return (BlockLiquid) Block.get(STILL_WATER, meta);
     }
-
 }

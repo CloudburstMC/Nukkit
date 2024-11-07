@@ -8,12 +8,13 @@ import cn.nukkit.lang.TextContainer;
  * @author Tee7even
  */
 public class RemoteConsoleCommandSender extends ConsoleCommandSender {
+
     private final StringBuilder messages = new StringBuilder();
 
     @Override
     public void sendMessage(String message) {
         message = this.getServer().getLanguage().translateString(message);
-        this.messages.append(message.trim()).append("\n");
+        this.messages.append(message.trim()).append('\n');
     }
 
     @Override
@@ -23,6 +24,10 @@ public class RemoteConsoleCommandSender extends ConsoleCommandSender {
 
     public String getMessages() {
         return messages.toString();
+    }
+
+    public void clearMessages() {
+        messages.delete(0, messages.length());
     }
 
     @Override

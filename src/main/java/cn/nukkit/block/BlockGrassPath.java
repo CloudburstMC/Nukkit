@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Sound;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -10,9 +10,6 @@ import cn.nukkit.utils.BlockColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockGrassPath extends BlockGrass {
-
-    public BlockGrassPath() {
-    }
 
     @Override
     public int getId() {
@@ -25,26 +22,8 @@ public class BlockGrassPath extends BlockGrass {
     }
 
     @Override
-    public int getToolType() {
-        return ItemTool.TYPE_SHOVEL;
-    }
-
-    @Override
-    public double getMaxY() {
-        return this.y + 1;
-    }
-
-    @Override
     public double getResistance() {
         return 3.25;
-    }
-
-    @Override
-    public BlockColor getColor() { return BlockColor.DIRT_BLOCK_COLOR; }
-
-    @Override
-    public boolean canSilkTouch() {
-        return true;
     }
 
     @Override
@@ -55,11 +34,27 @@ public class BlockGrassPath extends BlockGrass {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.isHoe()) {
-            item.useOn(this);
-            this.getLevel().setBlock(this, get(FARMLAND), true);
-            return true;
+            Block up = this.up();
+            if (up instanceof BlockAir || up instanceof BlockFlowable) {
+                item.useOn(this);
+                this.getLevel().setBlock(this, get(FARMLAND), true);
+                if (player != null) {
+                    player.getLevel().addSound(player, Sound.STEP_GRASS);
+                }
+                return true;
+            }
         }
 
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.DIRT_BLOCK_COLOR;
+    }
+
+    @Override
+    public double getMaxY() {
+        return this.y + 0.9375;
     }
 }

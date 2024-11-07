@@ -22,5 +22,4 @@ public abstract class PotionEvent extends Event {
     public void setPotion(Potion potion) {
         this.potion = potion;
     }
-
 }

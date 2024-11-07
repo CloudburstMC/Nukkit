@@ -2,7 +2,6 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemRedstoneRepeater;
 import cn.nukkit.math.BlockFace;
 
 /**
@@ -41,12 +40,12 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     public Item toItem() {
-        return new ItemRedstoneRepeater();
+        return Item.get(Item.REPEATER);
     }
 
     @Override
     protected int getDelay() {
-        return (1 + (getDamage() >> 2)) * 2;
+        return (1 + (getDamage() >> 2)) << 1;
     }
 
     @Override
@@ -56,7 +55,7 @@ public class BlockRedstoneRepeaterPowered extends BlockRedstoneDiode {
 
     @Override
     protected Block getUnpowered() {
-        return Block.get(BlockID.UNPOWERED_REPEATER, this.getDamage());
+        return Block.get(UNPOWERED_REPEATER, this.getDamage());
     }
 
     @Override

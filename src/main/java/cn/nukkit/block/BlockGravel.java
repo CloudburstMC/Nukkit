@@ -1,20 +1,20 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemFlint;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.ItemTool;
-
-import java.util.Random;
+import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.level.generator.object.ObjectTallGrass;
+import cn.nukkit.level.particle.BoneMealParticle;
+import cn.nukkit.utils.BlockColor;
+import cn.nukkit.utils.Utils;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class BlockGravel extends BlockFallable {
-
-
-    public BlockGravel() {
-    }
 
     @Override
     public int getId() {
@@ -43,9 +43,9 @@ public class BlockGravel extends BlockFallable {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (new Random().nextInt(9) == 0) {
+        if (Utils.random.nextInt(9) == 0 && !item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
             return new Item[]{
-                    new ItemFlint()
+                    Item.get(Item.FLINT)
             };
         } else {
             return new Item[]{
@@ -53,9 +53,38 @@ public class BlockGravel extends BlockFallable {
             };
         }
     }
-    
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.GRAY_BLOCK_COLOR;
+    }
+
     @Override
     public boolean canSilkTouch() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (player != null && item.getId() == Item.DYE && item.getDamage() == ItemDye.BONE_MEAL) {
+            Block up = this.up();
+            if (up instanceof BlockWater) {
+                if (!player.isCreative()) {
+                    item.count--;
+                }
+                this.level.addParticle(new BoneMealParticle(this));
+                if (up.getDamage() == 0 && up.up() instanceof BlockWater) {
+                    ObjectTallGrass.growSeagrass(this.getLevel(), this);
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean canBeActivated() {
         return true;
     }
 }

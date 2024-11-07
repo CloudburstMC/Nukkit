@@ -1,7 +1,7 @@
 package cn.nukkit.item;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemBeetroot extends ItemEdible {
@@ -17,5 +17,4 @@ public class ItemBeetroot extends ItemEdible {
     public ItemBeetroot(Integer meta, int count) {
         super(BEETROOT, meta, count, "Beetroot");
     }
-
 }

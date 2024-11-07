@@ -4,26 +4,17 @@ import cn.nukkit.entity.EntityArthropod;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-/**
- * @author Box.
- */
-public class EntityEndermite extends EntityMob implements EntityArthropod {
+public class EntityEndermite extends EntityWalkingMob implements EntityArthropod {
 
     public static final int NETWORK_ID = 55;
-
-    @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
-    }
 
     public EntityEndermite(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
 
     @Override
-    protected void initEntity() {
-        super.initEntity();
-        this.setMaxHealth(8);
+    public int getNetworkId() {
+        return NETWORK_ID;
     }
 
     @Override
@@ -37,7 +28,13 @@ public class EntityEndermite extends EntityMob implements EntityArthropod {
     }
 
     @Override
-    public String getName() {
-        return "Endermite";
+    public void initEntity() {
+        this.setMaxHealth(8);
+        super.initEntity();
+    }
+
+    @Override
+    public int getKillExperience() {
+        return 3;
     }
 }

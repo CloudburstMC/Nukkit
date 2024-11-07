@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
+import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
 
 @Suppress("DSL_SCOPE_VIOLATION") // https://youtrack.jetbrains.com/issue/IDEA-262280
 
@@ -12,7 +13,7 @@ plugins {
 
 group = "cn.nukkit"
 version = "1.0-SNAPSHOT"
-description = "Nuclear powered server software for Minecraft: Bedrock Edition"
+description = "Nuclear powered server software for Minecraft Bedrock Edition"
 
 repositories {
     mavenLocal()
@@ -23,16 +24,32 @@ repositories {
 
 dependencies {
     api(libs.network)
-    api(libs.natives)
+    api(libs.epoll)
     api(libs.fastutil)
+    api(libs.bundles.fastutilmaps)
     api(libs.guava)
     api(libs.gson)
     api(libs.snakeyaml)
     api(libs.leveldb)
+    api(libs.leveldbjni) {
+        exclude(group = "com.google.guava", module = "guava")
+        exclude(group = "io.netty", module = "netty-buffer")
+        exclude(group = "org.iq80.snappy", module = "snappy")
+        exclude(group = "org.iq80.leveldb", module = "leveldb")
+    }
+    api(libs.snappy)
     api(libs.jwt)
     api(libs.bundles.terminal)
     api(libs.bundles.log4j)
     api(libs.jopt.simple)
+    api(libs.blockstateupdater)
+    api(libs.lmbda) {
+        exclude(group = "org.checkerframework", module = "checker-qual")
+    }
+    api(libs.noise) {
+        exclude(group = "net.daporkchop.lib", module = "common")
+        exclude(group = "net.daporkchop.lib", module = "math")
+    }
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 

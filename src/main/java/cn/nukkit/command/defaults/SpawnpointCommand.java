@@ -17,6 +17,7 @@ import java.text.DecimalFormat;
  * Package cn.nukkit.command.defaults in project Nukkit .
  */
 public class SpawnpointCommand extends VanillaCommand {
+
     public SpawnpointCommand(String name) {
         super(name, "%nukkit.command.spawnpoint.description", "%commands.spawnpoint.usage");
         this.setPermission("nukkit.command.spawnpoint");
@@ -41,7 +42,7 @@ public class SpawnpointCommand extends VanillaCommand {
                 return true;
             }
         } else {
-            target = sender.getServer().getPlayer(args[0].replace("@s", sender.getName()));
+            target = sender.getServer().getPlayerExact(args[0].replace("@s", sender.getName()));
             if (target == null) {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
                 return true;
@@ -62,8 +63,8 @@ public class SpawnpointCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
                     return true;
                 }
-                if (y < 0) y = 0;
-                if (y > 256) y = 256;
+                if (y < target.getLevel().getMinBlockY()) y = target.getLevel().getMinBlockY();
+                if (y > target.getLevel().getMaxBlockY()) y = target.getLevel().getMaxBlockY();
                 target.setSpawn(new Position(x, y, z, level));
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.spawnpoint.success", target.getName(),
                         round2.format(x),

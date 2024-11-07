@@ -5,7 +5,7 @@ import cn.nukkit.event.Event;
 import cn.nukkit.inventory.Inventory;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public abstract class InventoryEvent extends Event {
@@ -23,5 +23,4 @@ public abstract class InventoryEvent extends Event {
     public Player[] getViewers() {
         return this.inventory.getViewers().toArray(new Player[0]);
     }
-
 }

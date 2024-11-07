@@ -4,7 +4,7 @@ import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.plugin.Plugin;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class PluginCommand<T extends Plugin> extends Command implements PluginIdentifiableCommand {
@@ -32,7 +32,7 @@ public class PluginCommand<T extends Plugin> extends Command implements PluginId
 
         boolean success = this.executor.onCommand(sender, this, commandLabel, args);
 
-        if (!success && !this.usageMessage.equals("")) {
+        if (!success && !this.usageMessage.isEmpty()) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
         }
 

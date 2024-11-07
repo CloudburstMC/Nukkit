@@ -42,7 +42,7 @@ public class BlockEntityMovingBlock extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return true;
+        return true; // TODO
     }
 
     @Override

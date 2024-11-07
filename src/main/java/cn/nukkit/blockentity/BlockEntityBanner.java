@@ -28,7 +28,8 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
 
     @Override
     public boolean isBlockEntityValid() {
-        return this.getBlock().getId() == Block.WALL_BANNER || this.getBlock().getId() == Block.STANDING_BANNER;
+        int id = level.getBlockIdAt(chunk, (int) x, (int) y, (int) z);
+        return id == Block.WALL_BANNER || id == Block.STANDING_BANNER;
     }
 
     @Override
@@ -48,6 +49,7 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
 
     public void setBaseColor(DyeColor color) {
         this.namedTag.putInt("Base", color.getDyeData() & 0x0f);
+        setDirty();
     }
 
     public int getType() {
@@ -56,6 +58,7 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
 
     public void setType(int type) {
         this.namedTag.putInt("Type", type);
+        setDirty();
     }
 
     public void addPattern(BannerPattern pattern) {
@@ -64,6 +67,7 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
                 putInt("Color", pattern.getColor().getDyeData() & 0x0f).
                 putString("Pattern", pattern.getType().getName()));
         this.namedTag.putList(patterns);
+        setDirty();
     }
 
     public BannerPattern getPattern(int index) {
@@ -72,9 +76,10 @@ public class BlockEntityBanner extends BlockEntitySpawnable {
 
     public void removePattern(int index) {
         ListTag<CompoundTag> patterns = this.namedTag.getList("Patterns", CompoundTag.class);
-        if(patterns.size() > index && index >= 0) {
+        if (patterns.size() > index && index >= 0) {
             patterns.remove(index);
         }
+        setDirty();
     }
 
     public int getPatternsSize() {

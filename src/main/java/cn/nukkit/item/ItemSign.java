@@ -1,10 +1,9 @@
 package cn.nukkit.item;
 
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 public class ItemSign extends Item {
@@ -18,8 +17,8 @@ public class ItemSign extends Item {
     }
 
     public ItemSign(Integer meta, int count) {
-        super(SIGN, 0, count, "Sign");
-        this.block = Block.get(BlockID.SIGN_POST);
+        super(SIGN, 0, count, "Oak Sign");
+        this.block = Block.get(SIGN_POST);
     }
 
     @Override

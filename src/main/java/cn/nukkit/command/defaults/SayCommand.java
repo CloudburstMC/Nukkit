@@ -45,7 +45,7 @@ public class SayCommand extends VanillaCommand {
 
         StringBuilder msg = new StringBuilder();
         for (String arg : args) {
-            msg.append(arg).append(" ");
+            msg.append(arg).append(' ');
         }
         if (msg.length() > 0) {
             msg = new StringBuilder(msg.substring(0, msg.length() - 1));

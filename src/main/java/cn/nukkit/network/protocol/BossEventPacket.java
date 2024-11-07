@@ -10,23 +10,25 @@ public class BossEventPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.BOSS_EVENT_PACKET;
 
-    /* S2C: Shows the bossbar to the player. */
+    /** Shows the bossbar to the player. */
     public static final int TYPE_SHOW = 0;
-    /* C2S: Registers a player to a boss fight. */
+    /** Registers a player to a boss fight. */
     public static final int TYPE_REGISTER_PLAYER = 1;
+    /** Not sure on this. */
     public static final int TYPE_UPDATE = 1;
-    /* S2C: Removes the bossbar from the client. */
+    /** Removes the bossbar from the client. */
     public static final int TYPE_HIDE = 2;
-    /* C2S: Unregisters a player from a boss fight. */
+    /** Unregisters a player from a boss fight. */
     public static final int TYPE_UNREGISTER_PLAYER = 3;
-    /* S2C: Sets the bar percentage. */
+    /** Sets the bar percentage. */
     public static final int TYPE_HEALTH_PERCENT = 4;
-    /* S2C: Sets title of the bar. */
+    /** Sets title of the bar. */
     public static final int TYPE_TITLE = 5;
-    /* S2C: Not sure on this. Includes color and overlay fields, plus an unknown short. TODO: check this */
+    /** Not sure on this. Includes color and overlay fields, plus an unknown short. */
     public static final int TYPE_UPDATE_PROPERTIES = 6;
-    /* S2C: Sets color and overlay of the bar. */
+    /** S2C: Sets color and overlay of the bar. **/
     public static final int TYPE_TEXTURE = 7;
+    /** Unknown. Since 1.18.10 **/
     public static final int TYPE_QUERY = 8;
 
     public long bossEid;

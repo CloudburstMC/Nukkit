@@ -37,11 +37,11 @@ public class ItemBoat extends Item {
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
         if (face != BlockFace.UP || block instanceof BlockWater) return false;
-        EntityBoat boat = (EntityBoat) Entity.createEntity("Boat",
-                level.getChunk(block.getFloorX() >> 4, block.getFloorZ() >> 4), new CompoundTag("")
+        Entity.createEntity(EntityBoat.NETWORK_ID,
+                level.getChunk(block.getChunkX(), block.getChunkZ()), new CompoundTag("")
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", block.getX() + 0.5))
-                        .add(new DoubleTag("", block.getY() - (target instanceof BlockWater ? 0.0625 : 0)))
+                        .add(new DoubleTag("", block.getY() - (target instanceof BlockWater ? 0.1 : 0)))
                         .add(new DoubleTag("", block.getZ() + 0.5)))
                 .putList(new ListTag<DoubleTag>("Motion")
                         .add(new DoubleTag("", 0))
@@ -50,20 +50,13 @@ public class ItemBoat extends Item {
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", (float) ((player.yaw + 90f) % 360)))
                         .add(new FloatTag("", 0)))
-                .putByte("woodID", this.getDamage())
-        );
+                .putInt("Variant", this.getDamage())
+        ).spawnToAll();
 
-        if (boat == null) {
-            return false;
+        if (!player.isCreative()) {
+            this.count--;
         }
 
-        if (player.isAdventure() || player.isSurvival()) {
-            Item item = player.getInventory().getItemInHand();
-            item.setCount(item.getCount() - 1);
-            player.getInventory().setItemInHand(item);
-        }
-
-        boat.spawnToAll();
         return true;
     }
 

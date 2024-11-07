@@ -7,8 +7,8 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.item.Item;
 
 /**
- * author: MagicDroidX
- * Nukkit Project
+ * Event for a block being placed.
+ * @author MagicDroidX
  */
 public class BlockPlaceEvent extends BlockEvent implements Cancellable {
 
@@ -25,6 +25,14 @@ public class BlockPlaceEvent extends BlockEvent implements Cancellable {
     protected final Block blockReplace;
     protected final Block blockAgainst;
 
+    /**
+     * This event is called when a block is placed.
+     * @param player Player who placed block.
+     * @param blockPlace Placed Block.
+     * @param blockReplace Block replace.
+     * @param blockAgainst Block against.
+     * @param item Item that was placed.
+     */
     public BlockPlaceEvent(Player player, Block blockPlace, Block blockReplace, Block blockAgainst, Item item) {
         super(blockPlace);
         this.blockReplace = blockReplace;

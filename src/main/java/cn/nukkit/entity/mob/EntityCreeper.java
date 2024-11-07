@@ -1,27 +1,29 @@
 package cn.nukkit.entity.mob;
 
 import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.entity.EntityExplosive;
 import cn.nukkit.entity.weather.EntityLightningStrike;
 import cn.nukkit.event.entity.CreeperPowerEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
+import cn.nukkit.event.entity.EntityDamageEvent;
+import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.level.Explosion;
+import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * @author Box.
- */
-public class EntityCreeper extends EntityMob {
+public class EntityCreeper extends EntityWalkingMob implements EntityExplosive {
 
     public static final int NETWORK_ID = 33;
 
-    public static final int DATA_SWELL_DIRECTION = 16;
-    public static final int DATA_SWELL = 17;
-    public static final int DATA_SWELL_OLD = 18;
-    public static final int DATA_POWERED = 19;
+    public EntityCreeper(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
 
     @Override
     public int getNetworkId() {
@@ -38,58 +40,80 @@ public class EntityCreeper extends EntityMob {
         return 1.7f;
     }
 
-    public EntityCreeper(FullChunk chunk, CompoundTag nbt) {
-        super(chunk, nbt);
-    }
-
-    public boolean isPowered() {
-        return getDataPropertyBoolean(DATA_POWERED);
-    }
-
-    public void setPowered(EntityLightningStrike bolt) {
-        CreeperPowerEvent ev = new CreeperPowerEvent(this, bolt, CreeperPowerEvent.PowerCause.LIGHTNING);
-        this.getServer().getPluginManager().callEvent(ev);
-
-        if (!ev.isCancelled()) {
-            this.setDataProperty(new ByteEntityData(DATA_POWERED, 1));
-            this.namedTag.putBoolean("powered", true);
-        }
-    }
-
-    public void setPowered(boolean powered) {
-        CreeperPowerEvent ev = new CreeperPowerEvent(this, powered ? CreeperPowerEvent.PowerCause.SET_ON : CreeperPowerEvent.PowerCause.SET_OFF);
-        this.getServer().getPluginManager().callEvent(ev);
-
-        if (!ev.isCancelled()) {
-            this.setDataProperty(new ByteEntityData(DATA_POWERED, powered ? 1 : 0));
-            this.namedTag.putBoolean("powered", powered);
-        }
-    }
-
-    public void onStruckByLightning(Entity entity) {
-        this.setPowered(true);
-    }
-
     @Override
-    protected void initEntity() {
+    public void initEntity() {
+        this.setMaxHealth(20);
         super.initEntity();
 
-        if (this.namedTag.getBoolean("powered") || this.namedTag.getBoolean("IsPowered")) {
-            this.dataProperties.putBoolean(DATA_POWERED, true);
+        if (this.namedTag.contains("powered")) {
+            this.setPowered(this.namedTag.getBoolean("powered"));
         }
-        this.setMaxHealth(20);
     }
 
-    @Override
-    public String getName() {
-        return "Creeper";
+    public void explode() {
+        if (this.closed) return;
+
+        EntityExplosionPrimeEvent ev = new EntityExplosionPrimeEvent(this, this.isPowered() ? 6 : 3);
+        this.server.getPluginManager().callEvent(ev);
+
+        if (!ev.isCancelled()) {
+            Explosion explosion = new Explosion(this, (float) ev.getForce(), this);
+
+            if (ev.isBlockBreaking() && this.level.getGameRules().getBoolean(GameRule.MOB_GRIEFING)) {
+                explosion.explodeA();
+            }
+
+            explosion.explodeB();
+        }
+
+        this.close();
     }
 
     @Override
     public Item[] getDrops() {
-        if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
-            return new Item[]{Item.get(Item.GUNPOWDER, ThreadLocalRandom.current().nextInt(2) + 1)};
+        List<Item> drops = new ArrayList<>();
+
+        for (int i = 0; i < Utils.rand(0, 2); i++) {
+            drops.add(Item.get(Item.GUNPOWDER, 0, 1));
         }
-        return new Item[0];
+
+        return drops.toArray(new Item[0]);
+    }
+
+    @Override
+    public int getKillExperience() {
+        return 5;
+    }
+
+    public boolean isPowered() {
+        return this.getDataFlag(DATA_FLAGS, DATA_FLAG_POWERED);
+    }
+
+    public void setPowered(boolean charged) {
+        this.setDataFlag(DATA_FLAGS, DATA_FLAG_POWERED, charged);
+    }
+
+    @Override
+    public void saveNBT() {
+        super.saveNBT();
+
+        this.namedTag.putBoolean("powered", this.isPowered());
+    }
+
+    @Override
+    public void onStruckByLightning(Entity lightning) {
+        if (this.attack(new EntityDamageByEntityEvent(lightning, this, EntityDamageEvent.DamageCause.LIGHTNING, 5))) {
+            if (this.fireTicks < 160) {
+                this.setOnFire(8);
+            }
+
+            if (lightning instanceof EntityLightningStrike) {
+                CreeperPowerEvent event = new CreeperPowerEvent(this, (EntityLightningStrike) lightning, CreeperPowerEvent.PowerCause.LIGHTNING);
+                server.getPluginManager().callEvent(event);
+                if (!event.isCancelled()) {
+                    this.setPowered(true);
+                }
+            }
+        }
     }
 }

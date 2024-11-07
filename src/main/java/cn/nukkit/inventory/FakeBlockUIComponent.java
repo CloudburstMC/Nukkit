@@ -9,6 +9,7 @@ import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
 
 public class FakeBlockUIComponent extends PlayerUIComponent {
+
     private final InventoryType type;
 
     FakeBlockUIComponent(PlayerUIInventory playerUI, InventoryType type, int offset, Position position) {
@@ -36,14 +37,6 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
     }
 
     @Override
-    public void close(Player who) {
-        InventoryCloseEvent ev = new InventoryCloseEvent(this, who);
-        who.getServer().getPluginManager().callEvent(ev);
-
-        this.onClose(who);
-    }
-
-    @Override
     public void onOpen(Player who) {
         super.onOpen(who);
         ContainerOpenPacket pk = new ContainerOpenPacket();
@@ -65,10 +58,20 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
 
     @Override
     public void onClose(Player who) {
+        who.resetCraftingGridType(); // Handles moving of UI inventory contents
+
         ContainerClosePacket pk = new ContainerClosePacket();
         pk.windowId = who.getWindowId(this);
         pk.wasServerInitiated = who.getClosingWindowId() != pk.windowId;
         who.dataPacket(pk);
+
         super.onClose(who);
+    }
+
+    @Override
+    public void close(Player who) {
+        InventoryCloseEvent ev = new InventoryCloseEvent(this, who);
+        who.getServer().getPluginManager().callEvent(ev);
+        this.onClose(who);
     }
 }

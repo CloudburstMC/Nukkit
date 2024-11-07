@@ -5,7 +5,7 @@ import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.Inventory;
 
 /**
- * author: Box
+ * @author Box
  * Nukkit Project
  */
 public class InventoryCloseEvent extends InventoryEvent {

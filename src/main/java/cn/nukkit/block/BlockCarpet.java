@@ -3,7 +3,6 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
-import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.DyeColor;
@@ -13,6 +12,7 @@ import cn.nukkit.utils.DyeColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockCarpet extends BlockFlowable {
+
     public BlockCarpet() {
         this(0);
     }
@@ -31,11 +31,6 @@ public class BlockCarpet extends BlockFlowable {
     }
 
     @Override
-    public double getHardness() {
-        return 0.1;
-    }
-
-    @Override
     public double getResistance() {
         return 0.5;
     }
@@ -47,17 +42,12 @@ public class BlockCarpet extends BlockFlowable {
 
     @Override
     public String getName() {
-        return DyeColor.getByWoolData(getDamage()) + " Carpet";
+        return DyeColor.getByWoolData(getDamage()).getName() + " Carpet";
     }
 
     @Override
     public boolean canPassThrough() {
         return false;
-    }
-
-    @Override
-    protected AxisAlignedBB recalculateBoundingBox() {
-        return this;
     }
 
     @Override
@@ -69,7 +59,7 @@ public class BlockCarpet extends BlockFlowable {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         Block down = this.down();
         if (down.getId() != Item.AIR) {
-            this.getLevel().setBlock(block, this, true, true);
+            this.getLevel().setBlock(this, this, true, true);
             return true;
         }
         return false;
@@ -97,4 +87,13 @@ public class BlockCarpet extends BlockFlowable {
         return DyeColor.getByWoolData(getDamage());
     }
 
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
+    }
 }

@@ -3,7 +3,6 @@ package cn.nukkit.level.biome.impl.mesa;
 /**
  * @author DaPorkchop_
  */
-//porktodo: the plateaus here are smaller and less frequent than in the normal counterpart (which is one giant plateau)
 public class MesaPlateauMBiome extends MesaBiome {
     public MesaPlateauMBiome() {
         super();
@@ -16,11 +15,9 @@ public class MesaPlateauMBiome extends MesaBiome {
         return "Mesa Plateau M";
     }
 
-
-
     @Override
     protected float getMoundFrequency() {
-        return 1 / 50f;
+        return 0.02f;
     }
 
     @Override

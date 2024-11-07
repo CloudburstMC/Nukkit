@@ -1,6 +1,7 @@
 package cn.nukkit.level;
 
 public enum ParticleEffect {
+
     ARROWSPELL("minecraft:arrow_spell_emitter"),
     BALLOON_GAS("minecraft:balloon_gas_particle"),
     BASIC_BUBBLE("minecraft:basic_bubble_particle"),

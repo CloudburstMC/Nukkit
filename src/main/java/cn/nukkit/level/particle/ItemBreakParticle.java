@@ -26,6 +26,7 @@ public class ItemBreakParticle extends Particle {
         packet.y = (float) this.y;
         packet.z = (float) this.z;
         packet.data = this.data;
+        packet.tryEncode();
         return new DataPacket[]{packet};
     }
 }

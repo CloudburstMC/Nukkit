@@ -3,7 +3,7 @@ package cn.nukkit.network.protocol;
 import lombok.ToString;
 
 /**
- * author: MagicDroidX
+ * @author MagicDroidX
  * Nukkit Project
  */
 @ToString
@@ -30,7 +30,7 @@ public class MobEffectPacket extends DataPacket {
 
     @Override
     public void decode() {
-
+        this.decodeUnsupported();
     }
 
     @Override

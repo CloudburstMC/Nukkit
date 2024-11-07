@@ -10,7 +10,7 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
 /**
- * author: DaPorkchop_
+ * @author DaPorkchop_
  * Nukkit Project
  */
 public class PopulatorTree extends PopulatorCount {
@@ -42,7 +42,7 @@ public class PopulatorTree extends PopulatorCount {
         int y;
         for (y = 254; y > 0; --y) {
             int b = this.level.getBlockIdAt(x, y, z);
-            if (b == Block.DIRT || b == Block.GRASS) {
+            if (b == Block.DIRT || b == Block.GRASS || (this.type == BlockSapling.SPRUCE && b == Block.PODZOL)) {
                 break;
             } else if (b != Block.AIR && b != Block.SNOW_LAYER) {
                 return -1;

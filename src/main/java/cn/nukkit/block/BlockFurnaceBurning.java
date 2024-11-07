@@ -12,15 +12,14 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.nbt.tag.Tag;
-import cn.nukkit.utils.Faceable;
 
 import java.util.Map;
 
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
-public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
+public class BlockFurnaceBurning extends BlockSolidMeta {
 
     public BlockFurnaceBurning() {
         this(0);
@@ -67,8 +66,7 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        int[] faces = {2, 5, 3, 4};
-        this.setDamage(faces[player != null ? player.getDirection().getHorizontalIndex() : 0]);
+        this.setDamage(Block.FACES2534[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         this.getLevel().setBlock(block, this, true, true);
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<>("Items"))
@@ -88,8 +86,8 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
             }
         }
 
-        BlockEntityFurnace furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-        return furnace != null;
+        BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getChunk(), nbt);
+        return true;
     }
 
     @Override
@@ -102,22 +100,11 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
     public boolean onActivate(Item item, Player player) {
         if (player != null) {
             BlockEntity t = this.getLevel().getBlockEntity(this);
-            BlockEntityFurnace furnace;
-            if (t instanceof BlockEntityFurnace) {
-                furnace = (BlockEntityFurnace) t;
-            } else {
-                CompoundTag nbt = new CompoundTag()
-                        .putList(new ListTag<>("Items"))
-                        .putString("id", BlockEntity.FURNACE)
-                        .putInt("x", (int) this.x)
-                        .putInt("y", (int) this.y)
-                        .putInt("z", (int) this.z);
-                furnace = (BlockEntityFurnace) BlockEntity.createBlockEntity(BlockEntity.FURNACE, this.getLevel().getChunk((int) (this.x) >> 4, (int) (this.z) >> 4), nbt);
-                if (furnace == null) {
-                    return false;
-                }
+            if (!(t instanceof BlockEntityFurnace)) {
+                return false;
             }
 
+            BlockEntityFurnace furnace = (BlockEntityFurnace) t;
             if (furnace.namedTag.contains("Lock") && furnace.namedTag.get("Lock") instanceof StringTag) {
                 if (!furnace.namedTag.getString("Lock").equals(item.getCustomName())) {
                     return true;
@@ -132,12 +119,12 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(Block.get(BlockID.FURNACE));
+        return new ItemBlock(Block.get(FURNACE));
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     this.toItem()
             };
@@ -167,7 +154,7 @@ public class BlockFurnaceBurning extends BlockSolidMeta implements Faceable {
     }
 
     @Override
-    public BlockFace getBlockFace() {
-        return BlockFace.fromHorizontalIndex(this.getDamage() & 0x7);
+    public boolean canBePushed() {
+        return false; // prevent item loss issue with pistons until a working implementation
     }
 }

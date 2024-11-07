@@ -3,7 +3,7 @@ package cn.nukkit.entity.passive;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
-public class EntityAxolotl extends EntityAnimal {
+public class EntityAxolotl extends EntityFish {
 
     public static final int NETWORK_ID = 130;
 
@@ -12,13 +12,14 @@ public class EntityAxolotl extends EntityAnimal {
     }
 
     @Override
-    public int getNetworkId() {
-        return NETWORK_ID;
+    public void initEntity() {
+        this.setMaxHealth(14);
+        super.initEntity();
     }
 
     @Override
-    public float getHeight() {
-        return 0.42f;
+    public int getNetworkId() {
+        return NETWORK_ID;
     }
 
     @Override
@@ -27,13 +28,12 @@ public class EntityAxolotl extends EntityAnimal {
     }
 
     @Override
-    protected void initEntity() {
-        super.initEntity();
-        this.setMaxHealth(14);
+    public float getHeight() {
+        return 0.42f;
     }
 
     @Override
-    public String getName() {
-        return "Axolotl";
+    int getBucketMeta() {
+        return 12;
     }
 }

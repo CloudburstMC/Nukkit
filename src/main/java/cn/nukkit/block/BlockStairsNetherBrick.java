@@ -8,6 +8,7 @@ import cn.nukkit.utils.BlockColor;
  * Package cn.nukkit.block in project Nukkit .
  */
 public class BlockStairsNetherBrick extends BlockStairs {
+
     public BlockStairsNetherBrick() {
         this(0);
     }

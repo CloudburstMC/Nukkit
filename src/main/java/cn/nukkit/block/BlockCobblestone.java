@@ -4,13 +4,10 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 
 /**
- * author: Angelic47
+ * @author Angelic47
  * Nukkit Project
  */
 public class BlockCobblestone extends BlockSolid {
-
-    public BlockCobblestone() {
-    }
 
     @Override
     public int getId() {
@@ -39,7 +36,7 @@ public class BlockCobblestone extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_WOODEN) {
+        if (item.isPickaxe()) {
             return new Item[]{
                     toItem()
             };

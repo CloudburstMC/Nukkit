@@ -3,11 +3,9 @@ package cn.nukkit.entity.passive;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
-/**
- * Created by PetteriM1
- */
-public class EntityDolphin extends EntityAnimal {
+public class EntityDolphin extends EntityWaterAnimal {
 
     public static final int NETWORK_ID = 31;
 
@@ -18,10 +16,6 @@ public class EntityDolphin extends EntityAnimal {
     @Override
     public int getNetworkId() {
         return NETWORK_ID;
-    }
-
-    public String getName() {
-        return "Dolphin";
     }
 
     @Override
@@ -36,12 +30,17 @@ public class EntityDolphin extends EntityAnimal {
 
     @Override
     public void initEntity() {
-        super.initEntity();
         this.setMaxHealth(10);
+        super.initEntity();
     }
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{Item.get(Item.RAW_FISH)};
+        return new Item[]{Item.get(Item.RAW_FISH, 0, Utils.rand(0, 1))};
+    }
+
+    @Override
+    public int getKillExperience() {
+        return 0;
     }
 }

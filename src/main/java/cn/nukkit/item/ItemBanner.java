@@ -6,9 +6,6 @@ import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BannerPattern;
 import cn.nukkit.utils.DyeColor;
 
-/**
- * Created by PetteriM1
- */
 public class ItemBanner extends Item {
 
     public ItemBanner() {
@@ -65,7 +62,7 @@ public class ItemBanner extends Item {
     public void removePattern(int index) {
         CompoundTag tag = this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag();
         ListTag<CompoundTag> patterns = tag.getList("Patterns", CompoundTag.class);
-        if(patterns.size() > index && index >= 0) {
+        if (patterns.size() > index && index >= 0) {
             patterns.remove(index);
         }
         this.setNamedTag(tag);
@@ -75,7 +72,7 @@ public class ItemBanner extends Item {
         return (this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag()).getList("Patterns").size();
     }
 
-    public void correctNBT() {
-
+    public boolean hasPattern() {
+        return (this.hasCompoundTag() ? this.getNamedTag() : new CompoundTag()).contains("Patterns");
     }
 }

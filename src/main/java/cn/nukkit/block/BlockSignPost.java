@@ -7,7 +7,6 @@ import cn.nukkit.event.block.SignColorChangeEvent;
 import cn.nukkit.event.block.SignGlowEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemDye;
-import cn.nukkit.item.ItemSign;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.AxisAlignedBB;
@@ -63,6 +62,14 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
         return null;
     }
 
+    protected int getPostId() {
+        return SIGN_POST;
+    }
+
+    protected int getWallId() {
+        return WALL_SIGN;
+    }
+
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (face != BlockFace.DOWN) {
@@ -78,10 +85,13 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
 
             if (face == BlockFace.UP) {
                 setDamage((int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
-                getLevel().setBlock(block, Block.get(BlockID.SIGN_POST, getDamage()), true);
+                getLevel().setBlock(block, Block.get(getPostId(), getDamage()), true);
+            } else if (target.canBeReplaced()) {
+                setDamage((int) Math.floor(((player.yaw + 180) * 16 / 360) + 0.5) & 0x0f);
+                getLevel().setBlock(target, Block.get(getPostId(), getDamage()), true);
             } else {
                 setDamage(face.getIndex());
-                getLevel().setBlock(block, Block.get(BlockID.WALL_SIGN, getDamage()), true);
+                getLevel().setBlock(block, Block.get(getWallId(), getDamage()), true);
             }
 
             if (player != null) {
@@ -94,7 +104,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
                 }
             }
 
-            BlockEntitySign sign = (BlockEntitySign) BlockEntity.createBlockEntity(BlockEntity.SIGN, getLevel().getChunk((int) block.x >> 4, (int) block.z >> 4), nbt);
+            BlockEntity.createBlockEntity(BlockEntity.SIGN, this.getChunk(), nbt);
 
             if (player != null) {
                 OpenSignPacket pk = new OpenSignPacket();
@@ -102,8 +112,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
                 pk.frontSide = true;
                 player.dataPacket(pk);
             }
-
-            return sign != null;
+            return true;
         }
 
         return false;
@@ -124,7 +133,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
 
     @Override
     public Item toItem() {
-        return new ItemSign();
+        return Item.get(Item.SIGN);
     }
 
     @Override
@@ -150,7 +159,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean onActivate(Item item, Player player) {
         if (item.getId() == Item.DYE) {
-            BlockEntity blockEntity = this.level.getBlockEntity(this);
+            BlockEntity blockEntity = this.level.getBlockEntityIfLoaded(player == null ? null : player.chunk, this);
             if (!(blockEntity instanceof BlockEntitySign)) {
                 return false;
             }
@@ -169,9 +178,9 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
                 SignGlowEvent event = new SignGlowEvent(this, player, glow);
                 this.level.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) {
-                    if (player != null) {
+                    /*if (player != null) {
                         sign.spawnTo(player);
-                    }
+                    }*/
                     return false;
                 }
 
@@ -189,9 +198,9 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
 
             BlockColor color = DyeColor.getByDyeData(meta).getSignColor();
             if (color.equals(sign.getColor())) {
-                if (player != null) {
+                /*if (player != null) {
                     sign.spawnTo(player);
-                }
+                }*/
                 return false;
             }
 
@@ -216,5 +225,10 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }
