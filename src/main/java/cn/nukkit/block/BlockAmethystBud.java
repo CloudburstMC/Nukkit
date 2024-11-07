@@ -28,9 +28,11 @@ public abstract class BlockAmethystBud extends BlockTransparentMeta implements F
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        this.setDamage(face.getIndex());
-        this.getLevel().setBlock(this, this, true, true);
-        return true;
+        if (Block.canConnectToFullSolid(this.getSide(face.getOpposite()))) {
+            this.setDamage(face.getIndex());
+            return this.getLevel().setBlock(this, this, true, true);
+        }
+        return false;
     }
 
     @Override

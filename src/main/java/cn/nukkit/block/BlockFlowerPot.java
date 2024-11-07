@@ -61,6 +61,7 @@ public class BlockFlowerPot extends BlockFlowable {
             case CRIMSON_ROOTS:
             case WARPED_ROOTS:
             case WITHER_ROSE:
+            case MANGROVE_PROPAGULE:
                 return true;
             default:
                 return false;
@@ -77,8 +78,8 @@ public class BlockFlowerPot extends BlockFlowable {
         return FLOWER_POT_BLOCK;
     }
 
-    private boolean isSupportValid(Block block) {
-        return block.isSolid() || block instanceof BlockFence || block instanceof BlockWall || block instanceof BlockHopper;
+    private static boolean isSupportValid(Block block) {
+        return block.isSolid() || block.isNarrowSurface() || Block.canStayOnFullSolid(block);
     }
 
     @Override

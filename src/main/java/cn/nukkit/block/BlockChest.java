@@ -128,7 +128,7 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
         if (player != null) {
             Block top = this.up();
             if (!(top instanceof BlockStairs)) { // Stairs don't block chest on vanilla
-                if ((!(top instanceof BlockSlab) && !top.isTransparent()) || (top instanceof BlockSlab && top.isTransparent())) { // Avoid issues with the slab hack
+                if (!top.isTransparent()) {
                     return true;
                 }
             }

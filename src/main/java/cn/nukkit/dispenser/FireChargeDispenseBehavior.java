@@ -13,7 +13,7 @@ public class FireChargeDispenseBehavior extends DefaultDispenseBehavior {
     public Item dispense(BlockDispenser block, BlockFace face, Item item) {
         Vector3 dispensePos = block.getDispensePosition();
 
-        Entity projectile = Entity.createEntity("GhastFireBall", block.level.getChunk(dispensePos.getChunkX(), dispensePos.getChunkZ()), Entity.getDefaultNBT(dispensePos));
+        Entity projectile = Entity.createEntity("BlazeFireBall", block.level.getChunk(dispensePos.getChunkX(), dispensePos.getChunkZ()), Entity.getDefaultNBT(dispensePos));
 
         if (!(projectile instanceof EntityProjectile)) {
             return super.dispense(block, face, item);

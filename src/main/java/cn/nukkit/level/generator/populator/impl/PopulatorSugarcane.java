@@ -6,6 +6,7 @@ import cn.nukkit.level.generator.populator.helper.EnsureCover;
 import cn.nukkit.level.generator.populator.helper.EnsureGrassBelow;
 import cn.nukkit.level.generator.populator.type.PopulatorSurfaceBlock;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.NukkitRandom;
 
 /**
@@ -17,13 +18,15 @@ import cn.nukkit.math.NukkitRandom;
 public class PopulatorSugarcane extends PopulatorSurfaceBlock {
 
     private boolean findWater(int x, int y, int z, FullChunk chunk) {
-        int b = chunk.getBlockId(x + BlockFace.NORTH.getXOffset() & 0xF, y, z + BlockFace.NORTH.getZOffset() & 0xF);
+        int cx = x & 0xF;
+        int cz = z & 0xF;
+        int b = chunk.getBlockId(NukkitMath.clamp(cx + BlockFace.NORTH.getXOffset(), 0, 15), y, NukkitMath.clamp(cz + BlockFace.NORTH.getZOffset(), 0, 15));
         if (b == Block.WATER || b == Block.STILL_WATER) return true;
-        b = chunk.getBlockId(x + BlockFace.EAST.getXOffset() & 0xF, y, z + BlockFace.EAST.getZOffset() & 0xF);
+        b = chunk.getBlockId(NukkitMath.clamp(cx + BlockFace.EAST.getXOffset(), 0, 15), y, NukkitMath.clamp(cz + BlockFace.EAST.getZOffset(), 0, 15));
         if (b == Block.WATER || b == Block.STILL_WATER) return true;
-        b = chunk.getBlockId(x + BlockFace.SOUTH.getXOffset() & 0xF, y, z + BlockFace.SOUTH.getZOffset() & 0xF);
+        b = chunk.getBlockId(NukkitMath.clamp(cx + BlockFace.SOUTH.getXOffset(), 0, 15), y, NukkitMath.clamp(cz + BlockFace.SOUTH.getZOffset(), 0, 15));
         if (b == Block.WATER || b == Block.STILL_WATER) return true;
-        b = chunk.getBlockId(x + BlockFace.WEST.getXOffset() & 0xF, y, z + BlockFace.WEST.getZOffset() & 0xF);
+        b = chunk.getBlockId(NukkitMath.clamp(cx + BlockFace.WEST.getXOffset(), 0, 15), y, NukkitMath.clamp(cz + BlockFace.WEST.getZOffset(), 0, 15));
         return b == Block.WATER || b == Block.STILL_WATER;
     }
 

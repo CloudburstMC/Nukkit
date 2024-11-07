@@ -42,7 +42,7 @@ public class ChunkSerializers {
     private static ChunkSerializer getChunkSerializer(int version) {
         ChunkSerializer chunkSerializer = SERIALIZERS.get(version);
         if (chunkSerializer == null) {
-            throw new IllegalArgumentException("Invalid chunk serialize version " + version);
+            throw new IllegalArgumentException("Invalid chunk serializer version " + version + "! Serializers up to 1.21.30 (version 40) are supported");
         }
         return chunkSerializer;
     }

@@ -14,7 +14,7 @@ import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Faceable;
 
-public class BlockLectern extends BlockSolidMeta implements Faceable {
+public class BlockLectern extends BlockTransparentMeta implements Faceable {
 
     public BlockLectern() {
         this(0);

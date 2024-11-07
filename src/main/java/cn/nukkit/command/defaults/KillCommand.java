@@ -94,18 +94,22 @@ public class KillCommand extends VanillaCommand {
                     sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.permission"));
                     return true;
                 }
+                StringJoiner joiner = new StringJoiner(", ");
                 for (Level level : Server.getInstance().getLevels().values()) {
-                    for (Entity entity : level.entities.values()) {
+                    for (Entity entity : level.getEntities()) {
                         if (entity instanceof Player) {
                             Player p = (Player) entity;
                             if (p.isCreative() || p.isSpectator()) {
                                 continue;
                             }
                             resetHealth(p);
+
+                            joiner.add(entity.getName());
                         }
                     }
                 }
-                sender.sendMessage(new TranslationContainer(TextFormat.GOLD + "%commands.kill.all.successful"));
+                String entities = joiner.toString();
+                sender.sendMessage(new TranslationContainer("commands.kill.successful", entities.isEmpty() ? "0" : entities));
             } else {
                 sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
             }

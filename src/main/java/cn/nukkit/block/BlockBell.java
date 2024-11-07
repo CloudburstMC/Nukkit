@@ -261,6 +261,10 @@ public class BlockBell extends BlockTransparentMeta implements Faceable {
         if (support instanceof BlockCauldron) {
             return attachmentFace == BlockFace.UP;
         }
+
+        if (attachmentFace == BlockFace.UP) {
+            return Block.canStayOnFullSolid(support);
+        }
         return false;
     }
 

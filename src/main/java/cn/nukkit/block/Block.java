@@ -34,7 +34,7 @@ import java.util.Optional;
 public abstract class Block extends Position implements Metadatable, Cloneable, AxisAlignedBB, BlockID {
 
     @SuppressWarnings("UnnecessaryBoxing")
-    public static final int MAX_BLOCK_ID = Integer.valueOf("1024");
+    public static final int MAX_BLOCK_ID = Integer.valueOf("2048");
     public static final int DATA_BITS = 6;
     public static final int DATA_SIZE = 1 << DATA_BITS;
     public static final int DATA_MASK = DATA_SIZE - 1;
@@ -946,23 +946,38 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return this.layer;
     }
 
-    protected static boolean canStayOnFullSolid(Block down) {
+    protected static boolean canConnectToFullSolid(Block down) {
         if (down.isTransparent()) {
             switch (down.getId()) {
                 case BEACON:
                 case ICE:
                 case GLASS:
                 case STAINED_GLASS:
-                case SCAFFOLDING:
                 case BARRIER:
                 case GLOWSTONE:
                 case SEA_LANTERN:
-                case HOPPER_BLOCK:
+                case MANGROVE_ROOTS:
+                case MUDDY_MANGROVE_ROOTS:
                     return true;
             }
             return false;
         }
         return true;
+    }
+
+    protected static boolean canStayOnFullSolid(Block down) {
+        if (canConnectToFullSolid(down)) {
+            return true;
+        }
+        switch (down.getId()) {
+            case SCAFFOLDING:
+            case HOPPER_BLOCK:
+                return true;
+        }
+        if (down instanceof BlockSlab) {
+            return ((BlockSlab) down).hasTopBit();
+        }
+        return down instanceof BlockTrapdoor && ((BlockTrapdoor) down).isTop() && !((BlockTrapdoor) down).isOpen();
     }
 
     protected static boolean canStayOnFullNonSolid(Block down) {
@@ -976,6 +991,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                 return true;
         }
         return false;
+    }
+
+    protected boolean isNarrowSurface() {
+        return this instanceof BlockGlassPane || this instanceof BlockFence || this instanceof BlockWall || this instanceof BlockChain || this instanceof BlockIronBars;
     }
 
     public boolean alwaysDropsOnExplosion() {

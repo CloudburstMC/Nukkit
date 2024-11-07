@@ -249,5 +249,4 @@ public class BlockLeaves extends BlockTransparentMeta {
     public boolean breakWhenPushed() {
         return true;
     }
-
 }

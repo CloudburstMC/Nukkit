@@ -155,4 +155,9 @@ public class EmptyChunkSection implements ChunkSection {
     public EmptyChunkSection copy() {
         return this;
     }
+
+    @Override
+    public EmptyChunkSection copyForChunkSending() {
+        return this;
+    }
 }

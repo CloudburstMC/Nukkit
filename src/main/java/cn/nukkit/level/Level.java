@@ -2331,7 +2331,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             return null;
         }
 
-        if (!(block.canBeReplaced() || (hand.getId() == Item.SLAB && block.getId() == Item.SLAB))) {
+        if (!(block.canBeReplaced() || (hand instanceof BlockSlab && block instanceof BlockSlab && hand.getId() == block.getId()))) {
             return null;
         }
 

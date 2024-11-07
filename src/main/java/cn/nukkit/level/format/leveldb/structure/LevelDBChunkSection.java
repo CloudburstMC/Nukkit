@@ -314,6 +314,26 @@ public class LevelDBChunkSection implements ChunkSection {
         );
     }
 
+    @Override
+    public ChunkSection copyForChunkSending() {
+        StateBlockStorage[] storages = new StateBlockStorage[this.storages.length];
+        for (int i = 0; i < this.storages.length; i++) {
+            if (this.storages[i] != null) {
+                storages[i] = this.storages[i].copy();
+            }
+        }
+
+        return new LevelDBChunkSection(
+                this.y,
+                storages,
+                null,
+                null,
+                null,
+                false,
+                false
+        );
+    }
+
     public boolean compress() {
         if (blockLight != null) {
             byte[] arr1 = blockLight;

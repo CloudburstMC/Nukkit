@@ -120,15 +120,7 @@ public class BlockLantern extends BlockFlowable {
 
     private boolean isBlockUnderValid() {
         Block down = this.down();
-        if (down instanceof BlockLeaves) {
-            return false;
-        } else if (down instanceof BlockFence || down instanceof BlockWall) {
-            return true;
-        } else if (down instanceof BlockSlab) {
-            return (down.getDamage() & 0x08) == 0x08;
-        } else if (down instanceof BlockStairs) {
-            return (down.getDamage() & 0x04) == 0x04;
-        } else return down.isSolid() || down instanceof BlockChain;
+        return !down.isTransparent() || down.isNarrowSurface() || Block.canStayOnFullSolid(down);
     }
 
     @Override

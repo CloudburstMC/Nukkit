@@ -64,9 +64,14 @@ public class BlockSapling extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (!(this instanceof BlockMangrovePropagule) &&
+                (block instanceof BlockWater || block.level.isBlockWaterloggedAt(block.getChunk(), (int) block.x, (int) block.y, (int) block.z))) {
+            return false;
+        }
+
         Block down = this.down();
         int id = down.getId();
-        if (id == Block.GRASS || id == Block.DIRT || id == Block.FARMLAND || id == Block.PODZOL || id == MYCELIUM || id == MOSS_BLOCK) {
+        if (id == Block.GRASS || id == Block.DIRT || id == Block.FARMLAND || id == Block.PODZOL || id == MYCELIUM || id == MOSS_BLOCK || id == MUD) {
             this.getLevel().setBlock(block, this, true, true);
             return true;
         }
@@ -137,7 +142,7 @@ public class BlockSapling extends BlockFlowable {
                     generator = new HugeTreesGenerator(0, 0, null, null) {
                         @Override
                         public boolean generate(ChunkManager level, NukkitRandom rand, Vector3 position) {
-                            ObjectBigSpruceTree object = new ObjectBigSpruceTree(0.5f, 4, true);
+                            ObjectBigSpruceTree object = new ObjectBigSpruceTree(0.25f, 4);
                             if (!this.ensureGrowable(level, position, object.getTreeHeight())) {
                                 return false;
                             }

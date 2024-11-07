@@ -1,8 +1,6 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.Server;
-import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.item.*;
 import cn.nukkit.network.protocol.CraftingDataPacket;
 import cn.nukkit.network.protocol.DataPacket;
@@ -72,170 +70,11 @@ public class CraftingManager {
             this.loadRecipes(customRecipes);
         }
 
-        this.buildMissingRecipes();
+        this.registerSmithingRecipes();
 
         this.rebuildPacket();
 
         MainLogger.getLogger().info("Successfully loaded " + this.recipes.size() + " recipes");
-    }
-
-    private void buildMissingRecipes() {
-        List<Item> oakChestBoat = Arrays.asList(Item.get(Item.CHEST, 0, 1), Item.get(Item.BOAT, 0, 1));
-        oakChestBoat.sort(recipeComparator);
-        this.registerRecipe(new ShapelessRecipe("craft_oak_chest_boat", 0, Item.get(Item.OAK_CHEST_BOAT, 0, 1), oakChestBoat));
-        List<Item> birchChestBoat = Arrays.asList(Item.get(Item.CHEST, 0, 1), Item.get(Item.BOAT, 2, 1));
-        birchChestBoat.sort(recipeComparator);
-        this.registerRecipe(new ShapelessRecipe("craft_birch_chest_boat", 0, Item.get(Item.BIRCH_CHEST_BOAT, 0, 1), birchChestBoat));
-        List<Item> jungleChestBoat = Arrays.asList(Item.get(Item.CHEST, 0, 1), Item.get(Item.BOAT, 3, 1));
-        jungleChestBoat.sort(recipeComparator);
-        this.registerRecipe(new ShapelessRecipe("craft_jungle_chest_boat", 0, Item.get(Item.JUNGLE_CHEST_BOAT, 0, 1), jungleChestBoat));
-        List<Item> spruceChestBoat = Arrays.asList(Item.get(Item.CHEST, 0, 1), Item.get(Item.BOAT, 1, 1));
-        spruceChestBoat.sort(recipeComparator);
-        this.registerRecipe(new ShapelessRecipe("craft_spruce_chest_boat", 0, Item.get(Item.SPRUCE_CHEST_BOAT, 0, 1), spruceChestBoat));
-        List<Item> acaciaChestBoat = Arrays.asList(Item.get(Item.CHEST, 0, 1), Item.get(Item.BOAT, 4, 1));
-        acaciaChestBoat.sort(recipeComparator);
-        this.registerRecipe(new ShapelessRecipe("craft_acacia_chest_boat", 0, Item.get(Item.ACACIA_CHEST_BOAT, 0, 1), acaciaChestBoat));
-        List<Item> darkOakChestBoat = Arrays.asList(Item.get(Item.CHEST, 0, 1), Item.get(Item.BOAT, 5, 1));
-        darkOakChestBoat.sort(recipeComparator);
-        this.registerRecipe(new ShapelessRecipe("craft_dark_oak_chest_boat", 0, Item.get(Item.DARK_OAK_CHEST_BOAT, 0, 1), darkOakChestBoat));
-        Map<Character, Item> record5 = new CharObjectHashMap<>();
-        record5.put('A', Item.get(Item.DISC_FRAGMENT_5, 0, 1));
-        this.registerRecipe(new ShapedRecipe("craft_record_5", 0, Item.get(Item.RECORD_5), new String[]{"AAA", "AAA", "AAA"}, record5, new ArrayList<>()));
-
-        Map<Character, Item> recoveryCompass = new CharObjectHashMap<>();
-        recoveryCompass.put('A', Item.get(Item.ECHO_SHARD, 0, 1));
-        recoveryCompass.put('B', Item.get(Item.COMPASS, 0, 1));
-        this.registerRecipe(new ShapedRecipe("craft_recovery_compass", 0, Item.get(Item.RECOVERY_COMPASS), new String[]{"AAA", "ABA", "AAA"}, recoveryCompass, new ArrayList<>()));
-
-        Map<Character, Item> copperBlock = new CharObjectHashMap<>();
-        copperBlock.put('A', Item.get(Item.COPPER_INGOT, 0, 1));
-        this.registerRecipe(new ShapedRecipe("craft_copper_block", 0, new ItemBlock(Block.get(BlockID.COPPER_BLOCK)), new String[]{"AAA", "AAA", "AAA"}, copperBlock, new ArrayList<>()));
-
-        Map<Character, Item> copperSlab1 = new CharObjectHashMap<>();
-        copperSlab1.put('A', new ItemBlock(Block.get(BlockID.CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_slab1", 0, new ItemBlock(Block.get(BlockID.CUT_COPPER_SLAB), 0, 6), new String[]{"   ", "   ", "AAA"}, copperSlab1, new ArrayList<>()));
-
-        Map<Character, Item> copperSlab2 = new CharObjectHashMap<>();
-        copperSlab2.put('A', new ItemBlock(Block.get(BlockID.EXPOSED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_slab2", 0, new ItemBlock(Block.get(BlockID.EXPOSED_CUT_COPPER_SLAB), 0, 6), new String[]{"   ", "   ", "AAA"}, copperSlab2, new ArrayList<>()));
-
-        Map<Character, Item> copperSlab3 = new CharObjectHashMap<>();
-        copperSlab3.put('A', new ItemBlock(Block.get(BlockID.WEATHERED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_slab3", 0, new ItemBlock(Block.get(BlockID.WEATHERED_CUT_COPPER_SLAB), 0, 6), new String[]{"   ", "   ", "AAA"}, copperSlab3, new ArrayList<>()));
-
-        Map<Character, Item> copperSlab4 = new CharObjectHashMap<>();
-        copperSlab4.put('A', new ItemBlock(Block.get(BlockID.OXIDIZED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_slab4", 0, new ItemBlock(Block.get(BlockID.OXIDIZED_CUT_COPPER_SLAB), 0, 6), new String[]{"   ", "   ", "AAA"}, copperSlab4, new ArrayList<>()));
-
-        Map<Character, Item> copperSlab1w = new CharObjectHashMap<>();
-        copperSlab1w.put('A', new ItemBlock(Block.get(BlockID.WAXED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_slab1w", 0, new ItemBlock(Block.get(BlockID.WAXED_CUT_COPPER_SLAB), 0, 6), new String[]{"   ", "   ", "AAA"}, copperSlab1w, new ArrayList<>()));
-
-        Map<Character, Item> copperSlab2w = new CharObjectHashMap<>();
-        copperSlab2w.put('A', new ItemBlock(Block.get(BlockID.WAXED_EXPOSED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_slab2w", 0, new ItemBlock(Block.get(BlockID.WAXED_EXPOSED_CUT_COPPER_SLAB), 0, 6), new String[]{"   ", "   ", "AAA"}, copperSlab2w, new ArrayList<>()));
-
-        Map<Character, Item> copperSlab3w = new CharObjectHashMap<>();
-        copperSlab3w.put('A', new ItemBlock(Block.get(BlockID.WAXED_WEATHERED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_slab3w", 0, new ItemBlock(Block.get(BlockID.WAXED_WEATHERED_CUT_COPPER_SLAB), 0, 6), new String[]{"   ", "   ", "AAA"}, copperSlab3w, new ArrayList<>()));
-
-        Map<Character, Item> copperSlab4w = new CharObjectHashMap<>();
-        copperSlab4w.put('A', new ItemBlock(Block.get(BlockID.WAXED_OXIDIZED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_slab4w", 0, new ItemBlock(Block.get(BlockID.WAXED_OXIDIZED_CUT_COPPER_SLAB), 0, 6), new String[]{"   ", "   ", "AAA"}, copperSlab4w, new ArrayList<>()));
-
-        Map<Character, Item> copperStairs1 = new CharObjectHashMap<>();
-        copperStairs1.put('A', new ItemBlock(Block.get(BlockID.CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_stairs1", 0, new ItemBlock(Block.get(BlockID.CUT_COPPER_STAIRS), 0, 4), new String[]{"A  ", "AA ", "AAA"}, copperStairs1, new ArrayList<>()));
-
-        Map<Character, Item> copperStairs2 = new CharObjectHashMap<>();
-        copperStairs2.put('A', new ItemBlock(Block.get(BlockID.EXPOSED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_stairs2", 0, new ItemBlock(Block.get(BlockID.EXPOSED_CUT_COPPER_STAIRS), 0, 4), new String[]{"A  ", "AA ", "AAA"}, copperStairs2, new ArrayList<>()));
-
-        Map<Character, Item> copperStairs3 = new CharObjectHashMap<>();
-        copperStairs3.put('A', new ItemBlock(Block.get(BlockID.WEATHERED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_stairs3", 0, new ItemBlock(Block.get(BlockID.WEATHERED_CUT_COPPER_STAIRS), 0, 4), new String[]{"A  ", "AA ", "AAA"}, copperStairs3, new ArrayList<>()));
-
-        Map<Character, Item> copperStairs4 = new CharObjectHashMap<>();
-        copperStairs4.put('A', new ItemBlock(Block.get(BlockID.OXIDIZED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_stairs4", 0, new ItemBlock(Block.get(BlockID.OXIDIZED_CUT_COPPER_STAIRS), 0, 4), new String[]{"A  ", "AA ", "AAA"}, copperStairs4, new ArrayList<>()));
-
-        Map<Character, Item> copperStairs1w = new CharObjectHashMap<>();
-        copperStairs1w.put('A', new ItemBlock(Block.get(BlockID.WAXED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_stairs1w", 0, new ItemBlock(Block.get(BlockID.WAXED_CUT_COPPER_STAIRS), 0, 4), new String[]{"A  ", "AA ", "AAA"}, copperStairs1w, new ArrayList<>()));
-
-        Map<Character, Item> copperStairs2w = new CharObjectHashMap<>();
-        copperStairs2w.put('A', new ItemBlock(Block.get(BlockID.WAXED_EXPOSED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_stairs2w", 0, new ItemBlock(Block.get(BlockID.WAXED_EXPOSED_CUT_COPPER_STAIRS), 0, 4), new String[]{"A  ", "AA ", "AAA"}, copperStairs2w, new ArrayList<>()));
-
-        Map<Character, Item> copperStairs3w = new CharObjectHashMap<>();
-        copperStairs3w.put('A', new ItemBlock(Block.get(BlockID.WAXED_WEATHERED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_stairs3w", 0, new ItemBlock(Block.get(BlockID.WAXED_WEATHERED_CUT_COPPER_STAIRS), 0, 4), new String[]{"A  ", "AA ", "AAA"}, copperStairs3w, new ArrayList<>()));
-
-        Map<Character, Item> copperStairs4w = new CharObjectHashMap<>();
-        copperStairs4w.put('A', new ItemBlock(Block.get(BlockID.WAXED_OXIDIZED_CUT_COPPER)));
-        this.registerRecipe(new ShapedRecipe("craft_copper_stairs4w", 0, new ItemBlock(Block.get(BlockID.WAXED_OXIDIZED_CUT_COPPER_STAIRS), 0, 4), new String[]{"A  ", "AA ", "AAA"}, copperStairs4w, new ArrayList<>()));
-
-        Map<Character, Item> lightningRod = new CharObjectHashMap<>();
-        lightningRod.put('A', Item.get(Item.COPPER_INGOT, 0, 1));
-        this.registerRecipe(new ShapedRecipe("craft_lightning_rod", 0, new ItemBlock(Block.get(BlockID.LIGHTNING_ROD)), new String[]{" A ", " A ", " A "}, lightningRod, new ArrayList<>()));
-
-        Map<Character, Item> spyglass = new CharObjectHashMap<>();
-        spyglass.put('A', Item.get(Item.COPPER_INGOT, 0, 1));
-        spyglass.put('B', Item.get(Item.AMETHYST_SHARD, 0, 1));
-        this.registerRecipe(new ShapedRecipe("craft_spyglass", 0, Item.get(Item.SPYGLASS), new String[]{" B ", " A ", " A "}, spyglass, new ArrayList<>()));
-
-        Map<Character, Item> tintedGlass = new CharObjectHashMap<>();
-        tintedGlass.put('A', Item.get(Item.AMETHYST_SHARD, 0, 1));
-        tintedGlass.put('B', new ItemBlock(Block.get(BlockID.GLASS), 0, 1));
-        this.registerRecipe(new ShapedRecipe("craft_tinted_glass", 0, new ItemBlock(Block.get(BlockID.TINTED_GLASS), 0, 2), new String[]{" A ", "ABA", " A "}, tintedGlass, new ArrayList<>()));
-
-        this.registerRecipe(new ShapelessRecipe("craft_copper_ingot", 0, Item.get(ItemID.COPPER_INGOT, 0, 9), Collections.singleton(new ItemBlock(Block.get(BlockID.COPPER_BLOCK)))));
-        this.registerRecipe(new ShapelessRecipe("craft_amethyst_block", 0, Item.get(ItemID.GLOW_ITEM_FRAME), Arrays.asList(Item.get(ItemID.ITEM_FRAME), Item.get(ItemID.DYE, ItemDye.GLOW_INK_SAC))));
-        this.registerRecipe(new ShapelessRecipe("craft_glow_frame", 0, new ItemBlock(Block.get(BlockID.AMETHYST_BLOCK)), Arrays.asList(Item.get(ItemID.AMETHYST_SHARD), Item.get(ItemID.AMETHYST_SHARD), Item.get(ItemID.AMETHYST_SHARD), Item.get(ItemID.AMETHYST_SHARD))));
-
-        this.registerRecipe(new ShapelessRecipe("craft_moss_stone", 0, new ItemBlock(Block.get(BlockID.MOSS_STONE)), Arrays.asList(new ItemBlock(Block.get(BlockID.MOSS_BLOCK)), new ItemBlock(Block.get(BlockID.COBBLESTONE)))));
-        this.registerRecipe(new ShapelessRecipe("craft_moss_stone_brick", 0, new ItemBlock(Block.get(BlockID.STONE_BRICK, 1)), Arrays.asList(new ItemBlock(Block.get(BlockID.MOSS_BLOCK)), new ItemBlock(Block.get(BlockID.STONE_BRICK)))));
-        this.registerRecipe(new ShapelessRecipe("craft_moss_carpet", 0, new ItemBlock(Block.get(BlockID.MOSS_CARPET), 0, 3), Arrays.asList(new ItemBlock(Block.get(BlockID.MOSS_BLOCK)), new ItemBlock(Block.get(BlockID.MOSS_BLOCK)))));
-
-        this.registerRecipe(new ShapelessRecipe("craft_wax_copper", 0, new ItemBlock(Block.get(BlockID.WAXED_COPPER)), Arrays.asList(Item.get(ItemID.HONEYCOMB), new ItemBlock(Block.get(BlockID.COPPER_BLOCK)))));
-        this.registerRecipe(new ShapelessRecipe("craft_wax_cut_copper", 0, new ItemBlock(Block.get(BlockID.WAXED_COPPER)), Arrays.asList(Item.get(ItemID.HONEYCOMB), new ItemBlock(Block.get(BlockID.CUT_COPPER)))));
-        this.registerRecipe(new ShapelessRecipe("craft_wax_o_copper", 0, new ItemBlock(Block.get(BlockID.WAXED_OXIDIZED_COPPER)), Arrays.asList(Item.get(ItemID.HONEYCOMB), new ItemBlock(Block.get(BlockID.OXIDIZED_COPPER)))));
-        this.registerRecipe(new ShapelessRecipe("craft_wax_oc_copper", 0, new ItemBlock(Block.get(BlockID.WAXED_OXIDIZED_CUT_COPPER)), Arrays.asList(Item.get(ItemID.HONEYCOMB), new ItemBlock(Block.get(BlockID.OXIDIZED_CUT_COPPER)))));
-        this.registerRecipe(new ShapelessRecipe("craft_wax_w_copper", 0, new ItemBlock(Block.get(BlockID.WAXED_WEATHERED_COPPER)), Arrays.asList(Item.get(ItemID.HONEYCOMB), new ItemBlock(Block.get(BlockID.WEATHERED_COPPER)))));
-        this.registerRecipe(new ShapelessRecipe("craft_wax_wc_copper", 0, new ItemBlock(Block.get(BlockID.WAXED_WEATHERED_CUT_COPPER)), Arrays.asList(Item.get(ItemID.HONEYCOMB), new ItemBlock(Block.get(BlockID.WEATHERED_CUT_COPPER)))));
-        this.registerRecipe(new ShapelessRecipe("craft_wax_e_copper", 0, new ItemBlock(Block.get(BlockID.WAXED_EXPOSED_COPPER)), Arrays.asList(Item.get(ItemID.HONEYCOMB), new ItemBlock(Block.get(BlockID.EXPOSED_COPPER)))));
-        this.registerRecipe(new ShapelessRecipe("craft_wax_ec_copper", 0, new ItemBlock(Block.get(BlockID.WAXED_EXPOSED_CUT_COPPER)), Arrays.asList(Item.get(ItemID.HONEYCOMB), new ItemBlock(Block.get(BlockID.EXPOSED_CUT_COPPER)))));
-
-        this.registerRecipe(new ShapelessRecipe("craft_cut_copper", 0, new ItemBlock(Block.get(BlockID.CUT_COPPER), 0, 4),
-                Arrays.asList(new ItemBlock(Block.get(BlockID.COPPER_BLOCK)), new ItemBlock(Block.get(BlockID.COPPER_BLOCK)), new ItemBlock(Block.get(BlockID.COPPER_BLOCK)), new ItemBlock(Block.get(BlockID.COPPER_BLOCK)))));
-        this.registerRecipe(new ShapelessRecipe("craft_waxed_cut_copper", 0, new ItemBlock(Block.get(BlockID.WAXED_CUT_COPPER), 0, 4),
-                Arrays.asList(new ItemBlock(Block.get(BlockID.WAXED_COPPER)), new ItemBlock(Block.get(BlockID.WAXED_COPPER)), new ItemBlock(Block.get(BlockID.WAXED_COPPER)), new ItemBlock(Block.get(BlockID.WAXED_COPPER)))));
-        this.registerRecipe(new ShapelessRecipe("craft_oxidized_cut_copper", 0, new ItemBlock(Block.get(BlockID.OXIDIZED_CUT_COPPER), 0, 4),
-                Arrays.asList(new ItemBlock(Block.get(BlockID.OXIDIZED_COPPER)), new ItemBlock(Block.get(BlockID.OXIDIZED_COPPER)), new ItemBlock(Block.get(BlockID.OXIDIZED_COPPER)), new ItemBlock(Block.get(BlockID.OXIDIZED_COPPER)))));
-        this.registerRecipe(new ShapelessRecipe("craft_weathered_cut_copper", 0, new ItemBlock(Block.get(BlockID.WEATHERED_CUT_COPPER), 0, 4),
-                Arrays.asList(new ItemBlock(Block.get(BlockID.WEATHERED_COPPER)), new ItemBlock(Block.get(BlockID.WEATHERED_COPPER)), new ItemBlock(Block.get(BlockID.WEATHERED_COPPER)), new ItemBlock(Block.get(BlockID.WEATHERED_COPPER)))));
-        this.registerRecipe(new ShapelessRecipe("craft_exposed_cut_copper", 0, new ItemBlock(Block.get(BlockID.EXPOSED_CUT_COPPER), 0, 4),
-                Arrays.asList(new ItemBlock(Block.get(BlockID.EXPOSED_COPPER)), new ItemBlock(Block.get(BlockID.EXPOSED_COPPER)), new ItemBlock(Block.get(BlockID.EXPOSED_COPPER)), new ItemBlock(Block.get(BlockID.EXPOSED_COPPER)))));
-
-
-        this.registerRecipe(new FurnaceRecipe(new ItemBlock(Block.get(BlockID.SMOOTH_BASALT)), new ItemBlock(Block.get(BlockID.BASALT))));
-        this.registerRecipe(new FurnaceRecipe(new ItemBlock(Block.get(BlockID.DEEPSLATE)), new ItemBlock(Block.get(BlockID.COBBLED_DEEPSLATE))));
-        this.registerRecipe(new FurnaceRecipe(new ItemBlock(Block.get(BlockID.CRACKED_DEEPSLATE_BRICKS)), new ItemBlock(Block.get(BlockID.DEEPSLATE_BRICKS))));
-        this.registerRecipe(new FurnaceRecipe(new ItemBlock(Block.get(BlockID.CRACKED_DEEPSLATE_TILES)), new ItemBlock(Block.get(BlockID.DEEPSLATE_TILES))));
-        this.registerRecipe(new FurnaceRecipe(new ItemBlock(Block.get(BlockID.CRACKED_POLISHED_BLACKSTONE_BRICKS)), new ItemBlock(Block.get(BlockID.POLISHED_BLACKSTONE_BRICKS))));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.IRON_INGOT), Item.get(ItemID.RAW_IRON)));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.GOLD_INGOT), Item.get(ItemID.RAW_GOLD)));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.COPPER_INGOT), Item.get(ItemID.RAW_COPPER)));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.IRON_INGOT), new ItemBlock(Block.get(BlockID.DEEPSLATE_IRON_ORE))));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.GOLD_INGOT), new ItemBlock(Block.get(BlockID.DEEPSLATE_GOLD_ORE))));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.COPPER_INGOT), new ItemBlock(Block.get(BlockID.DEEPSLATE_COPPER_ORE))));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.COAL), new ItemBlock(Block.get(BlockID.DEEPSLATE_COAL_ORE))));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.EMERALD), new ItemBlock(Block.get(BlockID.DEEPSLATE_EMERALD_ORE))));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.DIAMOND), new ItemBlock(Block.get(BlockID.DEEPSLATE_DIAMOND_ORE))));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.REDSTONE), new ItemBlock(Block.get(BlockID.DEEPSLATE_REDSTONE_ORE))));
-        this.registerRecipe(new FurnaceRecipe(Item.get(ItemID.DYE, ItemDye.LAPIS_LAZULI), new ItemBlock(Block.get(BlockID.DEEPSLATE_LAPIS_ORE))));
-
-        this.registerSmithingRecipes();
     }
 
     private void registerSmithingRecipes() {
@@ -267,7 +106,6 @@ public class CraftingManager {
         List<Map> recipes = config.getMapList("recipes");
         MainLogger.getLogger().info("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
-            top:
             try {
                 switch (Utils.toInt(recipe.get("type"))) {
                     case 0:
@@ -309,13 +147,6 @@ public class CraftingManager {
                         for (Map.Entry<String, Map<String, Object>> ingredientEntry : input.entrySet()) {
                             char ingredientChar = ingredientEntry.getKey().charAt(0);
                             Item ingredient = Item.fromJson(ingredientEntry.getValue());
-
-                            // TODO: update recipes
-                            if (ingredient.getId() == Item.PLANKS && Utils.toInt(ingredientEntry.getValue().getOrDefault("damage", 0)) == -1) {
-                                createLegacyPlanksRecipe(recipe, first);
-                                break top;
-                            }
-
                             ingredients.put(ingredientChar, ingredient);
                         }
 
@@ -326,23 +157,23 @@ public class CraftingManager {
                         resultItem = Item.fromJson(first);
                         this.registerRecipe(new ShapedRecipe(null, Utils.toInt(recipe.get("priority")), resultItem, shape, ingredients, extraResults));
                         break;
-                    case 2:
                     case 3:
                         craftingBlock = (String) recipe.get("block");
-                        if (!"furnace".equals(craftingBlock)) {
-                            // Ignore other recipes than furnaces
+                        if (!"furnace".equals(craftingBlock) && !"campfire".equals(craftingBlock)) {
                             continue;
                         }
                         Map<String, Object> resultMap = (Map) recipe.get("output");
                         resultItem = Item.fromJson(resultMap);
-                        Item inputItem;
-                        try {
-                            Map<String, Object> inputMap = (Map) recipe.get("input");
-                            inputItem = Item.fromJson(inputMap);
-                        } catch (Exception old) {
-                            inputItem = Item.get(Utils.toInt(recipe.get("inputId")), recipe.containsKey("inputDamage") ? Utils.toInt(recipe.get("inputDamage")) : -1, 1);
+                        Map<String, Object> inputMap = (Map) recipe.get("input");
+                        Item inputItem = Item.fromJson(inputMap);
+                        switch (craftingBlock) {
+                            case "furnace":
+                                this.registerRecipe(new FurnaceRecipe(resultItem, inputItem));
+                                break;
+                            case "campfire":
+                                this.registerRecipe(new CampfireRecipe(resultItem, inputItem));
+                                break;
                         }
-                        this.registerRecipe(new FurnaceRecipe(resultItem, inputItem));
                         break;
                     case 4:
                         this.registerRecipe(new MultiRecipe(UUID.fromString((String) recipe.get("uuid"))));
@@ -377,30 +208,6 @@ public class CraftingManager {
             int toItemId = ((Number) containerMix.get("outputId")).intValue();
 
             registerContainerRecipe(new ContainerRecipe(Item.get(fromItemId), Item.get(ingredient), Item.get(toItemId)));
-        }
-    }
-
-    private void createLegacyPlanksRecipe(Map<String, Object> recipe, Map<String, Object> first) {
-        List<Map> outputs = (List<Map>) recipe.get("output");
-        String[] shape = ((List<String>) recipe.get("shape")).toArray(new String[0]);
-        List<Item> extraResults = new ArrayList<>();
-        for (Map<String, Object> data : outputs) {
-            extraResults.add(Item.fromJson(data));
-        }
-        for (int planksMeta = 0; planksMeta <= 5; planksMeta++) {
-            Map<Character, Item> ingredients = new CharObjectHashMap<>();
-            Map<String, Map<String, Object>> input = (Map) recipe.get("input");
-            for (Map.Entry<String, Map<String, Object>> ingredientEntry : input.entrySet()) {
-                char ingredientChar = ingredientEntry.getKey().charAt(0);
-                ingredientEntry.getValue().put("damage", 0);
-                Item ingredient = Item.fromJson(ingredientEntry.getValue());
-                if (ingredient.getId() == Item.PLANKS) {
-                    ingredient.setDamage(planksMeta);
-                }
-                ingredients.put(ingredientChar, ingredient);
-            }
-            this.registerRecipe(
-                    new ShapedRecipe(null, Utils.toInt(recipe.get("priority")), Item.fromJson(first), shape, ingredients, extraResults));
         }
     }
 
@@ -480,7 +287,6 @@ public class CraftingManager {
         List<Item> inputList = new LinkedList<>(recipe.getIngredientsAggregate());
         map.put(getMultiItemHash(inputList), recipe);
     }
-
 
     public void registerRecipe(Recipe recipe) {
         if (recipe instanceof CraftingRecipe) {

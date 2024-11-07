@@ -579,11 +579,6 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbtBytes);
     }
 
-    public static Item fromJsonOld(Map<String, Object> data) {
-        String nbt = (String) data.getOrDefault("nbt_hex", "");
-        return get(Utils.toInt(data.get("id")), Utils.toInt(data.getOrDefault("damage", 0)), Utils.toInt(data.getOrDefault("count", 1)), nbt.isEmpty() ? new byte[0] : Utils.parseHexBinary(nbt));
-    }
-
     public static Item[] fromStringMultiple(String str) {
         String[] b = str.split(",");
         Item[] items = new Item[b.length - 1];

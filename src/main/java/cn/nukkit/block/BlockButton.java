@@ -34,12 +34,8 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isTransparent()) {
-            return false;
-        }
-
         this.setDamage(face.getIndex());
-        if (this.getSide(getFacing().getOpposite()).isTransparent()) {
+        if (!isSupportValid(this.getSide(this.getFacing().getOpposite()))) {
             return false;
         }
 
@@ -72,7 +68,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (this.getSide(getFacing().getOpposite()).isTransparent()) {
+            if (!isSupportValid(this.getSide(this.getFacing().getOpposite()))) {
                 this.level.useBreakOn(this, Item.get(Item.WOODEN_PICKAXE));
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -92,6 +88,16 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
         }
 
         return 0;
+    }
+
+    private boolean isSupportValid(Block block) {
+        if (!block.isTransparent()) {
+            return true;
+        }
+        if (this.getFacing() == BlockFace.UP) {
+            return Block.canStayOnFullSolid(block);
+        }
+        return Block.canConnectToFullSolid(block);
     }
 
     public boolean isActivated() {

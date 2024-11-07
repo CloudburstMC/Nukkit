@@ -449,7 +449,7 @@ class Blocks {
         list[QUARTZ_BRICKS] = BlockQuartzBricks.class; //559
         //
         list[POWDER_SNOW] = BlockPowderSnow.class; // 561
-        //list[SCULK_SENSOR] = BlockSculkSensor.class; // 562
+        list[SCULK_SENSOR] = BlockSculkSensor.class; // 562
         list[POINTED_DRIPSTONE] = BlockPointedDripstone.class; // 563
         //
         list[COPPER_ORE] = BlockOreCopper.class; //566
@@ -594,28 +594,28 @@ class Blocks {
         list[RAW_GOLD_BLOCK] = BlockRawGold.class; //708
         list[INFESTED_DEEPSLATE] = BlockInfestedDeepslate.class; //709
         //
-        //list[SCULK] = .class; //713
-        //list[SCULK_VEIN] = .class; //714
-        //list[SCULK_CATALYST] = .class; //715
-        //list[SCULK_SHRIEKER] = .class; //716
+        list[SCULK] = BlockSculk.class; //713
+        //list[SCULK_VEIN] = BlockSculkVein.class; //714
+        list[SCULK_CATALYST] = BlockSculkCatalyst.class; //715
+        list[SCULK_SHRIEKER] = BlockSculkShrieker.class; //716
         //
-        //list[REINFORCED_DEEPSLATE] = .class; //721
+        list[REINFORCED_DEEPSLATE] = BlockReinforcedDeeplsate.class; //721
         //
-        //list[FROG_SPAWN] = .class; //723
-        //list[PEARLESCENT_FROGLIGHT] = .class; //724
-        //list[VERDANT_FROGLIGHT] = .class; //725
-        //list[OCHRE_FROGLIGHT] = .class; //726
-        //list[MANGROVE_LEAVES] = .class; //727
+        list[FROG_SPAWN] = BlockFrogspawn.class; //723
+        list[PEARLESCENT_FROGLIGHT] = BlockFroglightPearlescent.class; //724
+        list[VERDANT_FROGLIGHT] = BlockFroglightVerdant.class; //725
+        list[OCHRE_FROGLIGHT] = BlockFroglightOchre.class; //726
+        //list[MANGROVE_LEAVES] = BlockLeavesMangrove.class; //727
         list[MUD] = BlockMud.class; //728
-        //list[MANGROVE_PROPAGULE] = .class; //729
+        list[MANGROVE_PROPAGULE] = BlockMangrovePropagule.class; //729
         list[MUD_BRICKS] = BlockMudBrick.class; //730
         list[PACKED_MUD] = BlockPackedMud.class; //732
         list[MUD_BRICK_SLAB] = BlockMudBrickSlab.class; //733
         list[MUD_BRICK_DOUBLE_SLAB] = BlockDoubleMudBrickSlab.class; //734
         list[MUD_BRICK_STAIRS] = BlockMudBrickStairs.class; //735
         list[MUD_BRICK_WALL] = BlockMudBrickWall.class; //736
-        //list[MANGROVE_ROOTS] = .class; //737
-        //list[MUDDY_MANGROVE_ROOTS] = .class; //738
+        list[MANGROVE_ROOTS] = BlockMangroveRoots.class; //737
+        //list[MUDDY_MANGROVE_ROOTS] = BlockMangroveRootsMuddy.class; //738
         //list[MANGROVE_LOG] = .class; //739
         //list[STRIPPED_MANGROVE_LOG] = .class; //740
         //list[MANGROVE_PLANKS] = .class; //741

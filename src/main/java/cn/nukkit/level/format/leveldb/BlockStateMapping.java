@@ -67,6 +67,11 @@ public class BlockStateMapping {
         updaters.add(BlockStateUpdater_1_20_50.INSTANCE);
         updaters.add(BlockStateUpdater_1_20_60.INSTANCE);
         updaters.add(BlockStateUpdater_1_20_70.INSTANCE);
+        updaters.add(BlockStateUpdater_1_20_80.INSTANCE);
+        updaters.add(BlockStateUpdater_1_21_0.INSTANCE);
+        updaters.add(BlockStateUpdater_1_21_10.INSTANCE);
+        updaters.add(BlockStateUpdater_1_21_20.INSTANCE);
+        updaters.add(BlockStateUpdater_1_21_30.INSTANCE);
         updaters.add(BlockStateUpdaterVanilla.INSTANCE);
 
         boolean chunkerSupport = Boolean.parseBoolean(System.getProperty("leveldb-chunker"));

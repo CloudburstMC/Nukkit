@@ -39,7 +39,7 @@ public class BlockTripWireHook extends BlockFlowable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!this.getSide(this.getFacing().getOpposite()).isNormalBlock()) {
+            if (!isSupportValid(this.getSide(this.getFacing().getOpposite()))) {
                 this.level.useBreakOn(this);
             }
 
@@ -54,12 +54,16 @@ public class BlockTripWireHook extends BlockFlowable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (!this.getSide(face.getOpposite()).isNormalBlock() || face == BlockFace.DOWN || face == BlockFace.UP) {
+        if (face == BlockFace.DOWN || face == BlockFace.UP) {
             return false;
         }
 
         if (face.getAxis().isHorizontal()) {
             this.setFace(face);
+        }
+
+        if (!isSupportValid(this.getSide(this.getFacing().getOpposite()))) {
+            return false;
         }
 
         this.level.setBlock(this, this);
@@ -68,6 +72,10 @@ public class BlockTripWireHook extends BlockFlowable {
             this.calculateState(false, false, -1, null);
         }
         return true;
+    }
+
+    private static boolean isSupportValid(Block block) {
+        return !block.isTransparent() || Block.canConnectToFullSolid(block);
     }
 
     @Override

@@ -65,7 +65,7 @@ public class BlockSlabWood extends BlockSlab {
     @Override
     public Item toItem() {
         int damage = this.getDamage() & 0x07;
-        return new ItemBlock(Block.get(this.getId(),damage ), damage);
+        return new ItemBlock(Block.get(this.getId(), damage), damage);
     }
 
     @Override

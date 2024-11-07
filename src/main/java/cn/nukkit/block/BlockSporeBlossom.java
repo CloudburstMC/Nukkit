@@ -32,7 +32,7 @@ public class BlockSporeBlossom extends BlockTransparent {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (block.up().isSolid()) {
+        if (Block.canConnectToFullSolid(this.up())) {
             return super.place(item, block, target, face, fx, fy, fz, player);
         }
         return false;
@@ -67,7 +67,7 @@ public class BlockSporeBlossom extends BlockTransparent {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             this.getLevel().useBreakOn(this, null, null, true);
-        } else if (type == Level.BLOCK_UPDATE_NORMAL && !this.up().isSolid()) {
+        } else if (type == Level.BLOCK_UPDATE_NORMAL && !Block.canConnectToFullSolid(this.up())) {
             this.getLevel().scheduleUpdate(this, 1);
         }
         return type;

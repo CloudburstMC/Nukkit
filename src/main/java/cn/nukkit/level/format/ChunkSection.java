@@ -83,4 +83,8 @@ public interface ChunkSection {
     void writeTo(BinaryStream stream);
 
     ChunkSection copy();
+
+    default ChunkSection copyForChunkSending() {
+        return copy();
+    }
 }

@@ -384,6 +384,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
         return false;
     }
 
+    @Override
     public ChunkSection copy() {
         return new ChunkSection(
                 this.y,
@@ -393,6 +394,19 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
                 this.compressedLight == null ? null : this.compressedLight.clone(),
                 this.hasBlockLight,
                 this.hasSkyLight
+        );
+    }
+
+    @Override
+    public ChunkSection copyForChunkSending() {
+        return new ChunkSection(
+                this.y,
+                this.storage.copy(),
+                null,
+                null,
+                null,
+                false,
+                false
         );
     }
 }

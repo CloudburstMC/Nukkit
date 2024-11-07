@@ -86,7 +86,7 @@ public class BlockLever extends BlockFlowable implements Faceable {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
             int face = this.isPowerOn() ? this.getDamage() ^ 0x08 : this.getDamage();
             BlockFace faces = LeverOrientation.byMetadata(face).getFacing().getOpposite();
-            if (!this.getSide(faces).isSolid()) {
+            if (!isSupportValid(this.getSide(faces))) {
                 this.level.useBreakOn(this);
             }
         }
@@ -95,12 +95,12 @@ public class BlockLever extends BlockFlowable implements Faceable {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target.isNormalBlock()) {
-            this.setDamage(LeverOrientation.forFacings(face, player.getHorizontalFacing()).getMetadata());
-            this.getLevel().setBlock(block, this, true, true);
-            return true;
+        LeverOrientation faces = LeverOrientation.forFacings(face, player.getHorizontalFacing());
+        this.setDamage(faces.getMetadata());
+        if (!isSupportValid(this.getSide(faces.facing.getOpposite()))) {
+            return false;
         }
-        return false;
+        return this.getLevel().setBlock(block, this, true, true);
     }
 
     @Override
@@ -112,6 +112,16 @@ public class BlockLever extends BlockFlowable implements Faceable {
             this.level.updateAround(this.getSideVec(face.getOpposite()));
         }
         return true;
+    }
+
+    private boolean isSupportValid(Block block) {
+        if (!block.isTransparent()) {
+            return true;
+        }
+        if (BlockFace.fromIndex(isPowerOn() ? getDamage() ^ 0x08 : getDamage()) == BlockFace.DOWN) {
+            return Block.canStayOnFullSolid(block);
+        }
+        return Block.canConnectToFullSolid(block);
     }
 
     @Override

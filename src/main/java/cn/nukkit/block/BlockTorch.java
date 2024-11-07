@@ -59,12 +59,8 @@ public class BlockTorch extends BlockFlowable implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            Block below = this.down();
             int side = this.getDamage();
-            Block block = this.getSide(BlockFace.fromIndex(FACES_2[side]));
-            int id = block.getId();
-
-            if ((block.isTransparent() && !(side == 0 && (below instanceof BlockFence || below.getId() == COBBLE_WALL))) && id != GLASS && id != STAINED_GLASS) {
+            if ((side != 0 && !Block.canConnectToFullSolid(this.getSide(BlockFace.fromIndex(FACES_2[side])))) || (side == 0 && !isSupportValidBelow())) {
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }
@@ -80,20 +76,27 @@ public class BlockTorch extends BlockFlowable implements Faceable {
         }
 
         int side = FACES[face.getIndex()];
-        int bid = this.getSide(BlockFace.fromIndex(FACES_2[side])).getId();
-        if ((!target.isTransparent() || bid == GLASS || bid == STAINED_GLASS) && face != BlockFace.DOWN) {
-            this.setDamage(side);
-            this.getLevel().setBlock(block, this, true, true);
-            return true;
+        if (face != BlockFace.UP) {
+            if (Block.canConnectToFullSolid(this.getSide(BlockFace.fromIndex(FACES_2[side])))) {
+                this.setDamage(side);
+                return this.getLevel().setBlock(this, this, true, true);
+            }
+            return false;
         }
 
-        Block below = this.down();
-        if (!below.isTransparent() || below instanceof BlockFence || below.getId() == COBBLE_WALL || below.getId() == GLASS || below.getId() == STAINED_GLASS) {
+        if (isSupportValidBelow()) {
             this.setDamage(0);
-            this.getLevel().setBlock(block, this, true, true);
-            return true;
+            return this.getLevel().setBlock(this, this, true, true);
         }
         return false;
+    }
+
+    private boolean isSupportValidBelow() {
+        Block block = this.down();
+        if (!block.isTransparent() || block.isNarrowSurface()) {
+            return true;
+        }
+        return Block.canStayOnFullSolid(block);
     }
 
     @Override

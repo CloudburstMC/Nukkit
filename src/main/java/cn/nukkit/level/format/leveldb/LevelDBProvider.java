@@ -56,6 +56,7 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import static cn.nukkit.level.format.leveldb.LevelDBConstants.*;
 
@@ -805,11 +806,16 @@ public class LevelDBProvider implements LevelProvider {
         this.closed = true;
         this.level = null;
         this.executor.shutdown();
+        try {
+            this.executor.awaitTermination(1, TimeUnit.DAYS);
+        } catch (InterruptedException e) {
+            Server.getInstance().getLogger().error("Stopping LevelDB Executor interrupted", e);
+        }
 
         try {
             this.db.close();
         } catch (IOException e) {
-            throw new RuntimeException("Can not close database", e);
+            Server.getInstance().getLogger().error("Can not close LevelDB database", e);
         }
     }
 

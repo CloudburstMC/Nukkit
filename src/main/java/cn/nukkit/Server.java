@@ -904,8 +904,8 @@ public class Server {
                 nameLookup.close();
             }
 
-            this.getLogger().debug("Stopping Watchdog...");
             if (this.watchdog != null) {
+                this.getLogger().debug("Stopping Watchdog...");
                 this.watchdog.kill();
             }
         } catch (Exception e) {
