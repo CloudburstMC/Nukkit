@@ -3,25 +3,20 @@
 # Requires Docker v17.05
 
 # Use OpenJDK JDK image for intermiediate build
-FROM openjdk:8-jdk-slim AS build
+FROM eclipse-temurin:8-jdk-jammy AS build
 
 # Build from source and create artifact
 WORKDIR /src
 
-COPY gradlew *.gradle.kts .gitmodules /src/
+COPY gradlew *.gradle.kts /src/
 COPY src /src/src
 COPY .git /src/.git
 COPY gradle /src/gradle
 
-RUN apt-get clean \
-    && apt-get update \
-    && apt install git -y
-RUN git submodule update --init
 RUN ./gradlew shadowJar
 
 # Use OpenJDK JRE image for runtime
-FROM openjdk:8-jre-slim AS run
-LABEL maintainer="Micheal Waltz <dockerfiles@ecliptik.com>"
+FROM eclipse-temurin:8-jdk-jammy AS run
 
 # Copy artifact from build image
 COPY --from=build /src/target/nukkit-1.0-SNAPSHOT.jar /app/nukkit.jar
@@ -34,7 +29,8 @@ RUN useradd --user-group \
             minecraft
 
 # Ports
-EXPOSE 19132
+EXPOSE 19132/tcp
+EXPOSE 19132/udp
 
 RUN mkdir /data && mkdir /home/minecraft
 RUN chown -R minecraft:minecraft /app /data /home/minecraft
@@ -50,4 +46,4 @@ WORKDIR /data
 
 # Run app
 ENTRYPOINT ["java"]
-CMD [ "-jar", "/app/nukkit.jar" ]
+CMD [ "-jar", "/app/nukkit.jar", "--language", "eng" ]

@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
 *.java text=auto eol=lf
+
+gradlew text eol=lf
