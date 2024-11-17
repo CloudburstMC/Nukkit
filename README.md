@@ -28,7 +28,6 @@ Compile Nukkit
 -------------
 - `git clone https://github.com/CloudburstMC/Nukkit`
 - `cd Nukkit`
-- `git submodule update --init`
 - `./gradlew shadowJar`
 
 The compiled JAR can be found in the `target/` directory.
