@@ -63,6 +63,7 @@ import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.annotation.Nullable;
 import java.lang.ref.SoftReference;
 import java.util.*;
 import java.util.concurrent.*;
@@ -2822,6 +2823,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         return chunk;
     }
 
+    @Nullable
     public BaseFullChunk getChunkIfLoaded(int chunkX, int chunkZ) {
         return this.provider.getLoadedChunk(Level.chunkHash(chunkX, chunkZ));
     }

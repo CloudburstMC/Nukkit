@@ -5,7 +5,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 
 /**
- * Event for Leaves decay.
+ * Event called before checking nearby logs or making leaves decay.
  * @author MagicDroidX
  */
 public class LeavesDecayEvent extends BlockEvent implements Cancellable {

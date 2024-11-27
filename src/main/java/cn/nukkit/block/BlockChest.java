@@ -66,14 +66,16 @@ public class BlockChest extends BlockTransparentMeta implements Faceable {
         BlockEntityChest chest = null;
         this.setDamage(Block.FACES2534[player != null ? player.getDirection().getHorizontalIndex() : 0]);
 
-        for (int side = 2; side <= 5; ++side) {
-            if ((this.getDamage() == 4 || this.getDamage() == 5) && (side == 4 || side == 5)) {
+        for (BlockFace side : BlockFace.Plane.HORIZONTAL) {
+            if ((this.getDamage() == 4 || this.getDamage() == 5) && (side == BlockFace.WEST || side == BlockFace.EAST)) {
                 continue;
-            } else if ((this.getDamage() == 3 || this.getDamage() == 2) && (side == 2 || side == 3)) {
+            } else if ((this.getDamage() == 3 || this.getDamage() == 2) && (side == BlockFace.NORTH || side == BlockFace.SOUTH)) {
                 continue;
             }
-            Block c = this.getSide(BlockFace.fromIndex(side));
-            if (c instanceof BlockChest && c.getDamage() == this.getDamage()) {
+            Block c = this.getSide(side);
+            if (c instanceof BlockChest &&
+                    (c.getDamage() == this.getDamage() || (c.getDamage() == 0 && this.getDamage() == 2))) { // leveldb states, idk
+
                 BlockEntity blockEntity = this.getLevel().getBlockEntity(c);
                 if (blockEntity instanceof BlockEntityChest && !((BlockEntityChest) blockEntity).isPaired()) {
                     chest = (BlockEntityChest) blockEntity;

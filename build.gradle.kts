@@ -115,6 +115,16 @@ tasks {
         archiveClassifier.set("")
 
         exclude("javax/annotation/**")
+
+        // These platforms are not popular, make the jar a bit smaller by not including optional Snappy support
+        exclude("org/xerial/snappy/native/AIX/**")
+        exclude("org/xerial/snappy/native/FreeBSD/**")
+        exclude("org/xerial/snappy/native/SunOS/**")
+        exclude("org/xerial/snappy/native/Linux/loongarch64/**")
+        exclude("org/xerial/snappy/native/Linux/ppc/**")
+        exclude("org/xerial/snappy/native/Linux/ppc64/**")
+        exclude("org/xerial/snappy/native/Linux/ppc64le/**")
+        exclude("org/xerial/snappy/native/Linux/s390x/**")
     }
 
     runShadow {

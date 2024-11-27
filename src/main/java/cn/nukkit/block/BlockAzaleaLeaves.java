@@ -61,11 +61,6 @@ public class BlockAzaleaLeaves extends BlockLeaves {
     }
 
     @Override
-    protected void setOnDecayDamage() {
-        this.setCheckDecay(false);
-    }
-
-    @Override
     protected boolean canDropApple() {
         return false;
     }

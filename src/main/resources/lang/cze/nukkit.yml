@@ -24,6 +24,8 @@ network:
  batch-threshold: 256
  #Compression level používaný Zlib při odesílání dávkových paketů. Vyšší = více CPU, méně využití šířky pásma
  compression-level: 5
+ #Enable high performance packet compression using Snappy (experimental)
+ compression-use-snappy: false
  #Enable network encryption
  encryption: true
 

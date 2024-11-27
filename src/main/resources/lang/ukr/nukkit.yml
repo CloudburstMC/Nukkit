@@ -29,6 +29,8 @@ network:
  #Рівень стискання, який використовує Zlib при відправленні пакетів
  #Чим більше значення - тим більше навантаження на процесор, але менше навантаження на мережу
  compression-level: 5
+ #Enable high performance packet compression using Snappy (experimental)
+ compression-use-snappy: false
  #Enable network encryption
  encryption: true
 

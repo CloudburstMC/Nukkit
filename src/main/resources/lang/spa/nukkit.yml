@@ -23,6 +23,8 @@ network:
  batch-threshold: 256
  #Nivel de compresion usada para el envió de paquetes. Alta = más CPU, menos banda ancha
  compression-level: 5
+ #Enable high performance packet compression using Snappy (experimental)
+ compression-use-snappy: false
  #Enable network encryption
  encryption: true
 

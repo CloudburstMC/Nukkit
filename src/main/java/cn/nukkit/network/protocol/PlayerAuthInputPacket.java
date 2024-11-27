@@ -35,6 +35,7 @@ public class PlayerAuthInputPacket extends DataPacket {
     private Vector2f vehicleRotation;
     private Vector2f interactRotation;
     private Vector3f cameraOrientation;
+    private Vector2f rawMoveVector;
 
     @Override
     public byte pid() {
@@ -92,6 +93,7 @@ public class PlayerAuthInputPacket extends DataPacket {
 
         this.analogMoveVector = this.getVector2f();
         this.cameraOrientation = this.getVector3f();
+        this.rawMoveVector = this.getVector2f();
     }
 
     @Override

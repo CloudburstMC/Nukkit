@@ -44,7 +44,9 @@ public class BlockTrappedChest extends BlockChest {
                 continue;
             }
             Block c = this.getSide(side);
-            if (c instanceof BlockTrappedChest && c.getDamage() == this.getDamage()) {
+            if (c instanceof BlockTrappedChest &&
+                    (c.getDamage() == this.getDamage() || (c.getDamage() == 0 && this.getDamage() == 2))) { // leveldb states, idk
+
                 BlockEntity blockEntity = this.getLevel().getBlockEntity(c);
                 if (blockEntity instanceof BlockEntityChest && !((BlockEntityChest) blockEntity).isPaired()) {
                     chest = (BlockEntityChest) blockEntity;

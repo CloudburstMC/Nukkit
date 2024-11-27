@@ -16,6 +16,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.Level;
+import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.potion.Effect;
@@ -126,7 +127,7 @@ public class BlockFire extends BlockFlowable {
                             this.getLevel().canBlockSeeSky(this.west()) ||
                             this.getLevel().canBlockSeeSky(this.south()) ||
                             this.getLevel().canBlockSeeSky(this.north()))
-                    ) {
+            ) {
 
                 this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
             }
@@ -158,12 +159,14 @@ public class BlockFire extends BlockFlowable {
 
                 //TODO: decrease the o if the rainfall values are high
 
-                this.tryToCatchBlockOnFire(this.east(), 300 + o, meta);
-                this.tryToCatchBlockOnFire(this.west(), 300 + o, meta);
-                this.tryToCatchBlockOnFire(this.down(), 250 + o, meta);
-                this.tryToCatchBlockOnFire(this.up(), 250 + o, meta);
-                this.tryToCatchBlockOnFire(this.south(), 300 + o, meta);
-                this.tryToCatchBlockOnFire(this.north(), 300 + o, meta);
+                this.tryToCatchBlockOnFire(this.getSideIfLoaded(BlockFace.EAST), 300 + o, meta);
+                this.tryToCatchBlockOnFire(this.getSideIfLoaded(BlockFace.WEST), 300 + o, meta);
+                this.tryToCatchBlockOnFire(this.getSideIfLoaded(BlockFace.DOWN), 250 + o, meta);
+                this.tryToCatchBlockOnFire(this.getSideIfLoaded(BlockFace.UP), 250 + o, meta);
+                this.tryToCatchBlockOnFire(this.getSideIfLoaded(BlockFace.SOUTH), 300 + o, meta);
+                this.tryToCatchBlockOnFire(this.getSideIfLoaded(BlockFace.NORTH), 300 + o, meta);
+
+                int dif = 40 + this.getLevel().getServer().getDifficulty() * 7;
 
                 for (int x = (int) (this.x - 1); x <= (int) (this.x + 1); ++x) {
                     for (int z = (int) (this.z - 1); z <= (int) (this.z + 1); ++z) {
@@ -175,11 +178,16 @@ public class BlockFire extends BlockFlowable {
                                     k += (y - (this.y + 1)) * 100;
                                 }
 
-                                Block block = this.getLevel().getBlock(x, y, z);
+                                FullChunk chunk = this.getLevel().getChunkIfLoaded(x >> 4, z >> 4);
+                                if (chunk == null) {
+                                    continue;
+                                }
+
+                                Block block = this.getLevel().getBlock(chunk, x, y, z, false);
                                 int chance = getChanceOfNeighborsEncouragingFire(block);
 
                                 if (chance > 0) {
-                                    int t = (chance + 40 + this.getLevel().getServer().getDifficulty() * 7) / (meta + 30);
+                                    int t = (chance + dif) / (meta + 30);
 
                                     //TODO: decrease the t if the rainfall values are high
 
@@ -210,8 +218,12 @@ public class BlockFire extends BlockFlowable {
     }
 
     private void tryToCatchBlockOnFire(Block block, int bound, int damage) {
-        if (Utils.random.nextInt(bound) < block.getBurnAbility()) {
+        int burnAbility = block.getBurnAbility();
+        if (burnAbility == 0) {
+            return;
+        }
 
+        if (Utils.random.nextInt(bound) < burnAbility) {
             if (Utils.random.nextInt(damage + 10) < 5) {
                 int meta = damage + (Utils.random.nextInt(5) >> 2);
 
@@ -246,12 +258,12 @@ public class BlockFire extends BlockFlowable {
             return 0;
         } else {
             int chance = 0;
-            chance = Math.max(chance, block.east().getBurnChance());
-            chance = Math.max(chance, block.west().getBurnChance());
-            chance = Math.max(chance, block.down().getBurnChance());
-            chance = Math.max(chance, block.up().getBurnChance());
-            chance = Math.max(chance, block.south().getBurnChance());
-            chance = Math.max(chance, block.north().getBurnChance());
+            chance = Math.max(chance, block.getSideIfLoaded(BlockFace.EAST).getBurnChance());
+            chance = Math.max(chance, block.getSideIfLoaded(BlockFace.WEST).getBurnChance());
+            chance = Math.max(chance, block.getSideIfLoaded(BlockFace.DOWN).getBurnChance());
+            chance = Math.max(chance, block.getSideIfLoaded(BlockFace.UP).getBurnChance());
+            chance = Math.max(chance, block.getSideIfLoaded(BlockFace.SOUTH).getBurnChance());
+            chance = Math.max(chance, block.getSideIfLoaded(BlockFace.NORTH).getBurnChance());
             return chance;
         }
     }

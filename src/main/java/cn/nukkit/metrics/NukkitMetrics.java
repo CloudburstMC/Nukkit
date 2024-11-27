@@ -40,7 +40,7 @@ public class NukkitMetrics {
         if (enabled) {
             Metrics metrics = new Metrics("Nukkit", serverUUID, logFailedRequests, server.getLogger());
 
-            metrics.addCustomChart(new Metrics.SingleLineChart("players", () -> server.getOnlinePlayers().size()));
+            metrics.addCustomChart(new Metrics.SingleLineChart("players", server::getOnlinePlayersCount));
             metrics.addCustomChart(new Metrics.SimplePie("codename", server::getCodename));
             metrics.addCustomChart(new Metrics.SimplePie("minecraft_version", server::getVersion));
             metrics.addCustomChart(new Metrics.SimplePie("nukkit_version", server::getNukkitVersion));

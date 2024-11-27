@@ -72,7 +72,7 @@ public abstract class ContainerInventory extends BaseInventory {
             float averageCount = 0;
 
             for (int slot = 0; slot < inv.getSize(); ++slot) {
-                Item item = inv.getItem(slot);
+                Item item = inv.getItemFast(slot);
 
                 if (item.getId() != 0) {
                     averageCount += (float) item.getCount() / (float) Math.min(inv.getMaxStackSize(), item.getMaxStackSize());
