@@ -30,13 +30,7 @@ dependencies {
     api(libs.guava)
     api(libs.gson)
     api(libs.snakeyaml)
-    api(libs.leveldb)
-    api(libs.leveldbjni) {
-        exclude(group = "com.google.guava", module = "guava")
-        exclude(group = "io.netty", module = "netty-buffer")
-        exclude(group = "org.iq80.snappy", module = "snappy")
-        exclude(group = "org.iq80.leveldb", module = "leveldb")
-    }
+    api(libs.bundles.leveldb)
     api(libs.snappy)
     api(libs.jwt)
     api(libs.bundles.terminal)
@@ -46,10 +40,7 @@ dependencies {
     api(libs.lmbda) {
         exclude(group = "org.checkerframework", module = "checker-qual")
     }
-    api(libs.noise) {
-        exclude(group = "net.daporkchop.lib", module = "common")
-        exclude(group = "net.daporkchop.lib", module = "math")
-    }
+    api(libs.noise)
     compileOnly(libs.lombok)
     annotationProcessor(libs.lombok)
 
@@ -60,7 +51,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(11))
     }
 }
 

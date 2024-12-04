@@ -33,9 +33,6 @@ import it.unimi.dsi.fastutil.longs.Long2ObjectMaps;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
-import net.daporkchop.ldbjni.DBProvider;
-import net.daporkchop.ldbjni.LevelDB;
-import net.daporkchop.lib.natives.FeatureBuilder;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
@@ -44,6 +41,7 @@ import org.iq80.leveldb.CompressionType;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.WriteBatch;
+import org.iq80.leveldb.impl.Iq80DBFactory;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -77,8 +75,6 @@ public class LevelDBProvider implements LevelProvider {
 
     private volatile boolean closed;
 
-    private static final DBProvider JAVA_LDB_PROVIDER = (DBProvider) FeatureBuilder.create(LevelDBProvider.class).addJava("net.daporkchop.ldbjni.java.JavaDBProvider").build();
-
     public LevelDBProvider(Level level, String path) throws IOException {
         this.level = level;
         this.path = Paths.get(path);
@@ -93,8 +89,7 @@ public class LevelDBProvider implements LevelProvider {
                 .cacheSize(1024L * 1024L * level.getServer().getConfig("leveldb.cache-size-mb", 80))
                 .blockSize(64 * 1024);
 
-        this.db = level.getServer().getConfig("leveldb.use-native", false) ?
-                LevelDB.PROVIDER.open(dbPath.toFile(), options) : JAVA_LDB_PROVIDER.open(dbPath.toFile(), options);
+        this.db = Iq80DBFactory.factory.open(dbPath.toFile(), options);
 
         this.levelData = loadLevelData(this.path);
 
