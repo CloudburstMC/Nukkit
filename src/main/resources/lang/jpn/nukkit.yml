@@ -23,6 +23,8 @@ network:
  batch-threshold: 256
  #バッチパケットを送信するときのzlibの圧縮レベルですす。 値を大きくするとcpuに多く負荷かけ、低くすると通信量が増えます。
  compression-level: 5
+ #Enable high performance packet compression using Snappy (experimental)
+ compression-use-snappy: false
  #Enable network encryption
  encryption: true
 

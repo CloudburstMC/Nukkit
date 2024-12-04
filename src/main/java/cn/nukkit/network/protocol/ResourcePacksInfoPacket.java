@@ -3,6 +3,8 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.resourcepacks.ResourcePack;
 import lombok.ToString;
 
+import java.util.UUID;
+
 @ToString
 public class ResourcePacksInfoPacket extends DataPacket {
 
@@ -11,6 +13,8 @@ public class ResourcePacksInfoPacket extends DataPacket {
     public boolean mustAccept;
     public boolean scripting;
     public boolean hasAddonPacks;
+    public UUID worldTemplateId = new UUID(0, 0);
+    public String worldTemplateVersion = "";
     public ResourcePack[] behaviourPackEntries = ResourcePack.EMPTY_ARRAY;
     public ResourcePack[] resourcePackEntries = ResourcePack.EMPTY_ARRAY;
 
@@ -25,6 +29,8 @@ public class ResourcePacksInfoPacket extends DataPacket {
         this.putBoolean(this.mustAccept);
         this.putBoolean(this.hasAddonPacks);
         this.putBoolean(this.scripting);
+        this.putUUID(this.worldTemplateId);
+        this.putString(this.worldTemplateVersion);
 
         this.encodeResourcePacks(this.resourcePackEntries);
     }
@@ -32,7 +38,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
     private void encodeResourcePacks(ResourcePack[] packs) {
         this.putLShort(packs.length);
         for (ResourcePack entry : packs) {
-            this.putString(entry.getPackId().toString());
+            this.putUUID(entry.getPackId());
             this.putString(entry.getPackVersion());
             this.putLLong(entry.getPackSize());
             this.putString(entry.getEncryptionKey());

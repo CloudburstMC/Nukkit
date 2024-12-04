@@ -23,6 +23,8 @@ network:
  batch-threshold: 256
  #壓縮等級，等級越高，CPU佔用越高，佔用頻寬越少
  compression-level: 5
+ #Enable high performance packet compression using Snappy (experimental)
+ compression-use-snappy: false
  #Enable network encryption
  encryption: true
 

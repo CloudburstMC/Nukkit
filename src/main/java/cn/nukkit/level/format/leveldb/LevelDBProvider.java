@@ -23,6 +23,7 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.utils.BlockUpdateEntry;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.LevelException;
+import cn.nukkit.utils.MainLogger;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -488,16 +489,12 @@ public class LevelDBProvider implements LevelProvider {
     }
 
     private void saveChunkCallback(WriteBatch batch, LevelDBChunk chunk) {
-        if (this.closed) {
-            return;
-        }
-
         chunk.writeLock().lock();
         try {
             this.db.write(batch);
             batch.close();
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to close WriteBatch for " + this.getName(), e);
+        } catch (Exception e) {
+            MainLogger.getLogger().error("Exception in saveChunkCallback for " + this.getName(), e);
         } finally {
             chunk.writeLock().unlock();
         }

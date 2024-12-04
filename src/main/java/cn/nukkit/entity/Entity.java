@@ -1982,9 +1982,7 @@ public abstract class Entity extends Location implements Metadatable {
                         damage -= (damage * 0.8f);
                     } else if (floor == BlockID.BED_BLOCK || block == BlockID.BED_BLOCK) {
                         damage -= (damage * 0.5f);
-                    } else if (floor == BlockID.SWEET_BERRY_BUSH || floor == BlockID.SCAFFOLDING || block == BlockID.SWEET_BERRY_BUSH || block == BlockID.SCAFFOLDING) {
-                        damage = 0;
-                    } else if ((floor == BlockID.SLIME_BLOCK || floor == BlockID.COBWEB || block == BlockID.SLIME_BLOCK || block == BlockID.COBWEB) && !this.isSneaking()) {
+                    } else if (floor == BlockID.SLIME_BLOCK || floor == BlockID.COBWEB || floor == BlockID.SCAFFOLDING || floor == BlockID.SWEET_BERRY_BUSH) {
                         damage = 0;
                     }
 

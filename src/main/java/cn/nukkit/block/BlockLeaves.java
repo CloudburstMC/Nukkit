@@ -10,10 +10,9 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Hash;
 import cn.nukkit.utils.Utils;
-import it.unimi.dsi.fastutil.longs.LongArraySet;
-import it.unimi.dsi.fastutil.longs.LongSet;
+
+import java.util.*;
 
 /**
  * @author Angelic47
@@ -115,87 +114,25 @@ public class BlockLeaves extends BlockTransparentMeta {
 
     @Override
     public int onUpdate(int type) {
-        if (type == Level.BLOCK_UPDATE_RANDOM && !isPersistent() && !isCheckDecay()) {
+        if (type == Level.BLOCK_UPDATE_NORMAL && !isPersistent() && !isCheckDecay()) {
             setCheckDecay(true);
             getLevel().setBlock((int) this.x, (int) this.y, (int) this.z, BlockLayer.NORMAL, this, false, false, false); // No need to send this to client
+
+            return Level.BLOCK_UPDATE_NORMAL;
         } else if (type == Level.BLOCK_UPDATE_RANDOM && isCheckDecay() && !isPersistent()) {
-            this.setOnDecayDamage();
-
             LeavesDecayEvent ev = new LeavesDecayEvent(this);
-
             Server.getInstance().getPluginManager().callEvent(ev);
-            if (ev.isCancelled() || findLog(this, new LongArraySet())) {
+
+            if (ev.isCancelled() || findLog()) {
+                setCheckDecay(false);
                 getLevel().setBlock((int) this.x, (int) this.y, (int) this.z, BlockLayer.NORMAL, this, false, false, false); // No need to send this to client
             } else {
                 getLevel().useBreakOn(this);
-                return Level.BLOCK_UPDATE_NORMAL;
             }
+
+            return Level.BLOCK_UPDATE_RANDOM;
         }
         return 0;
-    }
-
-    protected void setOnDecayDamage() {
-        setDamage(getDamage() & 0x03);
-    }
-
-    private boolean findLog(Block pos, LongSet visited) {
-        return findLog(pos, visited, 0, 0, null);
-    }
-
-    private boolean findLog(Block pos, LongSet visited, Integer distance, Integer check, BlockFace fromSide) {
-        ++check;
-        long index = Hash.hashBlock((int) pos.x, (int) pos.y, (int) pos.z);
-        if (visited.contains(index)) return false;
-        if (pos.getId() == WOOD || pos.getId() == WOOD2) return true;
-        if ((pos.getId() == LEAVES || pos.getId() == LEAVES2) && distance < 6) {
-            visited.add(index);
-            int down = pos.down().getId();
-            if (down == WOOD || down == WOOD2) {
-                return true;
-            }
-            if (fromSide == null) {
-                //North, East, South, West
-                for (int side = 2; side <= 5; ++side) {
-                    if (this.findLog(pos.getSide(BlockFace.fromIndex(side)), visited, distance + 1, check, BlockFace.fromIndex(side)))
-                        return true;
-                }
-            } else { //No more loops
-                switch (fromSide) {
-                    case NORTH:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                    case SOUTH:
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                    case WEST:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.WEST), visited, distance + 1, check, fromSide))
-                            return true;
-                    case EAST:
-                        if (this.findLog(pos.getSide(BlockFace.NORTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.SOUTH), visited, distance + 1, check, fromSide))
-                            return true;
-                        if (this.findLog(pos.getSide(BlockFace.EAST), visited, distance + 1, check, fromSide))
-                            return true;
-                        break;
-                }
-            }
-        }
-        return false;
     }
 
     public boolean isCheckDecay() {
@@ -248,5 +185,39 @@ public class BlockLeaves extends BlockTransparentMeta {
     @Override
     public boolean breakWhenPushed() {
         return true;
+    }
+
+    private boolean findLog() {
+        Set<Block> visited = new HashSet<>();
+        Queue<Block> queue = new LinkedList<>();
+        Map<Block, Integer> distance = new HashMap<>();
+
+        queue.offer(this);
+        visited.add(this);
+        distance.put(this, 0);
+
+        while (!queue.isEmpty()) {
+            Block currentBlock = queue.poll();
+            int currentDistance = distance.get(currentBlock);
+
+            if (currentDistance > 4) {
+                return false;
+            }
+
+            for (BlockFace face : BlockFace.values()) {
+                Block nextBlock = currentBlock.getSideIfLoadedOrNull(face); // If side chunk not loaded, do not load or decay
+                if (nextBlock == null || nextBlock.getId() == LOG || nextBlock.getId() == LOG2) {
+                    return true;
+                }
+
+                if ((nextBlock.getId() == LEAVES || nextBlock.getId() == LEAVES2) && !visited.contains(nextBlock)) {
+                    queue.offer(nextBlock);
+                    visited.add(nextBlock);
+                    distance.put(nextBlock, currentDistance + 1);
+                }
+            }
+        }
+
+        return false;
     }
 }

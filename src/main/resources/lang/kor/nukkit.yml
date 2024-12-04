@@ -23,6 +23,8 @@ network:
  batch-threshold: 256
  #일괄 처리된 패킷을 전송할 때 Zlib에 사용되는 압축 수준입니다. 높을수록 더 많은 CPU 사용량으로, 적은 대역폭을 사용합니다
  compression-level: 5
+ #Enable high performance packet compression using Snappy (experimental)
+ compression-use-snappy: false
  #Enable network encryption
  encryption: true
 

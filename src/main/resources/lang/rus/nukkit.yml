@@ -29,6 +29,8 @@ network:
  #Уровень сжатия используется Zlib при отправке сжатых пакетов
  #Чем больше - тем больше нагрузка на процессор, но меньше нагрузка на сеть
  compression-level: 5
+ #Enable high performance packet compression using Snappy (experimental)
+ compression-use-snappy: false
  #Enable network encryption
  encryption: true
 

@@ -10,10 +10,12 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.LevelProvider;
 import cn.nukkit.level.persistence.PersistentDataContainer;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.nbt.tag.NumberTag;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.BatchPacket;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
@@ -131,8 +133,8 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
                         this.setChanged();
                         continue;
                     }
-                    ListTag pos = nbt.getList("Pos");
-                    if ((((NumberTag) pos.get(0)).getData().intValue() >> 4) != this.x || ((((NumberTag) pos.get(2)).getData().intValue() >> 4) != this.z)) {
+                    ListTag<? extends Tag> pos = nbt.getList("Pos");
+                    if (NukkitMath.floorDouble(((NumberTag) pos.get(0)).getData().doubleValue()) >> 4 != this.x || NukkitMath.floorDouble(((NumberTag) pos.get(2)).getData().doubleValue()) >> 4 != this.z) {
                         changed = true;
                         continue;
                     }
@@ -400,8 +402,11 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     @Override
     public BlockEntity getTile(int x, int y, int z) {
-        int capY = this.getProvider() == null ? y : y - this.getProvider().getLevel().getMinBlockY(); //TODO: better fix
-        return this.tileList != null ? this.tileList.get((z << 16) | (x << 12) | capY) : null;
+        if (this.tileList == null || this.getProvider() == null)  {
+            return null;
+        }
+        int capY = y - this.getProvider().getLevel().getMinBlockY();
+        return this.tileList.get((z << 16) | (x << 12) | capY);
     }
 
     @Override

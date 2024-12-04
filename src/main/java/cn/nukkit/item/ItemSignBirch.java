@@ -18,7 +18,7 @@ public class ItemSignBirch extends Item {
     }
 
     public ItemSignBirch(Integer meta, int count) {
-        super(BIRCH_SIGN, 0, count, "BirchSign");
+        super(BIRCH_SIGN, 0, count, "Birch Sign");
         this.block = Block.get(BlockID.BIRCH_STANDING_SIGN);
     }
 

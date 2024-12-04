@@ -86,9 +86,8 @@ public class BlockCactus extends BlockTransparentMeta {
             if (down.getId() != SAND && down.getId() != CACTUS) {
                 this.getLevel().useBreakOn(this);
             } else {
-                for (int side = 2; side <= 5; ++side) {
-                    Block block = getSide(BlockFace.fromIndex(side));
-                    if (!block.canBeFlowedInto()) {
+                for (BlockFace side : BlockFace.Plane.HORIZONTAL) {
+                    if (!getSide(side).canBeFlowedInto()) {
                         this.getLevel().useBreakOn(this);
                     }
                 }

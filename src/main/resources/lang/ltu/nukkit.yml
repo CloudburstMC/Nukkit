@@ -23,6 +23,8 @@ network:
  batch-threshold: 256
  #Suspaudimo lygis naudojant Zlib kai siunčiami suspausti paketai. Didesnė reikšmė = daugiau CPU, mažiau tinklo naudojimo
  compression-level: 5
+ #Enable high performance packet compression using Snappy (experimental)
+ compression-use-snappy: false
  #Enable network encryption
  encryption: true
 

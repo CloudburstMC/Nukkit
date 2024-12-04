@@ -23,6 +23,8 @@ network:
  batch-threshold: 256
  #Komprimierungslevel von Zlib wenn eine Menge Pakete/Daten gesendet werden. Höher = mehr CPU, weniger Bandbreitennutzung
  compression-level: 5
+ #Enable high performance packet compression using Snappy (experimental)
+ compression-use-snappy: false
  #Enable network encryption
  encryption: true
 
