@@ -75,6 +75,7 @@ public class BlockBed extends BlockTransparentMeta implements Faceable {
                 }
 
                 Explosion explosion = new Explosion(this.add(0.5, 0, 0.5), 5, this);
+                explosion.setFireSpawnChance(0.3333);
                 explosion.explodeA();
                 explosion.explodeB();
             }

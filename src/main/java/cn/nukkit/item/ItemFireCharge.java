@@ -6,7 +6,8 @@ import cn.nukkit.event.block.BlockIgniteEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ItemFireCharge extends Item {
 
@@ -54,7 +55,7 @@ public class ItemFireCharge extends Item {
 
                 if (!e.isCancelled()) {
                     level.setBlock(fire, fire, true);
-                    level.scheduleUpdate(fire, (fire.tickRate() + Utils.random.nextInt(10)));
+                    level.scheduleUpdate(fire, (fire.tickRate() + ThreadLocalRandom.current().nextInt(10)));
                     level.addSound(block, Sound.MOB_GHAST_FIREBALL);
 
                     if (!player.isCreative()) {

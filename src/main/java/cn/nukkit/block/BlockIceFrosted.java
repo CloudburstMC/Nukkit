@@ -5,7 +5,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockIceFrosted extends BlockTransparentMeta {
 
@@ -46,7 +47,7 @@ public class BlockIceFrosted extends BlockTransparentMeta {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         boolean success = super.place(item, block, target, face, fx, fy, fz, player);
         if (success) {
-            level.scheduleUpdate(this, Utils.random.nextInt(20, 40));
+            level.scheduleUpdate(this, ThreadLocalRandom.current().nextInt(20, 40));
         }
         return success;
     }
@@ -61,10 +62,10 @@ public class BlockIceFrosted extends BlockTransparentMeta {
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_SCHEDULED) {
             int time = level.getTime() % Level.TIME_FULL;
-            if (((time < 13184 || time > 22800) || this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 12) && (Utils.random.nextInt(3) == 0 || countNeighbors() < 4)) {
+            if (((time < 13184 || time > 22800) || this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 12) && (ThreadLocalRandom.current().nextInt(3) == 0 || countNeighbors() < 4)) {
                 slightlyMelt(true);
             } else {
-                level.scheduleUpdate(this, Utils.random.nextInt(20, 40));
+                level.scheduleUpdate(this, ThreadLocalRandom.current().nextInt(20, 40));
             }
         } else if (type == Level.BLOCK_UPDATE_NORMAL) {
             if (countNeighbors() < 2) {
@@ -72,7 +73,7 @@ public class BlockIceFrosted extends BlockTransparentMeta {
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
             int time = level.getTime() % Level.TIME_FULL;
-            if (((time < 13184 || time > 22800) || this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 12) && (Utils.random.nextInt(3) == 0 || countNeighbors() < 4)) {
+            if (((time < 13184 || time > 22800) || this.getLevel().getBlockLightAt((int) this.x, (int) this.y, (int) this.z) >= 12) && (ThreadLocalRandom.current().nextInt(3) == 0 || countNeighbors() < 4)) {
                 slightlyMelt(true);
             }
         }
@@ -99,7 +100,7 @@ public class BlockIceFrosted extends BlockTransparentMeta {
         if (age < 3) {
             setDamage(age + 1);
             level.setBlock(this, this, true);
-            level.scheduleUpdate(level.getBlock(this), Utils.random.nextInt(20, 40));
+            level.scheduleUpdate(level.getBlock(this), ThreadLocalRandom.current().nextInt(20, 40));
         } else {
             level.setBlock(this, get(WATER), true);
             if (isSource) {

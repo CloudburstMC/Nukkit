@@ -41,7 +41,6 @@ import cn.nukkit.plugin.Plugin;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.ChunkException;
 import cn.nukkit.utils.MainLogger;
-import cn.nukkit.utils.Utils;
 import com.google.common.collect.Iterables;
 
 import java.lang.reflect.Constructor;
@@ -1529,7 +1528,7 @@ public abstract class Entity extends Location implements Metadatable {
                 direction = 5;
             }
 
-            double force = Utils.random.nextDouble() * 0.2 + 0.1;
+            double force = ThreadLocalRandom.current().nextDouble() * 0.2 + 0.1;
 
             if (direction == 0) {
                 this.motionX = -force;
@@ -2690,6 +2689,10 @@ public abstract class Entity extends Location implements Metadatable {
             return true;
         }
         return false;
+    }
+
+    protected boolean removeDataProperty(int id) {
+        return this.dataProperties.remove(id) != null;
     }
 
     protected boolean setDataPropertyAndSendOnlyToSelf(EntityData data) {

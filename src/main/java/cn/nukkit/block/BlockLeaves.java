@@ -13,6 +13,7 @@ import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Utils;
 
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Angelic47
@@ -92,17 +93,17 @@ public class BlockLeaves extends BlockTransparentMeta {
             if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
                 return new Item[]{this.toItem()};
             }
-            if (this.canDropApple() && Utils.random.nextInt(200) == 0) {
+            if (this.canDropApple() && ThreadLocalRandom.current().nextInt(200) == 0) {
                 return new Item[]{
                         Item.get(Item.APPLE)
                 };
             }
-            if (Utils.random.nextInt(20) == 0) {
+            if (ThreadLocalRandom.current().nextInt(20) == 0) {
                 if (Utils.rand()) {
                     return new Item[]{
-                            Item.get(Item.STICK, 0, Utils.random.nextInt(1, 2))
+                            Item.get(Item.STICK, 0, ThreadLocalRandom.current().nextInt(1, 2))
                     };
-                } else if ((this.getDamage() & 0x03) != JUNGLE || Utils.random.nextInt(20) == 0) {
+                } else if ((this.getDamage() & 0x03) != JUNGLE || ThreadLocalRandom.current().nextInt(20) == 0) {
                     return new Item[]{
                             this.getSapling()
                     };

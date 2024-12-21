@@ -24,7 +24,6 @@ import net.daporkchop.lib.noise.filter.ScaleOctavesOffsetFilter;
 import net.daporkchop.lib.random.PRandom;
 
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Nether extends Generator {
 
@@ -97,9 +96,12 @@ public class Nether extends Generator {
     @Override
     public void init(ChunkManager level, NukkitRandom random) {
         this.level = level;
-
         this.nukkitRandom = random;
         this.nukkitRandom.setSeed(this.level.getSeed());
+
+        SplittableRandom random1 = new SplittableRandom(this.level.getSeed());
+        this.localSeed1 = random1.nextLong();
+        this.localSeed2 = random1.nextLong();
 
         if (this.legacy || this.version < 2) {
             for (int i = 0; i < noiseGen.length; i++) {
@@ -112,8 +114,6 @@ public class Nether extends Generator {
         }
 
         this.nukkitRandom.setSeed(this.level.getSeed());
-        this.localSeed1 = ThreadLocalRandom.current().nextLong();
-        this.localSeed2 = ThreadLocalRandom.current().nextLong();
 
         this.biomeNoise = new SimplexF(this.nukkitRandom, 2F, 1F / 8F, 1F / 2048f);
 

@@ -8,7 +8,8 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.generator.object.ObjectTallGrass;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -43,7 +44,7 @@ public class BlockGravel extends BlockFallable {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (Utils.random.nextInt(9) == 0 && !item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
+        if (ThreadLocalRandom.current().nextInt(9) == 0 && !item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
             return new Item[]{
                     Item.get(Item.FLINT)
             };

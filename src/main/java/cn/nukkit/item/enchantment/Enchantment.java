@@ -21,10 +21,10 @@ import cn.nukkit.item.enchantment.trident.EnchantmentTridentChanneling;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentImpaling;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentLoyalty;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentRiptide;
-import cn.nukkit.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -272,8 +272,8 @@ public abstract class Enchantment implements Cloneable {
 
     public static String getRandomName() {
         HashSet<String> set = new HashSet<>();
-        while (set.size() < Utils.random.nextInt(3, 6)) {
-            set.add(Enchantment.words[Utils.random.nextInt(0, Enchantment.words.length)]);
+        while (set.size() < ThreadLocalRandom.current().nextInt(3, 6)) {
+            set.add(Enchantment.words[ThreadLocalRandom.current().nextInt(0, Enchantment.words.length)]);
         }
 
         String[] words = set.toArray(new String[0]);

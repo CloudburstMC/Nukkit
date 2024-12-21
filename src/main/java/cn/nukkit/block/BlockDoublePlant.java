@@ -8,7 +8,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -115,7 +116,7 @@ public class BlockDoublePlant extends BlockFlowable {
             switch (type) {
                 case TALL_GRASS:
                 case LARGE_FERN:
-                    boolean dropSeeds = Utils.random.nextInt(10) == 0;
+                    boolean dropSeeds = ThreadLocalRandom.current().nextInt(10) == 0;
                     if (item.isShears()) {
                         if (dropSeeds) {
                             return new Item[]{

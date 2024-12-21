@@ -11,7 +11,8 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by boybook on 2016/2/27.
@@ -39,7 +40,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
         super.initEntity();
 
         this.state = 2;
-        this.liveTime = Utils.random.nextInt(3) + 1;
+        this.liveTime = ThreadLocalRandom.current().nextInt(3) + 1;
 
         if (isEffect && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK) && (this.server.getDifficulty() >= 2)) {
             Block block = this.level.getBlock(this.chunk, this.getFloorX(), this.getFloorY(), this.getFloorZ(), true);
@@ -57,7 +58,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
 
                     if (!e.isCancelled()) {
                         level.setBlock(fire, fire, true);
-                        level.scheduleUpdate(fire, fire.tickRate() + Utils.random.nextInt(10));
+                        level.scheduleUpdate(fire, fire.tickRate() + ThreadLocalRandom.current().nextInt(10));
                     }
                 }
             }
@@ -105,7 +106,7 @@ public class EntityLightning extends Entity implements EntityLightningStrike {
             if (this.liveTime == 0) {
                 this.close();
                 return false;
-            } else if (this.state < -Utils.random.nextInt(10)) {
+            } else if (this.state < -ThreadLocalRandom.current().nextInt(10)) {
                 this.liveTime--;
                 this.state = 1;
 

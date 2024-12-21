@@ -1,7 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/11/22 by xtypr.
@@ -36,7 +37,7 @@ public class BlockBeetroot extends BlockCrops {
         if (this.getDamage() >= 0x07) {
             return new Item[]{
                     Item.get(Item.BEETROOT, 0, 1),
-                    Item.get(Item.BEETROOT_SEEDS, 0, Utils.random.nextInt(0, 4))
+                    Item.get(Item.BEETROOT_SEEDS, 0, ThreadLocalRandom.current().nextInt(0, 4))
             };
         } else {
             return new Item[]{

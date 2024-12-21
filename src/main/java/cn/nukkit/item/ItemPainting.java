@@ -13,10 +13,10 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelEventPacket;
-import cn.nukkit.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -75,7 +75,7 @@ public class ItemPainting extends Item {
             }
         }
         int direction = DIRECTION[face.getIndex() - 2];
-        EntityPainting.Motive motive = validMotives.get(Utils.random.nextInt(validMotives.size()));
+        EntityPainting.Motive motive = validMotives.get(ThreadLocalRandom.current().nextInt(validMotives.size()));
 
         Vector3 position = new Vector3(target.x + 0.5, target.y + 0.5, target.z + 0.5);
         double widthOffset = offset(motive.width);

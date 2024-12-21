@@ -23,7 +23,7 @@ public class PopulatorBamboo extends PopulatorSurfaceBlock {
 
     @Override
     protected void placeBlock(int x, int y, int z, int id, FullChunk chunk, NukkitRandom random) {
-        int height = Utils.rand(1, 10);
+        int height = Utils.rand(5, 16);
         int part = 0;
         while (part < height) {
             int yy = y + part;

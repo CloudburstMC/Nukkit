@@ -2,6 +2,7 @@ package cn.nukkit.level;
 
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockTNT;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityShulkerBox;
@@ -31,6 +32,7 @@ import it.unimi.dsi.fastutil.longs.LongArraySet;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Angelic47
@@ -49,6 +51,7 @@ public class Explosion {
     private final Object what;
     private boolean doesDamage = true;
     private double minHeight = Integer.MIN_VALUE;
+    private double fireSpawnChance;
 
     public Explosion(Position center, double size, Entity what) {
         this.level = center.getLevel();
@@ -87,6 +90,7 @@ public class Explosion {
 
         Vector3 vector = new Vector3(0, 0, 0);
         Vector3 vBlock = new Vector3(0, 0, 0);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
 
         int mRays = 15;
         for (int i = 0; i < rays; ++i) {
@@ -100,7 +104,7 @@ public class Explosion {
                         double pointerY = this.source.y;
                         double pointerZ = this.source.z;
 
-                        for (double blastForce = this.size * (Utils.random.nextInt(700, 1301)) / 1000d; blastForce > 0; blastForce -= 0.22499999999999998) {
+                        for (double blastForce = this.size * (random.nextInt(700, 1301)) / 1000d; blastForce > 0; blastForce -= stepLen * 0.75d) {
                             int x = (int) pointerX;
                             int y = (int) pointerY;
                             int z = (int) pointerZ;
@@ -203,6 +207,8 @@ public class Explosion {
 
         Item air = Item.get(Item.AIR);
         BlockEntity container;
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+
         for (Block block : this.affectedBlocks) {
             if (block.getId() == Block.TNT) {
                 ((BlockTNT) block).prime(Utils.rand(10, 30), this.what instanceof Entity ? (Entity) this.what : null);
@@ -223,7 +229,7 @@ public class Explosion {
                     }
                 }
                 container.close();
-            } else if (block.alwaysDropsOnExplosion() || Math.random() * 100 < yield) {
+            } else if (block.alwaysDropsOnExplosion() || random.nextDouble() * 100 < yield) {
                 if (this.level.getBlockIdAt((int) block.x, (int) block.y, (int) block.z) == Block.AIR) {
                     continue; // Block broken by another explosion (end crystals)
                 }
@@ -232,7 +238,11 @@ public class Explosion {
                 }
             }
 
-            this.level.setBlockAt((int) block.x, (int) block.y, (int) block.z, Block.AIR);
+            if (this.fireSpawnChance > 0 && random.nextDouble() < this.fireSpawnChance) {
+                this.level.setBlockAt((int) block.x, (int) block.y, (int) block.z, BlockID.FIRE);
+            } else {
+                this.level.setBlockAt((int) block.x, (int) block.y, (int) block.z, BlockID.AIR);
+            }
 
             Vector3 pos = new Vector3(block.x, block.y, block.z);
 
@@ -345,7 +355,7 @@ public class Explosion {
                             bb.getMinZ() + k * (bb.getMaxZ() - bb.getMinZ()) + zOffset
                     );
 
-                    if (!this.raycast(source, target)) {
+                    if (!this.raycastHit(source, target)) {
                         ++misses;
                     }
 
@@ -357,7 +367,7 @@ public class Explosion {
         return total != 0 ? (double) misses / (double) total : 0;
     }
 
-    private boolean raycast(Vector3 start, Vector3 end) {
+    private boolean raycastHit(Vector3 start, Vector3 end) {
         Vector3 current = new Vector3(start.x, start.y, start.z);
         Vector3 direction = end.subtract(start).normalize();
 
@@ -444,5 +454,13 @@ public class Explosion {
      */
     public void setMinHeight(double minHeight) {
         this.minHeight = minHeight;
+    }
+
+    /**
+     * Set chance for fire to be spawned
+     * @param fireSpawnChance 0.0 - 1.0
+     */
+    public void setFireSpawnChance(double fireSpawnChance) {
+        this.fireSpawnChance = fireSpawnChance;
     }
 }

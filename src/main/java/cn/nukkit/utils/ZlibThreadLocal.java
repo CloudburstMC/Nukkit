@@ -116,6 +116,9 @@ public final class ZlibThreadLocal implements ZlibProvider {
             int length = 0;
             while (!inflater.finished()) {
                 int i = inflater.inflate(buffer);
+                if (i == 0) {
+                    throw new IOException("Could not decompress data");
+                }
                 length += i;
                 if (maxSize > 0 && length >= maxSize) {
                     throw new IOException("Inflated data exceeds maximum size");

@@ -53,6 +53,7 @@ public abstract class BlockEntity extends Position {
     public static final String LECTERN = "Lectern";
     public static final String BLAST_FURNACE = "BlastFurnace";
     public static final String SMOKER = "Smoker";
+    public static final String CONDUIT = "Conduit";
 
     // Not a vanilla block entity
     public static final String PERSISTENT_CONTAINER = "PersistentContainer";
@@ -265,5 +266,19 @@ public abstract class BlockEntity extends Position {
 
     public boolean canSaveToStorage() {
         return true;
+    }
+
+    protected int getBlockIdIfLoaded(int bx, int by, int bz) {
+        if (by < this.level.getMinBlockY() || by > this.level.getMaxBlockY()) return 0;
+        int cx = bx >> 4;
+        int cz = bz >> 4;
+        FullChunk fullChunk = this.chunk;
+        if (fullChunk == null || cx != fullChunk.getX() || cz != fullChunk.getZ()) {
+            fullChunk = level.getChunkIfLoaded(cx, cz);
+            if (fullChunk == null) {
+                return -1;
+            }
+        }
+        return fullChunk.getBlockId(bx & 0x0f, by, bz & 0x0f);
     }
 }

@@ -7,6 +7,8 @@ import cn.nukkit.entity.data.EntityMetadata;
 import cn.nukkit.entity.mob.EntityCreeper;
 import cn.nukkit.network.protocol.*;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * DummyBossBar
  * ===============
@@ -44,7 +46,7 @@ public class DummyBossBar {
 
         public Builder(Player player) {
             this.player = player;
-            this.bossBarId = 1095216660480L + Utils.random.nextLong(0, 0x7fffffffL);
+            this.bossBarId = 1095216660480L + ThreadLocalRandom.current().nextLong(0, 0x7fffffffL);
         }
 
         public Builder text(String text) {

@@ -15,6 +15,8 @@ import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 import cn.nukkit.utils.Utils;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * Created by CreeperFace on 27. 10. 2016.
  */
@@ -111,7 +113,7 @@ public class BlockCocoa extends BlockTransparentMeta implements Faceable {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (Utils.random.nextInt(2) == 1) {
+            if (ThreadLocalRandom.current().nextInt(2) == 1) {
                 if (this.getDamage() >> 2 < 2) {
                     BlockCocoa block = (BlockCocoa) this.clone();
                     block.setDamage(block.getDamage() + 4);

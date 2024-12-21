@@ -5,6 +5,8 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.Utils;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * @author MagicDroidX
  * Nukkit Project
@@ -46,7 +48,7 @@ public class BlockOreDiamond extends BlockSolid {
             int count = 1;
             Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
             if (fortune != null && fortune.getLevel() >= 1) {
-                int i = Utils.random.nextInt(fortune.getLevel() + 2) - 1;
+                int i = ThreadLocalRandom.current().nextInt(fortune.getLevel() + 2) - 1;
 
                 if (i < 0) {
                     i = 0;

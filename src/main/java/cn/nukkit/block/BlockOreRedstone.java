@@ -6,6 +6,8 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.Utils;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * @author MagicDroidX
  * Nukkit Project
@@ -44,11 +46,11 @@ public class BlockOreRedstone extends BlockSolid {
                 return new Item[]{this.toItem()};
             }
 
-            int count = Utils.random.nextInt(2) + 4;
+            int count = ThreadLocalRandom.current().nextInt(2) + 4;
 
             Enchantment fortune = item.getEnchantment(Enchantment.ID_FORTUNE_DIGGING);
             if (fortune != null && fortune.getLevel() >= 1) {
-                count += Utils.random.nextInt(fortune.getLevel() + 1);
+                count += ThreadLocalRandom.current().nextInt(fortune.getLevel() + 1);
             }
 
             return new Item[]{

@@ -3,7 +3,8 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockSeaLantern extends BlockTransparent {
 
@@ -38,7 +39,7 @@ public class BlockSeaLantern extends BlockTransparent {
             return new Item[]{this.toItem()};
         }
         return new Item[]{
-                Item.get(Item.PRISMARINE_CRYSTALS, 0, Utils.random.nextInt(2, 4))
+                Item.get(Item.PRISMARINE_CRYSTALS, 0, ThreadLocalRandom.current().nextInt(2, 4))
         };
     }
 

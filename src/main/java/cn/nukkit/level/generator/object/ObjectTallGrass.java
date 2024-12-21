@@ -8,6 +8,8 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Utils;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 /**
  * @author ItsLucas
  * Nukkit Project
@@ -33,7 +35,7 @@ public class ObjectTallGrass {
             while (true) {
                 if (num >= i >> 4) {
                     if (level.getBlockIdAt(x, y, z) == Block.AIR) {
-                        if (Utils.random.nextInt(8) == 0) {
+                        if (ThreadLocalRandom.current().nextInt(8) == 0) {
                             //TODO: biomes have specific flower types that can grow in them
                             if (Utils.rand()) {
                                 level.setBlockAt(x, y, z, Block.DANDELION);
@@ -51,7 +53,7 @@ public class ObjectTallGrass {
                 }
 
                 x += Utils.rand(-1, 1);
-                y += Utils.rand(-1, 1) * Utils.random.nextInt(3) >> 1;
+                y += Utils.rand(-1, 1) * ThreadLocalRandom.current().nextInt(3) >> 1;
                 z += Utils.rand(-1, 1);
 
                 if (y > maxBlockY || y < minBlockY || level.getBlockIdAt(x, y - 1, z) != Block.GRASS) {
@@ -78,7 +80,7 @@ public class ObjectTallGrass {
                 if (num >= i >> 4) {
                     int block = level.getBlockIdAt(x, y, z);
                     if (block == Block.WATER || block == Block.STILL_WATER) {
-                        //if (Utils.random.nextInt(8) == 0) {
+                        //if (ThreadLocalRandom.current().nextInt(8) == 0) {
                         // TODO: coral & tall seagrass
                         //} else {
                         level.setBlockAt(x, y, z, Block.SEAGRASS, 0);
@@ -90,7 +92,7 @@ public class ObjectTallGrass {
                 }
 
                 x += Utils.rand(-1, 1);
-                y += Utils.rand(-1, 1) * Utils.random.nextInt(3) >> 1;
+                y += Utils.rand(-1, 1) * ThreadLocalRandom.current().nextInt(3) >> 1;
                 z += Utils.rand(-1, 1);
 
                 int block;

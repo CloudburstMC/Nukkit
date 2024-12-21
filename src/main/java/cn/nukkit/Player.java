@@ -94,6 +94,7 @@ import java.util.List;
 import java.util.*;
 import java.util.Queue;
 import java.util.Map.Entry;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -1477,7 +1478,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().callEvent(new PlayerBedLeaveEvent(this, this.level.getBlock(this.sleeping)));
 
             this.sleeping = null;
-            this.setDataProperty(new IntPositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0));
+            this.removeDataProperty(DATA_PLAYER_BED_POSITION);
             this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false);
 
             this.level.sleepTicks = 0;
@@ -2085,7 +2086,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             server.getPluginManager().callEvent(waterFrostEvent);
                             if (!waterFrostEvent.isCancelled()) {
                                 level.setBlockAt((int) block.x, (int) block.y, (int) block.z, Block.ICE_FROSTED, 0);
-                                level.scheduleUpdate(level.getBlock(this.chunk, block.getFloorX(), block.getFloorY(), block.getFloorZ(), true), Utils.random.nextInt(20, 40));
+                                level.scheduleUpdate(level.getBlock(this.chunk, block.getFloorX(), block.getFloorY(), block.getFloorZ(), true), ThreadLocalRandom.current().nextInt(20, 40));
                             }
                         }
                     }
@@ -6938,7 +6939,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 if (!itemsWithMending.isEmpty()) {
-                    int itemToRepair = itemsWithMending.getInt(Utils.random.nextInt(itemsWithMending.size()));
+                    int itemToRepair = itemsWithMending.getInt(ThreadLocalRandom.current().nextInt(itemsWithMending.size()));
                     boolean isOffhand = itemToRepair == -1;
 
                     Item repaired = isOffhand ? offhand : this.inventory.getItem(itemToRepair);

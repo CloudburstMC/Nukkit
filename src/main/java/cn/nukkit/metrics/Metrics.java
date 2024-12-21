@@ -12,10 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.zip.GZIPOutputStream;
 
 /**
@@ -79,8 +76,8 @@ public class Metrics {
         // bStats backend. To circumvent this problem, we introduce some randomness into the initial and second delay.
         // WARNING: You must not modify and part of this Metrics class, including the submit delay or frequency!
         // WARNING: Modifying this code will get your plugin banned on bStats. Just don't do it!
-        long initialDelay = (long) (1000 * 60 * (3 + Math.random() * 3));
-        long secondDelay = (long) (1000 * 60 * (Math.random() * 30));
+        long initialDelay = (long) (1000 * 60 * (3 + ThreadLocalRandom.current().nextDouble() * 3));
+        long secondDelay = (long) (1000 * 60 * (ThreadLocalRandom.current().nextDouble() * 30));
         scheduler.schedule(submitTask, initialDelay, TimeUnit.MILLISECONDS);
         scheduler.scheduleAtFixedRate(submitTask, initialDelay + secondDelay, 1000 * 60 * 30, TimeUnit.MILLISECONDS);
     }

@@ -6,8 +6,9 @@ import cn.nukkit.event.block.ComposterFillEvent;
 import cn.nukkit.item.*;
 import cn.nukkit.level.Sound;
 import cn.nukkit.utils.DyeColor;
-import cn.nukkit.utils.Utils;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockComposter extends BlockTransparentMeta implements ItemID {
 
@@ -109,7 +110,7 @@ public class BlockComposter extends BlockTransparentMeta implements ItemID {
             return false;
         }
 
-        boolean success = Utils.random.nextInt(100) < chance;
+        boolean success = ThreadLocalRandom.current().nextInt(100) < chance;
         ComposterFillEvent event = new ComposterFillEvent(this, player, item, chance, success);
         this.level.getServer().getPluginManager().callEvent(event);
 

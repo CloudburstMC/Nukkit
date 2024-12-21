@@ -332,7 +332,7 @@ public abstract class EntityLiving extends Entity implements EntityDamageable {
                 this.resetFallDistance();
             }
 
-            if (inWater && !this.hasEffect(Effect.WATER_BREATHING)) {
+            if (inWater && !this.hasEffect(Effect.WATER_BREATHING) && !this.hasEffect(Effect.CONDUIT_POWER)) {
                 if (this instanceof EntitySwimming || this instanceof EntityDrowned || this instanceof EntitySkeletonHorse || this instanceof EntityIronGolem ||
                         (this instanceof Player && (((Player) this).isCreative() || ((Player) this).isSpectator()))) {
                     this.setAirTicks(400);

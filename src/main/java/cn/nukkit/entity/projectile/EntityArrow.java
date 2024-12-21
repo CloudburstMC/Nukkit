@@ -7,7 +7,8 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -135,7 +136,7 @@ public class EntityArrow extends EntityProjectile {
         int base = NukkitMath.ceilDouble(Math.sqrt(this.motionX * this.motionX + this.motionY * this.motionY + this.motionZ * this.motionZ) * getDamage());
 
         if (this.isCritical()) {
-            base += Utils.random.nextInt((base >> 1) + 2);
+            base += ThreadLocalRandom.current().nextInt((base >> 1) + 2);
         }
 
         if (this.isFromCrossbow) {

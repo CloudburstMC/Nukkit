@@ -131,7 +131,8 @@ public class BlockChorusFlower extends BlockTransparentMeta {
                         }
                         // Grow Horizontally
                     } else if (!isFullyAged()) {
-                        for (int i = 0; i < ThreadLocalRandom.current().nextInt(ground ? 5 : 4); i++) {
+                        ThreadLocalRandom random = ThreadLocalRandom.current();
+                        for (int i = 0; i < random.nextInt(ground ? 5 : 4); i++) {
                             BlockFace face = BlockFace.Plane.HORIZONTAL.random();
                             Block check = this.getSide(face);
                             if (check.getId() == AIR && check.down().getId() == AIR && isHorizontalAirExcept(check, face.getOpposite())) {

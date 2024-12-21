@@ -16,10 +16,10 @@ import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public abstract class EntityHumanType extends EntityCreature implements InventoryHolder {
 
@@ -169,7 +169,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
                 source.setDamage(-source.getFinalDamage() * armorPoints * 0.04f, EntityDamageEvent.DamageModifier.ARMOR);
             }
 
-            source.setDamage(-source.getFinalDamage() * Math.min(NukkitMath.ceilFloat(Math.min(epf, 25) * ((float) Utils.random.nextInt(50, 100) / 100)), 20) * 0.04f,
+            source.setDamage(-source.getFinalDamage() * Math.min(NukkitMath.ceilFloat(Math.min(epf, 25) * ((float) ThreadLocalRandom.current().nextInt(50, 100) / 100)), 20) * 0.04f,
                     EntityDamageEvent.DamageModifier.ARMOR_ENCHANTMENTS);
 
             //source.setDamage(-Math.min(this.getAbsorption(), source.getFinalDamage()), EntityDamageEvent.DamageModifier.ABSORPTION);
@@ -224,7 +224,7 @@ public abstract class EntityHumanType extends EntityCreature implements Inventor
         Enchantment durability = armor.getEnchantment(Enchantment.ID_DURABILITY);
         if (durability != null
                 && durability.getLevel() > 0
-                && (100 / (durability.getLevel() + 1)) <= Utils.random.nextInt(100)) {
+                && (100 / (durability.getLevel() + 1)) <= ThreadLocalRandom.current().nextInt(100)) {
             return armor;
         }
 

@@ -7,6 +7,7 @@ import cn.nukkit.potion.Effect;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Snake1999 on 2016/1/13.
@@ -37,7 +38,7 @@ public class FoodEffective extends Food {
         super.onEatenBy(player);
 
         effects.forEach((effect, chance) -> {
-            if (chance >= Math.random()) {
+            if (chance >= ThreadLocalRandom.current().nextDouble()) {
                 player.addEffect(effect.clone(), EntityPotionEffectEvent.Cause.FOOD);
             }
         });

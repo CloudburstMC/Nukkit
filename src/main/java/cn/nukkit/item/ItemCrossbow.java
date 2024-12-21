@@ -11,7 +11,8 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ItemCrossbow extends ItemBow {
 
@@ -73,7 +74,7 @@ public class ItemCrossbow extends ItemBow {
             if (!player.isCreative()) {
                 if (!this.isUnbreakable()) {
                     Enchantment durability = this.getEnchantment(Enchantment.ID_DURABILITY);
-                    if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= Utils.random.nextInt(100))) {
+                    if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= ThreadLocalRandom.current().nextInt(100))) {
                         this.setDamage(this.getDamage() + 2);
                         if (this.getDamage() >= DURABILITY_CROSSBOW) {
                             this.count--;

@@ -36,7 +36,7 @@ public class SummonCommand extends VanillaCommand {
             return true;
         }
 
-        if (args.length == 0 || (args.length == 1 && !(sender instanceof Player))) {
+        if (args.length == 0 || (args.length != 2 && !(sender instanceof Player))) {
             sender.sendMessage(new TranslationContainer("commands.generic.usage", this.usageMessage));
             return false;
         }

@@ -24,7 +24,7 @@ public abstract class Food {
             .addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(2400))
             .addRelative(Item.GOLDEN_APPLE));
     public static final Food apple_golden_enchanted = registerDefaultFood(new FoodEffective(4, 9.6F)
-            .addEffect(Effect.getEffect(Effect.REGENERATION).setAmplifier(4).setDuration(600))
+            .addEffect(Effect.getEffect(Effect.REGENERATION).setAmplifier(1).setDuration(600))
             .addEffect(Effect.getEffect(Effect.ABSORPTION).setDuration(2400).setAmplifier(3))
             .addEffect(Effect.getEffect(Effect.DAMAGE_RESISTANCE).setDuration(6000))
             .addEffect(Effect.getEffect(Effect.FIRE_RESISTANCE).setDuration(6000))

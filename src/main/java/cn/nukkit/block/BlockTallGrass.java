@@ -8,7 +8,8 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Angelic47
@@ -130,7 +131,7 @@ public class BlockTallGrass extends BlockFlowable {
             };
         }
 
-        if (Utils.random.nextInt(10) == 0) {
+        if (ThreadLocalRandom.current().nextInt(10) == 0) {
             return new Item[]{
                     Item.get(Item.WHEAT_SEEDS)
             };

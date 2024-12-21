@@ -1,7 +1,6 @@
 package cn.nukkit.entity;
 
 import cn.nukkit.Player;
-import cn.nukkit.entity.data.IntPositionEntityData;
 import cn.nukkit.entity.data.Skin;
 import cn.nukkit.event.entity.EntityDamageBlockedEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -97,7 +96,6 @@ public class EntityHuman extends EntityHumanType {
     protected void initEntity() {
         this.setDataFlag(DATA_PLAYER_FLAGS, DATA_PLAYER_FLAG_SLEEP, false, false);
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_GRAVITY, true, false);
-        this.setDataProperty(new IntPositionEntityData(DATA_PLAYER_BED_POSITION, 0, 0, 0), false);
 
         if (!(this instanceof Player)) {
             if (this.namedTag.contains("NameTag")) {
