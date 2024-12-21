@@ -16,7 +16,8 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.MinecartType;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Adam Matthew [larryTheCoder]
@@ -66,7 +67,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
             if (isAlive() && fuse <= 0) {
                 if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
-                    this.explode(Utils.random.nextInt(5));
+                    this.explode(ThreadLocalRandom.current().nextInt(5));
                 }
                 this.close();
                 return false;
@@ -94,7 +95,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
             root = 5.0D;
         }
 
-        EntityExplosionPrimeEvent event = new EntityExplosionPrimeEvent(this, (4.0D + Utils.random.nextDouble() * 1.5D * root));
+        EntityExplosionPrimeEvent event = new EntityExplosionPrimeEvent(this, (4.0D + ThreadLocalRandom.current().nextDouble() * 1.5D * root));
         server.getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return;

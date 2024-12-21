@@ -94,6 +94,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
 
@@ -2111,7 +2112,7 @@ public class Server {
      * @return generated
      */
     public boolean generateLevel(String name) {
-        return this.generateLevel(name, Utils.random.nextLong());
+        return this.generateLevel(name, ThreadLocalRandom.current().nextLong());
     }
 
     /**
@@ -2772,6 +2773,9 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.BLAST_FURNACE, BlockEntityBlastFurnace.class);
         BlockEntity.registerBlockEntity(BlockEntity.SMOKER, BlockEntitySmoker.class);
         BlockEntity.registerBlockEntity(BlockEntity.BELL, BlockEntityBell.class);
+        BlockEntity.registerBlockEntity(BlockEntity.CONDUIT, BlockEntityConduit.class);
+
+        // Persistent container, not on vanilla
         BlockEntity.registerBlockEntity(BlockEntity.PERSISTENT_CONTAINER, PersistentDataContainerBlockEntity.class);
     }
 

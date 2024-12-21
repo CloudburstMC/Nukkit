@@ -1,7 +1,8 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Pub4Game on 15.01.2016.
@@ -34,14 +35,14 @@ public class BlockPotato extends BlockCrops {
     @Override
     public Item[] getDrops(Item item) {
         if (getDamage() >= 0x07) {
-            if (Utils.random.nextInt(100) < 2) {
+            if (ThreadLocalRandom.current().nextInt(100) < 2) {
                 return new Item[]{
-                        Item.get(Item.POTATO, 0, Utils.random.nextInt(3) + 2),
+                        Item.get(Item.POTATO, 0, ThreadLocalRandom.current().nextInt(3) + 2),
                         Item.get(Item.POISONOUS_POTATO, 0, 1)
                 };
             } else {
                 return new Item[]{
-                        Item.get(Item.POTATO, 0, Utils.random.nextInt(3) + 2)
+                        Item.get(Item.POTATO, 0, ThreadLocalRandom.current().nextInt(3) + 2)
                 };
             }
         } else {

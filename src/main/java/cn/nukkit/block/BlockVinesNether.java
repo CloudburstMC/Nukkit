@@ -73,7 +73,7 @@ public abstract class BlockVinesNether extends BlockTransparentMeta {
         int age;
 
         ThreadLocalRandom random = ThreadLocalRandom.current();
-        for(age = 0; random.nextDouble() < chance; ++age) {
+        for (age = 0; random.nextDouble() < chance; ++age) {
             chance *= 0.826D;
         }
 

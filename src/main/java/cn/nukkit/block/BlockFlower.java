@@ -8,7 +8,8 @@ import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/11/23 by xtypr.
@@ -108,14 +109,15 @@ public class BlockFlower extends BlockFlowable {
 
             this.level.addParticle(new BoneMealParticle(this));
 
+            ThreadLocalRandom random = ThreadLocalRandom.current();
             for (int i = 0; i < 8; i++) {
                 Vector3 vec = this.add(
-                        Utils.random.nextInt(-3, 4),
-                        Utils.random.nextInt(-1, 2),
-                        Utils.random.nextInt(-3, 4));
+                        random.nextInt(-3, 4),
+                        random.nextInt(-1, 2),
+                        random.nextInt(-3, 4));
 
                 if (vec.getY() >= level.getMinBlockY() && vec.getY() <= level.getMaxBlockY() && level.getBlock(vec).getId() == AIR && level.getBlock(vec.down()).getId() == GRASS) {
-                    if ((this.getDamage() == POPPY || this.getDamage() == DANDELION) && Utils.random.nextInt(10) == 0) {
+                    if ((this.getDamage() == POPPY || this.getDamage() == DANDELION) && random.nextInt(10) == 0) {
                         this.level.setBlock(vec, this.getUncommonFlower(), true);
                     } else {
                         this.level.setBlock(vec, get(this.getId(), this.getDamage()), true);

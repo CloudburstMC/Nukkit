@@ -16,9 +16,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.SplittableRandom;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -28,11 +28,6 @@ import java.util.zip.GZIPInputStream;
  * Nukkit Project
  */
 public class Utils {
-
-    /**
-     * A SplittableRandom you can use without having to create a new object every time.
-     */
-    public static final SplittableRandom random = new SplittableRandom();
 
     public static void writeFile(String fileName, String content) throws IOException {
         writeFile(fileName, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
@@ -322,7 +317,7 @@ public class Utils {
         if (min == max) {
             return max;
         }
-        return random.nextInt(max + 1 - min) + min;
+        return ThreadLocalRandom.current().nextInt(max + 1 - min) + min;
     }
 
     /**
@@ -336,7 +331,7 @@ public class Utils {
         if (min == max) {
             return max;
         }
-        return min + random.nextDouble() * (max-min);
+        return min + ThreadLocalRandom.current().nextDouble() * (max-min);
     }
 
     /**
@@ -345,7 +340,7 @@ public class Utils {
      * @return random boolean
      */
     public static boolean rand() {
-        return random.nextBoolean();
+        return ThreadLocalRandom.current().nextBoolean();
     }
 
     /**

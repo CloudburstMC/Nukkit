@@ -434,7 +434,7 @@ public class BlockCauldron extends BlockTransparentMeta {
         cauldron.clearCustomColor();
         this.level.setBlock(this, Block.get(CAULDRON_BLOCK), true);
         this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_FIZZ);
-        this.getLevel().addParticle(new SmokeParticle(add(Math.random(), 1.2, Math.random())), null, 8);
+        this.getLevel().addParticle(new SmokeParticle(add(ThreadLocalRandom.current().nextDouble(), 1.2, ThreadLocalRandom.current().nextDouble())), null, 8);
     }
 
     @Override

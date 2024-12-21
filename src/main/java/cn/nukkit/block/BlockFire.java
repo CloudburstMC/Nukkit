@@ -22,7 +22,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.potion.Potion;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -138,21 +139,22 @@ public class BlockFire extends BlockFlowable {
             }
 
             int meta = this.getDamage();
+            ThreadLocalRandom random = ThreadLocalRandom.current();
 
             if (meta < 15) {
-                int newMeta = meta + Utils.random.nextInt(3);
+                int newMeta = meta + random.nextInt(3);
                 if (newMeta > 15) newMeta = 15;
                 this.setDamage(newMeta);
                 this.getLevel().setBlock((int) this.x, (int) this.y, (int) this.z, BlockLayer.NORMAL, this, false, true, false); // No need to send this to client
             }
 
-            this.getLevel().scheduleUpdate(this, this.tickRate() + Utils.random.nextInt(10));
+            this.getLevel().scheduleUpdate(this, this.tickRate() + random.nextInt(10));
 
             if (!forever && !this.canNeighborBurn()) {
                 if (!this.isBlockTopFacingSurfaceSolid(this.down()) || meta > 3) {
                     this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
                 }
-            } else if (!forever && !(this.down().getBurnAbility() > 0) && meta == 15 && Utils.random.nextInt(4) == 0) {
+            } else if (!forever && !(this.down().getBurnAbility() > 0) && meta == 15 && random.nextInt(4) == 0) {
                 this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
             } else {
                 int o = 0;
@@ -191,8 +193,8 @@ public class BlockFire extends BlockFlowable {
 
                                     //TODO: decrease the t if the rainfall values are high
 
-                                    if (t > 0 && Utils.random.nextInt(k) <= t) {
-                                        int damage = meta + (Utils.random.nextInt(5) >> 2);
+                                    if (t > 0 && random.nextInt(k) <= t) {
+                                        int damage = meta + (random.nextInt(5) >> 2);
 
                                         if (damage > 15) {
                                             damage = 15;
@@ -223,9 +225,10 @@ public class BlockFire extends BlockFlowable {
             return;
         }
 
-        if (Utils.random.nextInt(bound) < burnAbility) {
-            if (Utils.random.nextInt(damage + 10) < 5) {
-                int meta = damage + (Utils.random.nextInt(5) >> 2);
+        ThreadLocalRandom random = ThreadLocalRandom.current();
+        if (random.nextInt(bound) < burnAbility) {
+            if (random.nextInt(damage + 10) < 5) {
+                int meta = damage + (random.nextInt(5) >> 2);
 
                 if (meta > 15) {
                     meta = 15;

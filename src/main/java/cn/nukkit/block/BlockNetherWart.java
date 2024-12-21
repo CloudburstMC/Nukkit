@@ -7,7 +7,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Leonidius20 on 22.03.17.
@@ -40,7 +41,7 @@ public class BlockNetherWart extends BlockFlowable {
                 return Level.BLOCK_UPDATE_NORMAL;
             }
         } else if (type == Level.BLOCK_UPDATE_RANDOM) {
-            if (Utils.random.nextInt(10) == 1) {
+            if (ThreadLocalRandom.current().nextInt(10) == 1) {
                 if (this.getDamage() < 0x03) {
                     Block block = this.clone();
                     block.setDamage(block.getDamage() + 1);
@@ -80,7 +81,7 @@ public class BlockNetherWart extends BlockFlowable {
     public Item[] getDrops(Item item) {
         if (this.getDamage() == 0x03) {
             return new Item[]{
-                    Item.get(Item.NETHER_WART, 0, 2 + (int) (Math.random() * (3)))
+                    Item.get(Item.NETHER_WART, 0, 2 + (int) (ThreadLocalRandom.current().nextDouble() * (3)))
             };
         } else {
             return new Item[]{

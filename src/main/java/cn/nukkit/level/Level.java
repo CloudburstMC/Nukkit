@@ -105,7 +105,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     /**
      * The blocks that can be randomly ticked
      */
-    private static final boolean[] randomTickBlocks = new boolean[Block.MAX_BLOCK_ID];
+    public static final boolean[] randomTickBlocks = new boolean[Block.MAX_BLOCK_ID];
 
     static {
         randomTickBlocks[Block.GRASS] = true;
@@ -934,7 +934,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     }
 
     private void performThunder(long index, FullChunk chunk) {
-        if (Utils.random.nextInt(100000) < 1) {
+        if (ThreadLocalRandom.current().nextInt(100000) < 1) {
             if (areNeighboringChunksLoaded(index)) {
                 return;
             }
@@ -984,7 +984,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         }
 
         if (!list.isEmpty()) {
-            return list.get(Utils.random.nextInt(list.size())).getPosition();
+            return list.get(ThreadLocalRandom.current().nextInt(list.size())).getPosition();
         } else {
             if (pos.getY() == -1) {
                 pos = pos.up(2);
@@ -1149,8 +1149,8 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             int existingLoaders = Math.max(0, this.chunkTickList.getOrDefault(index, 0));
             this.chunkTickList.put(index, existingLoaders + 1);
             for (int chunk = 0; chunk < chunksPerLoader; ++chunk) {
-                int dx = Utils.random.nextInt(randRange << 1) - randRange;
-                int dz = Utils.random.nextInt(randRange << 1) - randRange;
+                int dx = ThreadLocalRandom.current().nextInt(randRange << 1) - randRange;
+                int dz = ThreadLocalRandom.current().nextInt(randRange << 1) - randRange;
                 long hash = Level.chunkHash(dx + chunkX, dz + chunkZ);
                 if (!this.chunkTickList.containsKey(hash) && provider.isChunkLoaded(hash)) {
                     this.chunkTickList.put(hash, -1);
@@ -1985,7 +1985,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
                     motion = new Vector3(-MathHelper.sin(f1) * f, 0.20000000298023224, MathHelper.cos(f1) * f);
                 } else {
-                    motion = new Vector3(Utils.random.nextDouble() * 0.2 - 0.1, 0.2, Utils.random.nextDouble() * 0.2 - 0.1);
+                    motion = new Vector3(ThreadLocalRandom.current().nextDouble() * 0.2 - 0.1, 0.2, ThreadLocalRandom.current().nextDouble() * 0.2 - 0.1);
                 }
             }
 
@@ -3764,7 +3764,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
         if (raining) {
             pk.evid = LevelEventPacket.EVENT_START_RAIN;
-            int time = Utils.random.nextInt(12000) + 12000;
+            int time = ThreadLocalRandom.current().nextInt(12000) + 12000;
             pk.data = time;
             setRainTime(time);
         } else {
@@ -3807,7 +3807,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         // These numbers are from Minecraft
         if (thundering) {
             pk.evid = LevelEventPacket.EVENT_START_THUNDER;
-            int time = Utils.random.nextInt(12000) + 3600;
+            int time = ThreadLocalRandom.current().nextInt(12000) + 3600;
             pk.data = time;
             setThunderTime(time);
         } else {

@@ -2,7 +2,6 @@ package cn.nukkit.network.query;
 
 import cn.nukkit.Server;
 import cn.nukkit.event.server.QueryRegenerateEvent;
-import cn.nukkit.utils.Utils;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 
@@ -13,6 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -56,7 +56,7 @@ public class QueryHandler {
         this.lastToken = this.token;
         byte[] token = new byte[16];
         for (int i = 0; i < 16; i++) {
-            token[i] = (byte) Utils.random.nextInt(255);
+            token[i] = (byte) ThreadLocalRandom.current().nextInt(255);
         }
         this.token = token;
     }
@@ -73,7 +73,7 @@ public class QueryHandler {
             digest.update(token);
             return Arrays.copyOf(digest.digest(), 4);
         } catch (NoSuchAlgorithmException e) {
-            return ByteBuffer.allocate(4).putInt(Utils.random.nextInt()).array();
+            return ByteBuffer.allocate(4).putInt(ThreadLocalRandom.current().nextInt()).array();
         }
     }
 

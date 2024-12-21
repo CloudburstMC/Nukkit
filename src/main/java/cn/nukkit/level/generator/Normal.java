@@ -98,11 +98,12 @@ public class Normal extends Generator {
     public void init(ChunkManager level, NukkitRandom random) {
         this.level = level;
         this.nukkitRandom = random;
-        SplittableRandom random1 = new SplittableRandom();
         this.nukkitRandom.setSeed(this.level.getSeed());
+
+        SplittableRandom random1 = new SplittableRandom(this.level.getSeed());
         this.localSeed1 = random1.nextLong();
         this.localSeed2 = random1.nextLong();
-        this.nukkitRandom.setSeed(this.level.getSeed());
+
         this.selector = new BiomeSelector(this.nukkitRandom);
 
         this.minLimitPerlinNoise = new NoiseGeneratorOctavesF(random, 16);

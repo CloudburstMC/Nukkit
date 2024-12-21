@@ -14,7 +14,8 @@ import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -121,7 +122,7 @@ public class ItemBow extends ItemTool {
         double p = (double) ticksUsed / 20;
         double f = Math.min((p * p + p * 2) / 3, 1) * 2.8;
 
-        EntityArrow arrow = (EntityArrow) Entity.createEntity(EntityArrow.NETWORK_ID, player.chunk, nbt, player, f > 2.3, false);
+        EntityArrow arrow = (EntityArrow) Entity.createEntity(EntityArrow.NETWORK_ID, player.chunk, nbt, player, f > 2.3);
         if (itemArrow.getDamage() > 0) {
             arrow.setData(itemArrow.getDamage());
         }
@@ -154,7 +155,7 @@ public class ItemBow extends ItemTool {
 
                 if (!this.isUnbreakable()) {
                     Enchantment durability = this.getEnchantment(Enchantment.ID_DURABILITY);
-                    if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= Utils.random.nextInt(100))) {
+                    if (!(durability != null && durability.getLevel() > 0 && (100 / (durability.getLevel() + 1)) <= ThreadLocalRandom.current().nextInt(100))) {
                         this.setDamage(this.getDamage() + 2);
                         if (this.getDamage() >= getMaxDurability()) {
                             this.count--;

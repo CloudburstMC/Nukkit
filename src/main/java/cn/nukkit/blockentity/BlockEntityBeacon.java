@@ -21,8 +21,6 @@ import java.util.Map;
  */
 public class BlockEntityBeacon extends BlockEntitySpawnable {
 
-    private long currentTick;
-
     public BlockEntityBeacon(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
     }
@@ -75,7 +73,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         }
 
         //Only apply effects every 4 secs
-        if (currentTick++ % 80 != 0) {
+        if (level.getCurrentTick() % 80 != 0) {
             return true;
         }
 
@@ -162,9 +160,9 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     private static final int POWER_LEVEL_MAX = 4;
 
     private boolean hasSkyAccess() {
-        int tileX = getFloorX();
-        int tileY = getFloorY();
-        int tileZ = getFloorZ();
+        int tileX = (int) this.x;
+        int tileY = (int) this.y;
+        int tileZ = (int) this.z;
 
         //Check every block from our y coord to the top of the world
         for (int y = tileY + 1; y <= this.level.getMaxBlockY(); y++) {
@@ -179,9 +177,9 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     }
 
     private int calculatePowerLevel() {
-        int tileX = getFloorX();
-        int tileY = getFloorY();
-        int tileZ = getFloorZ();
+        int tileX = (int) this.x;
+        int tileY = (int) this.y;
+        int tileZ = (int) this.z;
 
         //The power level that we're testing for
         for (int powerLevel = 1; powerLevel <= POWER_LEVEL_MAX; powerLevel++) {
@@ -209,20 +207,6 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         }
 
         return POWER_LEVEL_MAX;
-    }
-
-    private int getBlockIdIfLoaded(int bx, int by, int bz) {
-        if (by < this.level.getMinBlockY() || by > this.level.getMaxBlockY()) return 0;
-        int cx = bx >> 4;
-        int cz = bz >> 4;
-        FullChunk fullChunk = this.chunk;
-        if (fullChunk == null || cx != fullChunk.getX() || cz != fullChunk.getZ()) {
-            fullChunk = level.getChunkIfLoaded(cx, cz);
-            if (fullChunk == null) {
-                return -1;
-            }
-        }
-        return fullChunk.getBlockId(bx & 0x0f, by, bz & 0x0f);
     }
 
     @Override

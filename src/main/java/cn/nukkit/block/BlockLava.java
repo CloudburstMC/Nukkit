@@ -16,7 +16,8 @@ import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author MagicDroidX
@@ -85,11 +86,11 @@ public class BlockLava extends BlockLiquid {
         int result = super.onUpdate(type);
 
         if (type == Level.BLOCK_UPDATE_RANDOM && this.level.gameRules.getBoolean(GameRule.DO_FIRE_TICK)) {
-            int i = Utils.random.nextInt(3);
+            int i = ThreadLocalRandom.current().nextInt(3);
 
             if (i > 0) {
                 for (int k = 0; k < i; ++k) {
-                    Vector3 v = this.add(Utils.random.nextInt(3) - 1, 1, Utils.random.nextInt(3) - 1);
+                    Vector3 v = this.add(ThreadLocalRandom.current().nextInt(3) - 1, 1, ThreadLocalRandom.current().nextInt(3) - 1);
                     Block block = this.getLevel().getBlock(v);
 
                     if (block.getId() == AIR) {
@@ -112,7 +113,7 @@ public class BlockLava extends BlockLiquid {
                 }
             } else {
                 for (int k = 0; k < 3; ++k) {
-                    Vector3 v = this.add(Utils.random.nextInt(3) - 1, 0, Utils.random.nextInt(3) - 1);
+                    Vector3 v = this.add(ThreadLocalRandom.current().nextInt(3) - 1, 0, ThreadLocalRandom.current().nextInt(3) - 1);
                     Block block = this.getLevel().getBlock(v);
 
                     if (block.up().getId() == AIR && block.getBurnChance() > 0) {

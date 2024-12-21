@@ -1,6 +1,7 @@
 package cn.nukkit.item.randomitem;
 
 import java.util.Map;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by Snake1999 on 2016/1/15.
@@ -30,7 +31,7 @@ public class Selector {
     public static Selector selectRandom(Map<Selector, Float> selectorChanceMap) {
         final float[] totalChance = {0};
         selectorChanceMap.values().forEach(f -> totalChance[0] += f);
-        float resultChance = (float) (Math.random() * totalChance[0]);
+        float resultChance = (float) (ThreadLocalRandom.current().nextDouble() * totalChance[0]);
         final float[] flag = {0};
         final boolean[] found = {false};
         final Selector[] temp = {null};

@@ -15,9 +15,9 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.StringTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
 import cn.nukkit.utils.Faceable;
-import cn.nukkit.utils.Utils;
 
 import java.util.Map.Entry;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created by CreeperFace on 15.4.2017.
@@ -163,10 +163,11 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
         Item target = null;
 
         Inventory inv = ((BlockEntityDispenser) blockEntity).getInventory();
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         for (Entry<Integer, Item> entry : inv.getContents().entrySet()) {
             Item item = entry.getValue();
 
-            if (!item.isNull() && Utils.random.nextInt(r++) == 0) {
+            if (!item.isNull() && random.nextInt(r++) == 0) {
                 target = item;
                 slot = entry.getKey();
             }

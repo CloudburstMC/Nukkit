@@ -5,7 +5,8 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/12/2 by xtypr.
@@ -68,7 +69,7 @@ public class BlockDeadBush extends BlockFlowable {
             };
         } else {
             return new Item[]{
-                    Item.get(Item.STICK, 0, Utils.random.nextInt(3))
+                    Item.get(Item.STICK, 0, ThreadLocalRandom.current().nextInt(3))
             };
         }
     }

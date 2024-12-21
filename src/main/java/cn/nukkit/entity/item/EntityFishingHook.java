@@ -130,8 +130,8 @@ public class EntityFishingHook extends EntityProjectile {
 					--this.waitTimer;
 				}
 				if (this.waitTimer == 0) {
-					if (Utils.random.nextInt(100) < 90) {
-						this.attractTimer = (Utils.random.nextInt(40) + 20);
+					if (ThreadLocalRandom.current().nextInt(100) < 90) {
+						this.attractTimer = (ThreadLocalRandom.current().nextInt(40) + 20);
 						this.spawnFish();
 						this.caught = false;
 						this.attracted = true;
@@ -141,7 +141,7 @@ public class EntityFishingHook extends EntityProjectile {
 				}
 			} else if (!this.caught) {
 				if (this.attractFish()) {
-					this.caughtTimer = (Utils.random.nextInt(20) + 30);
+					this.caughtTimer = (ThreadLocalRandom.current().nextInt(20) + 30);
 					this.fishBites();
 					this.caught = true;
 				}
@@ -189,17 +189,17 @@ public class EntityFishingHook extends EntityProjectile {
 		Server.broadcastPacket(viewers, teasePk);
 
 		this.level.addParticle(new BubbleParticle(this.setComponents(
-				this.x + Utils.random.nextDouble() * 0.5 - 0.25,
+				this.x + ThreadLocalRandom.current().nextDouble() * 0.5 - 0.25,
 				this.getWaterHeight(),
-				this.z + Utils.random.nextDouble() * 0.5 - 0.25
+				this.z + ThreadLocalRandom.current().nextDouble() * 0.5 - 0.25
 		)), null, 5);
 	}
 
 	public void spawnFish() {
 		this.fish = new Vector3(
-				this.x + (Utils.random.nextDouble() * 1.2 + 1) * (Utils.rand() ? -1 : 1),
+				this.x + (ThreadLocalRandom.current().nextDouble() * 1.2 + 1) * (Utils.rand() ? -1 : 1),
 				this.getWaterHeight(),
-				this.z + (Utils.random.nextDouble() * 1.2 + 1) * (Utils.rand() ? -1 : 1)
+				this.z + (ThreadLocalRandom.current().nextDouble() * 1.2 + 1) * (Utils.rand() ? -1 : 1)
 		);
 	}
 
@@ -210,7 +210,7 @@ public class EntityFishingHook extends EntityProjectile {
 				this.fish.y,
 				this.fish.z + (this.z - this.fish.z) * multiply
 		);
-		if (Utils.random.nextInt(100) < 85) {
+		if (ThreadLocalRandom.current().nextInt(100) < 85) {
 			this.level.addParticle(new WaterParticle(this.fish));
 		}
 		double dist = Math.abs(Math.sqrt(this.x * this.x + this.z * this.z) - Math.sqrt(this.fish.x * this.fish.x + this.fish.z * this.fish.z));
@@ -232,7 +232,7 @@ public class EntityFishingHook extends EntityProjectile {
 					if (!item.hasEnchantments()) {
 						item = item.clone();
 						Enchantment enchantment = Enchantment.getEnchantment(Utils.rand(0, 35));
-						if (Utils.random.nextDouble() < 0.3) {
+						if (ThreadLocalRandom.current().nextDouble() < 0.3) {
 							enchantment.setLevel(Utils.rand(1, enchantment.getMaxLevel()));
 						}
 						item.addEnchantment(enchantment);
@@ -241,13 +241,13 @@ public class EntityFishingHook extends EntityProjectile {
 					if (Utils.rand(1, 3) == 2 && !item.hasEnchantments()) {
 						item = item.clone();
 						Enchantment enchantment = Enchantment.getEnchantment(ROD_ENCHANTMENTS[Utils.rand(0, 4)]);
-						if (Utils.random.nextDouble() < 0.3) {
+						if (ThreadLocalRandom.current().nextDouble() < 0.3) {
 							enchantment.setLevel(Utils.rand(1, enchantment.getMaxLevel()));
 						}
 						item.addEnchantment(enchantment);
 					}
 				}
-				int experience = Utils.random.nextInt(3) + 1;
+				int experience = ThreadLocalRandom.current().nextInt(3) + 1;
 				Vector3 motion = player.subtract(this).multiply(0.1);
 				motion.y += Math.sqrt(player.distance(this)) * 0.05;
 

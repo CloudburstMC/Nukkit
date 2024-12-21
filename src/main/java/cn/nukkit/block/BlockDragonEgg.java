@@ -4,7 +4,8 @@ import cn.nukkit.event.block.BlockFromToEvent;
 import cn.nukkit.level.Level;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockDragonEgg extends BlockFallable {
 
@@ -52,8 +53,9 @@ public class BlockDragonEgg extends BlockFallable {
     }
 
     public void teleport() {
+        ThreadLocalRandom random = ThreadLocalRandom.current();
         for (int i = 0; i < 1000; ++i) {
-            Block to = this.getLevel().getBlock(this.add(Utils.random.nextInt(-16, 16), Utils.random.nextInt(-16, 16), Utils.random.nextInt(-16, 16)));
+            Block to = this.getLevel().getBlock(this.add(random.nextInt(-16, 16), random.nextInt(-16, 16), random.nextInt(-16, 16)));
             if (to.getId() == AIR) {
                 BlockFromToEvent event = new BlockFromToEvent(this, to);
                 this.level.getServer().getPluginManager().callEvent(event);
