@@ -45,4 +45,4 @@ fastutilmaps = [ "fastutil-int-short-maps", "fastutil-long-byte-maps" ]
 
 [plugins]
 shadow = { id = "com.github.johnrengelman.shadow", version = "8.0.0" }
-git = { id = "com.gorylenko.gradle-git-properties", version = "2.4.1" }
+git = { id = "com.gorylenko.gradle-git-properties", version = "2.4.2" }

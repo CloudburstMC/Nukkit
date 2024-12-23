@@ -87,6 +87,9 @@ publishing {
 
     publications {
         create<MavenPublication>("nukkit") {
+            artifact(tasks.generateGitProperties) {
+                extension = "properties"
+            }
             from(components["java"])
         }
     }
@@ -139,4 +142,8 @@ tasks {
     javadoc {
         options.encoding = "UTF-8"
     }
+}
+
+gitProperties {
+    customProperty("github.repo", "CloudburstMC/Nukkit")
 }
