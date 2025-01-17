@@ -55,7 +55,7 @@ public abstract class BlockSlab extends BlockTransparentMeta {
 
     @Override
     public double getHardness() {
-        return 3;
+        return 2;
     }
 
     @Override
