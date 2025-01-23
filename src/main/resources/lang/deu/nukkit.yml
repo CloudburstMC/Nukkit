@@ -75,8 +75,8 @@ ticks-per:
  autosave: 6000
 
 player:
- #If true, player data will be saved as players/playername.dat
- #If false, nukkit won't save player data as "dat" files, in order that plugins can do something on it.
+ #Wenn true, werden Spieldaten als players/playername.dat gespeichert.  
+ #Wenn false, speichert Nukkit keine Spieldaten als "dat" Dateien, sodass Plugins darauf zugreifen und eigene Aktionen ausführen können.
  save-player-data: true
  #The time between skin change action in seconds, set to 0 if you dont want the cooldown
  skin-change-cooldown: 15
