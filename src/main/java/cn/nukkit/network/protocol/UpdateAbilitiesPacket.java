@@ -19,31 +19,10 @@ public class UpdateAbilitiesPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.UPDATE_ABILITIES_PACKET;
 
-    protected static final PlayerAbility[] VALID_FLAGS = {
-            PlayerAbility.BUILD,
-            PlayerAbility.MINE,
-            PlayerAbility.DOORS_AND_SWITCHES,
-            PlayerAbility.OPEN_CONTAINERS,
-            PlayerAbility.ATTACK_PLAYERS,
-            PlayerAbility.ATTACK_MOBS,
-            PlayerAbility.OPERATOR_COMMANDS,
-            PlayerAbility.TELEPORT,
-            PlayerAbility.INVULNERABLE,
-            PlayerAbility.FLYING,
-            PlayerAbility.MAY_FLY,
-            PlayerAbility.INSTABUILD,
-            PlayerAbility.LIGHTNING,
-            PlayerAbility.FLY_SPEED,
-            PlayerAbility.WALK_SPEED,
-            PlayerAbility.MUTED,
-            PlayerAbility.WORLD_BUILDER,
-            PlayerAbility.NO_CLIP,
-            PlayerAbility.PRIVILEGED_BUILDER
-    };
-
     private static final EnumMap<PlayerAbility, Integer> FLAGS_TO_BITS = new EnumMap<>(PlayerAbility.class);
 
     static {
+        PlayerAbility[] VALID_FLAGS = PlayerAbility.values();
         for (int i = 0; i < VALID_FLAGS.length; i++) {
             FLAGS_TO_BITS.put(VALID_FLAGS[i], (1 << i));
         }
@@ -73,6 +52,7 @@ public class UpdateAbilitiesPacket extends DataPacket {
         buffer.putLInt(getAbilitiesNumber(abilityLayer.getAbilitiesSet()));
         buffer.putLInt(getAbilitiesNumber(abilityLayer.getAbilityValues()));
         buffer.putLFloat(abilityLayer.getFlySpeed());
+        buffer.putLFloat(abilityLayer.getVerticalFlySpeed());
         buffer.putLFloat(abilityLayer.getWalkSpeed());
     }
 

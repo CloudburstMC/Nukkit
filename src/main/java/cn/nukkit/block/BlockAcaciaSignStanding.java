@@ -37,9 +37,4 @@ public class BlockAcaciaSignStanding extends BlockSignPost {
     protected int getWallId() {
         return ACACIA_WALL_SIGN;
     }
-
-    @Override
-    public WaterloggingType getWaterloggingType() {
-        return WaterloggingType.WHEN_PLACED_IN_WATER;
-    }
 }

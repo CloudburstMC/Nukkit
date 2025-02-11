@@ -122,7 +122,7 @@ public class BlockWood extends BlockSolidMeta {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.isAxe() && player != null && (player.isSurvival() || player.isCreative()) && (!(this instanceof BlockWoodBark) || this.getDamage() < 8)) {
+        if (item.isAxe() && player != null && (player.isSurvival() || player.isCreative()) && !(this instanceof BlockWoodStripped) && (!(this instanceof BlockWoodBark) || this.getDamage() < 8)) {
             Block strippedBlock = Block.get(getStrippedId(), getStrippedDamage());
             item.useOn(this);
             this.level.setBlock(this, strippedBlock, true, true);

@@ -23,7 +23,8 @@ public enum PlayerAbility {
     MUTED,
     WORLD_BUILDER,
     NO_CLIP,
-    PRIVILEGED_BUILDER;
+    PRIVILEGED_BUILDER,
+    VERTICAL_FLY_SPEED;
 
     public static final List<PlayerAbility> VALUES = Arrays.asList(values());
 }

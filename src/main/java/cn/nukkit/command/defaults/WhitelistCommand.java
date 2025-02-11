@@ -8,6 +8,8 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.Locale;
+
 /**
  * Created on 2015/11/12 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -47,10 +49,10 @@ public class WhitelistCommand extends VanillaCommand {
         }
 
         if (args.length == 1) {
-            if (badPerm(sender, args[0].toLowerCase())) {
+            if (badPerm(sender, args[0].toLowerCase(Locale.ROOT))) {
                 return false;
             }
-            switch (args[0].toLowerCase()) {
+            switch (args[0].toLowerCase(Locale.ROOT)) {
                 case "reload":
                     sender.getServer().reloadWhitelist();
                     Command.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.reloaded"));
@@ -86,10 +88,10 @@ public class WhitelistCommand extends VanillaCommand {
                     return true;
             }
         } else {
-            if (badPerm(sender, args[0].toLowerCase())) {
+            if (badPerm(sender, args[0].toLowerCase(Locale.ROOT))) {
                 return false;
             }
-            switch (args[0].toLowerCase()) {
+            switch (args[0].toLowerCase(Locale.ROOT)) {
                 case "add":
                     sender.getServer().getOfflinePlayer(args[1]).setWhitelisted(true);
                     Command.broadcastCommandMessage(sender, new TranslationContainer("commands.whitelist.add.success", args[1]));

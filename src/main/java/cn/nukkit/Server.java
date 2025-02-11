@@ -531,16 +531,7 @@ public class Server {
         this.pluginManager.loadPlugins(this.pluginPath);
         this.enablePlugins(PluginLoadOrder.STARTUP);
 
-        boolean regenerateItemPalette = false;
-
-        if (CustomItemManager.get().closeRegistry()) {
-            regenerateItemPalette = true;
-        }
-
-        if (regenerateItemPalette) {
-            RuntimeItems.getMapping().generatePalette();
-        }
-
+        CustomItemManager.get().closeRegistry();
         EntityManager.get().closeRegistry();
 
         Item.initCreativeItems();
@@ -1392,7 +1383,7 @@ public class Server {
     }
 
     public static int getGamemodeFromString(String str) {
-        switch (str.trim().toLowerCase()) {
+        switch (str.trim().toLowerCase(Locale.ROOT)) {
             case "0":
             case "survival":
             case "s":
@@ -1418,7 +1409,7 @@ public class Server {
     }
 
     public static int getDifficultyFromString(String str) {
-        switch (str.trim().toLowerCase()) {
+        switch (str.trim().toLowerCase(Locale.ROOT)) {
             case "0":
             case "peaceful":
             case "p":
@@ -1633,7 +1624,7 @@ public class Server {
      * @return Optional UUID
      */
     public Optional<UUID> lookupName(String name) {
-        byte[] nameBytes = name.toLowerCase().getBytes(StandardCharsets.UTF_8);
+        byte[] nameBytes = name.toLowerCase(Locale.ROOT).getBytes(StandardCharsets.UTF_8);
         byte[] uuidBytes = nameLookup.get(nameBytes);
         if (uuidBytes == null) {
             return Optional.empty();
@@ -1650,7 +1641,7 @@ public class Server {
     }
 
     void updateName(UUID uuid, String name) {
-        byte[] nameBytes = name.toLowerCase().getBytes(StandardCharsets.UTF_8);
+        byte[] nameBytes = name.toLowerCase(Locale.ROOT).getBytes(StandardCharsets.UTF_8);
 
         ByteBuffer buffer = ByteBuffer.allocate(16);
         buffer.putLong(uuid.getMostSignificantBits());
@@ -1779,7 +1770,7 @@ public class Server {
 
     private void saveOfflinePlayerData(String name, CompoundTag tag, boolean async, boolean runEvent) {
         if (this.shouldSavePlayerData()) {
-            String nameLower = name.toLowerCase();
+            String nameLower = name.toLowerCase(Locale.ROOT);
             PlayerDataSerializeEvent event = new PlayerDataSerializeEvent(nameLower, playerDataSerializer);
             if (runEvent) {
                 pluginManager.callEvent(event);
@@ -1884,10 +1875,10 @@ public class Server {
      */
     public Player getPlayer(String name) {
         Player found = null;
-        name = name.toLowerCase();
+        name = name.toLowerCase(Locale.ROOT);
         int delta = Integer.MAX_VALUE;
         for (Player player : this.getOnlinePlayers().values()) {
-            if (player.getName().toLowerCase().startsWith(name)) {
+            if (player.getName().toLowerCase(Locale.ROOT).startsWith(name)) {
                 int curDelta = player.getName().length() - name.length();
                 if (curDelta < delta) {
                     found = player;
@@ -1925,12 +1916,12 @@ public class Server {
      * @return matching players
      */
     public Player[] matchPlayer(String partialName) {
-        partialName = partialName.toLowerCase();
+        partialName = partialName.toLowerCase(Locale.ROOT);
         List<Player> matchedPlayer = new ArrayList<>();
         for (Player player : this.getOnlinePlayers().values()) {
-            if (player.getName().toLowerCase().equals(partialName)) {
+            if (player.getName().toLowerCase(Locale.ROOT).equals(partialName)) {
                 return new Player[]{player};
-            } else if (player.getName().toLowerCase().contains(partialName)) {
+            } else if (player.getName().toLowerCase(Locale.ROOT).contains(partialName)) {
                 matchedPlayer.add(player);
             }
         }
@@ -2461,7 +2452,7 @@ public class Server {
      * @param name player name
      */
     public void addOp(String name) {
-        this.operators.set(name.toLowerCase(), true);
+        this.operators.set(name.toLowerCase(Locale.ROOT), true);
         Player player = this.getPlayerExact(name);
         if (player != null) {
             player.recalculatePermissions();
@@ -2475,7 +2466,7 @@ public class Server {
      * @param name player name
      */
     public void removeOp(String name) {
-        this.operators.remove(name.toLowerCase());
+        this.operators.remove(name.toLowerCase(Locale.ROOT));
         Player player = this.getPlayerExact(name);
         if (player != null) {
             player.recalculatePermissions();
@@ -2489,7 +2480,7 @@ public class Server {
      * @param name player name
      */
     public void addWhitelist(String name) {
-        this.whitelist.set(name.toLowerCase(), true);
+        this.whitelist.set(name.toLowerCase(Locale.ROOT), true);
         this.whitelist.save(true);
     }
 
@@ -2499,7 +2490,7 @@ public class Server {
      * @param name player name
      */
     public void removeWhitelist(String name) {
-        this.whitelist.remove(name.toLowerCase());
+        this.whitelist.remove(name.toLowerCase(Locale.ROOT));
         this.whitelist.save(true);
     }
 
@@ -2685,6 +2676,7 @@ public class Server {
         Entity.registerEntity("Warden", EntityWarden.class);
         Entity.registerEntity("Breeze", EntityBreeze.class);
         Entity.registerEntity("Bogged", EntityBogged.class);
+        Entity.registerEntity("Creaking", EntityCreaking.class);
         //Passive
         Entity.registerEntity("Bat", EntityBat.class);
         Entity.registerEntity("Cat", EntityCat.class);
@@ -2774,6 +2766,31 @@ public class Server {
         BlockEntity.registerBlockEntity(BlockEntity.SMOKER, BlockEntitySmoker.class);
         BlockEntity.registerBlockEntity(BlockEntity.BELL, BlockEntityBell.class);
         BlockEntity.registerBlockEntity(BlockEntity.CONDUIT, BlockEntityConduit.class);
+
+        // Not fully implemented yet but keep NBT for future use
+        BlockEntity.registerBlockEntity(BlockEntity.MOVING_BLOCK, BlockEntityMovingBlock.class);
+        BlockEntity.registerBlockEntity(BlockEntity.DAYLIGHT_DETECTOR, BlockEntityDaylightDetector.class);
+        BlockEntity.registerBlockEntity(BlockEntity.SCULK_CATALYST, BlockEntitySculkCatalyst.class);
+        BlockEntity.registerBlockEntity(BlockEntity.SCULK_SHRIEKER, BlockEntitySculkShrieker.class);
+        BlockEntity.registerBlockEntity(BlockEntity.SCULK_SENSOR, BlockEntitySculkSensor.class);
+        BlockEntity.registerBlockEntity(BlockEntity.CALIBRATED_SCULK_SENSOR, BlockEntityCalibratedSculkSensor.class);
+        BlockEntity.registerBlockEntity(BlockEntity.CHISELED_BOOKSHELF, BlockEntityChiseledBookshelf.class);
+        BlockEntity.registerBlockEntity(BlockEntity.TRIAL_SPAWNER, BlockEntityTrialSpawner.class);
+        BlockEntity.registerBlockEntity(BlockEntity.BEEHIVE, BlockEntityBeehive.class);
+        BlockEntity.registerBlockEntity(BlockEntity.HANGING_SIGN, BlockEntityHangingSign.class);
+        BlockEntity.registerBlockEntity(BlockEntity.DECORATED_POT, BlockEntityDecoratedPot.class);
+        BlockEntity.registerBlockEntity(BlockEntity.CRAFTER, BlockEntityCrafter.class);
+        BlockEntity.registerBlockEntity(BlockEntity.CREAKING_HEART, BlockEntityCreakingHeart.class);
+        BlockEntity.registerBlockEntity(BlockEntity.VAULT, BlockEntityVault.class);
+        BlockEntity.registerBlockEntity(BlockEntity.SPORE_BLOSSOM, BlockEntitySporeBlossom.class);
+        BlockEntity.registerBlockEntity(BlockEntity.STRUCTURE_BLOCK, BlockEntityStructureBlock.class);
+        BlockEntity.registerBlockEntity(BlockEntity.END_PORTAL, BlockEntityEndPortal.class);
+        BlockEntity.registerBlockEntity(BlockEntity.LODESTONE, BlockEntityLodestone.class);
+        BlockEntity.registerBlockEntity(BlockEntity.BRUSHABLE_BLOCK, BlockEntityBrushableBlock.class);
+        BlockEntity.registerBlockEntity(BlockEntity.COMMAND_BLOCK, BlockEntityCommandBlock.class);
+        BlockEntity.registerBlockEntity(BlockEntity.JIGSAW, BlockEntityJigsaw.class);
+        BlockEntity.registerBlockEntity(BlockEntity.JIGSAW_BLOCK, BlockEntityJigsawBlock.class);
+        BlockEntity.registerBlockEntity(BlockEntity.END_GATEWAY, BlockEntityEndGateway.class);
 
         // Persistent container, not on vanilla
         BlockEntity.registerBlockEntity(BlockEntity.PERSISTENT_CONTAINER, PersistentDataContainerBlockEntity.class);
@@ -2907,7 +2924,7 @@ public class Server {
             put("level-seed", "");
             put("level-type", "default");
             put("enable-rcon", false);
-            put("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes()).substring(3, 13));
+            put("rcon.password", Base64.getEncoder().encodeToString(UUID.randomUUID().toString().replace("-", "").getBytes(StandardCharsets.UTF_8)).substring(3, 13));
             put("force-resources", false);
             put("force-resources-allow-client-packs", false);
             put("xbox-auth", true);

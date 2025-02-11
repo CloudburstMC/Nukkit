@@ -65,10 +65,10 @@ public class Skin {
             return (skinId != null && !skinId.trim().isEmpty() && skinId.length() < 100) &&
                     (skinData != null && skinData.width >= 64 && skinData.height >= 32 && skinData.data.length >= SINGLE_SKIN_SIZE) &&
                     (geometryData != null && !geometryData.isEmpty()) &&
-                    ((geometryData.getBytes().length <= MAX_DATA_SIZE &&
+                    ((geometryData.getBytes(StandardCharsets.UTF_8).length <= MAX_DATA_SIZE &&
                             skinData.data.length <= MAX_DATA_SIZE &&
                             (capeData == null || capeData.data.length <= MAX_DATA_SIZE) &&
-                            (animationData == null || animationData.getBytes().length <= MAX_DATA_SIZE))) &&
+                            (animationData == null || animationData.getBytes(StandardCharsets.UTF_8).length <= MAX_DATA_SIZE))) &&
                     (playFabId == null || playFabId.length() < 100) &&
                     (capeId == null || capeId.length() < 100) &&
                     (skinColor == null || skinColor.length() < 100) &&

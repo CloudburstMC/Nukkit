@@ -3,7 +3,6 @@ package cn.nukkit.item.custom;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemEdible;
 import cn.nukkit.nbt.tag.CompoundTag;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
@@ -93,7 +92,7 @@ public class ItemDefinition {
             );
 
             if (this.creativeCategory != null) {
-                properties.putInt("creative_category", this.creativeCategory.id);
+                properties.putInt("creative_category", this.creativeCategory.ordinal());
 
                 if (this.creativeCategory != CreativeCategory.NONE && this.creativeGroup != null) {
                     properties.putString("creative_group", this.creativeGroup);
@@ -170,14 +169,13 @@ public class ItemDefinition {
         }
     }
 
-    @AllArgsConstructor
     public enum CreativeCategory {
-        CONSTRUCTION(1),
-        NATURE(2),
-        EQUIPMENT(3),
-        ITEMS(4),
-        NONE(6);
-
-        private final int id;
+        ALL,
+        CONSTRUCTION,
+        NATURE,
+        EQUIPMENT,
+        ITEMS,
+        ITEM_COMMAND_ONLY,
+        NONE
     }
 }

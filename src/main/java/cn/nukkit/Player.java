@@ -157,7 +157,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected final BiMap<Inventory, Integer> windows = HashBiMap.create();
     protected final BiMap<Integer, Inventory> windowIndex = windows.inverse();
     protected final Set<Integer> permanentWindows = new IntOpenHashSet();
-    @Getter
     private boolean inventoryOpen;
     protected int windowCnt = 4;
     protected int closingWindowId = Integer.MIN_VALUE;
@@ -1748,6 +1747,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         boolean netherPortal = false;
         boolean endPortal = false;
+        Block powderSnow = null;
 
         for (Block block : this.getCollisionBlocks()) {
             if (block.getLevel().getProvider() == null) {
@@ -1756,22 +1756,38 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             if (block.getId() == Block.NETHER_PORTAL) {
                 netherPortal = true;
-                continue;
             } else if (block.getId() == Block.END_PORTAL) {
                 endPortal = true;
-                continue;
+            } else if (block.getId() == Block.POWDER_SNOW) {
+                powderSnow = block;
             }
 
             block.onEntityCollide(this);
         }
 
+        if (powderSnow != null) {
+            this.inPowderSnowTicks++;
+
+            if (this.inPowderSnowTicks <= 140) {
+                this.setDataPropertyAndSendOnlyToSelf(new FloatEntityData(DATA_FREEZING_EFFECT_STRENGTH, this.inPowderSnowTicks / 140f));
+            }
+
+            if (this.inPowderSnowTicks >= 140 && server.getTick() % 40 == 0 && level.getGameRules().getBoolean(GameRule.FREEZE_DAMAGE)) {
+                this.attack(new EntityDamageByBlockEvent(powderSnow, this, EntityDamageEvent.DamageCause.CONTACT, 1f));
+            }
+        } else if (this.inPowderSnowTicks != 0) {
+            this.inPowderSnowTicks = 0;
+
+            this.setDataPropertyAndSendOnlyToSelf(new FloatEntityData(DATA_FREEZING_EFFECT_STRENGTH, 0f));
+        }
+
         if (endPortal) {
-            inEndPortalTicks++;
+            this.inEndPortalTicks++;
         } else {
             this.inEndPortalTicks = 0;
         }
 
-        if (inEndPortalTicks == 1 && EnumLevel.THE_END.getLevel() != null) {
+        if (this.inEndPortalTicks == 1 && EnumLevel.THE_END.getLevel() != null) {
             EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, EntityPortalEnterEvent.PortalType.END);
             this.getServer().getPluginManager().callEvent(ev);
 
@@ -1794,8 +1810,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         Position pos = new Position(100.5, 49, 0.5, end);
 
                         FullChunk chunk = end.getChunk(pos.getChunkX(), pos.getChunkZ(), false);
-                        if (chunk == null || !chunk.isGenerated()) {
-                            end.generateChunk(pos.getChunkX(), pos.getChunkZ(), true);
+                        if (chunk == null || !(chunk.isGenerated() || chunk.isPopulated())) {
+                            end.populateChunk(pos.getChunkX(), pos.getChunkZ(), true);
 
                             int x = pos.getFloorX();
                             int y = pos.getFloorY();
@@ -1837,7 +1853,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         int chunkX = (portalPos.getChunkX()) + x, chunkZ = (portalPos.getChunkZ()) + z;
                         FullChunk chunk = portalPos.level.getChunk(chunkX, chunkZ, false);
                         if (chunk == null || !(chunk.isGenerated() || chunk.isPopulated())) {
-                            portalPos.level.generateChunk(chunkX, chunkZ, true);
+                            portalPos.level.populateChunk(chunkX, chunkZ, true);
                         }
                     }
                 }
@@ -2788,9 +2804,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, false, false);
         }
 
-        if (CustomItemManager.get().hasCustomItems()) {
-            this.dataPacket(CustomItemManager.get().getCachedPacket());
-        }
+        this.dataPacket(CustomItemManager.get().getCachedPacket());
         this.dataPacket(BiomeDefinitionListPacket.getCachedPacket());
         this.dataPacket(EntityManager.get().getCachedPacket());
 
@@ -2948,7 +2962,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.username = this.unverifiedUsername;
                 this.unverifiedUsername = null;
                 this.displayName = this.username;
-                this.iusername = this.username.toLowerCase();
+                this.iusername = this.username.toLowerCase(Locale.ROOT);
                 this.setDataProperty(new StringEntityData(DATA_NAMETAG, this.username), false);
 
                 this.randomClientId = loginPacket.clientId;
@@ -5488,12 +5502,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 case CONTACT:
                     if (cause instanceof EntityDamageByBlockEvent) {
                         int id = ((EntityDamageByBlockEvent) cause).getDamager().getId();
-                        if (id == Block.CACTUS) {
+                        if (id == BlockID.CACTUS) {
                             message = "death.attack.cactus";
-                        } else if (id == Block.ANVIL) {
+                        } else if (id == BlockID.ANVIL) {
                             message = "death.attack.anvil";
-                        } else if (id == Block.SWEET_BERRY_BUSH) {
+                        } else if (id == BlockID.SWEET_BERRY_BUSH) {
                             message = "death.attack.sweetBerry";
+                        } else if (id == BlockID.POWDER_SNOW) {
+                            message = "death.attack.freeze";
                         } else {
                             message = "death.attack.generic";
                         }

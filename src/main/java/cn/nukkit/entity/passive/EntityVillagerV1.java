@@ -54,7 +54,7 @@ public class EntityVillagerV1 extends EntityWalkingAnimal implements InventoryHo
         if (this.isBaby()) {
             return 0.975f;
         }
-        return 1.95f;
+        return 1.9f;
     }
 
     @Override

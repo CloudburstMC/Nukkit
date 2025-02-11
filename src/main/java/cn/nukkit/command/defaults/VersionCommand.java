@@ -10,6 +10,7 @@ import cn.nukkit.plugin.PluginDescription;
 import cn.nukkit.utils.TextFormat;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created on 2015/11/12 by xtypr.
@@ -50,10 +51,10 @@ public class VersionCommand extends VanillaCommand {
             final Plugin[] exactPlugin = {sender.getServer().getPluginManager().getPlugin(pluginName.toString())};
 
             if (exactPlugin[0] == null) {
-                pluginName = new StringBuilder(pluginName.toString().toLowerCase());
+                pluginName = new StringBuilder(pluginName.toString().toLowerCase(Locale.ROOT));
                 final String finalPluginName = pluginName.toString();
                 sender.getServer().getPluginManager().getPlugins().forEach((s, p) -> {
-                    if (s.toLowerCase().contains(finalPluginName)) {
+                    if (s.toLowerCase(Locale.ROOT).contains(finalPluginName)) {
                         exactPlugin[0] = p;
                         found[0] = true;
                     }

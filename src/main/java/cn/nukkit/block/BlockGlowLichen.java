@@ -187,7 +187,7 @@ public class BlockGlowLichen extends BlockTransparentMeta implements BlockProper
         return false;
     }
 
-    public Set<BlockFace> getSupportedFaces() {
+    private Set<BlockFace> getSupportedFaces() {
         EnumSet<BlockFace> faces = EnumSet.noneOf(BlockFace.class);
         for (BlockFace face : BlockFace.values()) {
             if (this.hasBlockFace(face)) {

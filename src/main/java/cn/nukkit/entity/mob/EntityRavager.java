@@ -29,7 +29,7 @@ public class EntityRavager extends EntityWalkingMob {
 
     @Override
     public float getWidth() {
-        return 1.95f;
+        return 1.9f;
     }
 
     @Override

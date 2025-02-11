@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockCaveVines extends BlockTransparentMeta {
 
-    private static final float CHANCE_OF_BERRIES_ON_GROWTH = 0.11F * 1.2F;
+    private static final float CHANCE_OF_BERRIES_ON_GROWTH = 0.11f;
 
     public BlockCaveVines() {
         this(0);

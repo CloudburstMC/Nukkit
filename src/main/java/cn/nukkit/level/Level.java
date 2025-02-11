@@ -782,12 +782,8 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     }
 
     public void doTick(int currentTick) {
-        int sendCount = (this.players.size() + 1) * server.chunksPerTick;
-        for (int i = 0; i < sendCount; i++) {
-            AsyncChunkData data = this.asyncChunkThread.out.poll();
-            if (data == null) {
-                break;
-            }
+        AsyncChunkData data;
+        while ((data = this.asyncChunkThread.out.poll()) != null) {
             this.chunkRequestCallback(data.timestamp, data.x, data.z, data.count, data.data, data.hash);
         }
 
@@ -2245,7 +2241,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         return this.useItemOn(vector, item, face, fx, fy, fz, player, true);
     }
 
-    @SuppressWarnings("unchecked")
     public Item useItemOn(Vector3 vector, Item item, BlockFace face, float fx, float fy, float fz, Player player, boolean playSound) {
         Block target = this.getBlock(vector);
         Block block = target.getSide(face);
@@ -2370,6 +2365,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                 Tag tag = item.getNamedTagEntry("CanPlaceOn");
                 boolean canPlace = false;
                 if (tag instanceof ListTag) {
+                    //noinspection unchecked
                     for (Tag v : ((ListTag<Tag>) tag).getAll()) {
                         if (v instanceof StringTag) {
                             Item entry = Item.fromString(((StringTag) v).data);

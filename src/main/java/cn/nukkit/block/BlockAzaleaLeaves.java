@@ -3,10 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.math.BlockFace;
-
-import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockAzaleaLeaves extends BlockLeaves {
 
@@ -40,29 +37,13 @@ public class BlockAzaleaLeaves extends BlockLeaves {
     }
 
     @Override
-    public Item[] getDrops(Item item) {
-        if (item.isShears() || item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
-            return new Item[]{ this.toItem() };
-        }
-
-        ThreadLocalRandom random = ThreadLocalRandom.current();
-        if (random.nextInt(20) != 0) {
-            return new Item[0];
-        }
-
-        int chance = random.nextInt(4);
-        if (chance == 0 || chance == 1) {
-            return new Item[]{ Item.get(random.nextBoolean() ? Item.AZALEA : Item.FLOWERING_AZALEA, 0, 1) };
-        } else if (chance == 2) {
-            return new Item[]{ Item.get(Item.SAPLING, random.nextInt(0, 6), 1) };
-        } else {
-            return new Item[]{ Item.get(Item.STICK, 0, random.nextInt(1, 2)) };
-        }
+    protected boolean canDropApple() {
+        return false;
     }
 
     @Override
-    protected boolean canDropApple() {
-        return false;
+    protected Item getSapling() {
+        return new ItemBlock(Block.get(Block.AZALEA, 0));
     }
 
     @Override

@@ -107,7 +107,7 @@ public class LevelDBProvider implements LevelProvider {
             if (generator == null) {
                 generator = Generator.getGenerator("DEFAULT");
             }
-            this.levelData.putString("generatorName", generator.getSimpleName().toLowerCase());
+            this.levelData.putString("generatorName", generator.getSimpleName().toLowerCase(Locale.ROOT));
         }
 
         if (!this.levelData.contains("generatorOptions")) {
@@ -117,11 +117,11 @@ public class LevelDBProvider implements LevelProvider {
         this.spawn = new Vector3(this.levelData.getInt("SpawnX"), this.levelData.getInt("SpawnY"), this.levelData.getInt("SpawnZ"));
 
         ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
-        builder.setNameFormat("LevelDB Executor-" + this.getName() + " #%s");
+        builder.setNameFormat("LevelDB Executor for " + this.getName());
         builder.setUncaughtExceptionHandler((thread, ex) -> {
             Server.getInstance().getLogger().error("Exception in " + thread.getName(), ex);
         });
-        this.executor = Executors.newFixedThreadPool(3, builder.build());
+        this.executor = Executors.newSingleThreadExecutor(builder.build());
     }
 
     @SuppressWarnings("unused")
@@ -705,7 +705,7 @@ public class LevelDBProvider implements LevelProvider {
     public void setGameRules(GameRules rules) {
         //noinspection rawtypes
         for (Map.Entry<GameRule, GameRules.Value> entry : rules.getGameRules().entrySet()) {
-            String name = entry.getKey().getName().toLowerCase();
+            String name = entry.getKey().getName().toLowerCase(Locale.ROOT);
 
             if (entry.getValue().getType() == GameRules.Type.BOOLEAN) {
                 this.levelData.putBoolean(name, rules.getBoolean(entry.getKey()));

@@ -215,26 +215,38 @@ public class Explosion {
             } else if (block.getId() == Block.BED_BLOCK && (block.getDamage() & 0x08) == 0x08) {
                 this.level.setBlockAt((int) block.x, (int) block.y, (int) block.z, Block.AIR);
                 continue; // We don't want drops from both bed parts
-            } else if ((container = this.level.getBlockEntity(block)) instanceof InventoryHolder && !container.closed) {
-                if (this.level.getGameRules().getBoolean(GameRule.DO_TILE_DROPS)) {
-                    Inventory inv = ((InventoryHolder) container).getInventory();
-                    if (inv != null) {
-                        inv.getViewers().clear();
+            } else {
+                Item shulkerDrop = null;
+
+                // 100% drop chance for container contents
+                if ((container = this.level.getBlockEntity(block)) instanceof InventoryHolder && !container.closed) {
+                    if (this.level.getGameRules().getBoolean(GameRule.DO_TILE_DROPS)) {
+                        Inventory inv = ((InventoryHolder) container).getInventory();
+                        if (inv != null) {
+                            inv.getViewers().clear();
+                        }
+
+                        if (container instanceof BlockEntityShulkerBox) {
+                            shulkerDrop = block.toItem();
+                        } else {
+                            container.onBreak();
+                        }
                     }
-                    if (container instanceof BlockEntityShulkerBox) {
-                        this.level.dropItem(block.add(0.5, 0.5, 0.5), block.toItem());
-                        ((BlockEntityShulkerBox) container).getInventory().clearAll();
-                    } else {
-                        container.onBreak();
+
+                    container.close();
+
+                    if (shulkerDrop != null) {
+                        this.level.dropItem(block.add(0.5, 0.5, 0.5), shulkerDrop);
                     }
                 }
-                container.close();
-            } else if (block.alwaysDropsOnExplosion() || random.nextDouble() * 100 < yield) {
-                if (this.level.getBlockIdAt((int) block.x, (int) block.y, (int) block.z) == Block.AIR) {
-                    continue; // Block broken by another explosion (end crystals)
-                }
-                for (Item drop : block.getDrops(air)) {
-                    this.level.dropItem(block.add(0.5, 0.5, 0.5), drop);
+
+                if (shulkerDrop == null && (block.alwaysDropsOnExplosion() || random.nextDouble() * 100 < yield)) {
+                    if (this.level.getBlockIdAt((int) block.x, (int) block.y, (int) block.z) == Block.AIR) {
+                        continue; // Block broken by another explosion (end crystals)
+                    }
+                    for (Item drop : block.getDrops(air)) { // Might want to check if getDrops of any block expects block entity to still exist
+                        this.level.dropItem(block.add(0.5, 0.5, 0.5), drop);
+                    }
                 }
             }
 

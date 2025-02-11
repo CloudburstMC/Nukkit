@@ -43,4 +43,9 @@ public class BlockPowderSnow extends BlockTransparent {
     public boolean canHarvestWithHand() {
         return false;
     }
+
+    @Override
+    public boolean hasEntityCollision() {
+        return true;
+    }
 }

@@ -13,6 +13,8 @@ import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.event.potion.PotionApplyEvent;
 
+import java.util.Locale;
+
 /**
  * @author MagicDroidX
  * Nukkit Project
@@ -126,7 +128,7 @@ public class Potion implements Cloneable {
 
     public static Potion getPotionByName(String name) {
         try {
-            byte id = Potion.class.getField(name.toUpperCase()).getByte(null);
+            byte id = Potion.class.getField(name.toUpperCase(Locale.ROOT)).getByte(null);
             return getPotion(id);
         } catch (Exception e) {
             return null;

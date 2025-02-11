@@ -147,8 +147,9 @@ public class EmptyChunkSection implements ChunkSection {
 
     @Override
     public void writeTo(BinaryStream stream) {
-        stream.putByte((byte) 8); // paletted
+        stream.putByte((byte) 9); // SubChunk version
         stream.putByte((byte) 0); // layers
+        stream.putByte((byte) this.y);
     }
 
     @Override

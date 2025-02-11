@@ -42,6 +42,11 @@ public class BlockLeavesMangrove extends BlockLeaves {
     }
 
     @Override
+    protected Item getSapling() {
+        return new ItemBlock(Block.get(Block.AIR, 0));
+    }
+
+    @Override
     public boolean isPersistent() {
         return (this.getDamage() & 2) >>> 1 == 1;
     }

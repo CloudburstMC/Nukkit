@@ -10,7 +10,7 @@ import cn.nukkit.utils.Utils;
 /**
  * Created by Pub4Game on 27.12.2015.
  */
-public class BlockMobSpawner extends BlockSolid {
+public class BlockMobSpawner extends BlockTransparent {
 
     @Override
     public String getName() {
@@ -60,11 +60,6 @@ public class BlockMobSpawner extends BlockSolid {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[0];
-    }
-
-    @Override
-    public int getLightLevel() {
-        return 3;
     }
 
     @Override

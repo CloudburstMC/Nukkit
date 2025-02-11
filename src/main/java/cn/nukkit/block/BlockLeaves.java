@@ -207,11 +207,11 @@ public class BlockLeaves extends BlockTransparentMeta {
 
             for (BlockFace face : BlockFace.values()) {
                 Block nextBlock = currentBlock.getSideIfLoadedOrNull(face); // If side chunk not loaded, do not load or decay
-                if (nextBlock == null || nextBlock.getId() == LOG || nextBlock.getId() == LOG2) {
+                if (nextBlock == null || nextBlock instanceof BlockWood) {
                     return true;
                 }
 
-                if ((nextBlock.getId() == LEAVES || nextBlock.getId() == LEAVES2) && !visited.contains(nextBlock)) {
+                if (nextBlock instanceof BlockLeaves && !visited.contains(nextBlock)) {
                     queue.offer(nextBlock);
                     visited.add(nextBlock);
                     distance.put(nextBlock, currentDistance + 1);

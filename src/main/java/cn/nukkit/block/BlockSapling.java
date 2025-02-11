@@ -100,7 +100,7 @@ public class BlockSapling extends BlockFlowable {
         return false;
     }
 
-    private boolean growTreeHere() {
+    protected boolean growTreeHere() {
         BasicGenerator generator = null;
         boolean bigTree = false;
 

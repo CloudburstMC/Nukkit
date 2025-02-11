@@ -12,6 +12,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.particle.*;
 import cn.nukkit.math.Vector3;
 
+import java.util.Locale;
 import java.util.concurrent.ThreadLocalRandom;
 
 /**
@@ -55,7 +56,7 @@ public class ParticleCommand extends VanillaCommand {
             defaultPosition = new Position(0, 0, 0, sender.getServer().getDefaultLevel());
         }
 
-        String name = args[0].toLowerCase();
+        String name = args[0].toLowerCase(Locale.ROOT);
 
         double x;
         double y;

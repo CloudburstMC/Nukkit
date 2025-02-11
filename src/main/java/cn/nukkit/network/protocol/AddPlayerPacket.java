@@ -72,6 +72,7 @@ public class AddPlayerPacket extends DataPacket {
         this.putLInt(262143); // getAbilitiesSet()
         this.putLInt(63); // getAbilityValues()
         this.putLFloat(0.1f); // getFlySpeed()
+        this.putLFloat(1.0f); // getVerticalFlySpeed()
         this.putLFloat(0.05f); // getWalkSpeed()
         this.putUnsignedVarInt(0); // Entity links
         this.putString(deviceId);

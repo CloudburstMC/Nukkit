@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.file.Files;
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -71,7 +72,7 @@ public class BanIpCommand extends VanillaCommand {
 
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.banip.success.players", player.getAddress(), player.getName()));
             } else {
-                String name = value.toLowerCase();
+                String name = value.toLowerCase(Locale.ROOT);
                 String path = sender.getServer().getDataPath() + "players/";
                 File file = new File(path + name + ".dat");
                 CompoundTag nbt = null;

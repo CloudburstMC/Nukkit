@@ -83,7 +83,7 @@ public class TypesGeneratorHelper {
             try (InputStreamReader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
                 JsonObject json = JsonParser.parseReader(reader).getAsJsonObject();
                 for (String tag : json.keySet()) {
-                    String name = tag.split(":")[1].toUpperCase();
+                    String name = tag.split(":")[1].toUpperCase(Locale.ROOT);
                     joiner.add("public static final MaterialTag " + name + " = register(\"" + tag + "\", new LazilyInitializedMaterialTag(\"" + tag + "\"));");
                 }
             }

@@ -550,7 +550,7 @@ class Blocks {
         list[CRACKED_DEEPSLATE_TILES] = BlockTilesDeepslateCracked.class; //664
         list[CRACKED_DEEPSLATE_BRICKS] = BlockBricksDeepslateCracked.class; //665
         list[GLOW_LICHEN] = BlockGlowLichen.class; //666
-        /*list[CANDLE] = BlockCandle.class; //667
+        list[CANDLE] = BlockCandle.class; //667
         list[WHITE_CANDLE] = BlockCandleWhite.class; //668
         list[ORANGE_CANDLE] = BlockCandleOrange.class; //669
         list[MAGENTA_CANDLE] = BlockCandleMagenta.class; //670
@@ -567,7 +567,7 @@ class Blocks {
         list[GREEN_CANDLE] = BlockCandleGreen.class; //681
         list[RED_CANDLE] = BlockCandleRed.class; //682
         list[BLACK_CANDLE] = BlockCandleBlack.class; //683
-        list[CANDLE_CAKE] = BlockCandle.class; //684
+        list[CANDLE_CAKE] = BlockCandleCake.class; //684
         list[WHITE_CANDLE_CAKE] = BlockCandleCakeWhite.class; //685
         list[ORANGE_CANDLE_CAKE] = BlockCandleCakeOrange.class; //686
         list[MAGENTA_CANDLE_CAKE] = BlockCandleCakeMagenta.class; //687
@@ -583,7 +583,7 @@ class Blocks {
         list[BROWN_CANDLE_CAKE] = BlockCandleCakeBrown.class; //697
         list[GREEN_CANDLE_CAKE] = BlockCandleCakeGreen.class; //698
         list[RED_CANDLE_CAKE] = BlockCandleCakeRed.class; //699
-        list[BLACK_CANDLE_CAKE] = BlockCandleCakeBlack.class; //700*/
+        list[BLACK_CANDLE_CAKE] = BlockCandleCakeBlack.class; //700
         list[WAXED_OXIDIZED_COPPER] = BlockCopperOxidizedWaxed.class; //701
         list[WAXED_OXIDIZED_CUT_COPPER] = BlockCopperCutOxidizedWaxed.class; //702
         list[WAXED_OXIDIZED_CUT_COPPER_STAIRS] = BlockStairsCopperCutOxidizedWaxed.class; //703
@@ -595,7 +595,7 @@ class Blocks {
         list[INFESTED_DEEPSLATE] = BlockInfestedDeepslate.class; //709
         //
         list[SCULK] = BlockSculk.class; //713
-        //list[SCULK_VEIN] = BlockSculkVein.class; //714
+        list[SCULK_VEIN] = BlockSculkVein.class; //714
         list[SCULK_CATALYST] = BlockSculkCatalyst.class; //715
         list[SCULK_SHRIEKER] = BlockSculkShrieker.class; //716
         //
@@ -605,7 +605,7 @@ class Blocks {
         list[PEARLESCENT_FROGLIGHT] = BlockFroglightPearlescent.class; //724
         list[VERDANT_FROGLIGHT] = BlockFroglightVerdant.class; //725
         list[OCHRE_FROGLIGHT] = BlockFroglightOchre.class; //726
-        //list[MANGROVE_LEAVES] = BlockLeavesMangrove.class; //727
+        list[MANGROVE_LEAVES] = BlockLeavesMangrove.class; //727
         list[MUD] = BlockMud.class; //728
         list[MANGROVE_PROPAGULE] = BlockMangrovePropagule.class; //729
         list[MUD_BRICKS] = BlockMudBrick.class; //730
@@ -615,23 +615,23 @@ class Blocks {
         list[MUD_BRICK_STAIRS] = BlockMudBrickStairs.class; //735
         list[MUD_BRICK_WALL] = BlockMudBrickWall.class; //736
         list[MANGROVE_ROOTS] = BlockMangroveRoots.class; //737
-        //list[MUDDY_MANGROVE_ROOTS] = BlockMangroveRootsMuddy.class; //738
-        //list[MANGROVE_LOG] = .class; //739
-        //list[STRIPPED_MANGROVE_LOG] = .class; //740
-        //list[MANGROVE_PLANKS] = .class; //741
-        //list[MANGROVE_BUTTON] = .class; //742
-        //list[MANGROVE_STAIRS] = .class; //743
-        //list[MANGROVE_SLAB] = .class; //744
-        //list[MANGROVE_PRESSURE_PLATE] = .class; //745
-        //list[MANGROVE_FENCE] = .class; //746
-        //list[MANGROVE_FENCE_GATE] = .class; //747
-        //
-        //list[MANGROVE_STANDING_SIGN] = .class; //749
-        //list[MANGROVE_WALL_SIGN] = .class; //750
-        //list[MANGROVE_TRAPDOOR] = .class; //751
-        //list[MANGROVE_WOOD] = .class; //752
-        //list[STRIPPED_MANGROVE_WOOD] = .class; //753
-        //list[MANGROVE_DOUBLE_SLAB] = .class; //754
+        list[MUDDY_MANGROVE_ROOTS] = BlockMangroveRootsMuddy.class; //738
+        list[MANGROVE_LOG] = BlockMangroveLog.class; //739
+        list[STRIPPED_MANGROVE_LOG] = BlockMangroveLogStripped.class; //740
+        list[MANGROVE_PLANKS] = BlockMangrovePlanks.class; //741
+        list[MANGROVE_BUTTON] = BlockButtonMangrove.class; //742
+        list[MANGROVE_STAIRS] = BlockStairsMangrove.class; //743
+        list[MANGROVE_SLAB] = BlockSlabMangrove.class; //744
+        list[MANGROVE_PRESSURE_PLATE] = BlockPressurePlateMangrove.class; //745
+        list[MANGROVE_FENCE] = BlockFenceMangrove.class; //746
+        list[MANGROVE_FENCE_GATE] = BlockFenceGateMangrove.class; //747
+        list[MANGROVE_DOOR_BLOCK] = BlockDoorMangrove.class; //748
+        list[MANGROVE_STANDING_SIGN] = BlockMangroveSignStanding.class; //749
+        list[MANGROVE_WALL_SIGN] = BlockMangroveWallSign.class; //750
+        list[MANGROVE_TRAPDOOR] = BlockTrapdoorMangrove.class; //751
+        list[MANGROVE_WOOD] = BlockMangroveWood.class; //752
+        list[STRIPPED_MANGROVE_WOOD] = BlockMangroveWoodStripped.class; //753
+        list[MANGROVE_DOUBLE_SLAB] = BlockDoubleSlabMangrove.class; //754
     }
 
     static void init() {

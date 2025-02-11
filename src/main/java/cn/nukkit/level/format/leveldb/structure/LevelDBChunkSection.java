@@ -226,8 +226,9 @@ public class LevelDBChunkSection implements ChunkSection {
     public void writeTo(BinaryStream stream) {
         synchronized (this.storages) {
             boolean waterLogging = this.hasSecondLayer();
-            stream.putByte((byte) 8); // Paletted chunk because Mojang messed up the old one
-            stream.putByte((byte) (waterLogging ? 2 : 1));
+            stream.putByte((byte) 9); // SubChunk version
+            stream.putByte((byte) (waterLogging ? 2 : 1)); // layers
+            stream.putByte((byte) this.y);
             this.storages[0].writeTo(stream);
             if (waterLogging) {
                 this.storages[1].writeTo(stream);

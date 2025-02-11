@@ -11,6 +11,8 @@ import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.Locale;
+
 /**
  * Created by Pub4Game on 23.01.2016.
  */
@@ -78,7 +80,7 @@ public class EnchantCommand extends VanillaCommand {
     }
 
     public int getIdByName(String value) throws NumberFormatException {
-        value = value.toLowerCase();
+        value = value.toLowerCase(Locale.ROOT);
         switch (value) {
             case "protection":
                 return 0;

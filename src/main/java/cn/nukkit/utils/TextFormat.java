@@ -110,7 +110,8 @@ public enum TextFormat {
     MATERIAL_EMERALD('q'),
     MATERIAL_DIAMOND('s'),
     MATERIAL_LAPIS('t'),
-    MATERIAL_AMETHYST('u');
+    MATERIAL_AMETHYST('u'),
+    MATERIAL_RESIN('v');
 
     /**
      * The special character which prefixes all format codes. Use this if
@@ -118,7 +119,7 @@ public enum TextFormat {
      */
     public static final char ESCAPE = '\u00A7';
 
-    private static final Pattern CLEAN_PATTERN = Pattern.compile("(?i)" + ESCAPE + "[0-9A-U]");
+    private static final Pattern CLEAN_PATTERN = Pattern.compile("(?i)" + ESCAPE + "[0-9A-V]");
     private final static Map<Character, TextFormat> BY_CHAR = new HashMap<>();
 
     static {
@@ -211,7 +212,7 @@ public enum TextFormat {
         char[] b = textToTranslate.toCharArray();
         for (int i = 0; i < b.length - 1; i++) {
             int x = i + 1;
-            if (b[i] == altFormatChar && "0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUu".indexOf(b[x]) > -1) {
+            if (b[i] == altFormatChar && "0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVv".indexOf(b[x]) > -1) {
                 b[i] = TextFormat.ESCAPE;
                 b[x] = Character.toLowerCase(b[x]);
             }

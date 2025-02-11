@@ -9,6 +9,8 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.network.protocol.MobEffectPacket;
 
+import java.util.Locale;
+
 /**
  * @author MagicDroidX
  * Nukkit Project
@@ -101,7 +103,7 @@ public class Effect implements Cloneable {
     public static Effect getEffectByName(String name) {
         name = name.trim().replace(' ', '_').replace("minecraft:", "");
         try {
-            int id = Effect.class.getField(name.toUpperCase()).getInt(null);
+            int id = Effect.class.getField(name.toUpperCase(Locale.ROOT)).getInt(null);
             return getEffect(id);
         } catch (Exception e) {
             return null;

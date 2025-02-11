@@ -4,7 +4,9 @@ import cn.nukkit.Nukkit;
 import cn.nukkit.block.Block;
 import cn.nukkit.item.RuntimeItems.MappingEntry;
 import cn.nukkit.level.GlobalBlockPalette;
-import cn.nukkit.utils.BinaryStream;
+import cn.nukkit.nbt.NBTIO;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.ItemComponentPacket;
 import cn.nukkit.utils.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -14,9 +16,14 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
 
+import java.io.BufferedInputStream;
+import java.io.InputStream;
+import java.nio.ByteOrder;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
 @Log4j2
 public class RuntimeItemMapping {
@@ -25,12 +32,19 @@ public class RuntimeItemMapping {
     private final Int2ObjectMap<RuntimeEntry> legacy2Runtime = new Int2ObjectOpenHashMap<>();
     private final Map<String, LegacyEntry> identifier2Legacy = new HashMap<>();
 
-    private byte[] itemPalette;
+    private final Map<String, ItemComponentPacket.ItemDefinition> vanillaItems = new HashMap<>();
 
     public RuntimeItemMapping(Map<String, MappingEntry> mappings) {
         JsonArray json = Utils.loadJsonResource("runtime_item_states.json").getAsJsonArray();
         if (json.isEmpty()) {
             throw new IllegalStateException("Empty array");
+        }
+
+        CompoundTag itemComponents;
+        try (InputStream stream = RuntimeItemMapping.class.getClassLoader().getResourceAsStream("item_components.nbt")) {
+            itemComponents = NBTIO.read(new BufferedInputStream(new GZIPInputStream(stream)), ByteOrder.BIG_ENDIAN, false);
+        } catch (Exception e) {
+            throw new AssertionError("Error while loading item_components.nbt", e);
         }
 
         for (JsonElement element : json) {
@@ -40,6 +54,14 @@ public class RuntimeItemMapping {
             JsonObject entry = element.getAsJsonObject();
             String identifier = entry.get("name").getAsString();
             int runtimeId = entry.get("id").getAsInt();
+
+            int version = entry.get("version").getAsInt();
+            boolean componentBased = entry.get("componentBased").getAsBoolean();
+            CompoundTag components = null;
+            if (componentBased) {
+                components = new CompoundTag().putCompound("components", (CompoundTag) itemComponents.get(identifier));
+            }
+            this.vanillaItems.put(identifier, new ItemComponentPacket.ItemDefinition(identifier, runtimeId, componentBased, version, components));
 
             boolean hasDamage = false;
             int damage = 0;
@@ -63,8 +85,6 @@ public class RuntimeItemMapping {
 
             this.registerItem(identifier, runtimeId, legacyId, damage, hasDamage);
         }
-
-        this.generatePalette();
     }
 
     public void registerItem(String identifier, int runtimeId, int legacyId, int damage) {
@@ -88,17 +108,6 @@ public class RuntimeItemMapping {
         } else {
             this.legacy2Runtime.put(fullId, new RuntimeEntry(identifier, runtimeId, hasDamage));
         }
-    }
-
-    public void generatePalette() {
-        BinaryStream paletteBuffer = new BinaryStream();
-        paletteBuffer.putUnsignedVarInt(this.legacy2Runtime.size());
-        for (RuntimeEntry entry : this.legacy2Runtime.values()) {
-            paletteBuffer.putString(entry.getIdentifier());
-            paletteBuffer.putLShort(entry.getRuntimeId());
-            paletteBuffer.putBoolean(!entry.getIdentifier().startsWith("minecraft:")); // TODO: Component item without bc break
-        }
-        this.itemPalette = paletteBuffer.getBuffer();
     }
 
     public LegacyEntry fromRuntime(int runtimeId) {
@@ -130,9 +139,11 @@ public class RuntimeItemMapping {
         String identifier = json.get("id").getAsString();
         LegacyEntry legacyEntry = this.fromIdentifier(identifier);
         if (legacyEntry == null) {
-            log.trace("Can not find legacyEntry for " + identifier);
             if (!ignoreUnknown) {
                 throw new IllegalStateException("Can not find legacyEntry for " + identifier);
+            }
+            if (Nukkit.DEBUG > 2) {
+                log.debug("Can not find legacyEntry for " + identifier);
             }
             return null;
         }
@@ -154,22 +165,23 @@ public class RuntimeItemMapping {
             damage = legacyEntry.getDamage();
         } else if (json.has("blockRuntimeId")) {
             int runtimeId = json.get("blockRuntimeId").getAsInt();
-            int fullId = GlobalBlockPalette.getLegacyFullId(runtimeId);
-            if (fullId == -1) {
-                if (ignoreUnknown) {
-                    return null;
-                } else {
-                    throw new IllegalStateException("Can not find blockRuntimeId for " + identifier + " (" + runtimeId + ")");
+            if (runtimeId != 0) {
+                int fullId = GlobalBlockPalette.getLegacyFullId(runtimeId);
+                if (fullId == -1) {
+                    if (ignoreUnknown) {
+                        return null;
+                    } else {
+                        throw new IllegalStateException("Can not find blockRuntimeId for " + identifier + " (" + runtimeId + ")");
+                    }
                 }
-            }
 
-            damage = fullId & Block.DATA_MASK;
+                damage = fullId & Block.DATA_MASK;
+            }
         }
 
         int count = json.has("count") ? json.get("count").getAsInt() : 1;
         return Item.get(legacyId, damage, count, nbtBytes);
     }
-
 
     public LegacyEntry fromIdentifier(String identifier) {
         return this.identifier2Legacy.get(identifier);
@@ -179,8 +191,8 @@ public class RuntimeItemMapping {
         return (((short) id) << 16) | ((data & 0x7fff) << 1);
     }
 
-    public byte[] getItemPalette() {
-        return this.itemPalette;
+    public Collection<ItemComponentPacket.ItemDefinition> getVanillaItemDefinitions() {
+        return vanillaItems.values();
     }
 
     @Data

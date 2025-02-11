@@ -55,21 +55,14 @@ public class BlockWoodBark extends BlockWood {
     }
 
     @Override
-    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        /*if (face.getAxis().isHorizontal()) {
-            if (face.getAxis() == BlockFace.Axis.X) {
-                setDamage(getDamage() | 0x10);
-            } else {
-                setDamage(getDamage() | 0x20);
-            }
-        }*/
-        this.getLevel().setBlock(block, this, true, true);
-        return true;
-    }
-
-    @Override
     public Item toItem() {
         int meta = this.getDamage() & 0xF;
         return new ItemBlock(Block.get(WOOD_BARK, meta), meta);
+    }
+
+    @Override
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        //this.setPillarAxis(face.getAxis());
+        return this.getLevel().setBlock(block, this, true, true);
     }
 }
