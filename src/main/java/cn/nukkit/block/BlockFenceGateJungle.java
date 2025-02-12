@@ -1,6 +1,5 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -25,11 +24,6 @@ public class BlockFenceGateJungle extends BlockFenceGate {
     @Override
     public String getName() {
         return "Jungle Fence Gate";
-    }
-    
-    @Override
-    public Item toItem() {
-        return Item.get(Item.FENCE_GATE_JUNGLE, 0, 1);
     }
 
     @Override

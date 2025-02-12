@@ -8,6 +8,8 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.Fuel;
 import cn.nukkit.item.RuntimeItemMapping.RuntimeEntry;
+import cn.nukkit.item.custom.CustomItem;
+import cn.nukkit.item.custom.ItemDefinition;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.persistence.PersistentItemDataContainer;
@@ -22,7 +24,8 @@ import cn.nukkit.utils.material.BlockType;
 import cn.nukkit.utils.material.MaterialType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import com.google.gson.JsonObject;
+import lombok.Data;
 
 import java.io.IOException;
 import java.nio.ByteOrder;
@@ -320,6 +323,8 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             list[ECHO_SHARD] = ItemEchoShard.class; //647
             list[RECOVERY_COMPASS] = ItemRecoveryCompass.class; //648
             list[GLOW_BERRIES] = ItemGlowBerries.class; //654
+            list[MANGROVE_DOOR] = ItemDoorMangrove.class; //670
+            list[MANGROVE_SIGN] = ItemSignMangrove.class; //671
             list[CAMPFIRE] = ItemCampfire.class; //720
             list[SUSPICIOUS_STEW] = ItemSuspiciousStew.class; //734
             list[HONEYCOMB] = ItemHoneycomb.class; //736
@@ -361,26 +366,89 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         clearCreativeItems();
     }
 
-    private static final List<Item> CREATIVE_ITEMS = new ObjectArrayList<>();
+    private static final CreativeItems CREATIVE_ITEMS = new CreativeItems();
+
+    private static boolean initialized;
+    private static List<ItemDefinition> toBeAdded;
+
+    public static void addCustomCreativeItem(ItemDefinition definition) {
+        if (initialized) {
+            throw new IllegalStateException();
+        }
+
+        if (toBeAdded == null) {
+            toBeAdded = new ArrayList<>();
+        }
+
+        toBeAdded.add(definition);
+    }
 
     public static void initCreativeItems() {
         Server.getInstance().getLogger().debug("Loading creative items...");
+        if (initialized) {
+            throw new IllegalStateException();
+        }
+        initialized = true;
 
-        if (!CREATIVE_ITEMS.isEmpty()) {
-            throw new IllegalStateException("CREATIVE_ITEMS is not empty");
+        JsonObject root = Utils.loadJsonResource("creative_items.json").getAsJsonObject();
+
+        JsonArray itemsArray = root.getAsJsonArray("items");
+        if (itemsArray.isEmpty()) {
+            throw new IllegalStateException("Empty items");
         }
 
-        JsonArray itemsArray = Utils.loadJsonResource("creative_items.json").getAsJsonObject().getAsJsonArray("items");
-        if (itemsArray.isEmpty()) {
-            throw new IllegalStateException("Empty array");
+        RuntimeItemMapping mapping = RuntimeItems.getMapping();
+
+        JsonArray groupsArray = root.getAsJsonArray("groups");
+        if (groupsArray.isEmpty()) {
+            throw new IllegalStateException("Empty groups");
+        }
+
+        int creativeGroupId = 0;
+
+        for (JsonElement obj : groupsArray.asList()) {
+            JsonObject groupRoot = obj.getAsJsonObject();
+
+            Item icon = mapping.parseCreativeItem(groupRoot.get("icon").getAsJsonObject(), true);
+            if (icon == null) {
+                icon = Item.get(AIR);
+            }
+
+            CreativeItemGroup creativeGroup = new CreativeItemGroup(creativeGroupId++,
+                    ItemDefinition.CreativeCategory.valueOf(groupRoot.get("category").getAsString().toUpperCase(Locale.ROOT)),
+                    groupRoot.get("name").getAsString(),
+                    icon);
+
+            CREATIVE_ITEMS.addGroup(creativeGroup);
         }
 
         for (JsonElement element : itemsArray) {
-            Item item = RuntimeItems.getMapping().parseCreativeItem(element.getAsJsonObject(), true);
+            JsonObject creativeItem = element.getAsJsonObject();
+            CreativeItemGroup creativeGroup = CREATIVE_ITEMS.getGroups().get(creativeItem.get("groupId").getAsInt());
+
+            Item item = mapping.parseCreativeItem(creativeItem, true);
             if (item != null && !item.getName().equals(UNKNOWN_STR)) {
                 // Add only implemented items
-                CREATIVE_ITEMS.add(item);
+                CREATIVE_ITEMS.add(item, creativeGroup);
             }
+        }
+
+        // Custom items are registered before initCreativeItems, but we need groups ready before adding them here
+        if (toBeAdded != null) {
+            for (ItemDefinition definition : toBeAdded) {
+                try {
+                    Item item = definition.getImplementation().getConstructor(Integer.class, int.class).newInstance(0, 1);
+                    if (!(item instanceof CustomItem)) {
+                        throw new IllegalStateException("Implementation of " + definition.getIdentifier() + " does not implement CustomItem");
+                    }
+
+                    addCreativeItem(item, definition.getCreativeCategory(), definition.getCreativeGroup() == null ? "" : definition.getCreativeGroup());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
+            toBeAdded = null;
         }
     }
 
@@ -388,23 +456,29 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         Item.CREATIVE_ITEMS.clear();
     }
 
+    public static CreativeItems getCreativeItemsAndGroups() {
+        return CREATIVE_ITEMS;
+    }
+
     public static ArrayList<Item> getCreativeItems() {
-        return new ArrayList<>(Item.CREATIVE_ITEMS);
+        return new ArrayList<>(Item.CREATIVE_ITEMS.getItems());
     }
 
     public static void addCreativeItem(Item item) {
-        Item.CREATIVE_ITEMS.add(item.clone());
+        addCreativeItem(item, ItemDefinition.CreativeCategory.ALL, "");
+    }
+
+    private static void addCreativeItem(Item item, ItemDefinition.CreativeCategory category, String group) {
+        Item.CREATIVE_ITEMS.add(item.clone(), category, group);
+
     }
 
     public static void removeCreativeItem(Item item) {
-        int index = getCreativeItemIndex(item);
-        if (index != -1) {
-            Item.CREATIVE_ITEMS.remove(index);
-        }
+        Item.CREATIVE_ITEMS.getContents().remove(item);
     }
 
     public static boolean isCreativeItem(Item item) {
-        for (Item aCreative : Item.CREATIVE_ITEMS) {
+        for (Item aCreative : Item.CREATIVE_ITEMS.getItems()) {
             if (item.equals(aCreative, !item.isTool())) {
                 return true;
             }
@@ -412,13 +486,15 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         return false;
     }
 
+    @Deprecated
     public static Item getCreativeItem(int index) {
-        List<Item> items = Item.CREATIVE_ITEMS;
+        List<Item> items = getCreativeItems();
         return (index >= 0 && index < items.size()) ? items.get(index) : null;
     }
 
+    @Deprecated
     public static int getCreativeItemIndex(Item item) {
-        List<Item> items = Item.CREATIVE_ITEMS;
+        List<Item> items = getCreativeItems();
         for (int i = 0; i < items.size(); i++) {
             if (item.equals(items.get(i), !item.isTool())) {
                 return i;
@@ -537,7 +613,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         if (INTEGER_PATTERN.matcher(idStr).matches()) {
             id = Integer.parseInt(idStr);
         } else {
-            String idStrUp = idStr.toUpperCase();
+            String idStrUp = idStr.toUpperCase(Locale.ROOT);
             try {
                 id = BlockID.class.getField(idStrUp).getInt(null);
                 if (id > 255) {
@@ -1305,5 +1381,66 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
      */
     public boolean allowOffhand() {
         return this.id == AIR;
+    }
+
+    public static class CreativeItems {
+
+        private final List<CreativeItemGroup> groups = new ArrayList<>();
+        private final Map<Item, CreativeItemGroup> contents = new HashMap<>();
+
+        public void clear() {
+            groups.clear();
+            contents.clear();
+        }
+
+        public void add(Item item) {
+            add(item, ItemDefinition.CreativeCategory.ALL, ""); // TODO: vanilla items back to correct groups
+        }
+
+        public void add(Item item, CreativeItemGroup group) {
+            contents.put(item, group);
+        }
+
+        public void add(Item item, ItemDefinition.CreativeCategory category, String group) {
+            CreativeItemGroup creativeGroup = null;
+
+            for (CreativeItemGroup existing : groups) {
+                if (existing.category == category && existing.name.equals(group) && existing.icon.equals(item)) {
+                    creativeGroup = existing;
+                    break;
+                }
+            }
+
+            if (creativeGroup == null) {
+                creativeGroup = new CreativeItemGroup(groups.size(), category, group, item);
+                groups.add(creativeGroup);
+            }
+
+            contents.put(item, creativeGroup);
+        }
+
+        public void addGroup(CreativeItemGroup creativeGroup) {
+            groups.add(creativeGroup);
+        }
+
+        public Collection<Item> getItems() {
+            return contents.keySet();
+        }
+
+        public List<CreativeItemGroup> getGroups() {
+            return groups;
+        }
+
+        public Map<Item, CreativeItemGroup> getContents() {
+            return contents;
+        }
+    }
+
+    @Data
+    public static class CreativeItemGroup {
+        private final int groupId;
+        private final ItemDefinition.CreativeCategory category;
+        private final String name;
+        private final Item icon;
     }
 }

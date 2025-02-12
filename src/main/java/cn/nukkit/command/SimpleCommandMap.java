@@ -90,8 +90,8 @@ public class SimpleCommandMap implements CommandMap {
         if (label == null) {
             label = command.getName();
         }
-        label = label.trim().toLowerCase();
-        fallbackPrefix = fallbackPrefix.trim().toLowerCase();
+        label = label.trim().toLowerCase(Locale.ROOT);
+        fallbackPrefix = fallbackPrefix.trim().toLowerCase(Locale.ROOT);
 
         boolean registered = this.registerAlias(command, false, fallbackPrefix, label);
 
@@ -240,7 +240,7 @@ public class SimpleCommandMap implements CommandMap {
             return false;
         }
 
-        String sentCommandLabel = parsed.remove(0).toLowerCase();
+        String sentCommandLabel = parsed.remove(0).toLowerCase(Locale.ROOT);
         String[] args = parsed.toArray(new String[0]);
         Command target = this.getCommand(sentCommandLabel);
 
@@ -309,9 +309,9 @@ public class SimpleCommandMap implements CommandMap {
             }
 
             if (!targets.isEmpty()) {
-                this.knownCommands.put(alias.toLowerCase(), new FormattedCommandAlias(alias.toLowerCase(), targets));
+                this.knownCommands.put(alias.toLowerCase(Locale.ROOT), new FormattedCommandAlias(alias.toLowerCase(Locale.ROOT), targets));
             } else {
-                this.knownCommands.remove(alias.toLowerCase());
+                this.knownCommands.remove(alias.toLowerCase(Locale.ROOT));
             }
         }
     }

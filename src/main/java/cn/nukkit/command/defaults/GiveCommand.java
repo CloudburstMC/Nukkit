@@ -14,6 +14,7 @@ import cn.nukkit.utils.TextFormat;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Created on 2015/12/9 by xtypr.
@@ -91,7 +92,7 @@ public class GiveCommand extends VanillaCommand {
         item.setCount(count);
 
         if (item.getId() == 0) {
-            String identifier = args[1].toLowerCase();
+            String identifier = args[1].toLowerCase(Locale.ROOT);
             if (!identifier.contains(":")) {
                 identifier = "minecraft:" + identifier;
             }

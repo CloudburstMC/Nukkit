@@ -346,7 +346,7 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
     @Override
     public void writeTo(BinaryStream stream) {
         synchronized (storage) {
-            this.storage.writeTo(stream);
+            this.storage.writeTo(this.y, stream);
         }
     }
 

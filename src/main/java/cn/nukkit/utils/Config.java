@@ -580,7 +580,7 @@ public class Config {
                 if (Nukkit.DEBUG > 1 && this.config.containsKey(key)) {
                     MainLogger.getLogger().debug("[Config] Repeated property " + key + " in file " + this.file.toString());
                 }
-                switch (value.toLowerCase()) {
+                switch (value.toLowerCase(Locale.ROOT)) {
                     case "on":
                     case "true":
                     case "yes":

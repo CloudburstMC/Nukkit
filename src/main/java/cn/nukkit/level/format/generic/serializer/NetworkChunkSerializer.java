@@ -30,8 +30,9 @@ public class NetworkChunkSerializer {
         BinaryStream stream = new BinaryStream();
         // Build up 4 SubChunks for the extended negative height
         for (int i = 0; i < EXTENDED_NEGATIVE_SUB_CHUNKS; i++) {
-            stream.putByte((byte) 8); // SubChunk version
+            stream.putByte((byte) 9); // SubChunk version
             stream.putByte((byte) 0); // 0 layers
+            stream.putByte((byte) ((-64 + (i * 16)) / 16)); // section y
         }
         negativeSubChunks = stream.getBuffer();
     }

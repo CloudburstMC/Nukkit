@@ -2,6 +2,8 @@ package cn.nukkit.block;
 
 import cn.nukkit.block.properties.OxidizationLevel;
 
+import java.util.Locale;
+
 public class BlockStairsCopperCut extends BlockStairsCopperBase {
     
     public BlockStairsCopperCut() {
@@ -22,7 +24,7 @@ public class BlockStairsCopperCut extends BlockStairsCopperBase {
         OxidizationLevel oxidizationLevel = this.getOxidizationLevel();
         if (oxidizationLevel != OxidizationLevel.UNAFFECTED) {
             String oxidationName = oxidizationLevel.name();
-            name += oxidationName.charAt(0) + oxidationName.substring(1).toLowerCase();
+            name += oxidationName.charAt(0) + oxidationName.substring(1).toLowerCase(Locale.ROOT);
         }
         return name + " Cut Copper Stairs";
     }

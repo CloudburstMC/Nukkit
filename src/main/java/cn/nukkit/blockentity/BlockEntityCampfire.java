@@ -194,7 +194,8 @@ public class BlockEntityCampfire extends BlockEntitySpawnable implements Invento
 
     @Override
     public boolean isBlockEntityValid() {
-        return level.getBlockIdAt(chunk, (int) x, (int) y, (int) z) == BlockID.CAMPFIRE_BLOCK;
+        int id = level.getBlockIdAt(chunk, (int) x, (int) y, (int) z);
+        return id == BlockID.CAMPFIRE_BLOCK || id == BlockID.SOUL_CAMPFIRE_BLOCK;
     }
 
     @Override

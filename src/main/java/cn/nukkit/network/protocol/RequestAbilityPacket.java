@@ -12,7 +12,7 @@ public class RequestAbilityPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.REQUEST_ABILITY_PACKET;
 
-    protected static final PlayerAbility[] ABILITIES = UpdateAbilitiesPacket.VALID_FLAGS;
+    protected static final PlayerAbility[] ABILITIES = PlayerAbility.values();
     protected static final AbilityType[] ABILITY_TYPES = AbilityType.values();
 
     private PlayerAbility ability;

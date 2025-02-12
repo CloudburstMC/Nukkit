@@ -54,7 +54,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
 
     @Override
     public String getName() {
-        return "Sign Post";
+        return "Oak Sign Post";
     }
 
     @Override
@@ -230,5 +230,10 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean breakWhenPushed() {
         return true;
+    }
+
+    @Override
+    public WaterloggingType getWaterloggingType() {
+        return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 }

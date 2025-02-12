@@ -1,9 +1,5 @@
 ![nukkit](.github/images/banner.png)
 
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](LICENSE)
-[![Build Status](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master/badge/icon)](https://ci.nukkitx.com/job/NukkitX/job/Nukkit/job/master/)
-[![Discord](https://img.shields.io/discord/393465748535640064.svg)](https://discord.gg/5PzMkyK)
-
 Introduction
 -------------
 
@@ -21,7 +17,7 @@ Links
 * __[Forums](https://cloudburstmc.org/forums/)__
 * __[Discord](https://discord.gg/5PzMkyK)__
 * __[Wiki](https://cloudburstmc.org/wiki/nukkit)__
-* __[Download Nukkit](https://ci.opencollab.dev/job/NukkitX/job/Nukkit/job/master/)__
+* __[Download Nukkit](https://dl.opencollab.dev/nukkit)__
 * __[Download Plugins](https://cloudburstmc.org/resources/categories/nukkit-plugins.1/)__
 
 Compile Nukkit
@@ -32,7 +28,7 @@ Compile Nukkit
 
 The compiled JAR can be found in the `target/` directory.
 
-Note: You don't need to compile Nukkit yourself if you don't intend to modify the code. You can find precompiled JARs on Jenkins. 
+Note: You don't need to compile Nukkit yourself if you don't intend to modify the code.
 
 Running
 -------------
@@ -110,8 +106,3 @@ Testing after deployment:
 Completely remove the chart:
 
 `helm uninstall nukkit`
-
-Pterodactyl Panel
--------------
-
-[Download the official egg](https://raw.githubusercontent.com/parkervcp/eggs/master/game_eggs/minecraft/bedrock/nukkit/egg-nukkit.json)

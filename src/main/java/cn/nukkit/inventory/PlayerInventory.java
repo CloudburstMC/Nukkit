@@ -493,7 +493,9 @@ public class PlayerInventory extends BaseInventory {
         Player p = (Player) this.getHolder();
 
         CreativeContentPacket pk = new CreativeContentPacket();
-        pk.entries = p.isSpectator() ? new Item[0] : Item.getCreativeItems().toArray(new Item[0]);
+        if (!p.isSpectator()) {
+            pk.creativeItems = Item.getCreativeItemsAndGroups();
+        }
         p.dataPacket(pk);
     }
 

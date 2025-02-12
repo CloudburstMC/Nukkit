@@ -1,9 +1,17 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.event.level.StructureGrowEvent;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.ItemDye;
+import cn.nukkit.level.ListChunkManager;
 import cn.nukkit.level.Position;
+import cn.nukkit.level.generator.object.tree.ObjectAzaleaTree;
+import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.AxisAlignedBB;
+import cn.nukkit.math.NukkitRandom;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 public class BlockAzalea extends BlockTransparent {
 
@@ -36,16 +44,6 @@ public class BlockAzalea extends BlockTransparent {
                 return true;
         }
         return false;
-    }
-
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_NONE;
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return true;
     }
 
     @Override
@@ -96,5 +94,45 @@ public class BlockAzalea extends BlockTransparent {
     @Override
     public Item[] getDrops(Item item) {
         return new Item[0];
+    }
+
+    @Override
+    public boolean canBeActivated() {
+        return true;
+    }
+
+    @Override
+    public boolean onActivate(Item item, Player player) {
+        if (item.getId() == Item.DYE && item.getDamage() == ItemDye.BONE_MEAL) {
+            if (player != null && !player.isCreative()) {
+                item.count--;
+            }
+
+            this.level.addParticle(new BoneMealParticle(this));
+            if (ThreadLocalRandom.current().nextFloat() >= 0.45) {
+                return true;
+            }
+
+            return growTreeHere();
+        }
+        return false;
+    }
+
+    private boolean growTreeHere() {
+        NukkitRandom random = new NukkitRandom();
+        ObjectAzaleaTree tree = new ObjectAzaleaTree();
+        ListChunkManager chunkManager = new ListChunkManager(this.level);
+        tree.placeObject(chunkManager, (int) this.x, (int) this.y, (int) this.z, random);
+
+        StructureGrowEvent ev = new StructureGrowEvent(this, chunkManager.getBlocks());
+        this.level.getServer().getPluginManager().callEvent(ev);
+        if (ev.isCancelled()) {
+            return false;
+        }
+
+        for (Block block : ev.getBlockList()) {
+            this.level.setBlock(block, block);
+        }
+        return true;
     }
 }

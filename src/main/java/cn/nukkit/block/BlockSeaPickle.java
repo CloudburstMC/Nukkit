@@ -160,28 +160,36 @@ public class BlockSeaPickle extends BlockTransparentMeta {
         return WaterloggingType.WHEN_PLACED_IN_WATER;
     }
 
-
     @Override
     public Item toItem() {
-        return new ItemBlock(Block.get(SEA_PICKLE), 0);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override
     public Item[] getDrops(Item item) {
-        return new Item[]{new ItemBlock(Block.get(SEA_PICKLE), 0, (this.getDamage() & 0x3) + 1)};
+        return new Item[]{new ItemBlock(Block.get(this.getId()), 0, getPickleCount())};
     }
 
     @Override
     public int getLightLevel() {
         if (this.isDead()) {
             return 0;
-        } else {
-            return (this.getDamage() + 1) * 3;
         }
+
+        return getPickleCount() * 3;
+    }
+
+    public int getPickleCount() {
+        return (getDamage() & 0b11) + 1;
     }
 
     @Override
     public boolean breakWhenPushed() {
+        return true;
+    }
+
+    @Override
+    public boolean canPassThrough() {
         return true;
     }
 }

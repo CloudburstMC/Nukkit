@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
 
@@ -67,6 +68,11 @@ public class BlockLightningRod extends BlockTransparentMeta {
         this.setDamage(FACES[player != null ? face.getIndex() : 0]);
         this.getLevel().setBlock(this, this, true, true);
         return true;
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override

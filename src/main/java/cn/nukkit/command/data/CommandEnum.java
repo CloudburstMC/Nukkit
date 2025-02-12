@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author CreeperFace
@@ -25,13 +26,13 @@ public class CommandEnum {
     static {
         ImmutableList.Builder<String> blocks = ImmutableList.builder();
         for (Field field : BlockID.class.getDeclaredFields()) {
-            blocks.add(field.getName().toLowerCase());
+            blocks.add(field.getName().toLowerCase(Locale.ROOT));
         }
         ENUM_BLOCK = new CommandEnum("Block", blocks.build());
 
         ImmutableList.Builder<String> items = ImmutableList.builder();
         for (Field field : ItemID.class.getDeclaredFields()) {
-            items.add(field.getName().toLowerCase());
+            items.add(field.getName().toLowerCase(Locale.ROOT));
         }
         items.addAll(ENUM_BLOCK.getValues());
         ENUM_ITEM = new CommandEnum("Item", items.build());
@@ -39,7 +40,7 @@ public class CommandEnum {
         ImmutableList.Builder<String> effects = ImmutableList.builder();
         for (Field field : Effect.class.getDeclaredFields()) {
             if (field.getType() == int.class && field.getModifiers() == (Modifier.PUBLIC | Modifier.STATIC | Modifier.FINAL)) {
-                effects.add(field.getName().toLowerCase());
+                effects.add(field.getName().toLowerCase(Locale.ROOT));
             }
         }
         ENUM_EFFECTS = new CommandEnum("Effect", effects.build());

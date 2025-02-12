@@ -94,8 +94,8 @@ public class BlockStorage {
         blockData.set(index, (byte) (value & 0xf));
     }
 
-    public void writeTo(BinaryStream stream) {
-        stream.putByte((byte) 8); // paletted
+    public void writeTo(int sectionY, BinaryStream stream) {
+        stream.putByte((byte) 9); // SubChunk version
 
         PalettedBlockStorage layer = PalettedBlockStorage.createFromBlockPalette();
         for (int i = 0; i < SECTION_SIZE; i++) {
@@ -103,6 +103,8 @@ public class BlockStorage {
         }
 
         stream.putByte((byte) 1); // layers
+
+        stream.putByte((byte) sectionY);
 
         layer.writeTo(stream);
     }

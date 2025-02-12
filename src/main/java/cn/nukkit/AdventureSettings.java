@@ -93,6 +93,7 @@ public class AdventureSettings implements Cloneable {
         // Because we send speed
         layer.getAbilityValues().add(PlayerAbility.WALK_SPEED);
         layer.getAbilityValues().add(PlayerAbility.FLY_SPEED);
+        layer.getAbilityValues().add(PlayerAbility.VERTICAL_FLY_SPEED);
 
         if (player.isCreative()) { // Make sure player can interact with creative menu
             layer.getAbilityValues().add(PlayerAbility.INSTABUILD);
@@ -104,6 +105,7 @@ public class AdventureSettings implements Cloneable {
 
         layer.setWalkSpeed(Player.DEFAULT_SPEED);
         layer.setFlySpeed(Player.DEFAULT_FLY_SPEED);
+        layer.setVerticalFlySpeed(1.0f);
         packet.getAbilityLayers().add(layer);
 
         if (player.isSpectator()) {
@@ -113,6 +115,7 @@ public class AdventureSettings implements Cloneable {
             spectator.getAbilitiesSet().addAll(PlayerAbility.VALUES);
             spectator.getAbilitiesSet().remove(PlayerAbility.FLY_SPEED);
             spectator.getAbilitiesSet().remove(PlayerAbility.WALK_SPEED);
+            spectator.getAbilitiesSet().remove(PlayerAbility.VERTICAL_FLY_SPEED);
 
             for (Type type : Type.values()) {
                 if (type.isAbility() && this.get(type)) {

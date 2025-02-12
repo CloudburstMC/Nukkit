@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.event.block.DoorToggleEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
@@ -204,10 +205,10 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
 
         return 0;
     }
-    
+
     @Override
     public Item toItem() {
-        return Item.get(Item.FENCE_GATE, 0, 1);
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override

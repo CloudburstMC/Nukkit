@@ -1,10 +1,10 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.item.RuntimeItems;
 import cn.nukkit.level.GameRules;
 import cn.nukkit.network.protocol.types.ExperimentData;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Binary;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.ToString;
 
@@ -23,6 +23,18 @@ public class StartGamePacket extends DataPacket {
     public static final int GAME_PUBLISH_SETTING_FRIENDS_ONLY = 2;
     public static final int GAME_PUBLISH_SETTING_FRIENDS_OF_FRIENDS = 3;
     public static final int GAME_PUBLISH_SETTING_PUBLIC = 4;
+
+    private static final byte[] EMPTY_COMPOUND_TAG;
+    private static final byte[] EMPTY_UUID;
+
+    static {
+        try {
+            EMPTY_COMPOUND_TAG = NBTIO.writeNetwork(new CompoundTag(""));
+            EMPTY_UUID = Binary.writeUUID(new UUID(0, 0));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 
     @Override
     public byte pid() {
@@ -171,17 +183,12 @@ public class StartGamePacket extends DataPacket {
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
         this.putUnsignedVarInt(0); // No custom blocks
-        this.put(RuntimeItems.getMapping().getItemPalette());
         this.putString(this.multiplayerCorrelationId);
         this.putBoolean(false); // isInventoryServerAuthoritative
         this.putString(""); // serverEngine
-        try {
-            this.put(NBTIO.writeNetwork(new CompoundTag(""))); // playerPropertyData
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        this.put(EMPTY_COMPOUND_TAG); // playerPropertyData
         this.putLLong(0); // blockRegistryChecksum
-        this.putUUID(new UUID(0, 0)); // worldTemplateId
+        this.put(EMPTY_UUID); // worldTemplateId
         this.putBoolean(this.clientSideGenerationEnabled);
         this.putBoolean(false); // blockIdsAreHashed
         this.putBoolean(true); // isServerAuthSounds

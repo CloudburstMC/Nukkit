@@ -149,6 +149,8 @@ public class AddEntityPacket extends DataPacket {
             .put(EntityArmadillo.NETWORK_ID, "minecraft:armadillo")
             .put(143, "minecraft:wind_charge_projectile")
             .put(EntityBogged.NETWORK_ID, "minecraft:bogged")
+            .put(145, "minecraft:ominous_item_spawner")
+            .put(EntityCreaking.NETWORK_ID, "minecraft:creaking")
             .build();
 
     @Override

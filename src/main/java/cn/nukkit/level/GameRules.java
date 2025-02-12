@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 
 import java.util.EnumMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -210,7 +211,7 @@ public class GameRules {
 
         private void setValue(T value, Type type) {
             if (this.type != type) {
-                throw new UnsupportedOperationException("Rule not of type " + type.name().toLowerCase());
+                throw new UnsupportedOperationException("Rule not of type " + type.name().toLowerCase(Locale.ROOT));
             }
             this.value = value;
         }

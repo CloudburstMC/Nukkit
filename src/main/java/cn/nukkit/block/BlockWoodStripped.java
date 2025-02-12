@@ -44,8 +44,6 @@ public abstract class BlockWoodStripped extends BlockWood {
 
     @Override
     public Item toItem() {
-        // I was this before merge from upstream
-        // return new ItemBlock(this, this.getDamage());
         return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 }

@@ -8,6 +8,8 @@ import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
+import java.util.Locale;
+
 /**
  * @author Tee7even
  */
@@ -67,7 +69,7 @@ public class TitleCommand extends VanillaCommand {
         }
 
         if (args.length == 2) {
-            switch (args[1].toLowerCase()) {
+            switch (args[1].toLowerCase(Locale.ROOT)) {
                 case "clear":
                     player.clearTitle();
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.clear", player.getName()));
@@ -81,7 +83,7 @@ public class TitleCommand extends VanillaCommand {
                     return false;
             }
         } else if (args.length == 3) {
-            switch (args[1].toLowerCase()) {
+            switch (args[1].toLowerCase(Locale.ROOT)) {
                 case "title":
                     player.sendTitle(args[2]);
                     sender.sendMessage(new TranslationContainer("nukkit.command.title.title",
@@ -100,7 +102,7 @@ public class TitleCommand extends VanillaCommand {
                     return false;
             }
         } else if (args.length == 5) {
-            if (args[1].toLowerCase().equals("times")) {
+            if (args[1].toLowerCase(Locale.ROOT).equals("times")) {
                 try {
                     /*player.setTitleAnimationTimes(Integer.valueOf(args[2]), //fadeIn
                             Integer.valueOf(args[3]), //stay

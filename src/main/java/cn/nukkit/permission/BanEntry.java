@@ -23,7 +23,7 @@ public class BanEntry {
     private String reason = "Banned";
 
     public BanEntry(String name) {
-        this.name = name.toLowerCase();
+        this.name = name.toLowerCase(Locale.ROOT);
         this.creationDate = new Date();
     }
 

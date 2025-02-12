@@ -3,12 +3,14 @@ package cn.nukkit.network.protocol;
 import cn.nukkit.item.Item;
 import lombok.ToString;
 
+import java.util.Map;
+
 @ToString
 public class CreativeContentPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.CREATIVE_CONTENT_PACKET;
 
-    public Item[] entries;
+    public Item.CreativeItems creativeItems;
 
     @Override
     public byte pid() {
@@ -23,11 +25,27 @@ public class CreativeContentPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(entries.length);
-        int i = 1; //HACK around since 0 is not indexed by client
-        for (Item entry : entries) {
-            this.putUnsignedVarInt(i++);
-            this.putSlot(entry, true);
+
+        if (this.creativeItems == null) { // Spectator
+            this.putUnsignedVarInt(0);
+            this.putUnsignedVarInt(0);
+            return;
+        }
+
+        this.putUnsignedVarInt(creativeItems.getGroups().size());
+        for (Item.CreativeItemGroup group : creativeItems.getGroups()) {
+            this.putLInt(group.getCategory().ordinal());
+            this.putString(group.getName());
+            this.putSlot(group.getIcon(), true);
+        }
+
+        int creativeNetId = 1; // 0 is not indexed by client
+
+        this.putUnsignedVarInt(creativeItems.getContents().size());
+        for (Map.Entry<Item, Item.CreativeItemGroup> entry : creativeItems.getContents().entrySet()) {
+            this.putUnsignedVarInt(creativeNetId++);
+            this.putSlot(entry.getKey(), true);
+            this.putUnsignedVarInt(entry.getValue().getGroupId());
         }
     }
 }

@@ -16,7 +16,11 @@ public class BlockSlabWood extends BlockSlab {
     }
 
     public BlockSlabWood(int meta) {
-        super(meta, DOUBLE_WOODEN_SLAB);
+        this(meta, DOUBLE_WOODEN_SLAB);
+    }
+
+    public BlockSlabWood(int meta, int doubleSlab) {
+        super(meta, doubleSlab);
     }
 
     private static final String[] NAMES = {

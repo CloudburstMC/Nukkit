@@ -22,7 +22,7 @@ class AsyncChunkThread {
         ThreadFactoryBuilder builder = new ThreadFactoryBuilder();
         builder.setNameFormat("AsyncChunkThread for " + levelName);
         builder.setUncaughtExceptionHandler((thread, ex) -> Server.getInstance().getLogger().error("Exception in " + thread.getName(), ex));
-        this.threadedExecutor = Executors.newFixedThreadPool(2, builder.build());
+        this.threadedExecutor = Executors.newSingleThreadExecutor(builder.build());
     }
 
     void queue(BaseChunk chunk, long timestamp, int x, int z, DimensionData dimensionData) {

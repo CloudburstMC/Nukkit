@@ -677,7 +677,7 @@ public class BlockTypes {
     public static final BlockType MANGROVE_PRESSURE_PLATE = register("minecraft:mangrove_pressure_plate", BlockID.MANGROVE_PRESSURE_PLATE);
     public static final BlockType MANGROVE_FENCE = register("minecraft:mangrove_fence", BlockID.MANGROVE_FENCE);
     public static final BlockType MANGROVE_FENCE_GATE = register("minecraft:mangrove_fence_gate", BlockID.MANGROVE_FENCE_GATE);
-    public static final BlockType MANGROVE_DOOR = register("minecraft:mangrove_door", BlockID.MANGROVE_DOOR);
+    public static final BlockType MANGROVE_DOOR_BLOCK = register("minecraft:mangrove_door", BlockID.MANGROVE_DOOR_BLOCK);
     public static final BlockType MANGROVE_STANDING_SIGN = register("minecraft:mangrove_standing_sign", BlockID.MANGROVE_STANDING_SIGN);
     public static final BlockType MANGROVE_WALL_SIGN = register("minecraft:mangrove_wall_sign", BlockID.MANGROVE_WALL_SIGN);
     public static final BlockType MANGROVE_TRAPDOOR = register("minecraft:mangrove_trapdoor", BlockID.MANGROVE_TRAPDOOR);

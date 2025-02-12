@@ -66,7 +66,7 @@ public class RCONServer extends Thread {
     }
 
     public void respond(SocketChannel channel, int id, String response) {
-        this.send(channel, new RCONPacket(id, SERVERDATA_RESPONSE_VALUE, response.getBytes()));
+        this.send(channel, new RCONPacket(id, SERVERDATA_RESPONSE_VALUE, response.getBytes(StandardCharsets.UTF_8)));
     }
 
     public void close() {

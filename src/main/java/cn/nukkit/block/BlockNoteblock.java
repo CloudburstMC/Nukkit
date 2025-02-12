@@ -212,16 +212,17 @@ public class BlockNoteblock extends BlockSolid {
             return;
         }
 
-        Instrument instrument = this.getInstrument();
+        int instrumentId = this.getInstrument().ordinal();
+        int strength = this.getStrength();
 
-        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_NOTE, instrument.ordinal() << 8 | this.getStrength());
+        this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_NOTE, instrumentId << 8 | strength);
 
         BlockEventPacket pk = new BlockEventPacket();
         pk.x = this.getFloorX();
         pk.y = this.getFloorY();
         pk.z = this.getFloorZ();
-        pk.case1 = instrument.ordinal();
-        pk.case2 = this.getStrength();
+        pk.case1 = instrumentId;
+        pk.case2 = strength;
         this.getLevel().addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
     }
 
@@ -265,10 +266,10 @@ public class BlockNoteblock extends BlockSolid {
         DRUM(Sound.NOTE_SNARE),
         STICKS(Sound.NOTE_HAT),
         BASS(Sound.NOTE_BASS),
-        GLOCKENSPIEL(Sound.NOTE_BELL),
         FLUTE(Sound.NOTE_FLUTE),
-        CHIME(Sound.NOTE_CHIME),
+        GLOCKENSPIEL(Sound.NOTE_BELL),
         GUITAR(Sound.NOTE_GUITAR),
+        CHIME(Sound.NOTE_CHIME),
         XYLOPHONE(Sound.NOTE_XYLOPHONE),
         VIBRAPHONE(Sound.NOTE_IRON_XYLOPHONE),
         COW_BELL(Sound.NOTE_COW_BELL),

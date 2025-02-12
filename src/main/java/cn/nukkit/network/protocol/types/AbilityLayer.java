@@ -12,6 +12,7 @@ public class AbilityLayer {
     private final Set<PlayerAbility> abilitiesSet = EnumSet.noneOf(PlayerAbility.class);
     private final Set<PlayerAbility> abilityValues = EnumSet.noneOf(PlayerAbility.class);
     private float flySpeed;
+    private float verticalFlySpeed;
     private float walkSpeed;
 
     public enum Type {

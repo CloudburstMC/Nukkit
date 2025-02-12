@@ -117,6 +117,7 @@ public abstract class ObjectNetherTree extends ObjectTree {
         int maxBlockY = level instanceof Level ? ((Level) level).getMaxBlockY() : 255;
 
         level.setBlockAt(x, y, z, getTrunkBlock());
+        level.setBlockAt(x, y - 1, z, Block.NETHERRACK);
 
         for (int yy = 0; yy < trunkHeight; ++yy) {
             if (y + yy >= maxBlockY) {

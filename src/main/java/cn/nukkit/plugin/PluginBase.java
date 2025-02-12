@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 
 /**
  * 一般的Nukkit插件需要继承的类。<br>
@@ -157,7 +158,7 @@ abstract public class PluginBase implements Plugin {
     public PluginIdentifiableCommand getCommand(String name) {
         PluginIdentifiableCommand command = this.server.getPluginCommand(name);
         if (command == null || !command.getPlugin().equals(this)) {
-            command = this.server.getPluginCommand(this.description.getName().toLowerCase() + ':' + name);
+            command = this.server.getPluginCommand(this.description.getName().toLowerCase(Locale.ROOT) + ':' + name);
         }
 
         if (command != null && command.getPlugin().equals(this)) {

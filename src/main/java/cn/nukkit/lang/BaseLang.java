@@ -6,6 +6,7 @@ import cn.nukkit.utils.Utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
@@ -31,7 +32,7 @@ public class BaseLang {
     }
 
     public BaseLang(String lang, String path, String fallback) {
-        this.langName = lang.toLowerCase();
+        this.langName = lang.toLowerCase(Locale.ROOT);
         boolean useFallback = !lang.equals(fallback);
 
         if (path == null) {

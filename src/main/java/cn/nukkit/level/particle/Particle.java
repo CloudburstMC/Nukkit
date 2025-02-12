@@ -4,6 +4,7 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.DataPacket;
 
 import java.lang.reflect.Field;
+import java.util.Locale;
 
 /**
  * @author MagicDroidX
@@ -123,7 +124,7 @@ public abstract class Particle extends Vector3 {
     public abstract DataPacket[] encode();
 
     public static Integer getParticleIdByName(String name) {
-        name = name.toUpperCase();
+        name = name.toUpperCase(Locale.ROOT);
 
         try {
             Field field = Particle.class.getField((name.startsWith("TYPE_") ? name : ("TYPE_" + name)));

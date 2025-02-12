@@ -8,6 +8,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.Deflater;
@@ -47,7 +48,10 @@ public class CustomItemManager {
     public BatchPacket getCachedPacket() {
         if (this.cachedPacket == null) {
             ItemComponentPacket pk = new ItemComponentPacket();
-            pk.itemDefinitions = new ArrayList<>(this.itemDefinitions.values());
+            Collection<ItemComponentPacket.ItemDefinition> vanillaItems = RuntimeItems.getMapping().getVanillaItemDefinitions();
+            pk.itemDefinitions = new ArrayList<>(vanillaItems.size() + this.itemDefinitions.size());
+            pk.itemDefinitions.addAll(vanillaItems);
+            this.itemDefinitions.values().forEach((def) -> pk.itemDefinitions.add(new ItemComponentPacket.ItemDefinition(def.getIdentifier(), def.getLegacyId(), true, 1, def.getNetworkData())));
             pk.tryEncode();
             this.cachedPacket = pk.compress(Deflater.BEST_COMPRESSION);
         }
@@ -85,15 +89,7 @@ public class CustomItemManager {
         RuntimeItems.getMapping().registerItem(definition.getIdentifier(), definition.getLegacyId(), definition.getLegacyId(), 0);
 
         if (definition.getCreativeCategory() != null && definition.getCreativeCategory() != ItemDefinition.CreativeCategory.NONE) {
-            try {
-                Item item = definition.getImplementation().getConstructor(Integer.class, int.class).newInstance(0, 1);
-                if (!(item instanceof CustomItem)) {
-                    throw new IllegalStateException("Implementation of " + definition.getIdentifier() + " does not implement CustomItem");
-                }
-                Item.addCreativeItem(item);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
+            Item.addCustomCreativeItem(definition);
         }
     }
 

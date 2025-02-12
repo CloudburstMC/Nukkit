@@ -200,6 +200,8 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_PLAYER_HAS_DIED = 129;
     public static final int DATA_COLLISION_BOX = 130; //vector3f
     public static final int DATA_VISIBLE_MOB_EFFECTS = 131; //long
+    public static final int DATA_FILTERED_NAME = 132; //string
+    public static final int DATA_BED_ENTER_POSITION = 133; //vector3f
 
     // Flags
     public static final int DATA_FLAG_ONFIRE = 0;
@@ -317,6 +319,11 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_FEELING_HAPPY = 112;
     public static final int DATA_FLAG_SEARCHING = 113;
     public static final int DATA_FLAG_CRAWLING = 114;
+    public static final int DATA_FLAG_TIMER_FLAG_1 = 115;
+    public static final int DATA_FLAG_TIMER_FLAG_2 = 116;
+    public static final int DATA_FLAG_TIMER_FLAG_3 = 117;
+    public static final int DATA_FLAG_BODY_ROTATION_BLOCKED = 118;
+    public static final int DATA_FLAG_RENDER_WHEN_INVISIBLE = 119;
 
     public static final double STEP_CLIP_MULTIPLIER = 0.4;
 
@@ -403,6 +410,7 @@ public abstract class Entity extends Location implements Metadatable {
     public int fireTicks;
     public int inPortalTicks;
     public int inEndPortalTicks;
+    protected int inPowderSnowTicks;
     protected Position portalPos;
     public boolean noClip;
     public float scale = 1;
@@ -2384,7 +2392,6 @@ public abstract class Entity extends Location implements Metadatable {
         for (Block block : this.getCollisionBlocks()) {
             if (block.getId() == Block.NETHER_PORTAL) {
                 portal = true;
-                continue;
             }
 
             block.onEntityCollide(this);

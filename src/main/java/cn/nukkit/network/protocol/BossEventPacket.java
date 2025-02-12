@@ -36,6 +36,7 @@ public class BossEventPacket extends DataPacket {
     public long playerEid;
     public float healthPercent;
     public String title = "";
+    public String filteredTitle = "";
     public short unknown;
     public int color;
     public int overlay;
@@ -57,6 +58,7 @@ public class BossEventPacket extends DataPacket {
                 break;
             case TYPE_SHOW:
                 this.title = this.getString();
+                this.filteredTitle = this.getString();
                 this.healthPercent = this.getLFloat();
             case TYPE_UPDATE_PROPERTIES:
                 this.unknown = (short) this.getShort();
@@ -86,6 +88,7 @@ public class BossEventPacket extends DataPacket {
                 break;
             case TYPE_SHOW:
                 this.putString(this.title);
+                this.putString(this.filteredTitle);
                 this.putLFloat(this.healthPercent);
             case TYPE_UPDATE_PROPERTIES:
                 this.putShort(this.unknown);

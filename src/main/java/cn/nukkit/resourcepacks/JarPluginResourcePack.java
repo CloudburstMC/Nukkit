@@ -39,7 +39,7 @@ public class JarPluginResourcePack extends AbstractResourcePack {
         ZipEntry manifest = jar.getEntry(RESOURCE_PACK_PATH + "manifest.json");
         if (manifest == null) {
             manifest = jar.stream()
-                    .filter(e -> e.getName().toLowerCase(Locale.ENGLISH).endsWith("manifest.json") && !e.isDirectory())
+                    .filter(e -> e.getName().toLowerCase(Locale.ROOT).endsWith("manifest.json") && !e.isDirectory())
                     .filter(e -> {
                         File fe = new File(e.getName());
                         if (!fe.getName().equalsIgnoreCase("manifest.json")) {

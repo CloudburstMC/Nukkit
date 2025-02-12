@@ -27,17 +27,17 @@ public class GameruleCommand extends VanillaCommand {
         rules.getGameRules().forEach((rule, value) -> {
             switch (value.getType()) {
                 case BOOLEAN:
-                    boolGameRules.add(rule.getName().toLowerCase());
+                    boolGameRules.add(rule.getName().toLowerCase(Locale.ROOT));
                     break;
                 case INTEGER:
-                    intGameRules.add(rule.getName().toLowerCase());
+                    intGameRules.add(rule.getName().toLowerCase(Locale.ROOT));
                     break;
                 case FLOAT:
-                    floatGameRules.add(rule.getName().toLowerCase());
+                    floatGameRules.add(rule.getName().toLowerCase(Locale.ROOT));
                     break;
                 case UNKNOWN:
                 default:
-                    unknownGameRules.add(rule.getName().toLowerCase());
+                    unknownGameRules.add(rule.getName().toLowerCase(Locale.ROOT));
                     break;
             }
         });
@@ -85,7 +85,7 @@ public class GameruleCommand extends VanillaCommand {
                 int splitCounter = 0;
                 StringJoiner rulesJoiner = new StringJoiner("\n");
                 for (GameRule rule: rules.getRules()) {
-                    rulesJoiner.add(rule.getName().toLowerCase() + " = " + rules.getString(rule));
+                    rulesJoiner.add(rule.getName().toLowerCase(Locale.ROOT) + " = " + rules.getString(rule));
 
                     // 1.21 disconnects on too long message
                     // TODO: do this the same way as on vanilla
@@ -105,7 +105,7 @@ public class GameruleCommand extends VanillaCommand {
                     return true;
                 }
 
-                sender.sendMessage(gameRule.get().getName().toLowerCase() + " = " + rules.getString(gameRule.get()));
+                sender.sendMessage(gameRule.get().getName().toLowerCase(Locale.ROOT) + " = " + rules.getString(gameRule.get()));
                 return true;
             default:
                 Optional<GameRule> optionalRule = GameRule.parseString(args[0]);
@@ -117,7 +117,7 @@ public class GameruleCommand extends VanillaCommand {
 
                 try {
                     rules.setGameRules(optionalRule.get(), args[1]);
-                    sender.sendMessage(new TranslationContainer("commands.gamerule.success", optionalRule.get().getName().toLowerCase(), args[1]));
+                    sender.sendMessage(new TranslationContainer("commands.gamerule.success", optionalRule.get().getName().toLowerCase(Locale.ROOT), args[1]));
                 } catch (IllegalArgumentException e) {
                     sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule "  + args[0] + ' ', args[1], ' ' + String.join(" ", Arrays.copyOfRange(args, 2, args.length))));
                 }

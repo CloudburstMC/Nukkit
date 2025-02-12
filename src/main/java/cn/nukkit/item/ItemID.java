@@ -299,9 +299,8 @@ public interface ItemID {
     int RAW_GOLD = 521;
     int RAW_COPPER = 522;
     //
-    int RECORD_5 = 636; //TODO: 643
+    int RECORD_5 = 636;
     int DISC_FRAGMENT_5 = 637;
-    //
     int OAK_CHEST_BOAT = 638;
     int BIRCH_CHEST_BOAT = 639;
     int JUNGLE_CHEST_BOAT = 640;
@@ -314,6 +313,9 @@ public interface ItemID {
     int RECOVERY_COMPASS = 648;
     //
     int GLOW_BERRIES = 654;
+    //
+    int MANGROVE_DOOR = 670;
+    int MANGROVE_SIGN = 671;
     //
     int RECORD_RELIC = 701;
     //
@@ -341,9 +343,7 @@ public interface ItemID {
     int WARPED_SIGN = 754;
     int CRIMSON_DOOR = 755;
     int WARPED_DOOR = 756;
-    //
     int WARPED_FUNGUS_ON_A_STICK = 757;
-    //
     int CHAIN = 758;
     int RECORD_PIGSTEP = 759;
     int NETHER_SPROUTS = 760;

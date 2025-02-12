@@ -6,6 +6,8 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.Level;
 
+import java.util.Locale;
+
 /**
  * Created on 2015/11/13 by xtypr.
  * Package cn.nukkit.command.defaults in project Nukkit .
@@ -26,7 +28,7 @@ public class SaveCommand extends VanillaCommand {
         }
 
         if (args.length > 0) {
-            switch (args[0].toLowerCase()) {
+            switch (args[0].toLowerCase(Locale.ROOT)) {
                 case "on":
                     sender.getServer().setAutoSave(true);
                     Command.broadcastCommandMessage(sender, new TranslationContainer("commands.save.enabled"));
