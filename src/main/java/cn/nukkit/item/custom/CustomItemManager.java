@@ -123,12 +123,10 @@ public class CustomItemManager {
 
         this.closed = true;
 
-        boolean hasItems = this.hasCustomItems();
+        this.getCachedPacket(); // Cache compressed packet
 
-        if (hasItems) {
-            this.getCachedPacket();
-        }
+        RuntimeItems.getMapping().getVanillaItemDefinitions().clear(); // Free up memory
 
-        return hasItems;
+        return this.hasCustomItems();
     }
 }

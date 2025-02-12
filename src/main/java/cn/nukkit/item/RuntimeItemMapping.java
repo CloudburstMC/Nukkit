@@ -57,10 +57,7 @@ public class RuntimeItemMapping {
 
             int version = entry.get("version").getAsInt();
             boolean componentBased = entry.get("componentBased").getAsBoolean();
-            CompoundTag components = null;
-            if (componentBased) {
-                components = new CompoundTag().putCompound("components", (CompoundTag) itemComponents.get(identifier));
-            }
+            CompoundTag components = (CompoundTag) itemComponents.get(identifier);
             this.vanillaItems.put(identifier, new ItemComponentPacket.ItemDefinition(identifier, runtimeId, componentBased, version, components));
 
             boolean hasDamage = false;
