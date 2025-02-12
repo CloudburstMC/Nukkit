@@ -1386,7 +1386,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     public static class CreativeItems {
 
         private final List<CreativeItemGroup> groups = new ArrayList<>();
-        private final Map<Item, CreativeItemGroup> contents = new HashMap<>();
+        private final Map<Item, CreativeItemGroup> contents = new LinkedHashMap<>();
 
         public void clear() {
             groups.clear();
