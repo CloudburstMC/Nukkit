@@ -46,7 +46,7 @@ public class ItemComponentPacket extends DataPacket {
             this.putBoolean(definition.isComponentBased);
             this.putVarInt(definition.getVersion);
 
-            if (definition.isComponentBased) {
+            if (definition.getNetworkData != null) {
                 try {
                     this.put(NBTIO.write(definition.getNetworkData, ByteOrder.LITTLE_ENDIAN, true));
                 } catch (IOException e) {
