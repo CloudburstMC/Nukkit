@@ -442,7 +442,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
                         throw new IllegalStateException("Implementation of " + definition.getIdentifier() + " does not implement CustomItem");
                     }
 
-                    addCreativeItem(item, definition.getCreativeCategory(), definition.getCreativeGroup() == null ? "" : definition.getCreativeGroup());
+                    Item.CREATIVE_ITEMS.add(item, definition.getCreativeCategory(), definition.getCreativeGroup() == null ? "" : definition.getCreativeGroup());
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
@@ -465,12 +465,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
     }
 
     public static void addCreativeItem(Item item) {
-        addCreativeItem(item, ItemDefinition.CreativeCategory.ALL, "");
-    }
-
-    private static void addCreativeItem(Item item, ItemDefinition.CreativeCategory category, String group) {
-        Item.CREATIVE_ITEMS.add(item.clone(), category, group);
-
+        Item.CREATIVE_ITEMS.add(item.clone());
     }
 
     public static void removeCreativeItem(Item item) {
@@ -1394,7 +1389,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         }
 
         public void add(Item item) {
-            add(item, ItemDefinition.CreativeCategory.ALL, ""); // TODO: vanilla items back to correct groups
+            add(item, ItemDefinition.CreativeCategory.ITEMS, ""); // TODO: vanilla items back to correct categories & groups
         }
 
         public void add(Item item, CreativeItemGroup group) {
