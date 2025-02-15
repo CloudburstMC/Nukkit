@@ -31,12 +31,12 @@ public class BlockSandstone extends BlockSolidMeta {
 
     @Override
     public double getHardness() {
-        return 2;
+        return 0.8;
     }
 
     @Override
     public double getResistance() {
-        return 6;
+        return 0.8;
     }
 
     private static final String[] NAMES = {
