@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.object.tree;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
@@ -50,8 +49,8 @@ public abstract class HugeTreesGenerator extends TreeGenerator {
     private boolean isSpaceAt(ChunkManager worldIn, Vector3 leavesPos, int height) {
         boolean flag = true;
 
-        int maxY = worldIn instanceof Level ? ((Level) worldIn).getMaxBlockY() + 1 : 256;
-        int minBlockY = worldIn instanceof Level ? ((Level) worldIn).getMinBlockY() : 0;
+        int maxY = worldIn.getMaxBlockY() + 1;
+        int minBlockY = worldIn.getMinBlockY();
 
         if (leavesPos.getY() > minBlockY && leavesPos.getY() + height + 1 <= maxY) {
             for (int i = 0; i <= 1 + height; ++i) {

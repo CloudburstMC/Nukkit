@@ -88,9 +88,12 @@ public class BlockTurtleEgg extends BlockTransparentMeta {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        if (target instanceof BlockTurtleEgg && this.getDamage() < 3) {
-            this.setDamage(this.getDamage() + 1);
-            return this.getLevel().setBlock(target, this, true, true);
+        if (target instanceof BlockTurtleEgg) {
+            if (target.getDamage() < 3) {
+                this.setDamage(target.getDamage() + 1);
+                return this.getLevel().setBlock(target, this, true, true);
+            }
+            return false;
         }
         if (!canStayOnFullSolid(this.down())) {
             return false;

@@ -1,17 +1,11 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemDye;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockOreLapisDeepslate extends BlockOre {
+public class BlockOreLapisDeepslate extends BlockOreLapis {
 
     public BlockOreLapisDeepslate() {
-    }
-
-    @Override
-    protected int getRawMaterial() {
-        return ItemID.DYE;
     }
 
     @Override

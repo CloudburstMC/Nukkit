@@ -5,7 +5,6 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockLeaves;
 import cn.nukkit.block.BlockWood;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.BlockVector3;
 import cn.nukkit.math.NukkitRandom;
@@ -52,8 +51,8 @@ public class NewJungleTree extends TreeGenerator {
         int i = rand.nextBoundedInt(maxTreeHeight) + this.minTreeHeight;
         boolean flag = true;
 
-        int maxY = worldIn instanceof Level ? ((Level) worldIn).getMaxBlockY() + 1 : 256;
-        int minBlockY = worldIn instanceof Level ? ((Level) worldIn).getMinBlockY() : 0;
+        int maxY = worldIn.getMaxBlockY() + 1;
+        int minBlockY = worldIn.getMinBlockY();
 
         if (position.getY() > minBlockY && position.getY() + i + 1 <= maxY) {
             for (int j = position.getY(); j <= position.getY() + 1 + i; ++j) {

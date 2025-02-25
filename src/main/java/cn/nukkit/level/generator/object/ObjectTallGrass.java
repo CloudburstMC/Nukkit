@@ -3,7 +3,6 @@ package cn.nukkit.level.generator.object;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLayer;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Utils;
@@ -22,8 +21,8 @@ public class ObjectTallGrass {
     }
 
     public static void growGrass(ChunkManager level, Vector3 pos) {
-        int maxBlockY = level instanceof Level ? ((Level) level).getMaxBlockY() : 255;
-        int minBlockY = level instanceof Level ? ((Level) level).getMinBlockY() : 0;
+        int maxBlockY = level.getMaxBlockY();
+        int minBlockY = level.getMinBlockY();
 
         for (int i = 0; i < 128; ++i) {
             int num = 0;
@@ -66,8 +65,8 @@ public class ObjectTallGrass {
     }
 
     public static void growSeagrass(ChunkManager level, Vector3 pos) {
-        int maxBlockY = level instanceof Level ? ((Level) level).getMaxBlockY() : 255;
-        int minBlockY = level instanceof Level ? ((Level) level).getMinBlockY() : 0;
+        int maxBlockY = level.getMaxBlockY();
+        int minBlockY = level.getMinBlockY();
 
         for (int i = 0; i < 48; ++i) {
             int num = 0;

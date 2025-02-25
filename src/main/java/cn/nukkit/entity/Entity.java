@@ -1915,10 +1915,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setAbsorption(float absorption) {
-        if (absorption != this.absorption) {
-            this.absorption = absorption;
-            if (this instanceof Player) ((Player) this).setAttribute(Attribute.getAttribute(Attribute.ABSORPTION).setValue(absorption));
-        }
+        this.absorption = absorption;
+        if (this instanceof Player) ((Player) this).setAttribute(Attribute.getAttribute(Attribute.ABSORPTION).setValue(absorption));
     }
 
     public BlockFace getDirection() {

@@ -78,9 +78,9 @@ public class BlockSkull extends BlockTransparentMeta implements Faceable {
         CompoundTag nbt = new CompoundTag()
                 .putString("id", BlockEntity.SKULL)
                 .putByte("SkullType", item.getDamage())
-                .putInt("x", block.getFloorX())
-                .putInt("y", block.getFloorY())
-                .putInt("z", block.getFloorZ())
+                .putInt("x", (int) block.getX())
+                .putInt("y", (int) block.getY())
+                .putInt("z", (int) block.getZ())
                 .putByte("Rot", (int) Math.floor((player.yaw * 16 / 360) + 0.5) & 0x0f);
         if (item.hasCustomBlockData()) {
             for (Tag aTag : item.getCustomBlockData().getAllTags()) {

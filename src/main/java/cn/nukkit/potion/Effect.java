@@ -283,8 +283,7 @@ public class Effect implements Cloneable {
         }
 
         if (this.id == Effect.ABSORPTION) {
-            int add = (this.amplifier + 1) << 2;
-            if (add > entity.getAbsorption()) entity.setAbsorption(add);
+            entity.setAbsorption((this.amplifier + 1) << 2);
         }
     }
 

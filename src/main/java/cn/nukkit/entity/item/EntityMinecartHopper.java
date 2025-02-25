@@ -3,7 +3,6 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockComposter;
-import cn.nukkit.block.BlockRailActivator;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.blockentity.BlockEntityContainer;
 import cn.nukkit.blockentity.BlockEntityFurnace;
@@ -23,12 +22,18 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.MinecartType;
+import lombok.Getter;
+import lombok.Setter;
 
 public class EntityMinecartHopper extends EntityMinecartAbstract implements InventoryHolder {
 
     public static final int NETWORK_ID = 96;
 
     protected MinecartHopperInventory inventory;
+
+    @Getter
+    @Setter
+    private boolean enabled = true;
 
     public int transferCooldown;
 
@@ -93,6 +98,10 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
     public void initEntity() {
         super.initEntity();
 
+        if (this.namedTag.contains("Enabled")) {
+            this.enabled = this.namedTag.getBoolean("Enabled");
+        }
+
         this.inventory = new MinecartHopperInventory(this);
         if (this.namedTag.contains("Items") && this.namedTag.get("Items") instanceof ListTag) {
             ListTag<CompoundTag> inventoryList = this.namedTag.getList("Items", CompoundTag.class);
@@ -110,6 +119,8 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
     @Override
     public void saveNBT() {
         super.saveNBT();
+
+        this.namedTag.putBoolean("Enabled", this.enabled);
 
         this.namedTag.putList(new ListTag<CompoundTag>("Items"));
         if (this.inventory != null) {
@@ -131,9 +142,8 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
                 return true;
             }
 
-            Block rail = level.getBlock(this.chunk, getFloorX(), getFloorY(), getFloorZ(), false);
-            if (rail instanceof BlockRailActivator && ((BlockRailActivator) rail).isActive()) {
-                return false;
+            if (!this.enabled) {
+                return true;
             }
 
             boolean changed;
@@ -142,7 +152,8 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
             if (blockEntity instanceof BlockEntityContainer || (block = this.level.getBlock(this.chunk, this.getFloorX(), this.getFloorY() + 1, this.getFloorZ(), false)) instanceof BlockComposter) {
                 changed = pullItems(blockEntity, block);
             } else {
-                changed = pickupItems(new SimpleAxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 2, this.z + 1));
+                // Apparently we are 0.5 blocks above the ground
+                changed = pickupItems(new SimpleAxisAlignedBB(this.x, this.y - 0.5, this.z, this.x + 1, this.y + 1.5, this.z + 1));
             }
 
             if (changed) {
@@ -302,5 +313,10 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
         }
 
         return pickedUpItem;
+    }
+
+    @Override
+    protected void activate(int x, int y, int z, boolean flag) {
+        this.enabled = !flag;
     }
 }

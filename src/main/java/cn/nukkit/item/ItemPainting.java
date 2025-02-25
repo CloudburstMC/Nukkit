@@ -47,7 +47,7 @@ public class ItemPainting extends Item {
 
     @Override
     public boolean onActivate(Level level, Player player, Block block, Block target, BlockFace face, double fx, double fy, double fz) {
-        if (player.isAdventure() || target.isTransparent() || face.getHorizontalIndex() == -1 || block.isSolid()) {
+        if (player.isAdventure() || face.getHorizontalIndex() == -1 || !Block.canConnectToFullSolid(target) || block.isSolid()) {
             return false;
         }
 
@@ -57,23 +57,25 @@ public class ItemPainting extends Item {
         }
 
         List<EntityPainting.Motive> validMotives = new ArrayList<>();
+        next:
         for (EntityPainting.Motive motive : EntityPainting.motives) {
-            boolean valid = true;
-            for (int x = 0; x < motive.width && valid; x++) {
-                for (int z = 0; z < motive.height && valid; z++) {
-                    if (target.getSide(BlockFace.fromIndex(RIGHT[face.getIndex() - 2]), x).isTransparent() ||
-                            target.up(z).isTransparent() ||
-                            block.getSide(BlockFace.fromIndex(RIGHT[face.getIndex() - 2]), x).isSolid() ||
-                            block.up(z).isSolid()) {
-                        valid = false;
+            BlockFace rotation = BlockFace.fromIndex(RIGHT[face.getIndex() - 2]);
+            for (int x = 0; x < motive.width; x++) {
+                for (int z = 0; z < motive.height; z++) {
+                    if (!Block.canConnectToFullSolid(z == 0 ? target.getSide(rotation, x) : target.getSide(rotation, x).up(z)) ||
+                            Block.canConnectToFullSolid(z == 0 ? block.getSide(rotation, x) : block.getSide(rotation, x).up(z))) {
+                        continue next;
                     }
                 }
             }
 
-            if (valid) {
-                validMotives.add(motive);
-            }
+            validMotives.add(motive);
         }
+
+        if (validMotives.isEmpty()) {
+            return false;
+        }
+
         int direction = DIRECTION[face.getIndex() - 2];
         EntityPainting.Motive motive = validMotives.get(ThreadLocalRandom.current().nextInt(validMotives.size()));
 
