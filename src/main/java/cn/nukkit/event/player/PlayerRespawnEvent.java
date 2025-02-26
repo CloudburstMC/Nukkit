@@ -13,6 +13,7 @@ public class PlayerRespawnEvent extends PlayerEvent {
     }
 
     private Position position;
+    private boolean preserveEffects;
 
     private final boolean firstSpawn;
 
@@ -34,7 +35,15 @@ public class PlayerRespawnEvent extends PlayerEvent {
         this.position = position;
     }
 
+    public void setPreserveEffects(boolean preserveEffects) {
+        this.preserveEffects = preserveEffects;
+    }
+
     public boolean isFirstSpawn() {
         return firstSpawn;
+    }
+
+    public boolean isPreserveEffects() {
+        return preserveEffects;
     }
 }
