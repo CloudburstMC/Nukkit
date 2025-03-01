@@ -1,11 +1,9 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.ItemID;
-import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockOreRedstoneDeepslate extends BlockOre {
+public class BlockOreRedstoneDeepslate extends BlockOreRedstone {
 
     public BlockOreRedstoneDeepslate() {
     }
@@ -19,16 +17,6 @@ public class BlockOreRedstoneDeepslate extends BlockOre {
             return Level.BLOCK_UPDATE_WEAK;
         }
         return 0;
-    }
-
-    @Override
-    protected int getRawMaterial() {
-        return ItemID.REDSTONE_DUST;
-    }
-
-    @Override
-    public int getToolTier() {
-        return ItemTool.TIER_IRON;
     }
 
     @Override

@@ -3,7 +3,6 @@ package cn.nukkit.level.generator.object.mushroom;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.Level;
 import cn.nukkit.level.generator.object.BasicGenerator;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
@@ -54,8 +53,8 @@ public class BigMushroom extends BasicGenerator {
 
         boolean flag = true;
 
-        int maxY = level instanceof Level ? ((Level) level).getMaxBlockY() + 1 : 256;
-        int minBlockY = level instanceof Level ? ((Level) level).getMinBlockY() : 0;
+        int maxY = level.getMaxBlockY() + 1;
+        int minBlockY = level.getMinBlockY();
 
         if (position.getY() > minBlockY && position.getY() + i + 1 < maxY) {
             for (int j = position.getFloorY(); j <= position.getY() + 1 + i; ++j) {

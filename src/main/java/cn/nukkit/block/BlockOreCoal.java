@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.Utils;
 
@@ -11,26 +11,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author MagicDroidX
  * Nukkit Project
  */
-public class BlockOreCoal extends BlockSolid {
+public class BlockOreCoal extends BlockOre {
 
     @Override
     public int getId() {
         return COAL_ORE;
-    }
-
-    @Override
-    public double getHardness() {
-        return 3;
-    }
-
-    @Override
-    public double getResistance() {
-        return 3;
-    }
-
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override
@@ -66,17 +51,12 @@ public class BlockOreCoal extends BlockSolid {
     }
 
     @Override
-    public int getDropExp() {
-        return Utils.rand(0, 2);
+    protected int getRawMaterial() {
+        return ItemID.COAL;
     }
 
     @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
-    
-    @Override
-    public boolean canSilkTouch() {
-        return true;
+    public int getDropExp() {
+        return Utils.rand(0, 2);
     }
 }

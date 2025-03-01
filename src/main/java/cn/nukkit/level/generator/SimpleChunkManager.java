@@ -116,7 +116,4 @@ public abstract class SimpleChunkManager implements ChunkManager {
     public void cleanChunks(long seed) {
         this.seed = seed;
     }
-
-    public abstract int getMinBlockY();
-    public abstract int getMaxBlockY();
 }

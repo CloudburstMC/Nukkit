@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockOreIronDeepslate extends BlockOre {
+public class BlockOreIronDeepslate extends BlockOreIron {
 
     public BlockOreIronDeepslate() {
     }

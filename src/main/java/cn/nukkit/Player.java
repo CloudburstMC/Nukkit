@@ -2102,7 +2102,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             server.getPluginManager().callEvent(waterFrostEvent);
                             if (!waterFrostEvent.isCancelled()) {
                                 level.setBlockAt((int) block.x, (int) block.y, (int) block.z, Block.ICE_FROSTED, 0);
-                                level.scheduleUpdate(level.getBlock(this.chunk, block.getFloorX(), block.getFloorY(), block.getFloorZ(), true), ThreadLocalRandom.current().nextInt(20, 40));
+                                level.scheduleUpdate(level.getBlock(this.chunk, (int) block.getX(), (int) block.getY(), (int) block.getZ(), true), ThreadLocalRandom.current().nextInt(20, 40));
                             }
                         }
                     }
@@ -2466,7 +2466,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Block block;
                     while (itr.hasNext()) {
                         block = itr.next();
-                        entity = getEntityAtPosition(nearbyEntities, block.getFloorX(), block.getFloorY(), block.getFloorZ());
+                        entity = getEntityAtPosition(nearbyEntities, (int) block.getX(), (int) block.getY(), (int) block.getZ());
                         if (entity != null) {
                             break;
                         }
@@ -6210,7 +6210,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return form id to use in {@link PlayerFormRespondedEvent}
      */
     public int showFormWindow(FormWindow window, int id) {
-        if (formOpen) return 0;
+        if (formOpen) return -1;
         ModalFormRequestPacket packet = new ModalFormRequestPacket();
         packet.formId = id;
         packet.data = window.getJSONData();
@@ -6940,17 +6940,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 IntArrayList itemsWithMending = new IntArrayList();
                 for (int i = 0; i < 4; i++) {
-                    if (this.inventory.getArmorItem(i).hasEnchantment(Enchantment.ID_MENDING)) {
+                    Item item = inventory.getArmorItem(i);
+                    if (item.getDamage() != 0 && item.hasEnchantment(Enchantment.ID_MENDING)) {
                         itemsWithMending.add(this.inventory.getSize() + i);
                     }
                 }
 
-                if (this.inventory.getItemInHandFast().hasEnchantment(Enchantment.ID_MENDING)) {
+                Item hand = inventory.getItemInHandFast();
+                if (hand.getDamage() != 0 && hand.hasEnchantment(Enchantment.ID_MENDING)) {
                     itemsWithMending.add(this.inventory.getHeldItemIndex());
                 }
 
                 Item offhand = this.getOffhandInventory().getItem(0);
-                if (offhand.getId() == Item.SHIELD && offhand.hasEnchantment(Enchantment.ID_MENDING)) {
+                if (offhand.getId() == Item.SHIELD && offhand.getDamage() != 0 && offhand.hasEnchantment(Enchantment.ID_MENDING)) {
                     itemsWithMending.add(-1);
                 }
 

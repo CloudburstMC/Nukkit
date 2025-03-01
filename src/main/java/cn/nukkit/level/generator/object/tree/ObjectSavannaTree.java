@@ -5,7 +5,6 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.block.BlockLeaves2;
 import cn.nukkit.block.BlockWood2;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
@@ -19,8 +18,8 @@ public class ObjectSavannaTree extends TreeGenerator {
         int i = rand.nextBoundedInt(3) + rand.nextBoundedInt(3) + 5;
         boolean flag = true;
 
-        int maxY = level instanceof Level ? ((Level) level).getMaxBlockY() + 1 : 256;
-        int minBlockY = level instanceof Level ? ((Level) level).getMinBlockY() : 0;
+        int maxY = level.getMaxBlockY() + 1;
+        int minBlockY = level.getMinBlockY();
 
         if (position.getY() > minBlockY && position.getY() + i + 1 <= maxY) {
             for (int j = (int) position.getY(); j <= position.getY() + 1 + i; ++j) {

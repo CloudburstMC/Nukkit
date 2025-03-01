@@ -27,7 +27,7 @@ public class BlockOreRedstoneDeepslateGlowing extends BlockOreRedstoneDeepslate 
 
     @Override
     public Item toItem() {
-        return new ItemBlock(Block.get(REDSTONE_ORE));
+        return new ItemBlock(Block.get(DEEPSLATE_REDSTONE_ORE));
     }
 
     @Override

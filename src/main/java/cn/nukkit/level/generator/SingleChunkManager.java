@@ -42,14 +42,4 @@ public class SingleChunkManager extends SimpleChunkManager {
         CX = Integer.MAX_VALUE;
         CZ = Integer.MAX_VALUE;
     }
-
-    @Override
-    public int getMinBlockY() {
-        return 0;
-    }
-
-    @Override
-    public int getMaxBlockY() {
-        return 255;
-    }
 }

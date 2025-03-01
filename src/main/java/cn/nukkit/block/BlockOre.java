@@ -14,30 +14,26 @@ public abstract class BlockOre extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (!this.canHarvest(item) || item.getTier() < this.getToolTier()) {
+        if (item.isPickaxe() && item.getTier() >= this.getToolTier()) {
+            if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
+                return new Item[]{this.toItem()};
+            }
+
+            int rawMaterial = this.getRawMaterial();
+            if (rawMaterial == BlockID.AIR) {
+                return super.getDrops(item);
+            }
+
+            int amount = 1;
+            int fortuneLevel = NukkitMath.clamp(item.getEnchantmentLevel(Enchantment.ID_FORTUNE_DIGGING), 0, 3);
+            if (fortuneLevel > 0) {
+                amount += ThreadLocalRandom.current().nextInt(fortuneLevel + 1);
+            }
+
+            return new Item[]{Item.get(rawMaterial, this.getRawMaterialMeta(), amount)};
+        } else {
             return new Item[0];
         }
-
-        if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
-            return new Item[]{this.toItem()};
-        }
-
-        int rawMaterial = this.getRawMaterial();
-        if (rawMaterial == BlockID.AIR) {
-            return super.getDrops(item);
-        }
-
-        float multiplier = this.getDropMultiplier();
-        int amount = (int) multiplier;
-        if (amount > 1) {
-            amount = 1 + ThreadLocalRandom.current().nextInt(amount);
-        }
-        int fortuneLevel = NukkitMath.clamp(item.getEnchantmentLevel(Enchantment.ID_FORTUNE_DIGGING), 0, 3);
-        if (fortuneLevel > 0) {
-            int increase = ThreadLocalRandom.current().nextInt((int)(multiplier * fortuneLevel) + 1);
-            amount += increase;
-        }
-        return new Item[]{ Item.get(rawMaterial, this.getRawMaterialMeta(), amount) };
     }
 
     protected abstract int getRawMaterial();

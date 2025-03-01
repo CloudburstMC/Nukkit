@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
@@ -12,26 +13,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author MagicDroidX
  * Nukkit Project
  */
-public class BlockOreRedstone extends BlockSolid {
+public class BlockOreRedstone extends BlockOre {
 
     @Override
     public int getId() {
         return REDSTONE_ORE;
-    }
-
-    @Override
-    public double getHardness() {
-        return 3;
-    }
-
-    @Override
-    public double getResistance() {
-        return 3;
-    }
-
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override
@@ -41,7 +27,7 @@ public class BlockOreRedstone extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_IRON) {
+        if (item.isPickaxe() && item.getTier() >= this.getToolTier()) {
             if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
                 return new Item[]{this.toItem()};
             }
@@ -62,6 +48,11 @@ public class BlockOreRedstone extends BlockSolid {
     }
 
     @Override
+    protected int getRawMaterial() {
+        return ItemID.REDSTONE_DUST;
+    }
+
+    @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_TOUCH) {
             this.getLevel().setBlock(this, Block.get(GLOWING_REDSTONE_ORE), false, false);
@@ -79,12 +70,7 @@ public class BlockOreRedstone extends BlockSolid {
     }
 
     @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
-
-    @Override
-    public boolean canSilkTouch() {
-        return true;
+    public int getToolTier() {
+        return ItemTool.TIER_IRON;
     }
 }

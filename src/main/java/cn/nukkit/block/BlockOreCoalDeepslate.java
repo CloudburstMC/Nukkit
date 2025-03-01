@@ -1,17 +1,10 @@
 package cn.nukkit.block;
 
-import cn.nukkit.item.ItemID;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.Utils;
 
-public class BlockOreCoalDeepslate extends BlockOre {
+public class BlockOreCoalDeepslate extends BlockOreCoal {
 
     public BlockOreCoalDeepslate() {
-    }
-
-    @Override
-    protected int getRawMaterial() {
-        return ItemID.COAL;
     }
 
     @Override
@@ -32,10 +25,5 @@ public class BlockOreCoalDeepslate extends BlockOre {
     @Override
     public BlockColor getColor() {
         return BlockColor.DEEPSLATE_GRAY;
-    }
-
-    @Override
-    public int getDropExp() {
-        return Utils.rand(0, 2);
     }
 }

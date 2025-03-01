@@ -71,6 +71,7 @@ public class BossEventPacket extends DataPacket {
                 break;
             case TYPE_TITLE:
                 this.title = this.getString();
+                this.filteredTitle = this.getString();
                 break;
         }
     }
@@ -101,6 +102,7 @@ public class BossEventPacket extends DataPacket {
                 break;
             case TYPE_TITLE:
                 this.putString(this.title);
+                this.putString(this.filteredTitle);
                 break;
         }
     }

@@ -1,7 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.utils.Utils;
 
@@ -11,26 +11,11 @@ import java.util.concurrent.ThreadLocalRandom;
  * @author MagicDroidX
  * Nukkit Project
  */
-public class BlockOreLapis extends BlockSolid {
+public class BlockOreLapis extends BlockOre {
 
     @Override
     public int getId() {
         return LAPIS_ORE;
-    }
-
-    @Override
-    public double getHardness() {
-        return 3;
-    }
-
-    @Override
-    public double getResistance() {
-        return 3;
-    }
-
-    @Override
-    public int getToolType() {
-        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override
@@ -40,7 +25,7 @@ public class BlockOreLapis extends BlockSolid {
 
     @Override
     public Item[] getDrops(Item item) {
-        if (item.isPickaxe() && item.getTier() >= ItemTool.TIER_STONE) {
+        if (item.isPickaxe() && item.getTier() >= this.getToolTier()) {
             if (item.hasEnchantment(Enchantment.ID_SILK_TOUCH)) {
                 return new Item[]{this.toItem()};
             }
@@ -66,17 +51,12 @@ public class BlockOreLapis extends BlockSolid {
     }
 
     @Override
-    public int getDropExp() {
-        return Utils.rand(2, 5);
+    protected int getRawMaterial() {
+        return ItemID.DYE;
     }
 
     @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
-    
-    @Override
-    public boolean canSilkTouch() {
-        return true;
+    public int getDropExp() {
+        return Utils.rand(2, 5);
     }
 }

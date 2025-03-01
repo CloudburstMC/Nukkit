@@ -94,4 +94,14 @@ public class ListChunkManager implements ChunkManager {
     public List<Block> getBlocks() {
         return this.blocks;
     }
+
+    @Override
+    public int getMinBlockY() {
+        return parent instanceof Level ? parent.getMinBlockY() : 0;
+    }
+
+    @Override
+    public int getMaxBlockY() {
+        return parent instanceof Level ? parent.getMaxBlockY() : 255;
+    }
 }

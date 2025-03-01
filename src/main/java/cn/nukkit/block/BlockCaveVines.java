@@ -79,9 +79,7 @@ public class BlockCaveVines extends BlockTransparentMeta {
                 this.getLevel().useBreakOn(this, null, null, true);
                 break;
             case Level.BLOCK_UPDATE_RANDOM:
-                if (!this.tryGrowItself()) {
-                    this.tryGrow();
-                }
+                this.tryGrow();
                 break;
         }
         return type;
@@ -168,16 +166,6 @@ public class BlockCaveVines extends BlockTransparentMeta {
 
         BlockCaveVines support = (BlockCaveVines) Block.get(this.hasBerries() ? CAVE_VINES_BODY_WITH_BERRIES : CAVE_VINES, this.getDamage());
         this.getLevel().setBlock(this, support, true, true);
-        return true;
-    }
-
-    private boolean tryGrowItself() {
-        if (this.hasBerries() || ThreadLocalRandom.current().nextFloat() >= CHANCE_OF_BERRIES_ON_GROWTH) {
-            return false;
-        }
-
-        BlockCaveVines blockCaveVines = this.getStateWithBerries(this);
-        this.getLevel().setBlock(this, blockCaveVines, true, true);
         return true;
     }
 

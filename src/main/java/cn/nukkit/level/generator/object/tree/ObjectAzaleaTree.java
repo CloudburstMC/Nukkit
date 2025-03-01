@@ -2,7 +2,6 @@ package cn.nukkit.level.generator.object.tree;
 
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
-import cn.nukkit.level.Level;
 import cn.nukkit.math.NukkitRandom;
 
 public class ObjectAzaleaTree extends ObjectTree {
@@ -33,7 +32,8 @@ public class ObjectAzaleaTree extends ObjectTree {
         int treeHeight = random.nextBoundedInt(2) + 2;
 
         int i2 = y + treeHeight;
-        int maxBlockY = level instanceof Level ? ((Level) level).getMaxBlockY() : 255;
+        int maxBlockY = level.getMaxBlockY();
+
         if (i2 + 2 >= maxBlockY) {
             return;
         }

@@ -972,7 +972,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         return this.layer;
     }
 
-    protected static boolean canConnectToFullSolid(Block down) {
+    public static boolean canConnectToFullSolid(Block down) {
         if (down.isTransparent()) {
             switch (down.getId()) {
                 case BEACON:

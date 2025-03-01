@@ -1157,6 +1157,8 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
         int blockTest = 0;
 
         if (!chunkTickList.isEmpty()) {
+            int tickSpeed = gameRules.getInteger(GameRule.RANDOM_TICK_SPEED);
+
             ObjectIterator<Long2IntMap.Entry> iter = chunkTickList.long2IntEntrySet().iterator();
             while (iter.hasNext()) {
                 Long2IntMap.Entry entry = iter.next();
@@ -1192,7 +1194,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                     for (ChunkSection section : ((Chunk) chunk).getSections()) {
                         if (!(section instanceof EmptyChunkSection)) {
                             int Y = section.getY();
-                            for (int i = 0; i < gameRules.getInteger(GameRule.RANDOM_TICK_SPEED); ++i) {
+                            for (int i = 0; i < tickSpeed; ++i) {
                                 int n = ThreadLocalRandom.current().nextInt();
                                 int x = n & 0xF;
                                 int z = n >> 8 & 0xF;
@@ -1210,7 +1212,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                 } else {
                     for (int Y = 0; Y < 8 && (Y < 3 || blockTest != 0); ++Y) {
                         blockTest = 0;
-                        for (int i = 0; i < gameRules.getInteger(GameRule.RANDOM_TICK_SPEED); ++i) {
+                        for (int i = 0; i < tickSpeed; ++i) {
                             int n = ThreadLocalRandom.current().nextInt();
                             int x = n & 0xF;
                             int z = n >> 8 & 0xF;

@@ -59,7 +59,7 @@ public class EntityPainting extends EntityHanging {
         addPainting.y = (float) this.y;
         addPainting.z = (float) this.z;
         addPainting.direction = this.getDirection().getHorizontalIndex();
-        addPainting.title = this.namedTag.getString("Motive");
+        addPainting.title = this.motive.title;
         return addPainting;
     }
 
@@ -91,7 +91,7 @@ public class EntityPainting extends EntityHanging {
     }
 
     public Motive getMotive() {
-        return Motive.BY_NAME.get(namedTag.getString("Motive"));
+        return this.motive;
     }
 
     public enum Motive {
@@ -120,7 +120,27 @@ public class EntityPainting extends EntityHanging {
         DONKEY_KONG("DonkeyKong", 4, 3),
         POINTER("Pointer", 4, 4),
         PIG_SCENE("Pigscene", 4, 4),
-        BURNING_SKULL("BurningSkull", 4, 4);
+        BURNING_SKULL("BurningSkull", 4, 4),
+        MEDITATIVE("meditative", 1, 1),
+        PRAIRIE_RIDE("prairie_ride", 1, 2),
+        BAROQUE("baroque", 2, 2),
+        HUMBLE("humble", 2, 2),
+        UNPACKED("unpacked", 4, 4),
+        BOUQUET("bouquet", 3, 3),
+        CAVEBIRD("cavebird", 3, 3),
+        COTAN("cotan", 3, 3),
+        ENDBOSS("endboss", 3, 3),
+        FERN("fern", 3, 3),
+        OWLEMONS("owlemons", 3, 3),
+        SUNFLOWERS("sunflowers", 3, 3),
+        TIDES("tides", 3, 3),
+        BACKYARD("backyard", 3, 4),
+        POND("pond", 3, 4),
+        CHANGING("changing", 4, 2),
+        FINDING("finding", 4, 2),
+        LOWMIST("lowmist", 4, 2),
+        PASSAGE("passage", 4, 2),
+        ORB("orb", 4, 4);
 
         public final String title;
         public final int width;
