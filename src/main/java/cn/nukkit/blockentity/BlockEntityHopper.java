@@ -349,6 +349,9 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
             }
         } else if (block instanceof BlockComposter) {
             BlockComposter composter = (BlockComposter) block;
+            if (!composter.isFull()) {
+                return false;
+            }
             Item item = composter.empty();
             if (item == null || item.isNull()) {
                 return false;
@@ -433,7 +436,7 @@ public class BlockEntityHopper extends BlockEntitySpawnable implements Inventory
     }
 
     public boolean pushItems() {
-        int blockData = this.level.getBlockDataAt(this.chunk, (int) x, (int) y, (int) z, Block.LAYER_NORMAL);
+        int blockData = this.level.getBlockDataAt(this.chunk, (int) x, (int) y, (int) z, Block.LAYER_NORMAL) & 0x7;
         BlockEntity be = this.level.getBlockEntity(this.chunk, this.getSide(BlockFace.fromIndex(blockData)));
 
         if (!(be instanceof InventoryHolder) || (be instanceof BlockEntityHopper && blockData == 0)) {

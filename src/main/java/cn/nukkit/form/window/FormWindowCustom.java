@@ -78,8 +78,6 @@ public class FormWindowCustom extends FormWindow {
 
         List<String> elementResponses = GSON.fromJson(data, new ListTypeToken().getType());
 
-        int i = 0;
-
         HashMap<Integer, FormResponseData> dropdownResponses = new HashMap<>();
         HashMap<Integer, String> inputResponses = new HashMap<>();
         HashMap<Integer, Float> sliderResponses = new HashMap<>();
@@ -87,42 +85,53 @@ public class FormWindowCustom extends FormWindow {
         HashMap<Integer, Boolean> toggleResponses = new HashMap<>();
         HashMap<Integer, Object> responses = new HashMap<>();
         HashMap<Integer, String> labelResponses = new HashMap<>();
+        HashMap<Integer, String> headerResponses = new HashMap<>();
+        HashMap<Integer, String> dividerResponses = new HashMap<>();
 
-        for (String elementData : elementResponses) {
-            if (i >= content.size()) {
-                break;
-            }
-
+        int responseIndex = 0;
+        for (int i = 0; i < content.size(); i++) {
             Element e = content.get(i);
-            if (e == null) break;
+            String elementData = responseIndex >= elementResponses.size() ? "" : elementResponses.get(responseIndex);
             if (e instanceof ElementLabel) {
                 labelResponses.put(i, ((ElementLabel) e).getText());
                 responses.put(i, ((ElementLabel) e).getText());
             } else if (e instanceof ElementDropdown) {
-                String answer = ((ElementDropdown) e).getOptions().get(Integer.parseInt(elementData));
-                dropdownResponses.put(i, new FormResponseData(Integer.parseInt(elementData), answer));
+                int index = Integer.parseInt(elementData);
+                String answer = ((ElementDropdown) e).getOptions().get(index);
+                dropdownResponses.put(i, new FormResponseData(index, answer));
                 responses.put(i, answer);
+                responseIndex++;
             } else if (e instanceof ElementInput) {
                 inputResponses.put(i, elementData);
                 responses.put(i, elementData);
+                responseIndex++;
             } else if (e instanceof ElementSlider) {
                 Float answer = Float.parseFloat(elementData);
                 sliderResponses.put(i, answer);
                 responses.put(i, answer);
+                responseIndex++;
             } else if (e instanceof ElementStepSlider) {
-                String answer = ((ElementStepSlider) e).getSteps().get(Integer.parseInt(elementData));
-                stepSliderResponses.put(i, new FormResponseData(Integer.parseInt(elementData), answer));
+                int index = Integer.parseInt(elementData);
+                String answer = ((ElementStepSlider) e).getSteps().get(index);
+                stepSliderResponses.put(i, new FormResponseData(index, answer));
                 responses.put(i, answer);
+                responseIndex++;
             } else if (e instanceof ElementToggle) {
                 Boolean answer = Boolean.parseBoolean(elementData);
                 toggleResponses.put(i, answer);
                 responses.put(i, answer);
+                responseIndex++;
+            } else if (e instanceof ElementHeader) {
+                headerResponses.put(i, ((ElementHeader) e).getText());
+                responses.put(i, ((ElementHeader) e).getText());
+            } else if (e instanceof ElementDivider) {
+                dividerResponses.put(i, ((ElementDivider) e).getText());
+                responses.put(i, ((ElementDivider) e).getText());
             }
-            i++;
         }
 
         this.response = new FormResponseCustom(responses, dropdownResponses, inputResponses,
-                sliderResponses, stepSliderResponses, toggleResponses, labelResponses);
+                sliderResponses, stepSliderResponses, toggleResponses, labelResponses, headerResponses, dividerResponses);
     }
 
     /**

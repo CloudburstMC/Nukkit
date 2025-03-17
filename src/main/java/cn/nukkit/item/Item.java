@@ -424,11 +424,11 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
 
         for (JsonElement element : itemsArray) {
             JsonObject creativeItem = element.getAsJsonObject();
-            CreativeItemGroup creativeGroup = CREATIVE_ITEMS.getGroups().get(creativeItem.get("groupId").getAsInt());
-
             Item item = mapping.parseCreativeItem(creativeItem, true);
+
+            // Add only implemented items
             if (item != null && !item.getName().equals(UNKNOWN_STR)) {
-                // Add only implemented items
+                CreativeItemGroup creativeGroup = CREATIVE_ITEMS.getGroups().get(creativeItem.get("groupId").getAsInt());
                 CREATIVE_ITEMS.add(item, creativeGroup);
             }
         }

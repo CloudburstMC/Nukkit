@@ -130,4 +130,43 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
     public void onBreak() {
         this.dropItem();
     }
+
+    public int getComparatorSignal() {
+        if (this.recordItem instanceof ItemRecord) {
+            switch (this.recordItem.getId()) {
+                case Item.RECORD_13:
+                    return 1;
+                case Item.RECORD_CAT:
+                    return 2;
+                case Item.RECORD_BLOCKS:
+                    return 3;
+                case Item.RECORD_CHIRP:
+                    return 4;
+                case Item.RECORD_FAR:
+                    return 5;
+                case Item.RECORD_MALL:
+                    return 6;
+                case Item.RECORD_MELLOHI:
+                    return 7;
+                case Item.RECORD_STAL:
+                    return 8;
+                case Item.RECORD_STRAD:
+                    return 9;
+                case Item.RECORD_WARD:
+                    return 10;
+                case Item.RECORD_11:
+                    return 11;
+                case Item.RECORD_WAIT:
+                    return 12;
+                case Item.RECORD_PIGSTEP:
+                    return 13;
+                case Item.RECORD_OTHERSIDE:
+                    return 14;
+                case Item.RECORD_5:
+                case Item.RECORD_RELIC:
+                    return 15;
+            }
+        }
+        return 0;
+    }
 }

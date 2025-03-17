@@ -15,6 +15,7 @@ import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.NukkitMath;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
+import lombok.Getter;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -52,6 +53,9 @@ public abstract class EntityProjectile extends Entity {
      * The knockback this arrow causes on hit.
      */
     public float knockBack = 0.3f;
+
+    @Getter
+    protected int collidedTick;
 
     protected double getDamage() {
         return namedTag.contains("damage") ? namedTag.getDouble("damage") : getBaseDamage();
@@ -286,6 +290,7 @@ public abstract class EntityProjectile extends Entity {
     }
 
     protected void onHitGround(Vector3 moveVector) {
+        this.collidedTick = level.getServer().getTick();
         Block block = level.getBlock(this.chunk, moveVector.getFloorX(), moveVector.getFloorY(), moveVector.getFloorZ(), false);
         block.onEntityCollide(this);
     }

@@ -324,6 +324,9 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_TIMER_FLAG_3 = 117;
     public static final int DATA_FLAG_BODY_ROTATION_BLOCKED = 118;
     public static final int DATA_FLAG_RENDER_WHEN_INVISIBLE = 119;
+    public static final int DATA_FLAG_BODY_ROTATION_AXIS_ALIGNED = 120;
+    public static final int DATA_FLAG_COLLIDABLE = 121;
+    public static final int DATA_FLAG_WASD_AIR_CONTROLLED = 122;
 
     public static final double STEP_CLIP_MULTIPLIER = 0.4;
 
@@ -1578,10 +1581,14 @@ public abstract class Entity extends Location implements Metadatable {
         return false;
     }
 
+    @Deprecated
     public boolean entityBaseTick() {
         return this.entityBaseTick(1);
     }
 
+    /**
+     * Entity base tick, called from onUpdate if the entity is alive. Result is applied to onUpdate. updateMovement is called afterward automatically.
+     */
     public boolean entityBaseTick(int tickDiff) {
         if (!(this instanceof Player)) {
             //this.blocksAround = null; // Use only when entity moves for better performance

@@ -135,8 +135,10 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
     }
 
     @Override
-    public boolean onUpdate(int currentTick) {
-        if (super.onUpdate(currentTick) && !this.closed && isAlive()) {
+    public boolean entityBaseTick(int tickDiff) {
+        boolean hasUpdate = super.entityBaseTick(tickDiff);
+
+        if (!this.closed && this.isAlive()) {
             if (this.isOnTransferCooldown()) {
                 this.transferCooldown--;
                 return true;
@@ -153,7 +155,8 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
                 changed = pullItems(blockEntity, block);
             } else {
                 // Apparently we are 0.5 blocks above the ground
-                changed = pickupItems(new SimpleAxisAlignedBB(this.x, this.y - 0.5, this.z, this.x + 1, this.y + 1.5, this.z + 1));
+                // Hopper minecart can pick up items through is a block
+                changed = pickupItems(new SimpleAxisAlignedBB(this.x, this.y - 0.5, this.z, this.x + 1, this.y + 2, this.z + 1));
             }
 
             if (changed) {
@@ -163,7 +166,7 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
             return true;
         }
 
-        return false;
+        return hasUpdate;
     }
 
     @Override
@@ -246,6 +249,9 @@ public class EntityMinecartHopper extends EntityMinecartAbstract implements Inve
             }
         } else if (block instanceof BlockComposter) {
             BlockComposter composter = (BlockComposter) block;
+            if (!composter.isFull()) {
+                return false;
+            }
             Item item = composter.empty();
             if (item == null || item.isNull()) {
                 return false;

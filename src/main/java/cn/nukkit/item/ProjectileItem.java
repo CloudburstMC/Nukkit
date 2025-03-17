@@ -7,9 +7,7 @@ import cn.nukkit.entity.projectile.EntityEnderPearl;
 import cn.nukkit.entity.projectile.EntityProjectile;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.level.Level;
-import cn.nukkit.level.Position;
 import cn.nukkit.math.Vector3;
-import cn.nukkit.math.Vector3f;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
@@ -30,8 +28,19 @@ public abstract class ProjectileItem extends Item {
     abstract public float getThrowForce();
 
     public boolean onClickAir(Player player, Vector3 directionVector) {
-        if (this instanceof ItemEnderEye && player.getLevel().getDimension() != Level.DIMENSION_OVERWORLD) {
-            return false;
+        Vector3 motion;
+
+        if (this instanceof ItemEnderEye) {
+            if (player.getLevel().getDimension() != Level.DIMENSION_OVERWORLD) {
+                return false;
+            }
+
+            Vector3 vector = player // TODO: Stronghold position here. Meanwhile you can set custom motion in ProjectileLaunchEvent.
+                    .subtract(player).normalize();
+            vector.y = 0.55f;
+            motion = vector.divide(this.getThrowForce());
+        } else {
+            motion = directionVector.multiply(this.getThrowForce());
         }
 
         CompoundTag nbt = new CompoundTag()
@@ -40,9 +49,9 @@ public abstract class ProjectileItem extends Item {
                         .add(new DoubleTag("", player.y + player.getEyeHeight()))
                         .add(new DoubleTag("", player.z)))
                 .putList(new ListTag<DoubleTag>("Motion")
-                        .add(new DoubleTag("", directionVector.x))
-                        .add(new DoubleTag("", directionVector.y))
-                        .add(new DoubleTag("", directionVector.z)))
+                        .add(new DoubleTag("", motion.x))
+                        .add(new DoubleTag("", motion.y))
+                        .add(new DoubleTag("", motion.z)))
                 .putList(new ListTag<FloatTag>("Rotation")
                         .add(new FloatTag("", (float) player.yaw))
                         .add(new FloatTag("", (float) player.pitch)));
@@ -50,7 +59,7 @@ public abstract class ProjectileItem extends Item {
         this.correctNBT(nbt);
 
         Entity projectile = Entity.createEntity(this.getProjectileEntityType(), player.getLevel().getChunk(player.getChunkX(), player.getChunkZ()), nbt, player);
-        if (projectile != null) {
+        if (projectile instanceof EntityProjectile) {
             if (projectile instanceof EntityEnderPearl || projectile instanceof EntityEnderEye) {
                 if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
                     projectile.close();
@@ -58,48 +67,21 @@ public abstract class ProjectileItem extends Item {
                 }
             }
 
-            if (projectile instanceof EntityEnderEye) {
-                if (player.getServer().getTick() - player.getLastEnderPearlThrowingTick() < 20) {
-                    projectile.close();
-                    return false;
-                }
+            ProjectileLaunchEvent ev = new ProjectileLaunchEvent((EntityProjectile) projectile);
 
-                Position strongholdPosition = this.getStrongholdPosition(player);
-                if (strongholdPosition == null) {
-                    projectile.close();
-                    return false;
-                }
+            player.getServer().getPluginManager().callEvent(ev);
 
-                Vector3f vector = strongholdPosition
-                        .subtract(player.getPosition())
-                        .asVector3f()
-                        .normalize()
-                        .multiply(1f);
-
-                vector.y = 0.55f;
-
-                projectile.setMotion(vector.asVector3().divide(this.getThrowForce()));
+            if (ev.isCancelled()) {
+                projectile.close();
             } else {
-                projectile.setMotion(projectile.getMotion().multiply(this.getThrowForce()));
-            }
-
-            if (projectile instanceof EntityProjectile) {
-                ProjectileLaunchEvent ev = new ProjectileLaunchEvent((EntityProjectile) projectile);
-
-                player.getServer().getPluginManager().callEvent(ev);
-
-                if (ev.isCancelled()) {
-                    projectile.close();
-                } else {
-                    if (!player.isCreative()) {
-                        this.count--;
-                    }
-                    if (projectile instanceof EntityEnderPearl || projectile instanceof EntityEnderEye) {
-                        player.onThrowEnderPearl();
-                    }
-                    projectile.spawnToAll();
-                    player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
+                if (!player.isCreative()) {
+                    this.count--;
                 }
+                if (projectile instanceof EntityEnderPearl || projectile instanceof EntityEnderEye) {
+                    player.onThrowEnderPearl();
+                }
+                projectile.spawnToAll();
+                player.getLevel().addLevelSoundEvent(player, LevelSoundEventPacket.SOUND_BOW);
             }
         }
 
@@ -107,9 +89,5 @@ public abstract class ProjectileItem extends Item {
     }
 
     protected void correctNBT(CompoundTag nbt) {
-    }
-
-    private Position getStrongholdPosition(Player p) {
-        return p.level.getDimension() == Level.DIMENSION_OVERWORLD ? p : null; // TODO
     }
 }

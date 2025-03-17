@@ -3,9 +3,7 @@ package cn.nukkit.entity.item;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
-import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
-import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.ItemDespawnEvent;
@@ -251,17 +249,6 @@ public class EntityItem extends Entity {
                 // Force check for nearby blocks changed even if not moving
                 if (this.motionY == 0) {
                     this.motionY = 0.00001;
-                }
-
-                if (!this.fireProof) { // Fix missed collisions
-                    Block block = level.getBlock(this.chunk, this.getFloorX(), this.getFloorY(), this.getFloorZ(), false);
-                    int bid = block.getId();
-                    if (bid == BlockID.FIRE || bid == BlockID.SOUL_FIRE || bid == BlockID.LAVA || bid == BlockID.STILL_LAVA) {
-                        this.attack(new EntityDamageByBlockEvent(block, this, DamageCause.FIRE, 1));
-                    } else if (bid == BlockID.CACTUS) {
-                        this.attack(new EntityDamageByBlockEvent(block, this, DamageCause.CONTACT, 1));
-                        return true;
-                    }
                 }
             }
 

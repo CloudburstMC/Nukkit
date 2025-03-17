@@ -25,7 +25,6 @@ import cn.nukkit.utils.Rail;
 import cn.nukkit.utils.Rail.Orientation;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -119,151 +118,106 @@ public abstract class EntityMinecartAbstract extends EntityVehicle implements En
     }
 
     @Override
-    public boolean onUpdate(int currentTick) {
-        if (this.closed) {
-            return false;
+    public boolean entityBaseTick(int tickDiff) {
+        // The damage token
+        if (getHealth() < 20) {
+            setHealth(getHealth() + 1);
         }
 
-        if (!this.isAlive()) {
-            this.despawnFromAll();
-            this.close();
-            return false;
+        // Entity variables
+        lastX = x;
+        lastY = y;
+        lastZ = z;
+        motionY -= 0.04;
+        int dx = MathHelper.floor(x);
+        int dy = MathHelper.floor(y);
+        int dz = MathHelper.floor(z);
+
+        // Some hack to check rails
+        if (Rail.isRailBlock(level.getBlockIdAt(dx, dy - 1, dz))) {
+            --dy;
         }
 
-        int tickDiff = currentTick - this.lastUpdate;
-        if (tickDiff <= 0 && !this.justCreated) {
-            return true;
+        Block block = level.getBlock(chunk, dx, dy, dz, true);
+
+        // Ensure that the block is a rail
+        if (Rail.isRailBlock(block)) {
+            processMovement(dx, dy, dz, (BlockRail) block);
+            // Activate the minecart/TNT
+            if (block instanceof BlockRailActivator) {
+                activate(dx, dy, dz, ((BlockRailActivator) block).isActive());
+            }
+        } else {
+            setFalling();
         }
 
-        boolean firstTick = this.justCreated;
+        // Minecart head
+        pitch = 0;
+        double diffX = this.lastX - this.x;
+        double diffZ = this.lastZ - this.z;
+        double yawToChange = yaw;
+        if (diffX * diffX + diffZ * diffZ > 0.001D) {
+            yawToChange = (Math.atan2(diffZ, diffX) * 180 / Math.PI);
+        }
 
-        this.minimalEntityTick(currentTick, tickDiff);
+        // Reverse yaw if yaw is below 0
+        if (yawToChange < 0) {
+            // -90-(-90)-(-90) = 90
+            yawToChange -= yawToChange - yawToChange;
+        }
 
-        if (isAlive()) {
-            super.onUpdate(currentTick);
+        setRotation(yawToChange, pitch);
 
-            if (this.closed) {
-                return false;
-            }
+        Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
+        Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, level);
 
-            // The damage token
-            if (getHealth() < 20) {
-                setHealth(getHealth() + 1);
-            }
+        this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
 
-            // Entity variables
-            lastX = x;
-            lastY = y;
-            lastZ = z;
-            motionY -= 0.04;
-            int dx = MathHelper.floor(x);
-            int dy = MathHelper.floor(y);
-            int dz = MathHelper.floor(z);
+        if (!from.equals(to)) {
+            this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
+        }
 
-            // Some hack to check rails
-            if (Rail.isRailBlock(level.getBlockIdAt(dx, dy - 1, dz))) {
-                --dy;
-            }
-
-            Block block = level.getBlock(chunk, dx, dy, dz, true);
-
-            // Ensure that the block is a rail
-            if (Rail.isRailBlock(block)) {
-                processMovement(dx, dy, dz, (BlockRail) block);
-                // Activate the minecart/TNT
-                if (block instanceof BlockRailActivator) {
-                    activate(dx, dy, dz, ((BlockRailActivator) block).isActive());
+        // Collisions
+        if (this instanceof InventoryHolder) {
+            for (Entity entity : level.getNearbyEntities(boundingBox.grow(0.2D, 0, 0.2D), this)) {
+                if (entity instanceof EntityMinecartAbstract && !passengers.contains(entity)) {
+                    entity.applyEntityCollision(this);
                 }
-            } else {
-                setFalling();
             }
-            checkBlockCollision();
+        }
 
-            // Minecart head
-            pitch = 0;
-            double diffX = this.lastX - this.x;
-            double diffZ = this.lastZ - this.z;
-            double yawToChange = yaw;
-            if (diffX * diffX + diffZ * diffZ > 0.001D) {
-                yawToChange = (Math.atan2(diffZ, diffX) * 180 / Math.PI);
-            }
-
-            // Reverse yaw if yaw is below 0
-            if (yawToChange < 0) {
-                // -90-(-90)-(-90) = 90
-                yawToChange -= yawToChange - yawToChange;
-            }
-
-            setRotation(yawToChange, pitch);
-
-            Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
-            Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, level);
-
-            this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
-
-            if (!from.equals(to)) {
-                this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
-            }
-
-            // Collisions
-            if (this instanceof InventoryHolder) {
-                for (cn.nukkit.entity.Entity entity : level.getNearbyEntities(boundingBox.grow(0.2D, 0, 0.2D), this)) {
-                    if (entity instanceof EntityMinecartAbstract && !passengers.contains(entity)) {
-                        entity.applyEntityCollision(this);
+        if (this instanceof InventoryHolder) {
+            AxisAlignedBB pickupArea = new SimpleAxisAlignedBB(this.x, this.y - 1, this.z, this.x + 1, this.y, this.z + 1);
+            Block[] hopperPickupArray = this.level.getCollisionBlocks(this, pickupArea, false);
+            if (hopperPickupArray.length >= 1) {
+                Block hopper = hopperPickupArray[0];
+                if (hopper instanceof BlockHopper) {
+                    BlockEntity hopperBE = hopper.getLevel().getBlockEntityIfLoaded(hopper);
+                    if (hopperBE instanceof BlockEntityHopper) {
+                        ((BlockEntityHopper) hopperBE).setMinecartPickupInventory((InventoryHolder) this);
                     }
                 }
+                return true;
             }
 
-            Iterator<cn.nukkit.entity.Entity> linkedIterator = this.passengers.iterator();
-
-            while (linkedIterator.hasNext()) {
-                cn.nukkit.entity.Entity linked = linkedIterator.next();
-
-                if (!linked.isAlive()) {
-                    if (linked.riding == this) {
-                        linked.riding = null;
-                    }
-
-                    linkedIterator.remove();
-                }
-            }
-
-            if (this instanceof InventoryHolder) {
-                AxisAlignedBB pickupArea = new SimpleAxisAlignedBB(this.x, this.y - 1, this.z, this.x + 1, this.y, this.z + 1);
-                Block[] hopperPickupArray = this.level.getCollisionBlocks(this, pickupArea, false);
-                if (hopperPickupArray.length >= 1) {
-                    Block hopper = hopperPickupArray[0];
+            if (!(this instanceof EntityMinecartHopper)) {
+                AxisAlignedBB pushArea = new SimpleAxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 2, this.z + 1);
+                Block[] hopperPushArray = this.level.getCollisionBlocks(this, pushArea, false);
+                if (hopperPushArray.length >= 1) {
+                    Block hopper = hopperPushArray[0];
                     if (hopper instanceof BlockHopper) {
                         BlockEntity hopperBE = hopper.getLevel().getBlockEntityIfLoaded(hopper);
                         if (hopperBE instanceof BlockEntityHopper) {
-                            ((BlockEntityHopper) hopperBE).setMinecartPickupInventory((InventoryHolder) this);
+                            ((BlockEntityHopper) hopperBE).setMinecartPushInventory((InventoryHolder) this);
                         }
                     }
                     return true;
                 }
-
-                if (!(this instanceof EntityMinecartHopper)) {
-                    AxisAlignedBB pushArea = new SimpleAxisAlignedBB(this.x, this.y, this.z, this.x + 1, this.y + 2, this.z + 1);
-                    Block[] hopperPushArray = this.level.getCollisionBlocks(this, pushArea, false);
-                    if (hopperPushArray.length >= 1) {
-                        Block hopper = hopperPushArray[0];
-                        if (hopper instanceof BlockHopper) {
-                            BlockEntity hopperBE = hopper.getLevel().getBlockEntityIfLoaded(hopper);
-                            if (hopperBE instanceof BlockEntityHopper) {
-                                ((BlockEntityHopper) hopperBE).setMinecartPushInventory((InventoryHolder) this);
-                            }
-                        }
-                        return true;
-                    }
-                }
             }
-
-            this.updateMovement();
-
-            return firstTick || this.getRollingAmplitude() > 0 || !this.passengers.isEmpty() || !(this.motionX == 0 && this.motionY == 0 && this.motionZ == 0);
         }
 
-        return false;
+        // We call super here after movement code so block collision checks use up to date position
+        return super.entityBaseTick(tickDiff) || this.getRollingAmplitude() > 0 || !(this.motionX == 0 && this.motionY == 0 && this.motionZ == 0);
     }
 
     @Override

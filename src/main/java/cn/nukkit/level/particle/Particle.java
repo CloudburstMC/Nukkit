@@ -104,6 +104,10 @@ public abstract class Particle extends Vector3 {
     public static final int TYPE_WIND_EXPLOSION = 91;
     public static final int TYPE_WOLF_ARMOR_BREAK = 92;
     public static final int TYPE_OMINOUS_ITEM_SPAWNER = 93;
+    public static final int TYPE_CREAKING_CRUMBLE = 94;
+    public static final int TYPE_PALE_OAK_LEAVES = 95;
+    public static final int TYPE_EYEBLOSSOM_OPEN = 96;
+    public static final int TYPE_EYEBLOSSOM_CLOSE = 97;
 
     public Particle() {
         super(0, 0, 0);

@@ -64,21 +64,12 @@ public abstract class EntityVehicle extends Entity implements EntityRideable, En
     }
 
     @Override
-    public boolean onUpdate(int currentTick) {
-        if (y < (this.getLevel().getMinBlockY() - 16)) {
-            this.close();
-        }
-
-        if (closed) {
-            return false;
-        }
-
+    public boolean entityBaseTick(int tickDiff) {
         if (getRollingAmplitude() > 0) {
             setRollingAmplitude(getRollingAmplitude() - 1);
         }
 
-        updateMovement();
-        return true;
+        return super.entityBaseTick(tickDiff);
     }
 
     protected boolean rollingDirection = true;

@@ -2,6 +2,7 @@ package cn.nukkit.item;
 
 import cn.nukkit.Player;
 import cn.nukkit.event.entity.EntityPotionEffectEvent;
+import cn.nukkit.math.Vector3;
 import cn.nukkit.potion.Effect;
 
 /**
@@ -27,12 +28,16 @@ public class ItemHoneyBottle extends ItemEdible {
     }
 
     @Override
+    public boolean onClickAir(Player player, Vector3 directionVector) {
+        return true;
+    }
+
+    @Override
     public boolean onUse(Player player, int ticksUsed) {
         if (super.onUse(player, ticksUsed)) {
             player.removeEffect(Effect.POISON, EntityPotionEffectEvent.Cause.FOOD);
 
             if (!player.isCreative()) {
-                this.count--;
                 player.getInventory().addItem(Item.get(Item.BOTTLE, 0, 1));
             }
         }

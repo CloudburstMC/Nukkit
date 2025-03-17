@@ -24,22 +24,12 @@ public class BlockSculk extends BlockSolid {
 
     @Override
     public double getHardness() {
-        return 1.5;
+        return 0.2;
     }
 
     @Override
     public double getResistance() {
-        return 1.5;
-    }
-
-    @Override
-    public int getLightLevel() {
-        return 1;
-    }
-
-    @Override
-    public boolean canHarvestWithHand() {
-        return false;
+        return 0.2;
     }
 
     @Override

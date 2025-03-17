@@ -109,4 +109,15 @@ public class BlockJukebox extends BlockSolid {
     public boolean canBePushed() {
         return false;
     }
+
+    @Override
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    @Override
+    public int getComparatorInputOverride() {
+        BlockEntity blockEntity = this.getLevel().getBlockEntityIfLoaded(this);
+        return blockEntity instanceof BlockEntityJukebox ? ((BlockEntityJukebox) blockEntity).getComparatorSignal() : 0;
+    }
 }

@@ -1,11 +1,12 @@
 package cn.nukkit.entity.passive;
 
+import cn.nukkit.entity.EntityArthropod;
 import cn.nukkit.entity.mob.EntityFlyingMob;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Utils;
 
-public class EntityBee extends EntityFlyingMob {
+public class EntityBee extends EntityFlyingMob implements EntityArthropod {
 
     public static final int NETWORK_ID = 122;
 

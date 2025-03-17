@@ -149,4 +149,25 @@ public class BlockRespawnAnchor extends BlockSolidMeta {
         }
         return r;
     }
+
+    @Override
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    @Override
+    public int getComparatorInputOverride() {
+        switch (this.getDamage()) {
+            case 1:
+                return 3;
+            case 2:
+                return 7;
+            case 3:
+                return 11;
+            case 4:
+                return 15;
+            default:
+                return 0;
+        }
+    }
 }

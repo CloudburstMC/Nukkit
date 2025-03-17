@@ -16,11 +16,10 @@ public class FlowerForestBiome extends ForestBiome {
     public FlowerForestBiome(int type) {
         super(type);
 
-        //see https://minecraft.gamepedia.com/Flower#Flower_biomes
+        //https://minecraft.wiki/w/Flower#Natural_generation
         PopulatorFlower flower = new PopulatorFlower();
         flower.setBaseAmount(10);
         flower.setRandomAmount(10);
-        flower.addType(DANDELION, 0);
         flower.addType(RED_FLOWER, BlockFlower.TYPE_POPPY);
         flower.addType(RED_FLOWER, BlockFlower.TYPE_ALLIUM);
         flower.addType(RED_FLOWER, BlockFlower.TYPE_AZURE_BLUET);
