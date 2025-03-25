@@ -29,8 +29,8 @@ public class SetHudPacket extends DataPacket {
         this.reset();
         this.putUnsignedVarInt(this.elements.size());
         for (HudElement element : this.elements) {
-            this.putUnsignedVarInt(element.ordinal());
+            this.putVarInt(element.ordinal());
         }
-        this.putBoolean(this.visible);
+        this.putVarInt(this.visible ? 1 : 0);
     }
 }

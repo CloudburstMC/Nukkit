@@ -365,9 +365,9 @@ public class Utils {
             case 6:
                 return "HoloLens";
             case 7:
-                return "Windows 10";
-            case 8:
                 return "Windows";
+            case 8:
+                return "Windows x86";
             case 9:
                 return "Dedicated";
             case 10:

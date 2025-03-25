@@ -1,6 +1,7 @@
 package cn.nukkit.dispenser;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockBeehive;
 import cn.nukkit.block.BlockDispenser;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.passive.EntitySheep;
@@ -30,6 +31,11 @@ public class ShearsDispenseBehaviour extends DefaultDispenseBehavior {
                 }
             }
         }
+
+        if (target instanceof BlockBeehive && target.onActivate(item, null)) {
+            return item.getDamage() >= item.getMaxDurability() ? null : item;
+        }
+
         return item;
     }
 }

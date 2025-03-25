@@ -7,7 +7,9 @@ import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.NukkitMath;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.ContainerOpenPacket;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
@@ -78,21 +80,6 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable {
     @Override
     public BlockFace getBlockFace() {
         return BlockFace.fromHorizontalIndex(getDamage() & 0b11);
-    }
-
-    public boolean dropBook()  {
-        BlockEntity blockEntity = this.getLevel().getBlockEntity(this);
-        if (blockEntity instanceof BlockEntityLectern) {
-            BlockEntityLectern lectern = (BlockEntityLectern) blockEntity;
-            Item book = lectern.getBook();
-            if (book.getId() != BlockID.AIR) {
-                lectern.setBook(Item.get(BlockID.AIR));
-                lectern.spawnToAll();
-                this.level.dropItem(lectern.add(0.5f, 1, 0.5f), book);
-                return true;
-            }
-        }
-        return false;
     }
 
     @Override
@@ -166,5 +153,42 @@ public class BlockLectern extends BlockTransparentMeta implements Faceable {
     @Override
     public boolean canBePushed() {
         return false; // prevent item loss issue with pistons until a working implementation
+    }
+
+    @Override
+    public boolean hasComparatorInputOverride() {
+        return true;
+    }
+
+    @Override
+    public int getComparatorInputOverride() {
+        int power = 0;
+        BlockEntity lectern = level.getBlockEntityIfLoaded(this);
+        if (lectern instanceof BlockEntityLectern && ((BlockEntityLectern) lectern).hasBook()) {
+            int currentPage = ((BlockEntityLectern) lectern).getLeftPage();
+            int totalPages = ((BlockEntityLectern) lectern).getTotalPages();
+            power = NukkitMath.floorDouble(1 + ((double) (currentPage - 1) / (totalPages - 1)) * 14);
+        }
+        return power;
+    }
+
+    public void onPageChange(boolean active) {
+        if (isActivated() != active) {
+            setActivated(active);
+            level.setBlock((int) this.x, (int) this.y, (int) this.z, BlockLayer.NORMAL, this, false, false, false); // No need to send this to client
+            level.updateAroundRedstone(this, null);
+            if (active) {
+                level.scheduleUpdate(this, 1);
+            }
+        }
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_SCHEDULED || type == Level.BLOCK_UPDATE_NORMAL) {
+            onPageChange(false);
+        }
+
+        return 0;
     }
 }

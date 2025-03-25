@@ -71,12 +71,15 @@ import cn.nukkit.utils.*;
 import com.google.common.base.Strings;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
-import com.google.common.collect.Sets;
 import io.netty.util.internal.PlatformDependent;
+import it.unimi.dsi.fastutil.bytes.ByteOpenHashSet;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.longs.*;
+import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.longs.LongIterator;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import lombok.Getter;
 import lombok.Setter;
@@ -90,10 +93,10 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
-import java.util.List;
 import java.util.*;
-import java.util.Queue;
+import java.util.List;
 import java.util.Map.Entry;
+import java.util.Queue;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
@@ -125,6 +128,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public static final float DEFAULT_SPEED = 0.1f;
     public static final float MAXIMUM_SPEED = 6f; // TODO: Decrease when block collisions are fixed
     public static final float DEFAULT_FLY_SPEED = 0.05f;
+    public static final float DEFAULT_VERTICAL_FLY_SPEED = 1f;
 
     public static final int PERMISSION_CUSTOM = 3;
     public static final int PERMISSION_OPERATOR = 2;
@@ -178,7 +182,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Vector3 teleportPosition;
     protected Vector3 newPosition;
     protected Vector3 sleeping;
-    private Vector3 lastRightClickPos;
+    private BlockVector3 lastRightClickPos;
     private final Queue<Vector3> clientMovements = PlatformDependent.newMpscQueue(4);
 
     protected boolean connected = true;
@@ -215,6 +219,24 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     @Getter
     @Setter
     private boolean canTickShield = true;
+    /**
+     * Player's client-side walk speed. Remember to call getAdventureSettings().update() if changed.
+     */
+    @Getter
+    @Setter
+    private float walkSpeed = DEFAULT_SPEED;
+    /**
+     * Player's client-side fly speed. Remember to call getAdventureSettings().update() if changed.
+     */
+    @Getter
+    @Setter
+    private float flySpeed = DEFAULT_FLY_SPEED;
+    /**
+     * Player's client-side vertical fly speed. Remember to call getAdventureSettings().update() if changed.
+     */
+    @Getter
+    @Setter
+    private float verticalFlySpeed = DEFAULT_VERTICAL_FLY_SPEED;
 
     private int exp;
     private int expLevel;
@@ -296,7 +318,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     /**
      * Packets that can be received before the player has logged in
      */
-    private static final Set<Byte> PRE_LOGIN_PACKETS = Sets.newHashSet(ProtocolInfo.BATCH_PACKET, ProtocolInfo.LOGIN_PACKET, ProtocolInfo.REQUEST_NETWORK_SETTINGS_PACKET, ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET, ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET, ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET, ProtocolInfo.CLIENT_CACHE_STATUS_PACKET, ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET, ProtocolInfo.CLIENT_TO_SERVER_HANDSHAKE_PACKET);
+    private static final ByteOpenHashSet PRE_LOGIN_PACKETS = new ByteOpenHashSet(new byte[]{ProtocolInfo.BATCH_PACKET, ProtocolInfo.LOGIN_PACKET, ProtocolInfo.REQUEST_NETWORK_SETTINGS_PACKET, ProtocolInfo.REQUEST_CHUNK_RADIUS_PACKET, ProtocolInfo.SET_LOCAL_PLAYER_AS_INITIALIZED_PACKET, ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET, ProtocolInfo.RESOURCE_PACK_CLIENT_RESPONSE_PACKET, ProtocolInfo.CLIENT_CACHE_STATUS_PACKET, ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET, ProtocolInfo.CLIENT_TO_SERVER_HANDSHAKE_PACKET});
     /**
      * Default kick message for flying
      */
@@ -4197,7 +4219,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         UseItemData useItemData = (UseItemData) transactionPacket.transactionData;
                         BlockVector3 blockVector = useItemData.blockPos;
                         BlockFace face = useItemData.face;
-                        int type = useItemData.actionType;
 
                         this.setShieldBlockingDelay(5);
 
@@ -4209,14 +4230,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             itemSent = true; // Assume that the item is still correct even if the selected slot is not
                         }
 
-                        switch (type) {
+                        switch (useItemData.actionType) {
                             case InventoryTransactionPacket.USE_ITEM_ACTION_CLICK_BLOCK:
                                 // Hack: Fix client spamming right clicks
                                 if ((lastRightClickPos != null && this.getInventory().getItemInHandFast().getBlockId() == BlockID.AIR && System.currentTimeMillis() - lastRightClickTime < 200.0 && blockVector.distanceSquared(lastRightClickPos) < 0.00001)) {
                                     return;
                                 }
 
-                                lastRightClickPos = blockVector.asVector3();
+                                lastRightClickPos = blockVector;
                                 lastRightClickTime = System.currentTimeMillis();
 
                                 this.breakingBlock = null;
@@ -4366,17 +4387,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             return;
                         }
 
-                        type = useItemOnEntityData.actionType;
-
                         if (inventory.getHeldItemIndex() != useItemOnEntityData.hotbarSlot) {
                             inventory.equipItem(useItemOnEntityData.hotbarSlot);
                         }
 
                         item = this.inventory.getItemInHand();
 
-                        switch (type) {
+                        switch (useItemOnEntityData.actionType) {
                             case InventoryTransactionPacket.USE_ITEM_ON_ENTITY_ACTION_INTERACT:
-                                if (this.distanceSquared(target) > 1000) {
+                                if (this.distanceSquared(target) > 256) { // TODO: Note entity scale
                                     this.getServer().getLogger().debug(username + ": target entity is too far away");
                                     return;
                                 }
@@ -4513,8 +4532,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         ReleaseItemData releaseItemData = (ReleaseItemData) transactionPacket.transactionData;
 
                         try {
-                            type = releaseItemData.actionType;
-                            switch (type) {
+                            switch (releaseItemData.actionType) {
                                 case InventoryTransactionPacket.RELEASE_ITEM_ACTION_RELEASE:
                                     if (this.isUsingItem()) {
                                         int ticksUsed = this.server.getTick() - this.startAction;
@@ -4529,7 +4547,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 case InventoryTransactionPacket.RELEASE_ITEM_ACTION_CONSUME:
                                     return;
                                 default:
-                                    this.getServer().getLogger().debug(username + ": unknown release item action type: " + type);
+                                    this.getServer().getLogger().debug(username + ": unknown release item action type: " + releaseItemData.actionType);
                             }
                         } finally {
                             this.setUsingItem(false);
@@ -4687,12 +4705,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 LecternUpdatePacket lecternUpdatePacket = (LecternUpdatePacket) packet;
-                Vector3 lecternPos = lecternUpdatePacket.blockPosition.asVector3();
-                if (lecternPos.distanceSquared(this) > 4096) {
+                if (lecternUpdatePacket.blockPosition.distanceSquared(this) > 4096) {
                     return;
                 }
                 if (!lecternUpdatePacket.dropBook) {
-                    BlockEntity blockEntityLectern = this.level.getBlockEntityIfLoaded(this.chunk, lecternPos);
+                    BlockEntity blockEntityLectern = this.level.getBlockEntityIfLoaded(this.chunk, lecternUpdatePacket.blockPosition.asVector3());
                     if (blockEntityLectern instanceof BlockEntityLectern) {
                         BlockEntityLectern lectern = (BlockEntityLectern) blockEntityLectern;
                         if (lectern.getRawPage() != lecternUpdatePacket.page) {
@@ -4917,8 +4934,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         }
         this.needSendHeldItem = true;
         if (blockPos.distanceSquared(this) < 10000) {
-            this.level.sendBlocks(this, new Block[]{this.level.getBlock(blockPos.asVector3(), false)}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
-            BlockEntity blockEntity = this.level.getBlockEntityIfLoaded(this.chunk, blockPos.asVector3());
+            Vector3 pos = blockPos.asVector3();
+            this.level.sendBlocks(this, new Block[]{this.level.getBlock(pos, false)}, UpdateBlockPacket.FLAG_ALL_PRIORITY);
+            BlockEntity blockEntity = this.level.getBlockEntityIfLoaded(this.chunk, pos);
             if (blockEntity instanceof BlockEntitySpawnable) {
                 ((BlockEntitySpawnable) blockEntity).spawnTo(this);
             }

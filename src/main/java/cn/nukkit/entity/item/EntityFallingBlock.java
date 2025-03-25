@@ -11,6 +11,7 @@ import cn.nukkit.event.entity.EntityDamageByBlockEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.level.GameRule;
 import cn.nukkit.level.GlobalBlockPalette;
 import cn.nukkit.level.format.FullChunk;
@@ -164,7 +165,7 @@ public class EntityFallingBlock extends Entity {
                     }
                 } else if ((floorBlock.isTransparent() && !floorBlock.canBeReplaced() || this.getBlock() == Block.SNOW_LAYER && floorBlock instanceof BlockLiquid)) {
                     if (this.getBlock() != Block.SNOW_LAYER ? this.level.getGameRules().getBoolean(GameRule.DO_ENTITY_DROPS) : this.level.getGameRules().getBoolean(GameRule.DO_TILE_DROPS)) {
-                        getLevel().dropItem(this, Item.get(this.blockId, this.damage, 1));
+                        getLevel().dropItem(this, new ItemBlock(Block.get(this.blockId, this.damage), this.damage, 1));
                     }
                 } else if (floorBlock.canBeReplaced()) {
                     EntityBlockChangeEvent event = new EntityBlockChangeEvent(this, floorBlock, Block.get(blockId, damage));

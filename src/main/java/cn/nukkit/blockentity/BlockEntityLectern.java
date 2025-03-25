@@ -1,7 +1,9 @@
 package cn.nukkit.blockentity;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockLectern;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.level.GameRule;
@@ -29,7 +31,7 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
             this.namedTag.remove("page");
         }
 
-        updateTotalPages(false);
+        updateTotalPages();
     }
 
     @Override
@@ -98,7 +100,7 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
             item_ = null;
         }
 
-        updateTotalPages(true);
+        updateTotalPages();
         setDirty();
     }
 
@@ -121,7 +123,11 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
     public void setRawPage(int page) {
         this.namedTag.putInt("page", Math.min(page, totalPages));
         setDirty();
-        this.getLevel().updateAround(this);
+
+        Block block = getLevelBlock();
+        if (block instanceof BlockLectern) {
+            ((BlockLectern) block).onPageChange(hasBook());
+        }
     }
 
     public int getRawPage() {
@@ -132,16 +138,12 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
         return totalPages;
     }
 
-    private void updateTotalPages(boolean updateRedstone) {
+    private void updateTotalPages() {
         Item book = getBook();
         if (book.getId() == BlockID.AIR || !book.hasCompoundTag()) {
             totalPages = 0;
         } else {
             totalPages = book.getNamedTag().getList("pages", CompoundTag.class).size();
-        }
-
-        if (updateRedstone) {
-            this.getLevel().updateAroundRedstone(this, null);
         }
     }
 
@@ -150,6 +152,11 @@ public class BlockEntityLectern extends BlockEntitySpawnable {
         if (item != null && item.getId() != Item.AIR) {
             this.setBook(null);
             this.level.dropItem(this.add(0.5, 1, 0.5), item);
+
+            Block block = getLevelBlock();
+            if (block instanceof BlockLectern) {
+                ((BlockLectern) block).onPageChange(false);
+            }
             return true;
         }
         return false;

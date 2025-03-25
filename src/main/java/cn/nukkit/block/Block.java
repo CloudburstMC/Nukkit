@@ -640,7 +640,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
         if (this.isValid()) {
             return this.getLevel().getBlock(super.getSide(face, step), layer, true);
         }
-        return Block.get(AIR, 0, Position.fromObject(new Vector3(this.x, this.y, this.z).getSide(face, step)), layer);
+        return Block.get(AIR, 0, Position.fromObject(this.getSideVec(face, step)), layer);
     }
 
     protected Block getSideIfLoaded(BlockFace face) {
@@ -649,7 +649,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     (int) this.x + face.getXOffset(), (int) this.y + face.getYOffset(), (int) this.z + face.getZOffset(),
                     BlockLayer.NORMAL, false);
         }
-        return Block.get(AIR, 0, Position.fromObject(new Vector3(this.x, this.y, this.z).getSide(face, 1)), BlockLayer.NORMAL);
+        return Block.get(AIR, 0, Position.fromObject(this.getSideVec(face, 1)), BlockLayer.NORMAL);
     }
 
     protected Block getSideIfLoadedOrNull(BlockFace face) {
@@ -667,7 +667,7 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
                     BlockLayer.NORMAL, false);
         }
 
-        return Block.get(AIR, 0, Position.fromObject(new Vector3(this.x, this.y, this.z).getSide(face, 1)), BlockLayer.NORMAL);
+        return Block.get(AIR, 0, Position.fromObject(this.getSideVec(face, 1)), BlockLayer.NORMAL);
     }
 
     public Block up() {

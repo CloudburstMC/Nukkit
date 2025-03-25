@@ -1,6 +1,7 @@
 package cn.nukkit.form.window;
 
 import cn.nukkit.form.element.ElementButton;
+import cn.nukkit.form.element.SimpleElement;
 import cn.nukkit.form.response.FormResponseSimple;
 
 import java.util.ArrayList;
@@ -13,7 +14,9 @@ public class FormWindowSimple extends FormWindow {
     private String title = "";
     private String content = "";
     @SuppressWarnings("FieldMayBeFinal")
-    private List<ElementButton> buttons;
+    private transient List<ElementButton> buttons;
+    @SuppressWarnings("FieldMayBeFinal")
+    private List<SimpleElement> elements;
 
     private FormResponseSimple response = null;
 
@@ -22,9 +25,14 @@ public class FormWindowSimple extends FormWindow {
     }
 
     public FormWindowSimple(String title, String content, List<ElementButton> buttons) {
+        this(title, content, buttons, new ArrayList<>(buttons));
+    }
+
+    public FormWindowSimple(String title, String content, List<ElementButton> buttons, List<SimpleElement> elements) {
         this.title = title;
         this.content = content;
         this.buttons = buttons;
+        this.elements = elements;
     }
 
     public String getTitle() {
@@ -49,6 +57,18 @@ public class FormWindowSimple extends FormWindow {
 
     public void addButton(ElementButton button) {
         this.buttons.add(button);
+        this.elements.add(button);
+    }
+
+    public List<SimpleElement> getElements() {
+        return elements;
+    }
+
+    public void addElement(SimpleElement element) {
+        if (element instanceof ElementButton) {
+            this.buttons.add((ElementButton) element);
+        }
+        this.elements.add(element);
     }
 
     public FormResponseSimple getResponse() {

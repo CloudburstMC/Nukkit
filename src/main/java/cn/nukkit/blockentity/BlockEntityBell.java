@@ -126,7 +126,7 @@ public class BlockEntityBell extends BlockEntitySpawnable {
 
     @Override
     public CompoundTag getSpawnCompound() {
-        CompoundTag tag = new CompoundTag()
+        return new CompoundTag()
                 .putString("id", BlockEntity.BELL)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
@@ -134,7 +134,6 @@ public class BlockEntityBell extends BlockEntitySpawnable {
                 .putBoolean("Ringing", this.ringing)
                 .putInt("Direction", this.direction)
                 .putInt("Ticks", this.ticks);
-        return tag;
     }
 
     @Override

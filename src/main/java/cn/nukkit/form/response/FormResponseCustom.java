@@ -11,12 +11,26 @@ public class FormResponseCustom extends FormResponse {
     private final HashMap<Integer, FormResponseData> stepSliderResponses;
     private final HashMap<Integer, Boolean> toggleResponses;
     private final HashMap<Integer, String> labelResponses;
+    private final HashMap<Integer, String> headerResponses;
+    private final HashMap<Integer, String> dividerResponses;
 
+    @Deprecated
     public FormResponseCustom(HashMap<Integer, Object> responses, HashMap<Integer, FormResponseData> dropdownResponses,
                               HashMap<Integer, String> inputResponses, HashMap<Integer, Float> sliderResponses,
                               HashMap<Integer, FormResponseData> stepSliderResponses,
                               HashMap<Integer, Boolean> toggleResponses,
                               HashMap<Integer, String> labelResponses) {
+        this(responses, dropdownResponses, inputResponses, sliderResponses, stepSliderResponses, toggleResponses,
+                labelResponses, new HashMap<>(0), new HashMap<>(0));
+    }
+
+    public FormResponseCustom(HashMap<Integer, Object> responses, HashMap<Integer, FormResponseData> dropdownResponses,
+                              HashMap<Integer, String> inputResponses, HashMap<Integer, Float> sliderResponses,
+                              HashMap<Integer, FormResponseData> stepSliderResponses,
+                              HashMap<Integer, Boolean> toggleResponses,
+                              HashMap<Integer, String> labelResponses,
+                              HashMap<Integer, String> headerResponses,
+                              HashMap<Integer, String> dividerResponses) {
         this.responses = responses;
         this.dropdownResponses = dropdownResponses;
         this.inputResponses = inputResponses;
@@ -24,6 +38,8 @@ public class FormResponseCustom extends FormResponse {
         this.stepSliderResponses = stepSliderResponses;
         this.toggleResponses = toggleResponses;
         this.labelResponses = labelResponses;
+        this.headerResponses = headerResponses;
+        this.dividerResponses = dividerResponses;
     }
 
     public HashMap<Integer, Object> getResponses() {
@@ -56,5 +72,13 @@ public class FormResponseCustom extends FormResponse {
 
     public String getLabelResponse(int id) {
         return labelResponses.get(id);
+    }
+
+    public String getHeaderResponse(int id) {
+        return headerResponses.get(id);
+    }
+
+    public String getDividerResponses(int id) {
+        return dividerResponses.get(id);
     }
 }

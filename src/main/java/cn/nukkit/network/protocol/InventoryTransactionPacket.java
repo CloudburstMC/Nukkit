@@ -57,57 +57,7 @@ public class InventoryTransactionPacket extends DataPacket {
 
     @Override
     public void encode() {
-        this.reset();
-
-        this.putVarInt(this.legacyRequestId);
-
-        this.putUnsignedVarInt(this.transactionType);
-        this.putBoolean(this.hasNetworkIds);
-        this.putUnsignedVarInt(this.actions.length);
-
-        for (NetworkInventoryAction action : this.actions) {
-            action.write(this);
-        }
-
-        switch (this.transactionType) {
-            case TYPE_NORMAL:
-            case TYPE_MISMATCH:
-                break;
-            case TYPE_USE_ITEM:
-                UseItemData useItemData = (UseItemData) this.transactionData;
-
-                this.putUnsignedVarInt(useItemData.actionType);
-                this.putUnsignedVarInt(useItemData.triggerType);
-                this.putBlockVector3(useItemData.blockPos);
-                this.putBlockFace(useItemData.face);
-                this.putVarInt(useItemData.hotbarSlot);
-                this.putSlot(useItemData.itemInHand);
-                this.putVector3f(useItemData.playerPos.asVector3f());
-                this.putVector3f(useItemData.clickPos);
-                this.putUnsignedVarInt(useItemData.blockRuntimeId);
-                this.putUnsignedVarInt(useItemData.clientInteractPrediction);
-                break;
-            case TYPE_USE_ITEM_ON_ENTITY:
-                UseItemOnEntityData useItemOnEntityData = (UseItemOnEntityData) this.transactionData;
-
-                this.putEntityRuntimeId(useItemOnEntityData.entityRuntimeId);
-                this.putUnsignedVarInt(useItemOnEntityData.actionType);
-                this.putVarInt(useItemOnEntityData.hotbarSlot);
-                this.putSlot(useItemOnEntityData.itemInHand);
-                this.putVector3f(useItemOnEntityData.playerPos.asVector3f());
-                this.putVector3f(useItemOnEntityData.clickPos.asVector3f());
-                break;
-            case TYPE_RELEASE_ITEM:
-                ReleaseItemData releaseItemData = (ReleaseItemData) this.transactionData;
-
-                this.putUnsignedVarInt(releaseItemData.actionType);
-                this.putVarInt(releaseItemData.hotbarSlot);
-                this.putSlot(releaseItemData.itemInHand);
-                this.putVector3f(releaseItemData.headRot.asVector3f());
-                break;
-            default:
-                throw new RuntimeException("Unknown transaction type " + this.transactionType);
-        }
+        this.encodeUnsupported();
     }
 
     @Override

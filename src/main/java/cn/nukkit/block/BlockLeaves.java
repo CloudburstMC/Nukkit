@@ -116,6 +116,10 @@ public class BlockLeaves extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL && !isPersistent() && !isCheckDecay()) {
+            if (this.level.getBlockIdAt((int) this.x, (int) this.y, (int) this.z) != this.getId()) {
+                return 0;
+            }
+
             setCheckDecay(true);
             getLevel().setBlock((int) this.x, (int) this.y, (int) this.z, BlockLayer.NORMAL, this, false, false, false); // No need to send this to client
 

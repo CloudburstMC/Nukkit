@@ -63,11 +63,6 @@ public class BlockCampfire extends BlockTransparentMeta implements Faceable {
     }
 
     @Override
-    public boolean canHarvestWithHand() {
-        return false;
-    }
-
-    @Override
     public Item[] getDrops(Item item) {
         return new Item[] {Item.get(ItemID.COAL, 0, 1 + ThreadLocalRandom.current().nextInt(1))};
     }

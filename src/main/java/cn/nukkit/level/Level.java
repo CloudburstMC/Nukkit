@@ -1516,7 +1516,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
         if (entities || solidEntities) {
             for (Entity ent : this.getCollidingEntities(bb.grow(0.25f, 0.25f, 0.25f), entity)) {
-                if (solidEntities && !ent.canPassThrough()) {
+                if (solidEntities || !ent.canPassThrough()) {
                     collides.add(ent.boundingBox.clone());
                 }
             }
@@ -2149,12 +2149,6 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             drops = target.getDrops(item);
         }
 
-        Vector3 above = new Vector3(target.x, target.y + 1, target.z);
-        int bid = this.getBlockIdAt((int) above.x, (int) above.y, (int) above.z);
-        if (bid == Item.FIRE || bid == Item.SOUL_FIRE) {
-            this.setBlock(above, Block.get(BlockID.AIR), true);
-        }
-
         if (createParticles) {
             this.addParticle(new DestroyBlockParticle(target.add(0.5), target));
         }
@@ -2289,8 +2283,9 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
                 if (item.canBeActivated()) {
                     int oldCount = item.getCount();
+                    int oldDamage = item.getDamage();
                     if (item.onActivate(this, player, block, target, face, fx, fy, fz)) {
-                        if (oldCount != item.getCount()) {
+                        if (oldCount != item.getCount() || oldDamage != item.getDamage()) {
                             if (item.getCount() <= 0) {
                                 item = new ItemBlock(Block.get(BlockID.AIR), 0, 0);
                             }

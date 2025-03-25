@@ -1,5 +1,6 @@
 package cn.nukkit.level.biome.impl.savanna;
 
+import cn.nukkit.block.BlockFlower;
 import cn.nukkit.block.BlockSapling;
 import cn.nukkit.level.biome.type.GrassyBiome;
 import cn.nukkit.level.generator.populator.impl.PopulatorFlower;
@@ -18,7 +19,9 @@ public class SavannaBiome extends GrassyBiome {
         this.addPopulator(tree);
 
         PopulatorFlower flower = new PopulatorFlower();
-        flower.setBaseAmount(2);
+        flower.setRandomAmount(3);
+        flower.addType(DANDELION, 0);
+        flower.addType(RED_FLOWER, BlockFlower.TYPE_POPPY);
         this.addPopulator(flower);
 
         this.setBaseHeight(0.125f);

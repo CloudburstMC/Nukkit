@@ -38,19 +38,12 @@ public class RuntimeItems {
 
         JsonObject itemMapping = Utils.loadJsonResource("item_mappings.json").getAsJsonObject();
         Map<String, MappingEntry> mappingEntries = latestIdentifierMapping; // keep it same with master
-        Map<String, MappingEntry> mappingEntriesLegacy = new HashMap<>();
         for (String legacyName : itemMapping.keySet()) {
             JsonObject convertData = itemMapping.getAsJsonObject(legacyName);
-            boolean isLegacyStone = "minecraft:stone".equals(legacyName);
-
             for (String damageStr : convertData.keySet()) {
                 String identifier = convertData.get(damageStr).getAsString();
                 int damage = Integer.parseInt(damageStr);
                 mappingEntries.put(identifier, new MappingEntry(legacyName, damage));
-
-                if (!isLegacyStone) {
-                    mappingEntriesLegacy.put(identifier, new MappingEntry(legacyName, damage));
-                }
             }
         }
 

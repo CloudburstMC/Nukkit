@@ -9,7 +9,9 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
 
 /**
@@ -45,7 +47,7 @@ public class BlockCactus extends BlockTransparentMeta {
         return true;
     }
 
-    /*@Override
+    @Override
     public double getMinX() {
         return this.x + 0.0625;
     }
@@ -63,11 +65,12 @@ public class BlockCactus extends BlockTransparentMeta {
     @Override
     public double getMaxZ() {
         return this.z + 0.9375;
-    }*/
+    }
 
-    // Hack: Fix entity collisions
-    // No need for separate collision box
-    // Y-collisions need another fix anyway
+    @Override
+    protected AxisAlignedBB recalculateCollisionBoundingBox() {
+        return new SimpleAxisAlignedBB(x, y, z, x + 1, y + 1, z + 1);
+    }
 
     @Override
     public double getMaxY() {

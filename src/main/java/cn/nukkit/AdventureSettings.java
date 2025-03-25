@@ -103,9 +103,9 @@ public class AdventureSettings implements Cloneable {
             layer.getAbilityValues().add(PlayerAbility.OPERATOR_COMMANDS);
         }
 
-        layer.setWalkSpeed(Player.DEFAULT_SPEED);
-        layer.setFlySpeed(Player.DEFAULT_FLY_SPEED);
-        layer.setVerticalFlySpeed(1.0f);
+        layer.setWalkSpeed(player.getWalkSpeed());
+        layer.setFlySpeed(player.getFlySpeed());
+        layer.setVerticalFlySpeed(player.getVerticalFlySpeed());
         packet.getAbilityLayers().add(layer);
 
         if (player.isSpectator()) {

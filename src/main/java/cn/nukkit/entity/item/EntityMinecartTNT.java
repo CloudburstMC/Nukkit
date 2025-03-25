@@ -21,7 +21,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Adam Matthew [larryTheCoder]
- * 
+ *
  * Nukkit Project.
  */
 public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityExplosive {
@@ -53,19 +53,17 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
     }
 
     @Override
-    public boolean onUpdate(int currentTick) {
-        if (fuse < 80) {
-            int tickDiff = currentTick - lastUpdate;
+    public boolean entityBaseTick(int tickDiff) {
+        boolean hasUpdate = super.entityBaseTick(tickDiff);
 
-            lastUpdate = currentTick;
-
+        if (!this.closed && this.isAlive()) {
             if (fuse % 5 == 0) {
                 setDataProperty(new IntEntityData(DATA_FUSE_LENGTH, fuse));
             }
 
             fuse -= tickDiff;
 
-            if (isAlive() && fuse <= 0) {
+            if (fuse <= 0) {
                 if (this.level.getGameRules().getBoolean(GameRule.TNT_EXPLODES)) {
                     this.explode(ThreadLocalRandom.current().nextInt(5));
                 }
@@ -74,7 +72,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
             }
         }
 
-        return super.onUpdate(currentTick);
+        return hasUpdate;
     }
 
     @Override
@@ -135,7 +133,7 @@ public class EntityMinecartTNT extends EntityMinecartAbstract implements EntityE
 
         super.namedTag.putInt("TNTFuse", this.fuse);
     }
-    
+
     @Override
     public boolean onInteract(Player player, Item item, Vector3 clickedPos) {
         if (item.getId() == Item.FLINT_AND_STEEL || item.getId() == Item.FIRE_CHARGE) {

@@ -125,88 +125,70 @@ public class EntityBoat extends EntityVehicle {
     }
 
     @Override
-    public boolean onUpdate(int currentTick) {
-        if (this.closed) {
-            return false;
+    public boolean entityBaseTick(int tickDiff) {
+        boolean hasUpdate = false;
+
+        double waterDiff = getWaterLevel();
+
+        if (!hasControllingPassenger()) {
+            if (waterDiff > SINKING_DEPTH && !sinking) {
+                sinking = true;
+            } else if (waterDiff < -0.07 && sinking) {
+                sinking = false;
+            }
+
+            if (waterDiff < -0.07) {
+                this.motionY = Math.min(0.05, this.motionY + 0.005);
+            } else if (waterDiff < 0 || !sinking) {
+                this.motionY = this.motionY > SINKING_MAX_SPEED ? Math.max(this.motionY - 0.02, SINKING_MAX_SPEED) : this.motionY + SINKING_SPEED;
+            }
         }
 
-        int tickDiff = currentTick - this.lastUpdate;
-
-        if (tickDiff <= 0 && !this.justCreated) {
-            return true;
+        if (this.checkObstruction(this.x, this.y, this.z)) {
+            hasUpdate = true;
         }
 
-        this.lastUpdate = currentTick;
+        double friction = 1 - this.getDrag();
 
-        boolean hasUpdate = this.entityBaseTick(tickDiff);
+        if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
+            friction *= this.getLevel().getBlock(this.chunk, getFloorX(), getFloorY() - 1, getFloorZ(), false).getFrictionFactor();
+        }
 
-        if (this.isAlive()) {
-            super.onUpdate(currentTick);
+        this.motionX *= friction;
 
-            double waterDiff = getWaterLevel();
-            if (!hasControllingPassenger()) {
-                if (waterDiff > SINKING_DEPTH && !sinking) {
-                    sinking = true;
-                } else if (waterDiff < -0.07 && sinking) {
-                    sinking = false;
-                }
-
-                if (waterDiff < -0.07) {
-                    this.motionY = Math.min(0.05, this.motionY + 0.005);
-                } else if (waterDiff < 0 || !sinking) {
-                    this.motionY = this.motionY > SINKING_MAX_SPEED ? Math.max(this.motionY - 0.02, SINKING_MAX_SPEED) : this.motionY + SINKING_SPEED;
-                }
+        if (!hasControllingPassenger()) {
+            if (waterDiff > SINKING_DEPTH || sinking) {
+                this.motionY = waterDiff > 0.5 ? this.motionY - this.getGravity() : (this.motionY - SINKING_SPEED < -0.005 ? this.motionY : this.motionY - SINKING_SPEED);
             }
+        }
 
-            if (this.checkObstruction(this.x, this.y, this.z)) {
-                hasUpdate = true;
-            }
+        this.motionZ *= friction;
 
-            //this.move(this.motionX, this.motionY, this.motionZ);
+        Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
+        Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, level);
 
-            double friction = 1 - this.getDrag();
+        this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
 
-            if (this.onGround && (Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionZ) > 0.00001)) {
-                friction *= this.getLevel().getBlock(this.chunk, getFloorX(), getFloorY() - 1, getFloorZ(), false).getFrictionFactor();
-            }
+        if (!from.equals(to)) {
+            this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
+        }
 
-            this.motionX *= friction;
+        this.move(this.motionX, this.motionY, this.motionZ);
 
-            if (!hasControllingPassenger()) {
-                if (waterDiff > SINKING_DEPTH || sinking) {
-                    this.motionY = waterDiff > 0.5 ? this.motionY - this.getGravity() : (this.motionY - SINKING_SPEED < -0.005 ? this.motionY : this.motionY - SINKING_SPEED);
-                }
-            }
-
-            this.motionZ *= friction;
-
-            Location from = new Location(lastX, lastY, lastZ, lastYaw, lastPitch, level);
-            Location to = new Location(this.x, this.y, this.z, this.yaw, this.pitch, level);
-
-            this.getServer().getPluginManager().callEvent(new VehicleUpdateEvent(this));
-
-            if (!from.equals(to)) {
-                this.getServer().getPluginManager().callEvent(new VehicleMoveEvent(this, from, to));
-            }
-
-            this.move(this.motionX, this.motionY, this.motionZ);
-
-            this.updateMovement();
-
-            if (this.age % 5 == 0) {
-                if (!this.passengers.isEmpty() && this.passengers.get(0) instanceof Player) {
-                    Block[] blocks = this.level.getCollisionBlocks(this.getBoundingBox().grow(0.1, 0.3, 0.1));
-                    for (Block b : blocks) {
-                        if (b.getId() == Block.LILY_PAD) {
-                            this.level.setBlockAt((int) b.x, (int) b.y, (int) b.z, 0, 0);
-                            this.level.dropItem(b, Item.get(Item.LILY_PAD, 0, 1));
-                        }
+        if (this.age % 5 == 0) {
+            if (!this.passengers.isEmpty() && this.passengers.get(0) instanceof Player) {
+                Block[] blocks = this.level.getCollisionBlocks(this.getBoundingBox().grow(0.1, 0.3, 0.1));
+                for (Block b : blocks) {
+                    if (b.getId() == Block.LILY_PAD) {
+                        this.level.setBlockAt((int) b.x, (int) b.y, (int) b.z, 0, 0);
+                        this.level.dropItem(b, Item.get(Item.LILY_PAD, 0, 1));
                     }
                 }
             }
         }
 
-        return hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
+        // We call super here after movement code so block collision checks use up to date position
+        return super.entityBaseTick(tickDiff) || hasUpdate || !this.onGround || Math.abs(this.motionX) > 0.00001 || Math.abs(this.motionY) > 0.00001 || Math.abs(this.motionZ) > 0.00001;
     }
 
     public void updatePassengers() {
