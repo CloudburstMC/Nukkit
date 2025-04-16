@@ -42,7 +42,7 @@ public class EncryptionUtils {
         // DO NOT REMOVE THIS
         // Since Java 8u231, secp384r1 is deprecated and will throw an exception.
         String namedGroups = System.getProperty("jdk.tls.namedGroups");
-        System.setProperty("jdk.tls.namedGroups", namedGroups == null || namedGroups.isEmpty() ? "secp384r1" : ", secp384r1");
+        System.setProperty("jdk.tls.namedGroups", namedGroups == null || namedGroups.isEmpty() ? "secp384r1" : namedGroups + ", secp384r1");
 
         try {
             KEY_PAIR_GEN = KeyPairGenerator.getInstance("EC");
