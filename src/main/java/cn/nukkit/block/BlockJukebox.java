@@ -102,7 +102,7 @@ public class BlockJukebox extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.WOOD_BLOCK_COLOR;
+        return BlockColor.DIRT_BLOCK_COLOR;
     }
 
     @Override

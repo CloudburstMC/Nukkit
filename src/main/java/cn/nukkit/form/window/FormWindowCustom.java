@@ -76,7 +76,7 @@ public class FormWindowCustom extends FormWindow {
             return;
         }
 
-        List<String> elementResponses = GSON.fromJson(data, new ListTypeToken().getType());
+        List<String> elementResponses = GSON.fromJson(data, new ListTypeToken());
 
         HashMap<Integer, FormResponseData> dropdownResponses = new HashMap<>();
         HashMap<Integer, String> inputResponses = new HashMap<>();
@@ -88,10 +88,9 @@ public class FormWindowCustom extends FormWindow {
         HashMap<Integer, String> headerResponses = new HashMap<>();
         HashMap<Integer, String> dividerResponses = new HashMap<>();
 
-        int responseIndex = 0;
         for (int i = 0; i < content.size(); i++) {
             Element e = content.get(i);
-            String elementData = responseIndex >= elementResponses.size() ? "" : elementResponses.get(responseIndex);
+            String elementData = elementResponses.get(i);
             if (e instanceof ElementLabel) {
                 labelResponses.put(i, ((ElementLabel) e).getText());
                 responses.put(i, ((ElementLabel) e).getText());
@@ -100,27 +99,22 @@ public class FormWindowCustom extends FormWindow {
                 String answer = ((ElementDropdown) e).getOptions().get(index);
                 dropdownResponses.put(i, new FormResponseData(index, answer));
                 responses.put(i, answer);
-                responseIndex++;
             } else if (e instanceof ElementInput) {
                 inputResponses.put(i, elementData);
                 responses.put(i, elementData);
-                responseIndex++;
             } else if (e instanceof ElementSlider) {
                 Float answer = Float.parseFloat(elementData);
                 sliderResponses.put(i, answer);
                 responses.put(i, answer);
-                responseIndex++;
             } else if (e instanceof ElementStepSlider) {
                 int index = Integer.parseInt(elementData);
                 String answer = ((ElementStepSlider) e).getSteps().get(index);
                 stepSliderResponses.put(i, new FormResponseData(index, answer));
                 responses.put(i, answer);
-                responseIndex++;
             } else if (e instanceof ElementToggle) {
                 Boolean answer = Boolean.parseBoolean(elementData);
                 toggleResponses.put(i, answer);
                 responses.put(i, answer);
-                responseIndex++;
             } else if (e instanceof ElementHeader) {
                 headerResponses.put(i, ((ElementHeader) e).getText());
                 responses.put(i, ((ElementHeader) e).getText());

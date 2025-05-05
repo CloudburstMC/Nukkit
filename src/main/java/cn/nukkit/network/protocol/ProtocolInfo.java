@@ -14,11 +14,11 @@ public interface ProtocolInfo {
      * Actual Minecraft protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("786"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("800"); // DO NOT REMOVE BOXING
 
-    List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(785, CURRENT_PROTOCOL);
+    List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION_NETWORK = "1.21.70";
+    String MINECRAFT_VERSION_NETWORK = "1.21.80";
     String MINECRAFT_VERSION = 'v' + MINECRAFT_VERSION_NETWORK;
 
     byte BATCH_PACKET = (byte) 0xff;
@@ -238,8 +238,8 @@ public interface ProtocolInfo {
     byte __INTERNAL__CONTAINER_REGISTRY_CLEANUP_PACKET = (byte) 217;
     byte __INTERNAL__MOVEMENT_EFFECT_PACKET = (byte) 218;
     byte __INTERNAL__SET_MOVEMENT_AUTHORITY_PACKET = (byte) 219;
-    byte __INTERNAL__INTERNAL_CAMERA_AIM_ASSIST_INSTRUCTION_PACKET = (byte) 221;
-    byte __INTERNAL__INTERNAL_MOVEMENT_PREDICTION_SYNC_PACKET = (byte) 222;
+    byte __INTERNAL__CAMERA_AIM_ASSIST_INSTRUCTION_PACKET = (byte) 221;
+    byte __INTERNAL__MOVEMENT_PREDICTION_SYNC_PACKET = (byte) 222;
     byte __INTERNAL__UPDATE_CLIENT_OPTIONS_PACKET = (byte) 223;
     byte __INTERNAL__PLAYER_VIDEO_CAPTURE_PACKET = (byte) 224;
     byte __INTERNAL__PLAYER_UPDATE_ENTITY_OVERRIDES_PACKET = (byte) 225;

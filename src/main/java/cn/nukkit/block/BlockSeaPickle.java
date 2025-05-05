@@ -11,6 +11,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
+import cn.nukkit.utils.BlockColor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -191,5 +192,10 @@ public class BlockSeaPickle extends BlockTransparentMeta {
     @Override
     public boolean canPassThrough() {
         return true;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.GREEN_BLOCK_COLOR;
     }
 }

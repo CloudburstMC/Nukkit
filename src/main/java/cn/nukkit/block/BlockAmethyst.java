@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockAmethyst extends BlockSolid {
 
@@ -36,6 +37,11 @@ public class BlockAmethyst extends BlockSolid {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.PURPLE_BLOCK_COLOR;
     }
 
     // TODO:

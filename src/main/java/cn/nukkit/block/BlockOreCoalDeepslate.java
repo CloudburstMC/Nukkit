@@ -24,6 +24,6 @@ public class BlockOreCoalDeepslate extends BlockOreCoal {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.DEEPSLATE_GRAY;
+        return BlockColor.DEEPSLATE_GRAY_BLOCK_COLOR;
     }
 }

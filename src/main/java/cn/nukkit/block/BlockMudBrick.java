@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockMudBrick extends BlockSolid {
 
     public BlockMudBrick() {
@@ -23,5 +25,10 @@ public class BlockMudBrick extends BlockSolid {
     @Override
     public double getResistance() {
         return 3;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.LIGHT_GRAY_TERRACOTA_BLOCK_COLOR;
     }
 }

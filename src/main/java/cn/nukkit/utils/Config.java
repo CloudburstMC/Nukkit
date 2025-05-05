@@ -641,7 +641,7 @@ public class Config {
             case Config.JSON:
                 GsonBuilder builder = new GsonBuilder();
                 Gson gson = builder.create();
-                this.config = new ConfigSection(gson.fromJson(content, new LinkedHashMapTypeToken().getType()));
+                this.config = new ConfigSection(gson.fromJson(content, new LinkedHashMapTypeToken()));
                 break;
             case Config.YAML:
                 DumperOptions dumperOptions = new DumperOptions();

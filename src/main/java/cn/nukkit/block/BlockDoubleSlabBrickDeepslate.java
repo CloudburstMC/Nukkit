@@ -60,6 +60,6 @@ public class BlockDoubleSlabBrickDeepslate extends BlockDoubleSlabBase {
     
     @Override
     public BlockColor getColor() {
-        return BlockColor.DEEPSLATE_GRAY;
+        return BlockColor.DEEPSLATE_GRAY_BLOCK_COLOR;
     }
 }

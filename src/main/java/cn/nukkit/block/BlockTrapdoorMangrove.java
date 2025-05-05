@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockTrapdoorMangrove extends BlockTrapdoor {
 
     public BlockTrapdoorMangrove() {
@@ -18,5 +20,10 @@ public class BlockTrapdoorMangrove extends BlockTrapdoor {
     @Override
     public int getId() {
         return MANGROVE_TRAPDOOR;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.RED_BLOCK_COLOR;
     }
 }

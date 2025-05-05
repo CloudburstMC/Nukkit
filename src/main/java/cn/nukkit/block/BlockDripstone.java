@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockDripstone extends BlockSolid {
 
@@ -36,6 +37,11 @@ public class BlockDripstone extends BlockSolid {
     @Override
     public boolean canHarvestWithHand() {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.BROWN_TERRACOTA_BLOCK_COLOR;
     }
 
     // TODO:

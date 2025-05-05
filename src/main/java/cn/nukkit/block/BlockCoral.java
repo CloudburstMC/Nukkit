@@ -5,6 +5,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockCoral extends BlockTransparentMeta {
 
@@ -110,5 +111,10 @@ public class BlockCoral extends BlockTransparentMeta {
     @Override
     public boolean canPassThrough() {
         return true;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.BLUE_BLOCK_COLOR;
     }
 }

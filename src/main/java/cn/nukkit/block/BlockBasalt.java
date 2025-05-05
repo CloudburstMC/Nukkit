@@ -92,6 +92,6 @@ public class BlockBasalt extends BlockSolidMeta {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.GRAY_BLOCK_COLOR;
+        return BlockColor.BLACK_BLOCK_COLOR;
     }
 }

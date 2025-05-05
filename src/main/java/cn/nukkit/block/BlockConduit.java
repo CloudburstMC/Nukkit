@@ -5,6 +5,7 @@ import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockConduit extends BlockTransparentMeta {
 
@@ -68,5 +69,10 @@ public class BlockConduit extends BlockTransparentMeta {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.DIAMOND_BLOCK_COLOR;
     }
 }

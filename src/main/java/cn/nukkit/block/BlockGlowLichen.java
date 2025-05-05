@@ -141,7 +141,7 @@ public class BlockGlowLichen extends BlockTransparentMeta implements BlockProper
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.GRAY_BLOCK_COLOR;
+        return BlockColor.GLOW_LICHEN_BLOCK_COLOR;
     }
 
     public void setBlockFace(BlockFace face, boolean value) {

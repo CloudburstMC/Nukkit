@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockDoubleSlabMangrove extends BlockDoubleSlabWood {
 
     public BlockDoubleSlabMangrove() {
@@ -23,5 +25,10 @@ public class BlockDoubleSlabMangrove extends BlockDoubleSlabWood {
     @Override
     public int getSingleSlabId() {
         return MANGROVE_SLAB;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.RED_BLOCK_COLOR;
     }
 }

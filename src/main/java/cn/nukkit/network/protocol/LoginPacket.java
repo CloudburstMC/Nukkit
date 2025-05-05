@@ -61,7 +61,7 @@ public class LoginPacket extends DataPacket {
 
         String data = new String(this.get(size), StandardCharsets.UTF_8);
 
-        Map<String, List<String>> map = GSON.fromJson(data, new MapTypeToken().getType());
+        Map<String, List<String>> map = GSON.fromJson(data, new MapTypeToken());
         if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
 
         for (String c : map.get("chain")) {

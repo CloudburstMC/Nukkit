@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.utils.BlockColor;
 import cn.nukkit.utils.Utils;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -58,5 +59,10 @@ public class BlockOreQuartz extends BlockOre {
     @Override
     public int getDropExp() {
         return Utils.rand(1, 5);
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.NETHERRACK_BLOCK_COLOR;
     }
 }

@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockDoorMangrove extends BlockDoorWood {
 
@@ -26,5 +27,10 @@ public class BlockDoorMangrove extends BlockDoorWood {
     @Override
     public Item toItem() {
         return Item.get(ItemID.MANGROVE_DOOR);
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.RED_BLOCK_COLOR;
     }
 }

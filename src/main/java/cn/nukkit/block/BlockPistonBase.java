@@ -42,7 +42,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
     @Override
     public double getHardness() {
-        return 1.5;
+        return 0.5; // 1.5
     }
 
     @Override
@@ -61,15 +61,12 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         }
         this.getLevel().setBlock(this, this, true, false);
 
-        CompoundTag nbt = new CompoundTag("")
+        BlockEntityPistonArm be = (BlockEntityPistonArm) BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, this.getChunk(), new CompoundTag("")
                 .putString("id", BlockEntity.PISTON_ARM)
                 .putInt("x", (int) this.x)
                 .putInt("y", (int) this.y)
                 .putInt("z", (int) this.z)
-                .putBoolean("Sticky", this.sticky);
-
-        BlockEntityPistonArm be = (BlockEntityPistonArm) BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, this.getChunk(), nbt);
-        be.sticky = this.sticky;
+                .putBoolean("Sticky", this.sticky));
         be.spawnToAll();
 
         this.checkState();
@@ -244,9 +241,20 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                 Block block = blocks.get(i);
                 this.level.setBlock(block, Block.get(BlockID.AIR), true, false);
                 Vector3 newPos = block.getSideVec(side);
+                Block newBlock = newBlocks.get(i);
 
                 // TODO: Change this to block entity
-                this.level.setBlock(newPos, newBlocks.get(i), true, false);
+                this.level.setBlock(newPos, newBlock, true, false);
+
+                if (newBlock instanceof BlockPistonBase) {
+                    BlockEntityPistonArm be = (BlockEntityPistonArm) BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, newBlock.getChunk(), new CompoundTag("")
+                            .putString("id", BlockEntity.PISTON_ARM)
+                            .putInt("x", (int) newBlock.x)
+                            .putInt("y", (int) newBlock.y)
+                            .putInt("z", (int) newBlock.z)
+                            .putBoolean("Sticky", newBlock.getId() == STICKY_PISTON));
+                    be.spawnToAll();
+                }
             }
 
             if (pistonHead != null) {

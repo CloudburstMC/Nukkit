@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockRawIron extends BlockRawOreVariant {
 
     public BlockRawIron() {
@@ -13,5 +15,10 @@ public class BlockRawIron extends BlockRawOreVariant {
     @Override
     public int getId() {
         return RAW_IRON_BLOCK;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.RAW_IRON_BLOCK_COLOR;
     }
 }

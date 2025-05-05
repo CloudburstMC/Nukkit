@@ -5,7 +5,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.DyeColor;
 
 public class BlockMossCarpet extends BlockTransparent {
 
@@ -75,7 +74,7 @@ public class BlockMossCarpet extends BlockTransparent {
 
     @Override
     public BlockColor getColor() {
-        return DyeColor.GREEN.getColor();
+        return BlockColor.GREEN_BLOCK_COLOR;
     }
 
     @Override
