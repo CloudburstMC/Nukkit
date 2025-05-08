@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockGlassTinted extends BlockGlass {
 
@@ -26,5 +27,10 @@ public class BlockGlassTinted extends BlockGlass {
     @Override
     public boolean canSilkTouch() {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.GRAY_BLOCK_COLOR;
     }
 }

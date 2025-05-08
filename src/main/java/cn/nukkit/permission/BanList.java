@@ -106,7 +106,7 @@ public class BanList {
                 this.save();
             } else {
 
-                LinkedList<TreeMap<String, String>> list = new Gson().fromJson(Utils.readFile(this.file), new LinkedListTypeToken().getType());
+                LinkedList<TreeMap<String, String>> list = new Gson().fromJson(Utils.readFile(this.file), new LinkedListTypeToken());
                 for (TreeMap<String, String> map : list) {
                     BanEntry entry = BanEntry.fromMap(map);
                     this.list.put(entry.getName(), entry);

@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockMudBrickStairs extends BlockStairs {
 
     public BlockMudBrickStairs() {
@@ -28,5 +30,10 @@ public class BlockMudBrickStairs extends BlockStairs {
     @Override
     public double getResistance() {
         return 3;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.LIGHT_GRAY_TERRACOTA_BLOCK_COLOR;
     }
 }

@@ -29,6 +29,6 @@ public class BlockSlime extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.GREEN_BLOCK_COLOR;
+        return BlockColor.GRASS_BLOCK_COLOR;
     }
 }

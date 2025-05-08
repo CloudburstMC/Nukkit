@@ -95,6 +95,10 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL && this.getSideVec(this.getBlockFace()).equals(this.updatePos) && !this.isPowered()) {
+            // Make sure the block still exists to prevent item duplication
+            if (this.level.getBlockIdAt((int) this.x, (int) this.y, (int) this.z) != this.getId()) {
+                return 0;
+            }
             RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
             this.level.getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {
@@ -106,6 +110,10 @@ public class BlockObserver extends BlockSolidMeta implements Faceable {
             level.scheduleUpdate(this, 4);
             return Level.BLOCK_UPDATE_NORMAL;
         } else if (type == Level.BLOCK_UPDATE_SCHEDULED && this.isPowered()) {
+            // Make sure the block still exists to prevent item duplication
+            if (this.level.getBlockIdAt((int) this.x, (int) this.y, (int) this.z) != this.getId()) {
+                return 0;
+            }
             RedstoneUpdateEvent ev = new RedstoneUpdateEvent(this);
             this.level.getServer().getPluginManager().callEvent(ev);
             if (ev.isCancelled()) {

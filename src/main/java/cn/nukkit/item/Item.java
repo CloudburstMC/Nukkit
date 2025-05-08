@@ -320,13 +320,17 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             list[ACACIA_CHEST_BOAT] = ItemChestBoatAcacia.class; //642
             list[DARK_OAK_CHEST_BOAT] = ItemChestBoatDarkOak.class; //643
             list[MANGROVE_CHEST_BOAT] = ItemChestBoatMangrove.class; //644
+            list[BAMBOO_CHEST_RAFT] = ItemBambooChestRaft.class; //645
+            list[CHERRY_CHEST_BOAT] = ItemChestBoatCherry.class; //646
             list[ECHO_SHARD] = ItemEchoShard.class; //647
             list[RECOVERY_COMPASS] = ItemRecoveryCompass.class; //648
+            list[PALE_OAK_CHEST_BOAT] = ItemChestBoatPaleOak.class; //649
             list[GLOW_BERRIES] = ItemGlowBerries.class; //654
             list[MANGROVE_DOOR] = ItemDoorMangrove.class; //670
             list[MANGROVE_SIGN] = ItemSignMangrove.class; //671
             list[CAMPFIRE] = ItemCampfire.class; //720
             list[SUSPICIOUS_STEW] = ItemSuspiciousStew.class; //734
+            list[BRUSH] = ItemBrush.class; //735
             list[HONEYCOMB] = ItemHoneycomb.class; //736
             list[HONEY_BOTTLE] = ItemHoneyBottle.class; //737
             list[LODESTONE_COMPASS] = ItemLodestoneCompass.class; //741
@@ -1393,6 +1397,10 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         }
 
         public void add(Item item, CreativeItemGroup group) {
+            if (group == null) {
+                throw new IllegalArgumentException("group == null");
+            }
+
             contents.put(item, group);
         }
 
@@ -1400,7 +1408,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             CreativeItemGroup creativeGroup = null;
 
             for (CreativeItemGroup existing : groups) {
-                if (existing.category == category && existing.name.equals(group) && existing.icon.equals(item)) {
+                if (existing.category == category && existing.name.equals(group)) {
                     creativeGroup = existing;
                     break;
                 }

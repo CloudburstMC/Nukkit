@@ -55,7 +55,7 @@ public class BlockTarget extends BlockSolid {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.WHITE_BLOCK_COLOR;
+        return BlockColor.QUARTZ_BLOCK_COLOR;
     }
 
     @Override

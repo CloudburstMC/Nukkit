@@ -77,10 +77,9 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.IntArrayList;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap;
-import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongIterator;
-import it.unimi.dsi.fastutil.objects.ObjectIterator;
+import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
@@ -90,7 +89,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.net.InetSocketAddress;
 import java.nio.ByteOrder;
 import java.util.*;
@@ -101,7 +99,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.stream.Stream;
 
 /**
  * The Player class
@@ -200,7 +197,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected int chunkRadius;
     protected int viewDistance;
     public final Map<Long, Boolean> usedChunks = new Long2ObjectOpenHashMap<>();
-    protected final Long2ObjectLinkedOpenHashMap<Boolean> loadQueue = new Long2ObjectLinkedOpenHashMap<>();
+    protected final LongLinkedOpenHashSet loadQueue = new LongLinkedOpenHashSet();
 
     protected final Map<UUID, Player> hiddenPlayers = new HashMap<>();
 
@@ -268,8 +265,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
     private AsyncTask preLoginEventTask;
     protected boolean shouldLogin;
-
-    private static Stream<Field> pkIDs;
 
     protected int startAction = -1;
     private int lastEmote;
@@ -1135,14 +1130,13 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         if (!loadQueue.isEmpty()) {
             int count = 0;
-            ObjectIterator<Long2ObjectMap.Entry<Boolean>> iter = loadQueue.long2ObjectEntrySet().fastIterator();
+            LongIterator iter = loadQueue.longIterator();
             while (iter.hasNext()) {
                 if (count >= server.chunksPerTick) {
                     break;
                 }
 
-                Long2ObjectMap.Entry<Boolean> entry = iter.next();
-                long index = entry.getLongKey();
+                long index = iter.nextLong();
                 int chunkX = Level.getHashX(index);
                 int chunkZ = Level.getHashZ(index);
 
@@ -1284,43 +1278,43 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 /* Top right quadrant */
                 if (this.usedChunks.get(index = Level.chunkHash(centerX + x, centerZ + z)) != Boolean.TRUE) {
-                    this.loadQueue.put(index, Boolean.TRUE);
+                    this.loadQueue.add(index);
                 }
                 lastChunk.remove(index);
                 /* Top left quadrant */
                 if (this.usedChunks.get(index = Level.chunkHash(centerX - x - 1, centerZ + z)) != Boolean.TRUE) {
-                    this.loadQueue.put(index, Boolean.TRUE);
+                    this.loadQueue.add(index);
                 }
                 lastChunk.remove(index);
                 /* Bottom right quadrant */
                 if (this.usedChunks.get(index = Level.chunkHash(centerX + x, centerZ - z - 1)) != Boolean.TRUE) {
-                    this.loadQueue.put(index, Boolean.TRUE);
+                    this.loadQueue.add(index);
                 }
                 lastChunk.remove(index);
                 /* Bottom left quadrant */
                 if (this.usedChunks.get(index = Level.chunkHash(centerX - x - 1, centerZ - z - 1)) != Boolean.TRUE) {
-                    this.loadQueue.put(index, Boolean.TRUE);
+                    this.loadQueue.add(index);
                 }
                 lastChunk.remove(index);
                 if (x != z) {
                     /* Top right quadrant mirror */
                     if (this.usedChunks.get(index = Level.chunkHash(centerX + z, centerZ + x)) != Boolean.TRUE) {
-                        this.loadQueue.put(index, Boolean.TRUE);
+                        this.loadQueue.add(index);
                     }
                     lastChunk.remove(index);
                     /* Top left quadrant mirror */
                     if (this.usedChunks.get(index = Level.chunkHash(centerX - z - 1, centerZ + x)) != Boolean.TRUE) {
-                        this.loadQueue.put(index, Boolean.TRUE);
+                        this.loadQueue.add(index);
                     }
                     lastChunk.remove(index);
                     /* Bottom right quadrant mirror */
                     if (this.usedChunks.get(index = Level.chunkHash(centerX + z, centerZ - x - 1)) != Boolean.TRUE) {
-                        this.loadQueue.put(index, Boolean.TRUE);
+                        this.loadQueue.add(index);
                     }
                     lastChunk.remove(index);
                     /* Bottom left quadrant mirror */
                     if (this.usedChunks.get(index = Level.chunkHash(centerX - z - 1, centerZ - x - 1)) != Boolean.TRUE) {
-                        this.loadQueue.put(index, Boolean.TRUE);
+                        this.loadQueue.add(index);
                     }
                     lastChunk.remove(index);
                 }
@@ -4667,19 +4661,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
                 return;
             case ProtocolInfo.PACKET_VIOLATION_WARNING_PACKET:
-                PacketViolationWarningPacket PVWpk = (PacketViolationWarningPacket) packet;
-                if (pkIDs == null) {
-                    pkIDs = Arrays.stream(ProtocolInfo.class.getDeclaredFields()).filter(field -> field.getType() == Byte.TYPE);
-                }
-                Optional<String> PVWpkName = pkIDs
-                        .filter(field -> {
-                            try {
-                                return field.getByte(null) == ((PacketViolationWarningPacket) packet).packetId;
-                            } catch (IllegalAccessException e) {
-                                return false;
-                            }
-                        }).map(Field::getName).findFirst();
-                this.getServer().getLogger().warning("PacketViolationWarningPacket" + PVWpkName.map(name -> " for " + name).orElse(" UNKNOWN") + " from " + this.username + ": " + PVWpk.toString());
+                this.getServer().getLogger().warning("Packet violation warning 0x" + Integer.toHexString(((PacketViolationWarningPacket) packet).packetId) + " from " + this.username + ": " + packet);
                 return;
             case ProtocolInfo.EMOTE_PACKET:
                 if (!this.spawned || server.getTick() - this.lastEmote < 20 || this.isSpectator()) {

@@ -7,6 +7,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.BlockColor;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -121,4 +122,8 @@ public class BlockCoralBlock extends BlockSolidMeta {
         }
     }
 
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.BLUE_BLOCK_COLOR;
+    }
 }

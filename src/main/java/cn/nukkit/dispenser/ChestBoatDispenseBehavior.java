@@ -50,6 +50,12 @@ public class ChestBoatDispenseBehavior extends DefaultDispenseBehavior {
                 return 5;
             case ItemID.MANGROVE_CHEST_BOAT:
                 return 6;
+            case ItemID.BAMBOO_CHEST_RAFT:
+                return 7;
+            case ItemID.CHERRY_CHEST_BOAT:
+                return 8;
+            case ItemID.PALE_OAK_CHEST_BOAT:
+                return 9;
         }
         return 0;
     }

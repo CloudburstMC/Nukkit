@@ -96,7 +96,7 @@ public class BanEntry {
     }
 
     public static BanEntry fromString(String str) {
-        Map<String, String> map = new Gson().fromJson(str, new TreeMapTypeToken().getType());
+        Map<String, String> map = new Gson().fromJson(str, new TreeMapTypeToken());
         BanEntry banEntry = new BanEntry(map.get("name"));
         try {
             banEntry.setCreationDate(new SimpleDateFormat(format).parse(map.get("creationDate")));

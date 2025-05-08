@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockMangroveRoots extends BlockTransparent {
 
@@ -42,5 +43,10 @@ public class BlockMangroveRoots extends BlockTransparent {
     @Override
     public int getBurnAbility() {
         return 60;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.SPRUCE_BLOCK_COLOR;
     }
 }

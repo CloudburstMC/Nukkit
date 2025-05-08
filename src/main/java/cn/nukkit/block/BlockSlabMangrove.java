@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockSlabMangrove extends BlockSlabWood {
 
@@ -43,5 +44,10 @@ public class BlockSlabMangrove extends BlockSlabWood {
     @Override
     public void setTopBit(boolean topBit) {
         this.setDamage(topBit ? 1 : 0);
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.RED_BLOCK_COLOR;
     }
 }

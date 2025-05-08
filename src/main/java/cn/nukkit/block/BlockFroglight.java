@@ -4,7 +4,6 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
-import cn.nukkit.utils.BlockColor;
 
 public abstract class BlockFroglight extends BlockSolidMeta {
 
@@ -25,11 +24,6 @@ public abstract class BlockFroglight extends BlockSolidMeta {
     @Override
     public int getLightLevel() {
         return 15;
-    }
-
-    @Override
-    public BlockColor getColor() {
-        return BlockColor.WHITE_BLOCK_COLOR;
     }
 
     @Override

@@ -1448,6 +1448,10 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     }
 
     public boolean hasCollisionBlocks(Entity entity, AxisAlignedBB bb) {
+        return hasCollisionBlocks(entity, bb, false);
+    }
+
+    private boolean hasCollisionBlocks(Entity entity, AxisAlignedBB bb, boolean checkCanPassThrough) {
         int minX = NukkitMath.floorDouble(bb.getMinX());
         int minY = NukkitMath.floorDouble(bb.getMinY());
         int minZ = NukkitMath.floorDouble(bb.getMinZ());
@@ -1459,7 +1463,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             for (int x = minX; x <= maxX; ++x) {
                 for (int y = minY; y <= maxY; ++y) {
                     Block block = this.getBlock(entity.chunk, x, y, z, false);
-                    if (block != null && block.getId() != 0 && block.collidesWithBB(bb)) {
+                    if ((!checkCanPassThrough || !block.canPassThrough()) && block.collidesWithBB(bb)) {
                         return true;
                     }
                 }
@@ -1526,22 +1530,8 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     }
 
     public boolean hasCollision(Entity entity, AxisAlignedBB bb, boolean entities) {
-        int minX = NukkitMath.floorDouble(bb.getMinX());
-        int minY = NukkitMath.floorDouble(bb.getMinY());
-        int minZ = NukkitMath.floorDouble(bb.getMinZ());
-        int maxX = NukkitMath.ceilDouble(bb.getMaxX());
-        int maxY = NukkitMath.ceilDouble(bb.getMaxY());
-        int maxZ = NukkitMath.ceilDouble(bb.getMaxZ());
-
-        for (int z = minZ; z <= maxZ; ++z) {
-            for (int x = minX; x <= maxX; ++x) {
-                for (int y = minY; y <= maxY; ++y) {
-                    Block block = this.getBlock(entity.chunk, x, y, z, false);
-                    if (!block.canPassThrough() && block.collidesWithBB(bb)) {
-                        return true;
-                    }
-                }
-            }
+        if (this.hasCollisionBlocks(entity, bb, true)) {
+            return true;
         }
 
         if (entities) {
@@ -1662,14 +1652,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             fullState = 0;
         }
 
-        Block block = Block.fullList[fullState].clone();
-
-        block.x = x;
-        block.y = y;
-        block.z = z;
-        block.level = this;
-        block.setLayer(layer);
-        return block;
+        return Block.get(fullState, this, x, y, z, layer);
     }
 
     // Use only if getting correct block is not critical
@@ -1690,16 +1673,8 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             fullState = 0;
         }
 
-        Block block = Block.fullList[fullState].clone();
-
-        block.x = x;
-        block.y = y;
-        block.z = z;
-        block.level = this;
-        block.setLayer(layer);
-        return block;
+        return Block.get(fullState, this, x, y, z, layer);
     }
-
 
     public void updateAllLight(Vector3 pos) {
         this.updateBlockSkyLight((int) pos.x, (int) pos.y, (int) pos.z);

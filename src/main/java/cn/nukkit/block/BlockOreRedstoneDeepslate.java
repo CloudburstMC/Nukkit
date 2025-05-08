@@ -36,6 +36,6 @@ public class BlockOreRedstoneDeepslate extends BlockOreRedstone {
 
     @Override
     public BlockColor getColor() {
-        return BlockColor.DEEPSLATE_GRAY;
+        return BlockColor.DEEPSLATE_GRAY_BLOCK_COLOR;
     }
 }

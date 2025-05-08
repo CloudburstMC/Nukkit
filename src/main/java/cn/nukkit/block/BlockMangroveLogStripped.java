@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockMangroveLogStripped extends BlockWoodStripped {
 
@@ -54,5 +55,10 @@ public class BlockMangroveLogStripped extends BlockWoodStripped {
             default:
                 return BlockFace.Axis.Y;
         }
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.RED_BLOCK_COLOR;
     }
 }

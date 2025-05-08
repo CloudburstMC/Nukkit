@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.utils.BlockColor;
 
 public class BlockLodestone extends BlockSolid {
 
@@ -32,5 +33,10 @@ public class BlockLodestone extends BlockSolid {
     @Override
     public boolean canBePushed() {
         return false;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.IRON_BLOCK_COLOR;
     }
 }

@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockFroglightOchre extends BlockFroglight {
 
     public BlockFroglightOchre() {
@@ -18,5 +20,10 @@ public class BlockFroglightOchre extends BlockFroglight {
     @Override
     public int getId() {
         return OCHRE_FROGLIGHT;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.SAND_BLOCK_COLOR;
     }
 }

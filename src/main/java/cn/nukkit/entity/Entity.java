@@ -327,6 +327,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_BODY_ROTATION_AXIS_ALIGNED = 120;
     public static final int DATA_FLAG_COLLIDABLE = 121;
     public static final int DATA_FLAG_WASD_AIR_CONTROLLED = 122;
+    public static final int DATA_FLAG_DOES_SERVER_AUTH_ONLY_DISMOUNT = 123;
 
     public static final double STEP_CLIP_MULTIPLIER = 0.4;
 
@@ -1487,7 +1488,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     protected boolean checkObstruction(double x, double y, double z) {
-        if (this.noClip || this.level.getCollisionCubes(this, this.boundingBox, false).length == 0) {
+        if (this.noClip || !this.level.hasCollision(this, this.boundingBox, false)) {
             return false;
         }
 

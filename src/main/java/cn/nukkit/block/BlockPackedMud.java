@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.utils.BlockColor;
+
 public class BlockPackedMud extends BlockSolid {
 
     public BlockPackedMud() {
@@ -23,5 +25,10 @@ public class BlockPackedMud extends BlockSolid {
     @Override
     public double getResistance() {
         return 3;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.DIRT_BLOCK_COLOR;
     }
 }

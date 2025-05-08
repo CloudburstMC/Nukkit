@@ -16,11 +16,11 @@ public class BlockEntityPistonArm extends BlockEntitySpawnable {
     public float progress;
     public float lastProgress;
     public BlockFace facing;
-    public boolean extending = false;
-    public boolean sticky = false;
+    public boolean extending;
+    public boolean sticky;
     public byte state;
     public byte newState = 1;
-    public Vector3 attachedBlock = null;
+    public Vector3 attachedBlock;
     public boolean isMovable = true;
 
     public BlockEntityPistonArm(FullChunk chunk, CompoundTag nbt) {
