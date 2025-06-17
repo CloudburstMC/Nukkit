@@ -171,6 +171,9 @@ public class Network {
     }
 
     public DataPacket getPacket(int id) {
+        if (id < 0 || id >= this.packetPool.length) {
+            return null;
+        }
         Class<? extends DataPacket> clazz = this.packetPool[id];
         if (clazz != null) {
             try {

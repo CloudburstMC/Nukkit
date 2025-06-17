@@ -1,5 +1,7 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.ItemTool;
+
 public class BlockDoubleMudBrickSlab extends BlockDoubleSlabBase {
 
     public BlockDoubleMudBrickSlab() {
@@ -27,5 +29,15 @@ public class BlockDoubleMudBrickSlab extends BlockDoubleSlabBase {
     @Override
     public int getItemDamage() {
         return 0;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_PICKAXE;
     }
 }

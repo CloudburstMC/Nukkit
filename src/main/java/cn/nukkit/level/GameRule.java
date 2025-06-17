@@ -23,6 +23,7 @@ public enum GameRule {
     FREEZE_DAMAGE("freezeDamage"),
     FUNCTION_COMMAND_LIMIT("functionCommandLimit"),
     KEEP_INVENTORY("keepInventory"),
+    LOCATOR_BAR("locatorBar"),
     MAX_COMMAND_CHAIN_LENGTH("maxCommandChainLength"),
     MOB_GRIEFING("mobGriefing"),
     NATURAL_REGENERATION("naturalRegeneration"),

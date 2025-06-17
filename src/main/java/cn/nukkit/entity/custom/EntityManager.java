@@ -46,8 +46,7 @@ public class EntityManager {
     private BatchPacket cachedPacket;
 
     private EntityManager() {
-        try {
-            InputStream inputStream = Nukkit.class.getClassLoader().getResourceAsStream("entity_identifiers.dat");
+        try (InputStream inputStream = Nukkit.class.getClassLoader().getResourceAsStream("entity_identifiers.dat")) {
             if (inputStream == null) throw new AssertionError("Could not find entity_identifiers.dat");
             this.vanillaTag = ByteStreams.toByteArray(inputStream);
         } catch (Exception e) {

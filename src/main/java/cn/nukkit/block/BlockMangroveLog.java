@@ -2,6 +2,7 @@ package cn.nukkit.block;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.math.BlockFace;
 
 public class BlockMangroveLog extends BlockWood {
@@ -32,6 +33,11 @@ public class BlockMangroveLog extends BlockWood {
     @Override
     protected int getStrippedDamage() {
         return getDamage();
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
 
     @Override

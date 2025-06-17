@@ -24,7 +24,7 @@ public class BlockSculkShrieker extends BlockTransparent {
 
     @Override
     public double getHardness() {
-        return 3;
+        return 1;
     }
 
     @Override

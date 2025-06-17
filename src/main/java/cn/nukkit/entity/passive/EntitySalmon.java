@@ -14,7 +14,7 @@ public class EntitySalmon extends EntityFish {
     }
 
     @Override
-    int getBucketMeta() {
+    protected int getBucketMeta() {
         return 3;
     }
 

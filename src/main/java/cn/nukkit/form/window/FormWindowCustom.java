@@ -14,6 +14,7 @@ public class FormWindowCustom extends FormWindow {
     @SuppressWarnings("unused")
     private final String type = "custom_form"; // This variable is used for JSON import operations. Do NOT delete :) -- @Snake1999
     private String title = "";
+    private String submit = null;
     private ElementButtonImageData icon;
     @SuppressWarnings("FieldMayBeFinal")
     private List<Element> content;
@@ -44,6 +45,14 @@ public class FormWindowCustom extends FormWindow {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getSubmitButtonText() {
+        return submit;
+    }
+
+    public void setSubmitButtonText(String submit) {
+        this.submit = submit;
     }
 
     public List<Element> getElements() {

@@ -1,7 +1,6 @@
 package cn.nukkit.level.util;
 
 import cn.nukkit.math.MathHelper;
-import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
 
@@ -35,7 +34,9 @@ public class PaddedBitArray implements BitArray {
 
     @Override
     public void set(int index, int value) {
-        Preconditions.checkElementIndex(index, this.size);
+        if (index < 0 || index >= this.size) {
+            throw new IndexOutOfBoundsException();
+        }
         if (value < 0 || value > this.version.maxEntryValue) {
             throw new IllegalArgumentException(String.format("Max value: %s. Received value %s", this.version.maxEntryValue, value));
         }
@@ -48,7 +49,9 @@ public class PaddedBitArray implements BitArray {
 
     @Override
     public int get(int index) {
-        Preconditions.checkElementIndex(index, this.size);
+        if (index < 0 || index >= this.size) {
+            throw new IndexOutOfBoundsException();
+        }
         int arrayIndex = index / this.version.entriesPerWord;
         int offset = (index % this.version.entriesPerWord) * this.version.bits;
 

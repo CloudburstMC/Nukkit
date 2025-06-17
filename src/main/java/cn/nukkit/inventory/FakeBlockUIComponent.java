@@ -60,10 +60,13 @@ public class FakeBlockUIComponent extends PlayerUIComponent {
     public void onClose(Player who) {
         who.resetCraftingGridType(); // Handles moving of UI inventory contents
 
-        ContainerClosePacket pk = new ContainerClosePacket();
-        pk.windowId = who.getWindowId(this);
-        pk.wasServerInitiated = who.getClosingWindowId() != pk.windowId;
-        who.dataPacket(pk);
+        if (who.getClosingWindowId() != Integer.MAX_VALUE) {
+            ContainerClosePacket pk = new ContainerClosePacket();
+            int id = who.getWindowId(this);
+            pk.wasServerInitiated = id != who.getClosingWindowId();
+            pk.windowId = pk.wasServerInitiated ? id : who.getClosingWindowId();
+            who.dataPacket(pk);
+        }
 
         super.onClose(who);
     }

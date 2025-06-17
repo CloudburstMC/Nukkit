@@ -160,7 +160,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
 
         int r = 1;
         int slot = -1;
-        Item target = null;
+        Item original = null;
 
         Inventory inv = ((BlockEntityDispenser) blockEntity).getInventory();
         ThreadLocalRandom random = ThreadLocalRandom.current();
@@ -168,15 +168,16 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
             Item item = entry.getValue();
 
             if (!item.isNull() && random.nextInt(r++) == 0) {
-                target = item;
+                original = item;
                 slot = entry.getKey();
             }
         }
 
-        if (target == null) {
+        if (original == null) {
             return;
         }
-        target = target.clone();
+
+        Item target = original.clone();
 
         DispenseBehavior behavior = DispenseBehaviorRegister.getBehavior(target.getId());
         Item result = behavior.dispense(this, getBlockFace(), target);
@@ -186,6 +187,14 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
             inv.setItem(slot, target);
         } else if (!result.equals(target)) {
             inv.setItem(slot, result);
+
+            // TODO: Better solution. Give back empty buckets if a stack was in original slot.
+            if (result.getId() == Item.HONEY_BOTTLE || result.getId() == Item.GLASS_BOTTLE || (result.getId() == Item.BUCKET && result.getDamage() > 0)) {
+                Item[] invFull = inv.addItem(original.decrement(result.count));
+                for (Item drop : invFull) {
+                    DispenseBehaviorRegister.getBehavior(-1).dispense(this, getBlockFace(), drop);
+                }
+            }
         }
     }
 

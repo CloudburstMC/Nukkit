@@ -71,6 +71,7 @@ public class LevelDBProvider implements LevelProvider {
 
     private CompoundTag levelData;
     private Vector3 spawn;
+    private Long cachedSeed;
     private int lastGcPosition = 0;
 
     private final ExecutorService executor;
@@ -657,11 +658,15 @@ public class LevelDBProvider implements LevelProvider {
 
     @Override
     public long getSeed() {
-        return this.levelData.getLong("RandomSeed");
+        if (this.cachedSeed == null) {
+            this.cachedSeed = this.levelData.getLong("RandomSeed");
+        }
+        return this.cachedSeed;
     }
 
     @Override
     public void setSeed(long value) {
+        this.cachedSeed = null;
         this.levelData.putLong("RandomSeed", value);
     }
 

@@ -37,6 +37,7 @@ public class ObjectMangroveTree extends ObjectTree {
 
         int i2 = y + treeHeight;
         int maxBlockY = level.getMaxBlockY();
+
         if (i2 + 2 >= maxBlockY) {
             return;
         }
@@ -45,7 +46,7 @@ public class ObjectMangroveTree extends ObjectTree {
 
         // Adapted from https://github.com/PowerNukkitX/PowerNukkitX/blob/master/src/main/java/cn/nukkit/level/generator/object/ObjectMangroveTree.java
 
-        for (int il = 0; il < treeHeight + 1; il++) {
+        for (int il = 0; il <= treeHeight + 1; il++) { // +1 to stop leaves decay
             if (il > 2) {
                 placeLogAt(level, x, il + y, z);
             } else {
@@ -95,6 +96,9 @@ public class ObjectMangroveTree extends ObjectTree {
                 this.placeLeafAt(level, x - i3 + offsetX, i2 + k4 + offsetY, z - l3 + offsetZ);
             }
         }
+
+        // Always hide trunk
+        this.placeLeafAt(level, x, i2 + 2, z);
     }
 
     private void placeLogAt(ChunkManager level, int x, int y, int z) {

@@ -39,6 +39,7 @@ public abstract class BaseLevelProvider implements LevelProvider {
     protected CompoundTag levelData;
 
     private Vector3 spawn;
+    private Long cachedSeed;
 
     protected final AtomicReference<BaseRegionLoader> lastRegion = new AtomicReference<>();
 
@@ -253,11 +254,15 @@ public abstract class BaseLevelProvider implements LevelProvider {
 
     @Override
     public long getSeed() {
-        return this.levelData.getLong("RandomSeed");
+        if (this.cachedSeed == null) {
+            this.cachedSeed = this.levelData.getLong("RandomSeed");
+        }
+        return this.cachedSeed;
     }
 
     @Override
     public void setSeed(long value) {
+        this.cachedSeed = null;
         this.levelData.putLong("RandomSeed", value);
     }
 

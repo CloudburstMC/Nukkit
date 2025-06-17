@@ -2,13 +2,11 @@ package cn.nukkit.level.format.leveldb.serializer;
 
 import cn.nukkit.level.format.leveldb.structure.ChunkBuilder;
 import cn.nukkit.level.format.leveldb.structure.LevelDBChunk;
-import io.netty.util.collection.IntObjectHashMap;
-import io.netty.util.collection.IntObjectMap;
 import org.iq80.leveldb.DB;
 import org.iq80.leveldb.WriteBatch;
 
 public class ChunkSerializers {
-    private static final IntObjectMap<ChunkSerializer> SERIALIZERS = new IntObjectHashMap<>();
+    /*private static final IntObjectMap<ChunkSerializer> SERIALIZERS = new IntObjectHashMap<>();
 
     static {
         // SERIALIZERS.put(0, ChunkSerializerV1.INSTANCE);
@@ -37,14 +35,16 @@ public class ChunkSerializers {
         SERIALIZERS.put(37, ChunkSerializerV3.INSTANCE); // v1_18_0_24_beta
         SERIALIZERS.put(39, ChunkSerializerV3.INSTANCE); // v1_18_0_25_beta
         SERIALIZERS.put(40, ChunkSerializerV3.INSTANCE); // v1_18_30
-    }
+    }*/
 
     private static ChunkSerializer getChunkSerializer(int version) {
-        ChunkSerializer chunkSerializer = SERIALIZERS.get(version);
-        if (chunkSerializer == null) {
+        if (version < 3) {
+            throw new IllegalArgumentException("Invalid chunk serializer version " + version + "! Serializers down to 1.0.0 (version 3) are supported");
+        }
+        if (version > 40) {
             throw new IllegalArgumentException("Invalid chunk serializer version " + version + "! Serializers up to 1.21.30 (version 40) are supported");
         }
-        return chunkSerializer;
+        return ChunkSerializerV3.INSTANCE;
     }
 
     public static void serializeChunk(WriteBatch db, LevelDBChunk chunk, int version) {

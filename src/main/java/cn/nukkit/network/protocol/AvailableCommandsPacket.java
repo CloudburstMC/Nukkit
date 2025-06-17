@@ -162,7 +162,11 @@ public class AvailableCommandsPacket extends DataPacket {
                     } else {
                         type |= ARG_FLAG_VALID;
                         if (parameter.enumData != null) {
-                            type |= ARG_FLAG_ENUM | enums.indexOf(parameter.enumData);
+                            int i = enums.indexOf(parameter.enumData);
+                            if (i < 0) {
+                                throw new IllegalStateException("Enum '" + parameter.enumData.getName() + "' isn't in enums array");
+                            }
+                            type |= ARG_FLAG_ENUM | i;
                         } else {
                             type |= parameter.type.getId();
                         }

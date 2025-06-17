@@ -59,10 +59,14 @@ public class PlayerEnderChestInventory extends BaseInventory {
 
     @Override
     public void onClose(Player who) {
-        ContainerClosePacket containerClosePacket = new ContainerClosePacket();
-        containerClosePacket.windowId = who.getWindowId(this);
-        containerClosePacket.wasServerInitiated = who.getClosingWindowId() != containerClosePacket.windowId;
-        who.dataPacket(containerClosePacket);
+        if (who.getClosingWindowId() != Integer.MAX_VALUE) {
+            ContainerClosePacket pk = new ContainerClosePacket();
+            int id = who.getWindowId(this);
+            pk.wasServerInitiated = id != who.getClosingWindowId();
+            pk.windowId = pk.wasServerInitiated ? id : who.getClosingWindowId();
+            who.dataPacket(pk);
+        }
+
         super.onClose(who);
 
         BlockEnderChest chest = who.getViewingEnderChest();

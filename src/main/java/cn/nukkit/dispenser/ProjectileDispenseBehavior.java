@@ -3,6 +3,7 @@ package cn.nukkit.dispenser;
 import cn.nukkit.block.BlockDispenser;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.entity.projectile.EntityThrownTrident;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.math.BlockFace;
@@ -41,6 +42,11 @@ public class ProjectileDispenseBehavior extends DefaultDispenseBehavior {
         projectile.setMotion(projectile.getMotion().multiply(getMotion()));
 
         ((EntityProjectile) projectile).updateRotation();
+
+        if (projectile instanceof EntityThrownTrident) {
+            item.setDamage(item.getDamage() + 1);
+            ((EntityThrownTrident) projectile).setItem(item);
+        }
 
         projectile.spawnToAll();
         return null;

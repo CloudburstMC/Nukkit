@@ -357,6 +357,10 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
             list[AMETHYST_SHARD] = ItemAmethystShard.class; //771
             list[SPYGLASS] = ItemSpyglass.class; //772
             list[RECORD_OTHERSIDE] = ItemRecordOtherside.class; //773
+            list[BAMBOO_DOOR] = ItemDoorBamboo.class; //797
+            list[BAMBOO_SIGN] = ItemSignBamboo.class; //798
+            list[CHERRY_DOOR] = ItemDoorCherry.class; //799
+            list[CHERRY_SIGN] = ItemSignCherry.class; //800
             list[SOUL_CAMPFIRE] = ItemCampfireSoul.class; //801
             list[GLOW_ITEM_FRAME] = ItemItemFrameGlow.class; //850
 

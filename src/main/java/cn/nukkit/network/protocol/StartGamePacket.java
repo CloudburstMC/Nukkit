@@ -88,7 +88,6 @@ public class StartGamePacket extends DataPacket {
     public String worldName;
     public String premiumWorldTemplateId = "";
     public boolean isTrial;
-    public boolean isMovementServerAuthoritative = true;
     public boolean isInventoryServerAuthoritative;
     public long currentTick;
     public int enchantmentSeed;
@@ -172,12 +171,12 @@ public class StartGamePacket extends DataPacket {
         this.putString(""); // ServerId
         this.putString(""); // WorldId
         this.putString(""); // ScenarioId
+        this.putString(""); // OwnerId
         /* Level settings end */
         this.putString(this.levelId);
         this.putString(this.worldName);
         this.putString(this.premiumWorldTemplateId);
         this.putBoolean(this.isTrial);
-        this.putVarInt(this.isMovementServerAuthoritative ? 1 : 0); // 2 - rewind
         this.putVarInt(0); // RewindHistorySize
         this.putBoolean(true); // isServerAuthoritativeBlockBreaking
         this.putLLong(this.currentTick);

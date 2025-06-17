@@ -49,7 +49,7 @@ public abstract class ItemChestBoat extends Item {
         return true;
     }
 
-    abstract int getVariant();
+    protected abstract int getVariant();
 
     @Override
     public int getMaxStackSize() {
