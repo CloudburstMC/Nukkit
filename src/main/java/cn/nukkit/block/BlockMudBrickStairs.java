@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 public class BlockMudBrickStairs extends BlockStairs {
@@ -30,6 +31,16 @@ public class BlockMudBrickStairs extends BlockStairs {
     @Override
     public double getResistance() {
         return 3;
+    }
+
+    @Override
+    public boolean canHarvestWithHand() {
+        return false;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override

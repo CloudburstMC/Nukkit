@@ -17,7 +17,7 @@ public class EntityTadpole extends EntityFish {
     }
 
     @Override
-    int getBucketMeta() {
+    protected int getBucketMeta() {
         return 13;
     }
 

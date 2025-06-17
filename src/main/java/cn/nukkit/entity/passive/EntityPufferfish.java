@@ -23,7 +23,7 @@ public class EntityPufferfish extends EntityFish {
     }
 
     @Override
-    int getBucketMeta() {
+    protected int getBucketMeta() {
         return 5;
     }
 

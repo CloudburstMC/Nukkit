@@ -15,7 +15,7 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class ObjectTallGrass {
 
-    @SuppressWarnings("unused") // Backwards compatibility
+    @Deprecated
     public static void growGrass(ChunkManager level, Vector3 pos, NukkitRandom random) {
         growGrass(level, pos);
     }

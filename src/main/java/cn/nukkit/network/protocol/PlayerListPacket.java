@@ -5,6 +5,7 @@ import lombok.ToString;
 
 import java.awt.*;
 import java.util.UUID;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @author Nukkit Project Team
@@ -90,6 +91,12 @@ public class PlayerListPacket extends DataPacket {
             this.name = name;
             this.skin = skin;
             this.xboxUserId = xboxUserId == null ? "" : xboxUserId;
+
+            // Set random locator bar color when spawning player
+            if (this.skin != null) {
+                ThreadLocalRandom random = ThreadLocalRandom.current();
+                this.color = new Color(random.nextFloat(), random.nextFloat(), random.nextFloat()).getRGB();
+            }
         }
     }
 }

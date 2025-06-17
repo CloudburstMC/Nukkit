@@ -1878,6 +1878,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             if (this.inPortalTicks == (this.gamemode == CREATIVE ? 1 : 80)) {
                 EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, EntityPortalEnterEvent.PortalType.NETHER);
+
+                if (this.portalPos == null) {
+                    ev.setCancelled();
+                }
+
                 this.getServer().getPluginManager().callEvent(ev);
 
                 if (ev.isCancelled()) {
@@ -2379,7 +2384,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     Item elytra = inv.getChestplate();
                     if (elytra == null || elytra.getId() != ItemID.ELYTRA) {
                         this.setGliding(false);
-                    } else if ((this.gamemode & 0x01) == 0 && this.age % (20 * (elytra.getEnchantmentLevel(Enchantment.ID_DURABILITY) + 1)) == 0) {
+                    } else if ((this.gamemode & 0x01) == 0 && this.age % (20 * (elytra.getEnchantmentLevel(Enchantment.ID_DURABILITY) + 1)) == 0 && !elytra.isUnbreakable()) {
                         elytra.setDamage(elytra.getDamage() + 1);
                         if (elytra.getDamage() >= elytra.getMaxDurability()) {
                             this.setGliding(false);
@@ -3338,6 +3343,48 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                 }
 
+                if (authPacket.getInputData().contains(AuthInputAction.START_SPIN_ATTACK)) {
+                    Enchantment riptide = this.getInventory().getItemInHandFast().getEnchantment(Enchantment.ID_TRIDENT_RIPTIDE);
+                    if (riptide != null) {
+                        PlayerToggleSpinAttackEvent playerToggleSpinAttackEvent = new PlayerToggleSpinAttackEvent(this, true);
+
+                        if (riptide.getLevel() < 1) {
+                            playerToggleSpinAttackEvent.setCancelled(true);
+                        } else {
+                            boolean inWater = false;
+                            for (Block block : this.getCollisionBlocks()) {
+                                if (block instanceof BlockWater || block.level.isBlockWaterloggedAt(this.chunk, (int) block.x, (int) block.y, (int) block.z)) {
+                                    inWater = true;
+                                    break;
+                                }
+                            }
+                            if (!(inWater || (this.getLevel().isRaining() && this.canSeeSky()))) {
+                                playerToggleSpinAttackEvent.setCancelled(true);
+                            }
+                        }
+
+                        server.getPluginManager().callEvent(playerToggleSpinAttackEvent);
+
+                        if (playerToggleSpinAttackEvent.isCancelled()) {
+                            this.setNeedSendData(true);
+                        } else {
+                            this.onSpinAttack(riptide.getLevel());
+                            this.setSpinAttack(true);
+                            this.setUsingItem(false);
+                            this.resetFallDistance();
+                            int riptideSound;
+                            if (riptide.getLevel() >= 3) {
+                                riptideSound = LevelSoundEventPacket.SOUND_ITEM_TRIDENT_RIPTIDE_3;
+                            } else if (riptide.getLevel() == 2) {
+                                riptideSound = LevelSoundEventPacket.SOUND_ITEM_TRIDENT_RIPTIDE_2;
+                            } else {
+                                riptideSound = LevelSoundEventPacket.SOUND_ITEM_TRIDENT_RIPTIDE_1;
+                            }
+                            this.getLevel().addLevelSoundEvent(this, riptideSound);
+                        }
+                    }
+                }
+
                 if (authPacket.getInputData().contains(AuthInputAction.STOP_SPIN_ATTACK)) {
                     PlayerToggleSpinAttackEvent playerToggleSpinAttackEvent = new PlayerToggleSpinAttackEvent(this, false);
                     this.server.getPluginManager().callEvent(playerToggleSpinAttackEvent);
@@ -3554,6 +3601,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 this.inventoryOpen = true;
                                 this.awardAchievement("openInventory");
                             }
+                        } else if (Nukkit.DEBUG > 1) {
+                            server.getLogger().debug(this.username + " tried to open inventory but one is already open");
                         }
                         return;
                     case InteractPacket.ACTION_MOUSEOVER:
@@ -3764,36 +3813,47 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 return;
             case ProtocolInfo.CONTAINER_CLOSE_PACKET:
                 ContainerClosePacket containerClosePacket = (ContainerClosePacket) packet;
-                if (!this.spawned || (containerClosePacket.windowId == ContainerIds.INVENTORY && !inventoryOpen)) {
+
+                if (!this.spawned) {
                     return;
                 }
 
-                if (this.windowIndex.containsKey(containerClosePacket.windowId)) {
-                    this.server.getPluginManager().callEvent(new InventoryCloseEvent(this.windowIndex.get(containerClosePacket.windowId), this));
-                    if (containerClosePacket.windowId == ContainerIds.INVENTORY) this.inventoryOpen = false;
-                    this.closingWindowId = containerClosePacket.windowId;
-                    this.removeWindow(this.windowIndex.get(containerClosePacket.windowId), true);
-                    this.closingWindowId = Integer.MIN_VALUE;
-                }
-
                 if (containerClosePacket.windowId == -1) {
+                    // At least 1.21 does sometimes send windowId -1 when opening and closing containers quickly
+                    if (this.inventoryOpen) {
+                        this.inventoryOpen = false;
+
+                        if (this.craftingType == CRAFTING_SMALL) {
+                            for (Entry<Inventory, Integer> open : new ArrayList<>(this.windows.entrySet())) {
+                                if (open.getKey() instanceof ContainerInventory || open.getKey() instanceof PlayerEnderChestInventory) {
+                                    this.server.getPluginManager().callEvent(new InventoryCloseEvent(open.getKey(), this));
+                                    this.closingWindowId = Integer.MAX_VALUE;
+                                    this.removeWindow(open.getKey(), true);
+                                    this.closingWindowId = Integer.MIN_VALUE;
+                                }
+                            }
+                            return;
+                        }
+                    }
+
                     this.resetCraftingGridType();
                     this.addWindow(this.craftingGrid, ContainerIds.NONE);
                     ContainerClosePacket pk = new ContainerClosePacket();
                     pk.windowId = -1;
                     pk.wasServerInitiated = false;
                     this.dataPacket(pk);
-                } else { // TODO: check this
+                } else if (this.windowIndex.containsKey(containerClosePacket.windowId)) {
+                    this.inventoryOpen = false;
+                    Inventory inn = this.windowIndex.get(containerClosePacket.windowId);
+                    this.server.getPluginManager().callEvent(new InventoryCloseEvent(inn, this));
+                    this.closingWindowId = containerClosePacket.windowId;
+                    this.removeWindow(inn, true);
+                    this.closingWindowId = Integer.MIN_VALUE;
+                } else { // Close the bugged inventory client refused with id -1 above
                     ContainerClosePacket pk = new ContainerClosePacket();
                     pk.windowId = containerClosePacket.windowId;
                     pk.wasServerInitiated = false;
                     this.dataPacket(pk);
-
-                    for (Inventory open : new ArrayList<>(this.windows.keySet())) {
-                        if (open instanceof ContainerInventory) {
-                            this.removeWindow(open);
-                        }
-                    }
                 }
                 return;
             case ProtocolInfo.BLOCK_ENTITY_DATA_PACKET:
@@ -6494,7 +6554,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      */
     private void moveBlockUIContents(int window) {
         Inventory inventory = this.getWindowById(window);
-        if (inventory != null && !(inventory instanceof ContainerInventory)) {
+        if (inventory instanceof FakeBlockUIComponent) {
             Item[] drops = this.inventory.addItem(inventory.getContents().values().toArray(new Item[0]));
             inventory.clearAll();
             for (Item drop : drops) {

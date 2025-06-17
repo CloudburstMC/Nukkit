@@ -129,8 +129,8 @@ public class LevelDBChunkSection implements ChunkSection {
 
     @Override
     public boolean setBlockAtLayer(int x, int y, int z, BlockLayer layer, int blockId, int meta) {
+        int fullId = (blockId << Block.DATA_BITS) | meta;
         synchronized (this.storages) {
-            int fullId = (blockId << Block.DATA_BITS) | meta;
             boolean success = this.computeStorage(layer).getAndSetFullBlock(x, y, z, fullId) != fullId;
             if (layer != Block.LAYER_WATERLOGGED && blockId == 0 && this.hasSecondLayer()) {
                 this.computeStorage(Block.LAYER_WATERLOGGED).setFullBlock(x, y, z, 0);

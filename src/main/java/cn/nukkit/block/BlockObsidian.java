@@ -55,7 +55,7 @@ public class BlockObsidian extends BlockSolid {
                 this.west(), this.east(),
         };
         for (Block aNearby : nearby) {
-            if (aNearby != null) if (aNearby.getId() == NETHER_PORTAL) {
+            if (aNearby != null && aNearby.getId() == NETHER_PORTAL) {
                 aNearby.onBreak(item);
             }
         }

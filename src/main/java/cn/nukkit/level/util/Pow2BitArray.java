@@ -1,7 +1,6 @@
 package cn.nukkit.level.util;
 
 import cn.nukkit.math.MathHelper;
-import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
 
@@ -37,7 +36,9 @@ public class Pow2BitArray implements BitArray {
      * Sets the entry at the given location to the given value
      */
     public void set(int index, int value) {
-        Preconditions.checkElementIndex(index, this.size);
+        if (index < 0 || index >= this.size) {
+            throw new IndexOutOfBoundsException();
+        }
         if (value < 0 || value > this.version.maxEntryValue) {
             throw new IllegalArgumentException(String.format("Max value: %s. Received value %s", this.version.maxEntryValue, value));
         }
@@ -52,7 +53,9 @@ public class Pow2BitArray implements BitArray {
      * Gets the entry at the given index
      */
     public int get(int index) {
-        Preconditions.checkElementIndex(index, this.size);
+        if (index < 0 || index >= this.size) {
+            throw new IndexOutOfBoundsException();
+        }
         int bitIndex = index * this.version.bits;
         int arrayIndex = bitIndex >> 5;
         int wordOffset = bitIndex & 31;

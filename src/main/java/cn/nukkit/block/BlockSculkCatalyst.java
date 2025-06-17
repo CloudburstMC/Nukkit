@@ -24,7 +24,7 @@ public class BlockSculkCatalyst extends BlockSolid {
 
     @Override
     public double getHardness() {
-        return 3;
+        return 1;
     }
 
     @Override

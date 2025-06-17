@@ -38,7 +38,7 @@ public class ObjectAzaleaTree extends ObjectTree {
             return;
         }
 
-        for (int il = 0; il < treeHeight + 1; il++) {
+        for (int il = 0; il <= treeHeight + 1; il++) { // +1 to stop leaves decay
             placeLogAt(level, x, il + y, z);
         }
 
@@ -80,6 +80,9 @@ public class ObjectAzaleaTree extends ObjectTree {
                 this.placeLeafAt(level, x - i3 + offsetX, i2 + k4 + offsetY, z - l3 + offsetZ, random);
             }
         }
+
+        // Always hide trunk
+        this.placeLeafAt(level, x, i2 + 2, z, random);
     }
 
     private void placeLogAt(ChunkManager level, int x, int y, int z) {

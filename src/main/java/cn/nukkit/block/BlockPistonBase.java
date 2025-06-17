@@ -390,13 +390,13 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
                         if (index > -1) {
                             this.reorderListAtCollision(blockCount, index);
 
-                            for (int l = 0; l <= index + blockCount; ++l) {
+                            /*for (int l = 0; l <= index + blockCount; ++l) {
                                 Block b = this.toMove.get(l);
 
-                                /*if (false && b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
+                                if (b.getId() == SLIME_BLOCK && !this.addBranchingBlocks(b)) {
                                     return false;
-                                }*/
-                            }
+                                }
+                            }*/
 
                             return true;
                         }

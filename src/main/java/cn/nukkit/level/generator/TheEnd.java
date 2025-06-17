@@ -11,7 +11,6 @@ import cn.nukkit.math.Vector3;
 import it.unimi.dsi.fastutil.longs.Long2LongLinkedOpenHashMap;
 import net.daporkchop.lib.common.ref.Ref;
 import net.daporkchop.lib.common.ref.ThreadRef;
-import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.noise.NoiseSource;
 import net.daporkchop.lib.noise.engine.PerlinNoiseEngine;
 import net.daporkchop.lib.noise.engine.SimplexNoiseEngine;
@@ -167,7 +166,7 @@ public class TheEnd extends Generator {
     }
 
     private double[] densityGet(double[] arr, int x, int z) {
-        int totalSize = PValidation.positive(CACHE_X) * PValidation.positive(CACHE_Y) * PValidation.positive(CACHE_Z) + PValidation.notNegative(0);
+        int totalSize = CACHE_X * CACHE_Y * CACHE_Z;
         if (arr == null || arr.length < totalSize) {
             arr = new double[totalSize];
         }

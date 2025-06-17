@@ -51,7 +51,7 @@ public class BlockSculkVein extends BlockTransparentMeta implements BlockPropert
 
     @Override
     public double getHardness() {
-        return 0.2;
+        return 0;
     }
 
     @Override

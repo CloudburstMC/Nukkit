@@ -328,6 +328,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_COLLIDABLE = 121;
     public static final int DATA_FLAG_WASD_AIR_CONTROLLED = 122;
     public static final int DATA_FLAG_DOES_SERVER_AUTH_ONLY_DISMOUNT = 123;
+    public static final int DATA_FLAG_BODY_ROTATION_ALWAYS_FOLLOWS_HEAD = 124;
 
     public static final double STEP_CLIP_MULTIPLIER = 0.4;
 
@@ -380,11 +381,6 @@ public abstract class Entity extends Location implements Metadatable {
     public double lastYaw;
     public double lastPitch;
     public double lastHeadYaw;
-
-    @Deprecated
-    public double PitchDelta;
-    @Deprecated
-    public double YawDelta;
 
     public double entityCollisionReduction; // Higher than 0.9 will result a fast collisions
     public AxisAlignedBB boundingBox;

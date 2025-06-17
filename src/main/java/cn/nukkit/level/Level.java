@@ -1699,11 +1699,11 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             Map.Entry<Long, Set<Integer>> entry = iter.next();
             iter.remove();
             long index = entry.getKey();
+            BaseFullChunk chunk = getChunk(getHashX(index), getHashZ(index), false);
             Set<Integer> blocks = entry.getValue();
 
             for (int blockHash : blocks) {
                 Vector3 pos = getBlockXYZ(index, blockHash, this.getDimensionData());
-                BaseFullChunk chunk = getChunk(((int) pos.x) >> 4, ((int) pos.z) >> 4, false);
 
                 if (chunk != null) {
                     int lcx = ((int) pos.x) & 0xF;
@@ -1711,7 +1711,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
                     int oldLevel = chunk.getBlockLight(lcx, ((int) pos.y), lcz);
                     int newLevel = Block.getBlockLight(chunk.getBlockId(lcx, ((int) pos.y), lcz));
                     if (oldLevel != newLevel) {
-                        this.setBlockLightAt(((int) pos.x), ((int) pos.y), ((int) pos.z), newLevel);
+                        chunk.setBlockLight(((int) pos.x) & 0x0f, ((int) pos.y), ((int) pos.z) & 0x0f, newLevel & 0x0f);
 
                         long hash = Hash.hashBlock(((int) pos.x), ((int) pos.y), ((int) pos.z));
                         if (newLevel < oldLevel) {

@@ -4,6 +4,7 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.potion.Effect;
 import com.google.common.collect.ImmutableList;
+import lombok.EqualsAndHashCode;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -14,6 +15,7 @@ import java.util.Locale;
 /**
  * @author CreeperFace
  */
+@EqualsAndHashCode
 public class CommandEnum {
 
     public static final CommandEnum ENUM_BOOLEAN = new CommandEnum("Boolean", ImmutableList.of("true", "false"));
@@ -64,9 +66,5 @@ public class CommandEnum {
 
     public List<String> getValues() {
         return values;
-    }
-
-    public int hashCode() {
-        return name.hashCode();
     }
 }

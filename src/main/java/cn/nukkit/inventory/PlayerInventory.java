@@ -519,10 +519,14 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public void onClose(Player who) {
-        ContainerClosePacket pk = new ContainerClosePacket();
-        pk.windowId = who.getWindowId(this);
-        pk.wasServerInitiated = who.getClosingWindowId() != pk.windowId;
-        who.dataPacket(pk);
+        if (who.getClosingWindowId() != Integer.MAX_VALUE) {
+            ContainerClosePacket pk = new ContainerClosePacket();
+            int id = who.getWindowId(this);
+            pk.wasServerInitiated = id != who.getClosingWindowId();
+            pk.windowId = pk.wasServerInitiated ? id : who.getClosingWindowId();
+            who.dataPacket(pk);
+        }
+
         // Player can never stop viewing their own inventory
         if (who != holder) {
             super.onClose(who);

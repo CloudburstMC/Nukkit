@@ -13,6 +13,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
     public boolean mustAccept;
     public boolean scripting;
     public boolean hasAddonPacks;
+    public boolean forceDisableVibrantVisuals;
     public UUID worldTemplateId = new UUID(0, 0);
     public String worldTemplateVersion = "";
     public ResourcePack[] behaviourPackEntries = ResourcePack.EMPTY_ARRAY;
@@ -29,6 +30,7 @@ public class ResourcePacksInfoPacket extends DataPacket {
         this.putBoolean(this.mustAccept);
         this.putBoolean(this.hasAddonPacks);
         this.putBoolean(this.scripting);
+        this.putBoolean(this.forceDisableVibrantVisuals);
         this.putUUID(this.worldTemplateId);
         this.putString(this.worldTemplateVersion);
 

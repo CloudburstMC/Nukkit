@@ -61,10 +61,19 @@ public class LoginPacket extends DataPacket {
 
         String data = new String(this.get(size), StandardCharsets.UTF_8);
 
-        Map<String, List<String>> map = GSON.fromJson(data, new MapTypeToken());
-        if (map.isEmpty() || !map.containsKey("chain") || map.get("chain").isEmpty()) return;
+        Map<String, Object> map = GSON.fromJson(data, new MapTypeToken());
 
-        for (String c : map.get("chain")) {
+        String certificate = (String) map.get("Certificate");
+        if (certificate != null) {
+            map = GSON.fromJson(certificate, new MapTypeToken());
+        }
+
+        List<String> chains = (List<String>) map.get("chain");
+        if (chains == null || chains.isEmpty()) {
+            return;
+        }
+
+        for (String c : chains) {
             JsonObject chainMap = ClientChainData.decodeToken(c);
             if (chainMap == null) continue;
 
@@ -223,6 +232,6 @@ public class LoginPacket extends DataPacket {
         return new PersonaPieceTint(pieceType, colors);
     }
 
-    private static class MapTypeToken extends TypeToken<Map<String, List<String>>> {
+    private static class MapTypeToken extends TypeToken<Map<String, Object>> {
     }
 }

@@ -18,7 +18,6 @@ import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.math.Vector3;
 import net.daporkchop.lib.common.ref.Ref;
 import net.daporkchop.lib.common.ref.ThreadRef;
-import net.daporkchop.lib.common.util.PValidation;
 import net.daporkchop.lib.noise.engine.PerlinNoiseEngine;
 import net.daporkchop.lib.noise.filter.ScaleOctavesOffsetFilter;
 import net.daporkchop.lib.random.PRandom;
@@ -311,15 +310,15 @@ public class Nether extends Generator {
     }
 
     private double[] densityGet(double[] arr, int x, int y, int z) {
-        int totalSize = PValidation.positive(Nether.CACHE_X) * PValidation.positive(Nether.CACHE_Y) * PValidation.positive(Nether.CACHE_Z) + PValidation.notNegative(0);
+        int totalSize = CACHE_X * CACHE_Y * CACHE_Z;
         if (arr == null || arr.length < totalSize) {
             arr = new double[totalSize];
         }
 
-        for (int i = 0, dx = 0; dx < Nether.CACHE_X; dx++) {
-            for (int dz = 0; dz < Nether.CACHE_Z; dz++) {
-                for (int dy = 0; dy < Nether.CACHE_Y; dy++) {
-                    arr[i++] = densityGet(x + dx * Nether.STEP_X, y + dy * Nether.STEP_Y, z + dz * Nether.STEP_Z);
+        for (int i = 0, dx = 0; dx < CACHE_X; dx++) {
+            for (int dz = 0; dz < CACHE_Z; dz++) {
+                for (int dy = 0; dy < CACHE_Y; dy++) {
+                    arr[i++] = densityGet(x + dx * STEP_X, dy * STEP_Y, z + dz * STEP_Z);
                 }
             }
         }

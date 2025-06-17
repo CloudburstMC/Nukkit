@@ -43,7 +43,6 @@ public interface Oxidizable {
         int odds = 0;
         int cons = 0;
 
-        scan:
         for (int x = -4; x <= 4; x++) {
             for (int y = -4; y <= 4; y++) {
                 for (int z = -4; z <= 4; z++) {

@@ -74,10 +74,10 @@ public class BlockDirt extends BlockSolidMeta {
                 }
                 return true;
             }
-        } else if (player != null && item.getId() == Item.DYE && item.getDamage() == ItemDye.BONE_MEAL) {
+        } else if (item.getId() == Item.DYE && item.getDamage() == ItemDye.BONE_MEAL) {
             Block up = this.up();
             if (up instanceof BlockWater) {
-                if (!player.isCreative()) {
+                if (player != null && !player.isCreative()) {
                     item.count--;
                 }
                 this.level.addParticle(new BoneMealParticle(this));
@@ -86,13 +86,17 @@ public class BlockDirt extends BlockSolidMeta {
                 }
                 return true;
             }
-        } else if (player != null && item.getId() == Item.POTION && item.getDamage() == ItemPotion.NO_EFFECTS) {
-            item.count--;
-            Item emptyBottle = Item.get(Item.GLASS_BOTTLE);
-            if (player.getInventory().canAddItem(emptyBottle)) {
-                player.getInventory().addItem(emptyBottle);
-            } else {
-                player.getLevel().dropItem(player.add(0, 1.3, 0), emptyBottle, player.getDirectionVector().multiply(0.4));
+        } else if (item.getId() == Item.POTION && item.getDamage() == ItemPotion.NO_EFFECTS) {
+            if (player != null) {
+                if (!player.isCreative()) {
+                    item.count--;
+                }
+                Item emptyBottle = Item.get(Item.GLASS_BOTTLE);
+                if (player.getInventory().canAddItem(emptyBottle)) {
+                    player.getInventory().addItem(emptyBottle);
+                } else {
+                    player.getLevel().dropItem(player.add(0, 1.3, 0), emptyBottle, player.getDirectionVector().multiply(0.4));
+                }
             }
             this.getLevel().setBlock(this, get(MUD), true);
             return true;

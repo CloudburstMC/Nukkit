@@ -395,7 +395,10 @@ public interface ItemID {
     int SHELTER_POTTERY_SHERD = 794;
     int SKULL_POTTERY_SHERD = 795;
     int SNORT_POTTERY_SHERD = 796;
-    //
+    int BAMBOO_DOOR = 797;
+    int BAMBOO_SIGN = 798;
+    int CHERRY_DOOR = 799;
+    int CHERRY_SIGN = 800;
     int SOUL_CAMPFIRE = 801;
     //
     int GLOW_ITEM_FRAME = 850;

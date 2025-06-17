@@ -36,5 +36,5 @@ public abstract class EntityFish extends EntityWaterAnimal {
         return super.onInteract(player, item, clickedPos);
     }
 
-    abstract int getBucketMeta();
+    protected abstract int getBucketMeta();
 }

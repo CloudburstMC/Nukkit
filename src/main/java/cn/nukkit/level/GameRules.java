@@ -40,6 +40,7 @@ public class GameRules {
         gameRules.gameRules.put(FREEZE_DAMAGE, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(FUNCTION_COMMAND_LIMIT, new Value<>(Type.INTEGER, 10000));
         gameRules.gameRules.put(KEEP_INVENTORY, new Value<>(Type.BOOLEAN, false));
+        gameRules.gameRules.put(LOCATOR_BAR, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(MAX_COMMAND_CHAIN_LENGTH, new Value<>(Type.INTEGER, 65536));
         gameRules.gameRules.put(MOB_GRIEFING, new Value<>(Type.BOOLEAN, true));
         gameRules.gameRules.put(NATURAL_REGENERATION, new Value<>(Type.BOOLEAN, true));

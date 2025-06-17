@@ -24,7 +24,7 @@ public class BlockSculkSensor extends BlockTransparent {
 
     @Override
     public double getHardness() {
-        return 1.5;
+        return 0.5;
     }
 
     @Override

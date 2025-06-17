@@ -33,7 +33,7 @@ public class EntityAxolotl extends EntityFish {
     }
 
     @Override
-    int getBucketMeta() {
+    protected int getBucketMeta() {
         return 12;
     }
 }

@@ -179,8 +179,8 @@ public class ChunkSection implements cn.nukkit.level.format.ChunkSection {
             return true;
         }
 
+        int fullId = (blockId << Block.DATA_BITS) | meta;
         synchronized (storage) {
-            int fullId = (blockId << Block.DATA_BITS) | meta;
             return storage.getAndSetFullBlock(x, y, z, fullId) != fullId;
         }
     }
