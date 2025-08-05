@@ -214,7 +214,7 @@ public class BlockKelp extends BlockFlowable {
         int x = (int) this.x;
         int z = (int) this.z;
 
-        for (int y = (int) this.y + 1; y < 255; y++) {
+        for (int y = (int) this.y + 1; y < this.getLevel().getMaxBlockY(); y++) {
             int blockIdAbove = this.getLevel().getBlockIdAt(x, y, z);
             if (blockIdAbove == BLOCK_KELP) continue;
             if (!Block.isWater(blockIdAbove)) {

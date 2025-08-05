@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemID;
 import lombok.ToString;
 
 import java.util.ArrayList;
@@ -13,22 +14,32 @@ import java.util.List;
  */
 @ToString
 public class SmithingRecipe extends ShapelessRecipe {
+
     private final Item equipment;
     private final Item ingredient;
     private final Item result;
+    private final Item template;
 
     private final List<Item> ingredientsAggregate;
 
     public SmithingRecipe(String recipeId, int priority, Collection<Item> ingredients, Item result) {
         super(recipeId, priority, result, ingredients);
+
         this.equipment = (Item) ingredients.toArray()[0];
         this.ingredient = (Item) ingredients.toArray()[1];
+
+        if (ingredients.size() >= 3) {
+            this.template = (Item) ingredients.toArray()[2];
+        } else {
+            this.template = Item.get(0);
+        }
+
         this.result = result;
 
-        ArrayList<Item> aggregation = new ArrayList<>(2);
+        ArrayList<Item> aggregation = new ArrayList<>(3);
 
-        for (Item item : new Item[]{equipment, ingredient}) {
-            if (item.getCount() < 1) {
+        for (Item item : new Item[]{equipment, ingredient, template}) {
+            if (item.getId() != 0 && item.getCount() < 1) {
                 throw new IllegalArgumentException("Recipe Ingredient amount was not 1 (value: " + item.getCount() + ")");
             }
             boolean found = false;
@@ -54,25 +65,33 @@ public class SmithingRecipe extends ShapelessRecipe {
         return result;
     }
 
-    public Item getFinalResult(Item equip) {
-        Item finalResult = getResult().clone();
+    public Item getFinalResult(Item equip, Item template) {
+        Item recipeTemplate = getTemplate();
 
-        if (equip.hasCompoundTag()) {
-            finalResult.setCompoundTag(equip.getCompoundTag());
-        }
+        if ((recipeTemplate.getId() == 0 && template.getId() == 0) ||
+                (recipeTemplate.getId() == ItemID.NETHERITE_UPGRADE_SMITHING_TEMPLATE && template.getId() == ItemID.NETHERITE_UPGRADE_SMITHING_TEMPLATE)) {
 
-        int maxDurability = finalResult.getMaxDurability();
-        if (maxDurability <= 0 || equip.getMaxDurability() <= 0) {
+            Item finalResult = getResult().clone();
+
+            if (equip.hasCompoundTag()) {
+                finalResult.setCompoundTag(equip.getCompoundTag());
+            }
+
+            int maxDurability = finalResult.getMaxDurability();
+            if (maxDurability <= 0 || equip.getMaxDurability() <= 0) {
+                return finalResult;
+            }
+
+            int damage = equip.getDamage();
+            if (damage <= 0) {
+                return finalResult;
+            }
+
+            finalResult.setDamage(Math.min(maxDurability, damage));
             return finalResult;
         }
 
-        int damage = equip.getDamage();
-        if (damage <= 0) {
-            return finalResult;
-        }
-
-        finalResult.setDamage(Math.min(maxDurability, damage));
-        return finalResult;
+        return Item.get(0);
     }
 
     @Override
@@ -93,6 +112,10 @@ public class SmithingRecipe extends ShapelessRecipe {
         return ingredient;
     }
 
+    public Item getTemplate() {
+        return template;
+    }
+
     public List<Item> getIngredientsAggregate() {
         return ingredientsAggregate;
     }
@@ -109,7 +132,7 @@ public class SmithingRecipe extends ShapelessRecipe {
             haveInputs.add(item.clone());
         }
         List<Item> needInputs = new ArrayList<>();
-        if (multiplier != 1) {
+        if(multiplier != 1){
             for (Item item : ingredientsAggregate) {
                 if (item.isNull())
                     continue;

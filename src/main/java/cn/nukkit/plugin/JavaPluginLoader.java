@@ -22,7 +22,7 @@ public class JavaPluginLoader implements PluginLoader {
 
     private final Server server;
 
-    private final Map<String, Class> classes = new HashMap<>();
+    private final Map<String, Class<?>> classes = new HashMap<>();
     private final Map<String, PluginClassLoader> classLoaders = new HashMap<>();
 
     public JavaPluginLoader(Server server) {
@@ -44,7 +44,7 @@ public class JavaPluginLoader implements PluginLoader {
             this.classLoaders.put(description.getName(), classLoader);
             PluginBase plugin;
             try {
-                Class javaClass = classLoader.loadClass(className);
+                Class<?> javaClass = classLoader.loadClass(className);
 
                 if (!PluginBase.class.isAssignableFrom(javaClass)) {
                     throw new PluginException("Main class `" + description.getMain() + "' does not extend PluginBase");

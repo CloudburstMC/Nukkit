@@ -27,7 +27,7 @@ public class AnvilInventory extends FakeBlockUIComponent {
     @Override
     public void onOpen(Player who) {
         super.onOpen(who);
-        who.craftingType = Player.CRAFTING_ANVIL;
+        who.craftingType = Player.ANVIL_WINDOW_ID;
     }
 
     public Item getInputSlot() {

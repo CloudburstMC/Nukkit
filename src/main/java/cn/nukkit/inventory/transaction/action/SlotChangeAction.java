@@ -8,6 +8,7 @@ import cn.nukkit.entity.Entity;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.InventoryTransaction;
 import cn.nukkit.item.Item;
+import lombok.ToString;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -15,6 +16,7 @@ import java.util.Set;
 /**
  * @author CreeperFace
  */
+@ToString
 public class SlotChangeAction extends InventoryAction {
 
     protected Inventory inventory;

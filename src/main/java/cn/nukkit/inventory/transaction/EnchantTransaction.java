@@ -1,5 +1,6 @@
 package cn.nukkit.inventory.transaction;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.EnchantItemEvent;
 import cn.nukkit.inventory.EnchantInventory;
@@ -8,10 +9,16 @@ import cn.nukkit.inventory.transaction.action.EnchantingAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArmor;
+import cn.nukkit.item.ItemBookEnchanted;
+import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -20,7 +27,7 @@ public class EnchantTransaction extends InventoryTransaction {
 
     private Item inputItem;
     private Item outputItem;
-    private Item outputItemCheck;
+    private final List<Item> outputItemCheck = new ArrayList<>();
 
     private int cost = -1;
 
@@ -30,8 +37,8 @@ public class EnchantTransaction extends InventoryTransaction {
         for (InventoryAction action : actions) {
             if (action instanceof SlotChangeAction) {
                 SlotChangeAction slotChangeAction = (SlotChangeAction) action;
-                if (slotChangeAction.getInventory() instanceof EnchantInventory && slotChangeAction.getSlot() == 0) {
-                    this.outputItemCheck = slotChangeAction.getTargetItem();
+                if (!(slotChangeAction.getInventory() instanceof EnchantInventory)) {
+                    this.outputItemCheck.add(slotChangeAction.getTargetItemUnsafe());
                 }
             }
         }
@@ -43,6 +50,7 @@ public class EnchantTransaction extends InventoryTransaction {
         if (!(inv instanceof EnchantInventory)) {
             return false;
         }
+
         EnchantInventory eInv = (EnchantInventory) inv;
         if (!getSource().isCreative()) {
             if (this.cost < 1) {
@@ -54,31 +62,70 @@ public class EnchantTransaction extends InventoryTransaction {
                 }
             }
         }
-        return this.inputItem != null && this.outputItem != null
-                && this.inputItem.equals(eInv.getInputSlot(), true, true)
-                && (this.outputItemCheck == null || this.inputItem.getId() == this.outputItemCheck.getId() ||
-                (this.inputItem.getId() == Item.BOOK && this.outputItemCheck.getId() == Item.ENCHANTED_BOOK))
-                && (this.outputItemCheck == null || this.inputItem.getCount() == this.outputItemCheck.getCount() ||
-                (this.outputItemCheck.getId() == Item.ENCHANTED_BOOK && this.outputItemCheck.getCount() == 1));
+
+        if (this.outputItem == null || this.outputItem.isNull() || this.inputItem == null || this.inputItem.isNull()) {
+            return false;
+        }
+
+        for (Item check : this.outputItemCheck) {
+            if (check != null && !this.outputItem.equals(check)) {
+                source.getServer().getLogger().debug("Illegal output");
+                return false;
+            }
+        }
+
+        return this.inputItem.equals(eInv.getInputSlot(), true, true)
+                && (this.inputItem.getId() == this.outputItem.getId() || (this.inputItem.getId() == Item.BOOK && this.outputItem.getId() == Item.ENCHANTED_BOOK))
+                && (this.inputItem.getCount() == this.outputItem.getCount() || (this.outputItem.getId() == Item.ENCHANTED_BOOK && this.outputItem.getCount() == 1)
+                && validateNBT());
+    }
+
+    private boolean validateNBT() {
+        if (!(outputItem instanceof ItemTool || outputItem instanceof ItemArmor || outputItem instanceof ItemBookEnchanted)) {
+            source.getServer().getLogger().debug("Non-enchantable item");
+            return false;
+        }
+
+        for (Enchantment e : outputItem.getEnchantments()) {
+            if (e.isTreasure()) {
+                source.getServer().getLogger().debug("Illegal treasure enchantment");
+                return false;
+            }
+        }
+
+        CompoundTag a = this.inputItem.getNamedTag();
+        a = a == null ? new CompoundTag() : a.clone().remove("ench");
+        CompoundTag b = this.outputItem.getNamedTag();
+        b = b == null ? new CompoundTag() : b.clone().remove("ench");
+        if (!a.equals(b)) {
+            if (Nukkit.DEBUG > 1) {
+                source.getServer().getLogger().debug("NBT check failed: input=" + a + ", output=" + b);
+            }
+            return false;
+        }
+
+        return true;
     }
 
     @Override
     public boolean execute() {
         // This will validate the enchant conditions
-        if (this.hasExecuted || !this.canExecute()) {
+        if (this.invalid || this.hasExecuted() || !this.canExecute()) {
             source.removeAllWindows(false);
             this.sendInventories();
             return false;
         }
+
         EnchantInventory inv = (EnchantInventory) getSource().getWindowById(Player.ENCHANT_WINDOW_ID);
         EnchantItemEvent ev = new EnchantItemEvent(inv, inputItem, outputItem, cost, source);
         source.getServer().getPluginManager().callEvent(ev);
         if (ev.isCancelled()) {
-            source.removeAllWindows(false);
             this.sendInventories();
+            source.setNeedSendInventory(true);
             // Cancelled by plugin, means handled OK
             return true;
         }
+
         // This will process all the slot changes
         for (InventoryAction a : this.actions) {
             if (a.execute(source)) {
@@ -123,7 +170,8 @@ public class EnchantTransaction extends InventoryTransaction {
         }
     }
 
-    public boolean checkForEnchantPart(List<InventoryAction> actions) {
+    @Override
+    public boolean checkForItemPart(List<InventoryAction> actions) {
         for (InventoryAction action : actions) {
             if (action instanceof EnchantingAction) return true;
         }

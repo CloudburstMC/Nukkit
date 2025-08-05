@@ -13,9 +13,6 @@ import java.util.Map;
  */
 public interface LevelProvider {
 
-    byte ORDER_YZX = 0;
-    byte ORDER_ZXY = 1;
-
     void requestChunkTask(int X, int Z);
 
     String getPath();

@@ -68,7 +68,7 @@ public class CraftingDataPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putUnsignedVarInt(entries.size());
+        this.putUnsignedVarInt(entries.size() + 1); // + hardcoded smithing recipe
 
         for (Recipe recipe : entries) {
             RecipeType networkType = recipe.getType();
@@ -149,7 +149,7 @@ public class CraftingDataPacket extends DataPacket {
                 case SMITHING_TRANSFORM:
                     SmithingRecipe smithing = (SmithingRecipe) recipe;
                     this.putString(smithing.getRecipeId());
-                    this.putRecipeIngredient(Item.get(Item.AIR)); //template
+                    this.putRecipeIngredient(smithing.getTemplate());
                     this.putRecipeIngredient(smithing.getEquipment());
                     this.putRecipeIngredient(smithing.getIngredient());
                     this.putSlot(smithing.getResult(), true);
@@ -158,6 +158,16 @@ public class CraftingDataPacket extends DataPacket {
                     break;
             }
         }
+
+        // Hardcoded smithing recipe start
+        this.putVarInt(9); // Type SMITHING_TRIM
+        this.putString("minecraft:smithing_armor_trim"); // Recipe
+        this.putTrimRecipeIngredient("minecraft:trim_templates");
+        this.putTrimRecipeIngredient("minecraft:trimmable_armors");
+        this.putTrimRecipeIngredient("minecraft:trim_materials");
+        this.putString(CRAFTING_TAG_SMITHING_TABLE);
+        this.putUnsignedVarInt(1); // Network ID (hardcoded in CraftingManager)
+        // Hardcoded smithing recipe end
 
         this.putUnsignedVarInt(this.brewingEntries.size());
         for (BrewingRecipe recipe : brewingEntries) {
@@ -179,6 +189,12 @@ public class CraftingDataPacket extends DataPacket {
         this.putUnsignedVarInt(0); // Material reducers size
 
         this.putBoolean(cleanRecipes);
+    }
+
+    private void putTrimRecipeIngredient(String itemTag) {
+        this.putByte((byte) 3);
+        this.putString(itemTag);
+        this.putVarInt(1);
     }
 
     @Override

@@ -24,7 +24,7 @@ public final class RandomItem {
         return selector;
     }
 
-    static Object selectFrom(Selector selector) {
+    public static Object selectFrom(Selector selector) {
         Objects.requireNonNull(selector);
         Map<Selector, Float> child = new HashMap<>();
         selectors.forEach((s, f) -> {

@@ -294,9 +294,9 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public boolean clear(int index, boolean send) {
-        if (this.slots.containsKey(index)) {
+        Item old = this.slots.get(index);
+        if (old != null) {
             Item item = new ItemBlock(Block.get(BlockID.AIR), null, 0);
-            Item old = this.slots.get(index);
             if (index >= this.getSize() && index < this.size) {
                 EntityArmorChangeEvent ev = new EntityArmorChangeEvent(this.getHolder(), old, item, index);
                 Server.getInstance().getPluginManager().callEvent(ev);

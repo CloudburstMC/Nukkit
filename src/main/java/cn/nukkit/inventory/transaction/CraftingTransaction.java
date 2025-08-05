@@ -3,13 +3,14 @@ package cn.nukkit.inventory.transaction;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.inventory.CraftItemEvent;
-import cn.nukkit.inventory.*;
+import cn.nukkit.inventory.BigCraftingGrid;
+import cn.nukkit.inventory.CraftingRecipe;
+import cn.nukkit.inventory.InventoryType;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
-import cn.nukkit.scheduler.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,26 +85,7 @@ public class CraftingTransaction extends InventoryTransaction {
     }
 
     public boolean canExecute() {
-        if (source.craftingType == Player.CRAFTING_LOOM) {
-            Inventory inventory = source.getWindowById(Player.LOOM_WINDOW_ID);
-            if (inventory instanceof LoomInventory) {
-                addInventory(inventory);
-            }
-        } else if (source.craftingType == Player.CRAFTING_SMITHING) {
-            Inventory inventory = source.getWindowById(Player.SMITHING_WINDOW_ID);
-            if (inventory instanceof SmithingInventory) {
-                addInventory(inventory);
-
-                SmithingInventory smithingInventory = (SmithingInventory) inventory;
-                SmithingRecipe smithingRecipe = smithingInventory.matchRecipe();
-                if (smithingRecipe != null && this.primaryOutput.equals(smithingRecipe.getFinalResult(smithingInventory.getEquipment()), true, true)) {
-                    return super.canExecute();
-                }
-                return false;
-            }
-        } else {
-            recipe = source.getServer().getCraftingManager().matchRecipe(inputs, this.primaryOutput, this.secondaryOutputs);
-        }
+        this.recipe = source.getServer().getCraftingManager().matchRecipe(inputs, this.primaryOutput, this.secondaryOutputs);
         return this.recipe != null && super.canExecute();
     }
 
@@ -127,15 +109,12 @@ public class CraftingTransaction extends InventoryTransaction {
          * So people don't whine about messy desync issues when someone cancels CraftItemEvent, or when a crafting
          * transaction goes wrong.
          */
-        source.getServer().getScheduler().scheduleDelayedTask(new Task() {
-            @Override
-            public void onRun(int currentTick) {
-                if (source.isOnline() && source.isAlive()) {
-                    ContainerClosePacket pk = new ContainerClosePacket();
-                    pk.windowId = ContainerIds.NONE;
-                    pk.wasServerInitiated = true;
-                    source.dataPacket(pk);
-                }
+        source.getServer().getScheduler().scheduleDelayedTask(null, () -> {
+            if (source.isOnline() && source.isAlive()) {
+                ContainerClosePacket pk = new ContainerClosePacket();
+                pk.windowId = ContainerIds.NONE;
+                pk.wasServerInitiated = true;
+                source.dataPacket(pk);
             }
         }, 10);
 
@@ -192,7 +171,8 @@ public class CraftingTransaction extends InventoryTransaction {
         return false;
     }
 
-    public boolean checkForCraftingPart(List<InventoryAction> actions) {
+    @Override
+    public boolean checkForItemPart(List<InventoryAction> actions) {
         for (InventoryAction action : actions) {
             if (action instanceof SlotChangeAction) {
                 SlotChangeAction slotChangeAction = (SlotChangeAction) action;

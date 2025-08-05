@@ -84,8 +84,9 @@ public class Attribute implements Cloneable {
     }
 
     public static Attribute getAttribute(int id) {
-        if (attributes.containsKey(id)) {
-            return attributes.get(id).clone();
+        Attribute attribute = attributes.get(id);
+        if (attribute != null) {
+            return attribute.clone();
         }
         throw new ServerException("Attribute id: " + id + " not found");
     }
