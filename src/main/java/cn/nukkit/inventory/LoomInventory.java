@@ -20,7 +20,7 @@ public class LoomInventory extends FakeBlockUIComponent {
     @Override
     public void onOpen(Player who) {
         super.onOpen(who);
-        who.craftingType = Player.CRAFTING_LOOM;
+        who.craftingType = Player.LOOM_WINDOW_ID;
     }
 
     public Item getBanner() {

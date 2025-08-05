@@ -33,14 +33,16 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
         Map<Integer, Item> items = new HashMap<>();
         // First we add the items from the left chest
         for (int idx = 0; idx < this.left.getSize(); idx++) {
-            if (this.left.getContents().containsKey(idx)) { // Don't forget to skip empty slots!
-                items.put(idx, this.left.getContents().get(idx));
+            Item item = this.left.getContents().get(idx);
+            if (item != null) { // Don't forget to skip empty slots!
+                items.put(idx, item);
             }
         }
         // And them the items from the right chest
         for (int idx = 0; idx < this.right.getSize(); idx++) {
-            if (this.right.getContents().containsKey(idx)) { // Don't forget to skip empty slots!
-                items.put(idx + this.left.getSize(), this.right.getContents().get(idx)); // idx + this.left.getSize() so we don't overlap left chest items
+            Item item = this.right.getContents().get(idx);
+            if (item != null) { // Don't forget to skip empty slots!
+                items.put(idx + this.left.getSize(), item); // idx + this.left.getSize() so we don't overlap left chest items
             }
         }
 

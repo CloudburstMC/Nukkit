@@ -190,6 +190,7 @@ public class StartGamePacket extends DataPacket {
         this.put(EMPTY_UUID); // worldTemplateId
         this.putBoolean(this.clientSideGenerationEnabled);
         this.putBoolean(false); // blockIdsAreHashed
+        this.putBoolean(false); // mTickDeathSystemsEnabled
         this.putBoolean(true); // isServerAuthSounds
     }
 }

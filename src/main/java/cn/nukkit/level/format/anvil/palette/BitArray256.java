@@ -21,7 +21,7 @@ public final class BitArray256 {
         this.data = other.data.clone();
     }
 
-    public final void setAt(int index, int value) {
+    public void setAt(int index, int value) {
         int bitIndexStart = index * bitsPerEntry;
         int longIndexStart = bitIndexStart >> 6;
         int localBitIndexStart = bitIndexStart & 63;
@@ -35,7 +35,7 @@ public final class BitArray256 {
         }
     }
 
-    public final int getAt(int index) {
+    public int getAt(int index) {
         int bitIndexStart = index * bitsPerEntry;
 
         int longIndexStart = bitIndexStart >> 6;
@@ -48,7 +48,7 @@ public final class BitArray256 {
         }
     }
 
-    public final void fromRaw(int[] arr) {
+    public void fromRaw(int[] arr) {
         for (int i = 0; i < arr.length; i++) {
             setAt(i, arr[i]);
         }
@@ -73,14 +73,14 @@ public final class BitArray256 {
         return newBitArray;
     }
 
-    public final int[] toRaw(int[] buffer) {
+    public int[] toRaw(int[] buffer) {
         for (int i = 0; i < buffer.length; i++) {
             buffer[i] = getAt(i);
         }
         return buffer;
     }
 
-    public final int[] toRaw() {
+    public int[] toRaw() {
         return toRaw(new int[256]);
     }
 

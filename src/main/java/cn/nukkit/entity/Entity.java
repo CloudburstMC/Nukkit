@@ -846,9 +846,8 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void removeEffect(int effectId, EntityPotionEffectEvent.Cause cause) {
-        if (this.effects.containsKey(effectId)) {
-            Effect effect = this.effects.get(effectId);
-
+        Effect effect = this.effects.get(effectId);
+        if (effect != null) {
             if (cause != null) {
                 EntityPotionEffectEvent event =
                         new EntityPotionEffectEvent(this, effect, null, EntityPotionEffectEvent.Action.REMOVED, cause);

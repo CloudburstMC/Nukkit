@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.Player;
 import lombok.ToString;
 
 /**
@@ -50,7 +49,10 @@ public class AdventureSettingsPacket extends DataPacket {
     public long customFlags;
 
     public long commandPermission = PERMISSION_NORMAL;
-    public long playerPermission = Player.PERMISSION_MEMBER;
+    /**
+     * PERMISSION_CUSTOM = 3, PERMISSION_OPERATOR = 2, PERMISSION_MEMBER = 1, PERMISSION_VISITOR = 0
+     */
+    public long playerPermission = 1;
 
     public long entityUniqueId; //This is a little-endian long, NOT a var-long. (WTF Mojang)
 

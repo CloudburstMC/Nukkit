@@ -6,10 +6,12 @@ import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.SmithingInventory;
 import cn.nukkit.inventory.transaction.action.CreativeInventoryAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
+import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.inventory.transaction.action.SmithingItemAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,9 +22,20 @@ public class SmithingTransaction extends InventoryTransaction {
     private Item equipmentItem;
     private Item ingredientItem;
     private Item outputItem;
+    private Item templateItem;
+    private final List<Item> outputItemCheck = new ArrayList<>();
 
     public SmithingTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
+
+        for (InventoryAction action : actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                if (!(slotChangeAction.getInventory() instanceof SmithingInventory)) {
+                    this.outputItemCheck.add(slotChangeAction.getTargetItemUnsafe());
+                }
+            }
+        }
     }
 
     @Override
@@ -38,6 +51,9 @@ public class SmithingTransaction extends InventoryTransaction {
                     break;
                 case 2: // result
                     this.outputItem = action.getSourceItem();
+                    break;
+                case 3: // template
+                    this.templateItem = action.getTargetItem();
                     break;
             }
         } else if (action instanceof CreativeInventoryAction) {
@@ -56,24 +72,33 @@ public class SmithingTransaction extends InventoryTransaction {
         if (!(inventory instanceof SmithingInventory)) {
             return false;
         }
+
         SmithingInventory smithingInventory = (SmithingInventory) inventory;
-        if (outputItem == null || outputItem.isNull() ||
-                ((equipmentItem == null || equipmentItem.isNull()) && (ingredientItem == null || ingredientItem.isNull()))) {
+
+        if (this.outputItem == null || this.outputItem.isNull() || this.equipmentItem == null || this.equipmentItem.isNull()) {
             return false;
         }
 
-        Item air = Item.get(0);
-        Item equipment = equipmentItem != null ? equipmentItem : air;
-        Item ingredient = ingredientItem != null ? ingredientItem : air;
+        for (Item check : this.outputItemCheck) {
+            if (check != null && !check.isNull() && !this.outputItem.equals(check)) {
+                source.getServer().getLogger().debug("Illegal output");
+                return false;
+            }
+        }
 
-        return equipment.equals(smithingInventory.getEquipment(), true, true)
+        Item air = Item.get(0);
+        Item ingredient = ingredientItem != null ? ingredientItem : air;
+        Item template = templateItem != null ? templateItem : air;
+
+        return equipmentItem.equals(smithingInventory.getEquipment(), true, true)
                 && ingredient.equals(smithingInventory.getIngredient(), true, true)
+                && template.equals(smithingInventory.getTemplate(), true, true)
                 && outputItem.equals(smithingInventory.getResult(), true, true);
     }
 
     @Override
     public boolean execute() {
-        if (this.hasExecuted() || !this.canExecute()) {
+        if (this.invalid || this.hasExecuted() || !this.canExecute()) {
             this.source.removeAllWindows(false);
             this.sendInventories();
             return false;
@@ -83,8 +108,8 @@ public class SmithingTransaction extends InventoryTransaction {
         SmithItemEvent event = new SmithItemEvent(inventory, this.equipmentItem, this.outputItem, this.ingredientItem, this.source);
         this.source.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            this.source.removeAllWindows(false);
             this.sendInventories();
+            source.setNeedSendInventory(true);
             return true;
         }
 
@@ -114,7 +139,15 @@ public class SmithingTransaction extends InventoryTransaction {
         return this.outputItem;
     }
 
-    public static boolean checkForItemPart(List<InventoryAction> actions) {
-        return actions.stream().anyMatch(it-> it instanceof SmithingItemAction);
+    public static boolean isIn(List<InventoryAction> actions) {
+        for (InventoryAction action : actions) {
+            if (action instanceof SmithingItemAction) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean checkForItemPart(List<InventoryAction> actions) {
+        return isIn(actions);
     }
 }

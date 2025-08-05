@@ -54,10 +54,7 @@ import cn.nukkit.network.BatchingHelper;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.protocol.BiomeDefinitionListPacket;
-import cn.nukkit.network.protocol.DataPacket;
-import cn.nukkit.network.protocol.PlayerListPacket;
-import cn.nukkit.network.protocol.ProtocolInfo;
+import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
 import cn.nukkit.permission.BanEntry;
@@ -88,12 +85,19 @@ import org.iq80.leveldb.DB;
 import org.iq80.leveldb.Options;
 import org.iq80.leveldb.impl.Iq80DBFactory;
 
-import java.io.*;
-import java.net.*;
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.regex.Pattern;
@@ -485,6 +489,8 @@ public class Server {
         EntityManager.get();
         //noinspection ResultOfMethodCallIgnored
         BiomeDefinitionListPacket.getCachedPacket();
+        //noinspection ResultOfMethodCallIgnored
+        TrimDataPacket.getCachedPacket();
 
         // Convert legacy data before plugins get the chance to mess with it
         try {
@@ -1002,18 +1008,13 @@ public class Server {
         }
     }
 
-    public void onPlayerCompleteLoginSequence(Player player) {
-        this.playerList.put(player.getUniqueId(), player);
-        this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin(), player.getLoginChainData().getXUID());
-    }
-
     public void addPlayer(InetSocketAddress socketAddress, Player player) {
         this.players.put(socketAddress, player);
     }
 
     public void addOnlinePlayer(Player player) {
         this.playerList.put(player.getUniqueId(), player);
-        this.updatePlayerListData(player.getUniqueId(), player.getId(), player.getDisplayName(), player.getSkin(), player.getLoginChainData().getXUID());
+        player.updatePlayerListData(false);
     }
 
     public void removeOnlinePlayer(Player player) {
@@ -1042,9 +1043,13 @@ public class Server {
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Player[] players) {
+        this.updatePlayerListData(new PlayerListPacket.Entry(uuid, entityId, name, skin, xboxUserId, Color.WHITE), players);
+    }
+
+    public void updatePlayerListData(PlayerListPacket.Entry playerListEntry, Player[] players) {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
-        pk.entries = new PlayerListPacket.Entry[]{new PlayerListPacket.Entry(uuid, entityId, name, skin, xboxUserId)};
+        pk.entries = new PlayerListPacket.Entry[]{playerListEntry};
         this.batchPackets(players, new DataPacket[]{pk}); // This is sent "directly" so it always gets through before possible TYPE_REMOVE packet for NPCs etc.
     }
 
@@ -1083,7 +1088,8 @@ public class Server {
                         p.getId(),
                         p.getDisplayName(),
                         p.getSkin(),
-                        p.getLoginChainData().getXUID()))
+                        p.getLoginChainData().getXUID(),
+                        p.getLocatorBarColor()))
                 .toArray(PlayerListPacket.Entry[]::new);
         player.dataPacket(pk);
     }
@@ -2730,6 +2736,8 @@ public class Server {
         Entity.registerEntity("Camel", EntityCamel.class);
         Entity.registerEntity("Sniffer", EntitySniffer.class);
         Entity.registerEntity("Armadillo", EntityArmadillo.class);
+        Entity.registerEntity("HappyGhast", EntityHappyGhast.class);
+        Entity.registerEntity("CopperGolem", EntityCopperGolem.class);
         //Vehicles
         Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
         Entity.registerEntity("MinecartChest", EntityMinecartChest.class);

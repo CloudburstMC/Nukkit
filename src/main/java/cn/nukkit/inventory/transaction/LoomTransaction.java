@@ -77,24 +77,26 @@ public class LoomTransaction extends InventoryTransaction {
         LoomItemEvent event = new LoomItemEvent(inventory, this.outputItem, this.source);
         this.source.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
-            this.source.removeAllWindows(false);
             this.sendInventories();
+            source.setNeedSendInventory(true);
             return false;
         }
         return true;
-    }
-
-    @Override
-    protected void sendInventories() {
-        this.source.removeAllWindows(false);
-        super.sendInventories();
     }
 
     public Item getOutputItem() {
         return this.outputItem;
     }
 
-    public static boolean checkForItemPart(List<InventoryAction> actions) {
-        return actions.stream().anyMatch(it-> it instanceof LoomItemAction);
+    public static boolean isIn(List<InventoryAction> actions) {
+        for (InventoryAction action : actions) {
+            if (action instanceof LoomItemAction) return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean checkForItemPart(List<InventoryAction> actions) {
+        return isIn(actions);
     }
 }

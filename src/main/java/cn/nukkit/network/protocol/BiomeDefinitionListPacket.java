@@ -67,10 +67,11 @@ public class BiomeDefinitionListPacket extends DataPacket {
 
         this.putUnsignedVarInt(this.biomeDefinitions.size());
         for (Map.Entry<String, BiomeDefinitionData> entry : this.biomeDefinitions.entrySet()) {
-            String name = entry.getKey();
-            BiomeDefinitionData definition = entry.getValue();
+            String name = "minecraft:" + entry.getKey(); // TODO: Update mappings
             this.putLShort(strings.addAndGetIndex(name));
-            this.putBoolean(false); // Optional ID
+
+            BiomeDefinitionData definition = entry.getValue();
+            this.putLShort(-1); // Vanilla biomes don't contain ID field
             this.putLFloat(definition.getTemperature());
             this.putLFloat(definition.getDownfall());
             this.putLFloat(definition.getRedSporeDensity());

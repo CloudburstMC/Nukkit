@@ -25,7 +25,7 @@ public class BeaconInventory extends FakeBlockUIComponent {
     @Override
     public void onOpen(Player who) {
         super.onOpen(who);
-        who.craftingType = Player.CRAFTING_BEACON;
+        who.craftingType = Player.BEACON_WINDOW_ID;
     }
 
     @Override

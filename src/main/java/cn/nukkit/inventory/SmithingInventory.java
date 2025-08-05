@@ -2,11 +2,10 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
+import cn.nukkit.item.*;
 import cn.nukkit.level.Position;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
+
+import java.util.Arrays;
 
 /**
  * @author joserobjr
@@ -15,56 +14,47 @@ public class SmithingInventory extends FakeBlockUIComponent {
 
     private static final int EQUIPMENT = 0;
     private static final int INGREDIENT = 1;
+    private static final int TEMPLATE = 2;
 
     public static final int SMITHING_EQUIPMENT_UI_SLOT = 51;
-
     public static final int SMITHING_INGREDIENT_UI_SLOT = 52;
-
-    private Item currentResult = Item.get(0);
-
-    private static final IntSet ITEMS = new IntOpenHashSet(new int[]{
-            Item.AIR, ItemID.NETHERITE_INGOT, ItemID.DIAMOND_SWORD, ItemID.DIAMOND_SHOVEL, ItemID.DIAMOND_PICKAXE, ItemID.DIAMOND_AXE,
-            ItemID.DIAMOND_HOE, ItemID.DIAMOND_HELMET, ItemID.DIAMOND_CHESTPLATE, ItemID.DIAMOND_LEGGINGS, ItemID.DIAMOND_BOOTS,
-            ItemID.NETHERITE_SWORD, ItemID.NETHERITE_SHOVEL, ItemID.NETHERITE_PICKAXE, ItemID.NETHERITE_AXE, ItemID.NETHERITE_HOE,
-            ItemID.NETHERITE_HELMET, ItemID.NETHERITE_CHESTPLATE, ItemID.NETHERITE_LEGGINGS, ItemID.NETHERITE_BOOTS});
+    public static final int SMITHING_TEMPLATE_UI_SLOT = 53;
 
     public SmithingInventory(PlayerUIInventory playerUI, Position position) {
         super(playerUI, InventoryType.SMITHING_TABLE, 51, position);
     }
 
     public SmithingRecipe matchRecipe() {
-        return Server.getInstance().getCraftingManager().matchSmithingRecipe(getEquipment(), getIngredient());
-    }
-
-    @Override
-    public void onSlotChange(int index, Item before, boolean send) {
-        if (index == EQUIPMENT || index == INGREDIENT) {
-            updateResult();
-        }
-        super.onSlotChange(index, before, send);
-    }
-
-    public void updateResult() {
-        Item result;
-        SmithingRecipe recipe = matchRecipe();
-        if (recipe == null) {
-            result = Item.get(0);
-        } else {
-            result = recipe.getFinalResult(getEquipment());
-        }
-        setResult(result);
-    }
-
-    private void setResult(Item result) {
-        this.currentResult = result;
+        return Server.getInstance().getCraftingManager().matchSmithingRecipe(Arrays.asList(getEquipment(), getIngredient(), getTemplate()));
     }
 
     public Item getResult() {
+        Item trimOutput = this.getTrimOutputItem();
+        if (trimOutput != null) {
+            return trimOutput;
+        }
+
         SmithingRecipe recipe = matchRecipe();
         if (recipe == null) {
             return Item.get(0);
         }
-        return recipe.getFinalResult(getEquipment());
+
+        return recipe.getFinalResult(getEquipment(), getTemplate());
+    }
+
+    private Item getTrimOutputItem() {
+        Item ingredient = getIngredient();
+        Item template = getTemplate();
+
+        if (ingredient instanceof ItemTrimMaterial && template instanceof ItemTrimPattern) {
+            Item input = getEquipment();
+
+            if (input instanceof ItemArmor) {
+                return ((ItemArmor) input).setArmorTrim(((ItemTrimPattern) template).getPattern(), ((ItemTrimMaterial) ingredient).getMaterial());
+            }
+        }
+
+        return null;
     }
 
     public Item getEquipment() {
@@ -83,18 +73,17 @@ public class SmithingInventory extends FakeBlockUIComponent {
         setItem(INGREDIENT, ingredient);
     }
 
+    public Item getTemplate() {
+        return getItem(TEMPLATE);
+    }
+
+    public void setTemplate(Item template) {
+        setItem(TEMPLATE, template);
+    }
+
     @Override
     public void onOpen(Player who) {
         super.onOpen(who);
-        who.craftingType = Player.CRAFTING_SMITHING;
-    }
-
-    public Item getCurrentResult() {
-        return currentResult;
-    }
-
-    @Override
-    public boolean allowedToAdd(Item item) {
-        return ITEMS.contains(item.getId());
+        who.craftingType = Player.SMITHING_WINDOW_ID;
     }
 }

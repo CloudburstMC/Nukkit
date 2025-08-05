@@ -11,7 +11,6 @@ import cn.nukkit.level.GameRule;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -119,50 +118,17 @@ public class BlockEntityItemFrame extends BlockEntitySpawnable {
         int itemId = itemOriginal.getShort("id");
         if (itemId != Item.AIR) {
             CompoundTag item;
+            item = itemOriginal.copy();
+            item.setName("Item");
+
+            String identifier = RuntimeItems.getMapping().toRuntime(itemId, itemOriginal.getShort("Damage")).getIdentifier();
+            item.putString("Name", identifier);
+            item.remove("id");
+
             if (itemId == Item.MAP) {
-                item = itemOriginal.copy();
-                item.setName("Item");
-
-                String identifier = RuntimeItems.getMapping().toRuntime(itemId, itemOriginal.getShort("Damage")).getIdentifier();
-                item.putString("Name", identifier);
-                item.remove("id");
-
                 item.getCompound("tag").remove("Colors");
             } else {
-                // Instead of copying the item's whole nbt just send the data necessary to display the item
-                item = new CompoundTag("Item")
-                        .putByte("Count", itemOriginal.getByte("Count"))
-                        .putShort("Damage", itemOriginal.getShort("Damage"));
-
-                String identifier = RuntimeItems.getMapping().toRuntime(itemId, itemOriginal.getShort("Damage")).getIdentifier();
-                item.putString("Name", identifier);
-
-                if (itemOriginal.contains("tag")) {
-                    CompoundTag oldTag = itemOriginal.getCompound("tag");
-                    CompoundTag newTag = new CompoundTag();
-
-                    if (oldTag.contains("ench")) {
-                        newTag.putList(new ListTag<>("ench"));
-                    }
-
-                    if (oldTag.contains("Base")) {
-                        newTag.put("Base", oldTag.get("Base"));
-                    }
-
-                    if (oldTag.contains("Patterns")) {
-                        newTag.put("Patterns", oldTag.get("Patterns"));
-                    }
-
-                    if (oldTag.contains("customColor")) {
-                        newTag.put("customColor", oldTag.get("customColor"));
-                    }
-
-                    if (oldTag.contains("display") && oldTag.get("display") instanceof CompoundTag) {
-                        newTag.putCompound("display", new CompoundTag("display").putString("Name", ((CompoundTag) oldTag.get("display")).getString("Name")));
-                    }
-
-                    item.put("tag", newTag);
-                }
+                item.getCompound("tag").remove("Items");
             }
 
             tag.putCompound("Item", item)
