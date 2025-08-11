@@ -32,7 +32,7 @@ Note: You don't need to compile Nukkit yourself if you don't intend to modify th
 
 Running
 -------------
-Simply run `java -jar nukkit-1.0-SNAPSHOT.jar`.
+Simply run `java -jar nukkit-1.0-SNAPSHOT.jar`. Make sure you have Java 11 or newer installed on your system.
 
 Plugin API
 -------------

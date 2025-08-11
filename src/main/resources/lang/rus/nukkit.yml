@@ -72,8 +72,6 @@ chunk-generation:
  population-queue-size: 8
 
 leveldb:
- #Use native LevelDB implementation for better performance
- use-native: false
  #Set LevelDB memory cache size
  cache-size-mb: 80
 

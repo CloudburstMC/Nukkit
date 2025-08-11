@@ -3,7 +3,7 @@
 # Requires Docker v17.05
 
 # Use OpenJDK JDK image for intermiediate build
-FROM eclipse-temurin:8-jdk-jammy AS build
+FROM eclipse-temurin:11-jdk-jammy AS build
 
 # Build from source and create artifact
 WORKDIR /src
@@ -16,7 +16,7 @@ COPY gradle /src/gradle
 RUN ./gradlew shadowJar
 
 # Use OpenJDK JRE image for runtime
-FROM eclipse-temurin:8-jdk-jammy AS run
+FROM eclipse-temurin:11-jdk-jammy AS run
 
 # Copy artifact from build image
 COPY --from=build /src/target/nukkit-1.0-SNAPSHOT.jar /app/nukkit.jar
