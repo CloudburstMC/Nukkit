@@ -122,7 +122,7 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
         } else {
             this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_OFF);
         }
-        this.level.setBlock(this, this, true, false);
+        this.level.setBlock(this, this, true, true);
 
         this.onChange();
         return true;
@@ -154,9 +154,9 @@ public abstract class BlockRedstoneComparator extends BlockRedstoneDiode {
             boolean isPowered = this.isPowered();
 
             if (isPowered && !shouldBePowered) {
-                this.level.setBlock(this, getUnpowered(), true, false);
+                this.level.setBlock(this, getUnpowered(), true, true);
             } else if (!isPowered && shouldBePowered) {
-                this.level.setBlock(this, getPowered(), true, false);
+                this.level.setBlock(this, getPowered(), true, true);
             }
 
             this.level.updateAroundRedstone(this, null); //TODO: remove

@@ -57,6 +57,10 @@ public class GrindstoneTransaction extends InventoryTransaction {
 
     @Override
     public boolean canExecute() {
+        if (!super.canExecute()) {
+            return false;
+        }
+
         Inventory inventory = getSource().getWindowById(Player.GRINDSTONE_WINDOW_ID);
         if (!(inventory instanceof GrindstoneInventory)) {
             return false;

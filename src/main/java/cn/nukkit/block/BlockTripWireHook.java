@@ -148,7 +148,7 @@ public class BlockTripWireHook extends BlockFlowable {
             Vector3 vec = this.getSideVec(facing, distance);
             BlockFace face = facing.getOpposite();
             hook.setFace(face);
-            this.level.setBlock(vec, hook, true, false);
+            this.level.setBlock(vec, hook, true, true);
             this.level.updateAroundRedstone(vec, null);
             this.level.updateAroundRedstone(vec.getSideVec(face.getOpposite()), null);
             this.addSound(vec, canConnect, nextPowered, attached, powered);
@@ -158,7 +158,7 @@ public class BlockTripWireHook extends BlockFlowable {
 
         if (!onBreak) {
             hook.setFace(facing);
-            this.level.setBlock(this, hook, true, false);
+            this.level.setBlock(this, hook, true, true);
 
             if (updateAround) {
                 this.level.updateAroundRedstone(this, null);
@@ -176,7 +176,7 @@ public class BlockTripWireHook extends BlockFlowable {
                         block.setDamage(block.getDamage() ^ 0x04);
                     }
 
-                    this.level.setBlock(vc, block, true, false);
+                    this.level.setBlock(vc, block, true, true);
                 }
             }
         }

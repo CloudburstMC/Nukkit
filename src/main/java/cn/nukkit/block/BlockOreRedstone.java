@@ -55,7 +55,7 @@ public class BlockOreRedstone extends BlockOre {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_TOUCH) {
-            this.getLevel().setBlock(this, Block.get(GLOWING_REDSTONE_ORE), false, false);
+            this.getLevel().setBlock(this, Block.get(GLOWING_REDSTONE_ORE), false, true);
             this.getLevel().scheduleUpdate(this, 600);
 
             return Level.BLOCK_UPDATE_WEAK;

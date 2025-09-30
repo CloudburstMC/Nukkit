@@ -1,7 +1,7 @@
 package cn.nukkit.inventory.transaction.action;
 
 import cn.nukkit.Player;
-import cn.nukkit.inventory.SmithingInventory;
+import cn.nukkit.inventory.GrindstoneInventory;
 import cn.nukkit.item.Item;
 import lombok.Getter;
 
@@ -17,7 +17,7 @@ public class GrindstoneItemAction extends InventoryAction {
 
     @Override
     public boolean isValid(Player source) {
-        return source.getWindowById(Player.GRINDSTONE_WINDOW_ID) instanceof SmithingInventory;
+        return source.getWindowById(Player.GRINDSTONE_WINDOW_ID) instanceof GrindstoneInventory;
     }
 
     @Override

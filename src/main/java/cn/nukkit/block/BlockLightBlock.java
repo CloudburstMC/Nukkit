@@ -72,4 +72,9 @@ public class BlockLightBlock extends BlockTransparentMeta {
     public boolean canBePushed() {
         return false;
     }
+
+    @Override
+    public double getFrictionFactor() {
+        return 0.9;
+    }
 }

@@ -2,6 +2,8 @@ package cn.nukkit.form.element;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
+
 public class ElementInput extends Element {
 
     @SuppressWarnings("unused")
@@ -10,6 +12,7 @@ public class ElementInput extends Element {
     private String placeholder = "";
     @SerializedName("default")
     private String defaultText = "";
+    private String tooltip = null;
 
     public ElementInput(String text) {
         this(text, "");
@@ -47,5 +50,14 @@ public class ElementInput extends Element {
 
     public void setDefaultText(String defaultText) {
         this.defaultText = defaultText;
+    }
+
+    @Nullable
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
     }
 }

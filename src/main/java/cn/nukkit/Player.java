@@ -195,7 +195,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected Position spawnPosition;
 
     protected int inAirTicks;
-    protected int startAirTicks = 10;
+    protected int startAirTicks = 5;
 
     protected AdventureSettings adventureSettings;
     protected Color locatorBarColor;
@@ -501,7 +501,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      */
     public void resetInAirTicks() {
         if (this.inAirTicks != 0) {
-            this.startAirTicks = 10;
+            this.startAirTicks = 5;
         }
         this.inAirTicks = 0;
     }
@@ -1649,10 +1649,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.dataPacket(pk);
         }
 
+        if (this.isSpectator()) {
+            // Tp not on ground to not fly slowly
+            this.teleport(this.add(0, 0.0001, 0), null);
+        }
+
         this.setAdventureSettings(ev.getNewAdventureSettings());
 
         if (this.isSpectator()) {
-            this.teleport(this, null);
             this.setDataFlag(DATA_FLAGS, DATA_FLAG_SILENT, true, false);
             this.setDataFlag(DATA_FLAGS, DATA_FLAG_HAS_COLLISION, false); // Sends both
         } else {
@@ -2359,7 +2363,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 PlayerInvalidMoveEvent ev = new PlayerInvalidMoveEvent(this, true);
                                 this.getServer().getPluginManager().callEvent(ev);
                                 if (!ev.isCancelled()) {
-                                    this.startAirTicks = this.inAirTicks - 10;
+                                    this.startAirTicks = this.inAirTicks - 5;
                                     this.setMotion(new Vector3(0, expectedVelocity, 0));
                                 }
                             } else if (this.kick(PlayerKickEvent.Reason.FLYING_DISABLED, MSG_FLYING_NOT_ENABLED, true)) {
@@ -4160,8 +4164,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             if (this.loomTransaction.execute()) {
                                 level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_LOOM_USE);
                             }
-                            this.loomTransaction = null;
                         }
+                        this.loomTransaction = null; // Must be here or stuff will break
                         return;
                     }
 
@@ -5349,7 +5353,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (notify && !reason.isEmpty()) {
                 DisconnectPacket pk = new DisconnectPacket();
                 // New disconnection screen doesn't support colors :(
-                pk.message = reason = TextFormat.clean(reason);
+                pk.message = TextFormat.clean(reason);
                 this.forceDataPacket(pk, null);
             }
 

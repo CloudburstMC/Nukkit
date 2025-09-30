@@ -68,6 +68,10 @@ public class SmithingTransaction extends InventoryTransaction {
 
     @Override
     public boolean canExecute() {
+        if (!(matchItems(true, false) && !this.invalid && !this.actions.isEmpty())) {
+            return false;
+        }
+
         Inventory inventory = getSource().getWindowById(Player.SMITHING_WINDOW_ID);
         if (!(inventory instanceof SmithingInventory)) {
             return false;

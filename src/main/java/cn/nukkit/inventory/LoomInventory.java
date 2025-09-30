@@ -2,16 +2,11 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.Player;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.level.Position;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
 
 public class LoomInventory extends FakeBlockUIComponent {
 
     public static final int OFFSET = 9;
-
-    public static final IntSet ITEMS = new IntOpenHashSet(new int[]{Item.AIR, ItemID.BANNER, ItemID.DYE, ItemID.BANNER_PATTERN});
 
     public LoomInventory(PlayerUIInventory playerUI, Position position) {
         super(playerUI, InventoryType.LOOM, OFFSET, position);
@@ -45,10 +40,5 @@ public class LoomInventory extends FakeBlockUIComponent {
 
     public void setPattern(Item item) {
         this.setItem(2, item);
-    }
-
-    @Override
-    public boolean allowedToAdd(Item item) {
-        return ITEMS.contains(item.getId());
     }
 }

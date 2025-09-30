@@ -2,6 +2,8 @@ package cn.nukkit.form.element;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
+
 public class ElementToggle extends Element {
 
     @SuppressWarnings("unused")
@@ -9,6 +11,7 @@ public class ElementToggle extends Element {
     private String text;
     @SerializedName("default")
     private boolean defaultValue;
+    private String tooltip = null;
 
     public ElementToggle(String text) {
         this(text, false);
@@ -33,5 +36,14 @@ public class ElementToggle extends Element {
 
     public void setDefaultValue(boolean defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    @Nullable
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
     }
 }

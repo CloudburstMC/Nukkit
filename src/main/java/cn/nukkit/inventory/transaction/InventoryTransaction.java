@@ -8,6 +8,7 @@ import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemDye;
 import cn.nukkit.item.enchantment.Enchantment;
 
 import java.util.*;
@@ -139,10 +140,17 @@ public class InventoryTransaction {
         this.inventories.add(inventory);
     }
 
-    protected boolean matchItems(List<Item> needItems, List<Item> haveItems) {
+    protected boolean matchItems(boolean clientAuthTrim, boolean clientAuthLapis) {
+        List<Item> haveItems = new ArrayList<>();
+        List<Item> needItems = new ArrayList<>();
+
         for (InventoryAction action : this.actions) {
             if (action.getTargetItemUnsafe().getId() != Item.AIR) {
                 needItems.add(action.getTargetItem());
+            }
+
+            if (clientAuthTrim && action instanceof SlotChangeAction) {
+                ((SlotChangeAction) action).setSmithingClientAuth(true);
             }
 
             if (!action.isValid(this.source)) {
@@ -172,7 +180,16 @@ public class InventoryTransaction {
             }
         }
 
-        return haveItems.isEmpty() && needItems.isEmpty();
+        if (clientAuthLapis) {
+            haveItems.removeIf(item -> item.getId() == Item.DYE && item.getDamage() == ItemDye.LAPIS_LAZULI);
+        }
+
+        if (clientAuthTrim) {
+            needItems.removeIf(item -> (item.getId() == Item.NETHERITE_UPGRADE_SMITHING_TEMPLATE || (item.getId() >= Item.COAST_ARMOR_TRIM_SMITHING_TEMPLATE &&
+                    item.getId() <= Item.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE)) && item.getDamage() == 0 && item.getCount() <= 1);
+        }
+
+        return needItems.isEmpty() && haveItems.isEmpty();
     }
 
     protected void sendInventories() {
@@ -185,9 +202,8 @@ public class InventoryTransaction {
     }
 
     public boolean canExecute() {
-        List<Item> haveItems = new ArrayList<>();
-        List<Item> needItems = new ArrayList<>();
-        return matchItems(needItems, haveItems) && !invalid && !this.actions.isEmpty() && haveItems.isEmpty() && needItems.isEmpty();
+        return matchItems(false, false) && !this.invalid && !this.actions.isEmpty();
+
     }
 
     protected boolean callExecuteEvent() {

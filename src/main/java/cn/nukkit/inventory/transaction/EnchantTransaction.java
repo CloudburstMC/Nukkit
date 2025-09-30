@@ -46,6 +46,10 @@ public class EnchantTransaction extends InventoryTransaction {
 
     @Override
     public boolean canExecute() {
+        if (!(matchItems(false, true) && !this.invalid && !this.actions.isEmpty())) {
+            return false;
+        }
+
         Inventory inv = getSource().getWindowById(Player.ENCHANT_WINDOW_ID);
         if (!(inv instanceof EnchantInventory)) {
             return false;
