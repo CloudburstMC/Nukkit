@@ -241,13 +241,14 @@ public class NetworkInventoryAction {
                 return null;
             case SOURCE_WORLD:
                 if (this.inventorySlot != InventoryTransactionPacket.ACTION_MAGIC_SLOT_DROP_ITEM) {
-                    player.getServer().getLogger().debug("Only expecting drop-item world actions from the client!");
+                    player.getServer().getLogger().debug(player.getName() + ": Only expecting drop-item world actions from the client!");
                     return null;
                 }
 
                 return new DropItemAction(this.oldItem, this.newItem);
             case SOURCE_CREATIVE:
                 if (!player.isCreative()) {
+                    player.getServer().getLogger().debug(player.getName() + ": Unexpected creative inventory action");
                     return null;
                 }
 
@@ -260,7 +261,7 @@ public class NetworkInventoryAction {
                         type = CreativeInventoryAction.TYPE_CREATE_ITEM;
                         break;
                     default:
-                        player.getServer().getLogger().debug("Unexpected creative action type " + this.inventorySlot);
+                        player.getServer().getLogger().debug(player.getName() + ": Unexpected creative action type " + this.inventorySlot);
                         return null;
                 }
 
@@ -295,7 +296,7 @@ public class NetworkInventoryAction {
                     if (!(inv instanceof AnvilInventory)) {
                         // Hack: Fix beacon payment // TODO: Better fix
                         if ((inv = player.getWindowById(Player.BEACON_WINDOW_ID)) instanceof BeaconInventory) {
-                            inv.setItem(0, Item.get(Item.AIR));
+                            ((BeaconInventory) inv).setMaterial();
                             return null;
                         }
 

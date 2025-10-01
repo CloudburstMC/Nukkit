@@ -763,16 +763,16 @@ public class BinaryStream {
         return new Vector2f(this.getLFloat(), this.getLFloat());
     }
 
-    public void putGameRules(GameRules gameRules) {
+    public void putGameRules(GameRules gameRules, boolean startGame) {
         Map<GameRule, GameRules.Value> rulesToSend = new HashMap<>(gameRules.getGameRules());
         this.putUnsignedVarInt(rulesToSend.size());
         rulesToSend.forEach((gameRule, value) -> {
             putString(gameRule.getName().toLowerCase(Locale.ROOT));
-            value.write(this);
+            value.write(this, startGame);
         });
     }
 
-    public void putGameRulesMap(Map<GameRule, GameRules.Value> allGameRules) {
+    public void putGameRulesMap(Map<GameRule, GameRules.Value> allGameRules, boolean startGame) {
         Map<GameRule, GameRules.Value> rulesToSend = new HashMap<>();
         allGameRules.forEach((gameRule, value) -> {
             if (gameRule == GameRule.NATURAL_REGENERATION) {
@@ -784,7 +784,7 @@ public class BinaryStream {
         this.putUnsignedVarInt(rulesToSend.size());
         rulesToSend.forEach((gameRule, value) -> {
             putString(gameRule.getName().toLowerCase(Locale.ROOT));
-            value.write(this);
+            value.write(this, startGame);
         });
     }
 

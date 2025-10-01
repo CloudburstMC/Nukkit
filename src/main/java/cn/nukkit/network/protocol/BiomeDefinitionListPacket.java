@@ -74,10 +74,7 @@ public class BiomeDefinitionListPacket extends DataPacket {
             this.putLShort(-1); // Vanilla biomes don't contain ID field
             this.putLFloat(definition.getTemperature());
             this.putLFloat(definition.getDownfall());
-            this.putLFloat(definition.getRedSporeDensity());
-            this.putLFloat(definition.getBlueSporeDensity());
-            this.putLFloat(definition.getAshDensity());
-            this.putLFloat(definition.getWhiteAshDensity());
+            this.putLFloat(0); // mFoliageSnow - 0 for old behavior
             this.putLFloat(definition.getDepth());
             this.putLFloat(definition.getScale());
             this.putLInt(definition.getMapWaterColor().getRGB());

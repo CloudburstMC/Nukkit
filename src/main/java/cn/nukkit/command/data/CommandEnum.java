@@ -5,6 +5,7 @@ import cn.nukkit.item.ItemID;
 import cn.nukkit.potion.Effect;
 import com.google.common.collect.ImmutableList;
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -15,6 +16,7 @@ import java.util.Locale;
 /**
  * @author CreeperFace
  */
+@ToString
 @EqualsAndHashCode
 public class CommandEnum {
 

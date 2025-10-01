@@ -2,6 +2,8 @@ package cn.nukkit.form.element;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
+
 public class ElementSlider extends Element {
 
     @SuppressWarnings("unused")
@@ -12,6 +14,7 @@ public class ElementSlider extends Element {
     private int step;
     @SerializedName("default")
     private float defaultValue;
+    private String tooltip = null;
 
     public ElementSlider(String text, float min, float max) {
         this(text, min, max, -1);
@@ -67,5 +70,14 @@ public class ElementSlider extends Element {
 
     public void setDefaultValue(float defaultValue) {
         this.defaultValue = defaultValue;
+    }
+
+    @Nullable
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
     }
 }

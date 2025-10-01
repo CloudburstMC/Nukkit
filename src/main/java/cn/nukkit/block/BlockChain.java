@@ -17,7 +17,7 @@ public class BlockChain extends BlockTransparentMeta {
 
     @Override
     public String getName() {
-        return "Chain";
+        return "Iron Chain";
     }
 
     @Override

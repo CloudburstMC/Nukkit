@@ -58,7 +58,7 @@ public class StartGamePacket extends DataPacket {
     public int spawnY;
     public int spawnZ;
     public boolean hasAchievementsDisabled = true;
-    public boolean worldEditor;
+    public int editorWorldType;
     public int dayCycleStopTime = -1; // -1 = not stopped, any positive value = stopped
     public int eduEditionOffer = 0;
     public boolean hasEduFeaturesEnabled;
@@ -126,7 +126,7 @@ public class StartGamePacket extends DataPacket {
         this.putVarInt(this.difficulty);
         this.putBlockVector3(this.spawnX, this.spawnY, this.spawnZ);
         this.putBoolean(this.hasAchievementsDisabled);
-        this.putBoolean(this.worldEditor);
+        this.putVarInt(this.editorWorldType);
         this.putBoolean(false); // isCreatedInEditor
         this.putBoolean(false); // isExportedFromEditor
         this.putVarInt(this.dayCycleStopTime);
@@ -142,7 +142,7 @@ public class StartGamePacket extends DataPacket {
         this.putVarInt(this.platformBroadcastIntent);
         this.putBoolean(this.commandsEnabled);
         this.putBoolean(this.isTexturePacksRequired);
-        this.putGameRules(this.gameRules);
+        this.putGameRules(this.gameRules, true);
         this.putExperiments(this.experiments);
         this.putBoolean(this.bonusChest);
         this.putBoolean(this.hasStartWithMapEnabled);

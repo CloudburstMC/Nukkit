@@ -59,7 +59,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         } else {
             this.setDamage(player.getHorizontalFacing().getIndex());
         }
-        this.getLevel().setBlock(this, this, true, false);
+        this.getLevel().setBlock(this, this, true, true);
 
         BlockEntityPistonArm be = (BlockEntityPistonArm) BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, this.getChunk(), new CompoundTag("")
                 .putString("id", BlockEntity.PISTON_ARM)
@@ -200,7 +200,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
         BlockFace direction = getFacing();
 
         if (!extending) {
-            this.level.setBlock(this.getSideVec(direction), Block.get(BlockID.AIR), true, false);
+            this.level.setBlock(this.getSideVec(direction), Block.get(BlockID.AIR), true, true);
         }
         if (calculator == null) {
             calculator = new BlocksCalculator(this, direction, extending);
@@ -239,12 +239,12 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
 
             for (int i = blocks.size() - 1; i >= 0; --i) {
                 Block block = blocks.get(i);
-                this.level.setBlock(block, Block.get(BlockID.AIR), true, false);
+                this.level.setBlock(block, Block.get(BlockID.AIR), true, true);
                 Vector3 newPos = block.getSideVec(side);
                 Block newBlock = newBlocks.get(i);
 
                 // TODO: Change this to block entity
-                this.level.setBlock(newPos, newBlock, true, false);
+                this.level.setBlock(newPos, newBlock, true, true);
 
                 if (newBlock instanceof BlockPistonBase) {
                     BlockEntityPistonArm be = (BlockEntityPistonArm) BlockEntity.createBlockEntity(BlockEntity.PISTON_ARM, newBlock.getChunk(), new CompoundTag("")
@@ -258,7 +258,7 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
             }
 
             if (pistonHead != null) {
-                this.level.setBlock(pistonHead, Block.get(this.getPistonHeadBlockId(), this.getDamage()), true, false);
+                this.level.setBlock(pistonHead, Block.get(this.getPistonHeadBlockId(), this.getDamage()), true, true);
             }
             return true;
         } else {

@@ -36,7 +36,7 @@ public class BlockOreRedstoneDeepslateGlowing extends BlockOreRedstoneDeepslate 
             BlockFadeEvent event = new BlockFadeEvent(this, Block.get(DEEPSLATE_REDSTONE_ORE));
             level.getServer().getPluginManager().callEvent(event);
             if (!event.isCancelled()) {
-                level.setBlock(this, event.getNewState(), false, false);
+                level.setBlock(this, event.getNewState(), false, true);
             }
 
             return Level.BLOCK_UPDATE_WEAK;

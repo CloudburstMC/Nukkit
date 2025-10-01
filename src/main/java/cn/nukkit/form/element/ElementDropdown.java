@@ -2,6 +2,7 @@ package cn.nukkit.form.element;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class ElementDropdown extends Element {
     private List<String> options;
     @SerializedName("default")
     private int defaultOptionIndex = 0;
+    private String tooltip = null;
 
     public ElementDropdown(String text) {
         this(text, new ArrayList<>());
@@ -57,5 +59,14 @@ public class ElementDropdown extends Element {
     public void addOption(String option, boolean isDefault) {
         options.add(option);
         if (isDefault) this.defaultOptionIndex = options.size() - 1;
+    }
+
+    @Nullable
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
     }
 }

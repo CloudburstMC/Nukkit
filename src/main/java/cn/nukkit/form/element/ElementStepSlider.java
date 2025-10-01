@@ -2,6 +2,7 @@ package cn.nukkit.form.element;
 
 import com.google.gson.annotations.SerializedName;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public class ElementStepSlider extends Element {
     private List<String> steps;
     @SerializedName("default")
     private int defaultStepIndex = 0;
+    private String tooltip = null;
 
     public ElementStepSlider(String text) {
         this(text, new ArrayList<>());
@@ -57,5 +59,14 @@ public class ElementStepSlider extends Element {
     public void addStep(String step, boolean isDefault) {
         steps.add(step);
         if (isDefault) this.defaultStepIndex = steps.size() - 1;
+    }
+
+    @Nullable
+    public String getTooltip() {
+        return tooltip;
+    }
+
+    public void setTooltip(String tooltip) {
+        this.tooltip = tooltip;
     }
 }

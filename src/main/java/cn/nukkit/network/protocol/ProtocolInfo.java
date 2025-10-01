@@ -14,11 +14,11 @@ public interface ProtocolInfo {
      * Actual Minecraft protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("827"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("844"); // DO NOT REMOVE BOXING
 
-    List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
+    List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(843, CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION_NETWORK = "1.21.100";
+    String MINECRAFT_VERSION_NETWORK = "1.21.110";
     String MINECRAFT_VERSION = 'v' + MINECRAFT_VERSION_NETWORK;
 
     byte BATCH_PACKET = (byte) 0xff;
@@ -246,4 +246,5 @@ public interface ProtocolInfo {
     byte __INTERNAL__PLAYER_LOCATION_PACKET = (byte) 226;
     byte __INTERNAL__CLIENTBOUND_CONTROL_SCHEME_SET_PACKET = (byte) 227;
     byte __INTERNAL__SERVER_SCRIPT_DEBUG_DRAWER_PACKET = (byte) 228;
+    byte __INTERNAL__SERVERBOUND_PACK_SETTING_CHANGE_PACKET = (byte) 229;
 }

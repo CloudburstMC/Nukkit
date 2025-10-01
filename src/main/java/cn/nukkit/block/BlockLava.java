@@ -75,7 +75,7 @@ public class BlockLava extends BlockLiquid {
 
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
-        boolean ret = this.getLevel().setBlock(this, this, true, false);
+        boolean ret = this.getLevel().setBlock(this, this, true, true);
         this.getLevel().scheduleUpdate(this, this.tickRate());
 
         return ret;

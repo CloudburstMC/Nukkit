@@ -104,7 +104,7 @@ public class CraftingManager {
     @SuppressWarnings("unchecked")
     private void loadRecipes(Config config) {
         List<Map> recipes = config.getMapList("recipes");
-        MainLogger.getLogger().info("Loading recipes...");
+        MainLogger.getLogger().debug("Loading recipes...");
         for (Map<String, Object> recipe : recipes) {
             try {
                 switch (Utils.toInt(recipe.get("type"))) {
@@ -415,7 +415,7 @@ public class CraftingManager {
         for (Item item : inputList) {
             Item clone = item.clone();
             clone.setCount(1);
-            if (item.isTool() && item.getDamage() > 0) {
+            if (item instanceof ItemDurable && item.getDamage() > 0) {
                 clone.setDamage(0);
             }
             list.add(clone);

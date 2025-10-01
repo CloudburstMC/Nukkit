@@ -71,7 +71,7 @@ public abstract class BlockMushroom extends BlockFlowable {
     }
 
     public boolean grow() {
-        this.level.setBlock(this, Block.get(BlockID.AIR), true, false);
+        this.level.setBlock(this, Block.get(BlockID.AIR), true, true);
 
         BigMushroom generator = new BigMushroom(getType());
 

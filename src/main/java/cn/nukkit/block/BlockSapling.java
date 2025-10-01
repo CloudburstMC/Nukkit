@@ -172,12 +172,12 @@ public class BlockSapling extends BlockFlowable {
         }
 
         if (bigTree) {
-            this.level.setBlock(vector3, Block.get(AIR), true, false);
-            this.level.setBlock(vector3.add(1, 0, 0), Block.get(AIR), true, false);
-            this.level.setBlock(vector3.add(0, 0, 1), Block.get(AIR), true, false);
-            this.level.setBlock(vector3.add(1, 0, 1), Block.get(AIR), true, false);
+            this.level.setBlock(vector3, Block.get(AIR), true, true);
+            this.level.setBlock(vector3.add(1, 0, 0), Block.get(AIR), true, true);
+            this.level.setBlock(vector3.add(0, 0, 1), Block.get(AIR), true, true);
+            this.level.setBlock(vector3.add(1, 0, 1), Block.get(AIR), true, true);
         } else {
-            this.level.setBlock(this, Block.get(AIR), true, false);
+            this.level.setBlock(this, Block.get(AIR), true, true);
         }
 
         ListChunkManager chunkManager = new ListChunkManager(this.level);

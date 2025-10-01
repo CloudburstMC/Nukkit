@@ -349,7 +349,7 @@ public class BlockEntityBrewingStand extends BlockEntitySpawnable implements Inv
         }
 
         block.setDamage(meta);
-        this.level.setBlock(block, block, false, false);
+        this.level.setBlock(block, block, false, true);
 
         if (brewTime != MAX_BREW_TIME && matchRecipes(true)[0] == null) {
             stopBrewing();

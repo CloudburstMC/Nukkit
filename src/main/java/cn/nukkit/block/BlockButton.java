@@ -56,7 +56,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
 
         this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 0, 15));
         this.setDamage(this.getDamage() ^ 0x08);
-        this.level.setBlock(this, this, true, false);
+        this.level.setBlock(this, this, true, true);
         this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_ON);
         this.level.scheduleUpdate(this, 30);
 
@@ -77,7 +77,7 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
                 this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
 
                 this.setDamage(this.getDamage() ^ 0x08);
-                this.level.setBlock(this, this, true, false);
+                this.level.setBlock(this, this, true, true);
                 this.level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_POWER_OFF);
 
                 level.updateAroundRedstone(this, null);

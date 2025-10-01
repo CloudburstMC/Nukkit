@@ -1,7 +1,10 @@
 package cn.nukkit.command.data;
 
+import lombok.ToString;
+
 import java.util.ArrayList;
 
+@ToString
 public class CommandParameter {
 
     public String name;

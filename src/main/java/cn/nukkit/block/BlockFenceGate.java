@@ -180,7 +180,7 @@ public class BlockFenceGate extends BlockTransparentMeta implements Faceable {
         }
 
         this.setDamage(direction | ((~this.getDamage()) & 0x04));
-        this.level.setBlock(this, this, true, false);
+        this.level.setBlock(this, this, true, true);
         if (this.isOpen()) {
             this.level.addSound(this, Sound.RANDOM_DOOR_OPEN);
         } else {

@@ -24,17 +24,13 @@ public class SmithingInventory extends FakeBlockUIComponent {
         super(playerUI, InventoryType.SMITHING_TABLE, 51, position);
     }
 
-    public SmithingRecipe matchRecipe() {
-        return Server.getInstance().getCraftingManager().matchSmithingRecipe(Arrays.asList(getEquipment(), getIngredient(), getTemplate()));
-    }
-
     public Item getResult() {
         Item trimOutput = this.getTrimOutputItem();
         if (trimOutput != null) {
             return trimOutput;
         }
 
-        SmithingRecipe recipe = matchRecipe();
+        SmithingRecipe recipe = Server.getInstance().getCraftingManager().matchSmithingRecipe(Arrays.asList(getEquipment(), getIngredient(), getTemplate()));
         if (recipe == null) {
             return Item.get(0);
         }
