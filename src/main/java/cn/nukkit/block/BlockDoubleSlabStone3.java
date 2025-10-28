@@ -1,5 +1,6 @@
 package cn.nukkit.block;
 
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
 public class BlockDoubleSlabStone3 extends BlockDoubleSlabBase  {
@@ -45,6 +46,21 @@ public class BlockDoubleSlabStone3 extends BlockDoubleSlabBase  {
     @Override
     public int getSingleSlabId() {
         return STONE_SLAB3;
+    }
+
+    @Override
+    public double getResistance() {
+        return this.getToolType() > ItemTool.TIER_WOODEN ? 30 : 15;
+    }
+
+    @Override
+    public double getHardness() {
+        return 2;
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_PICKAXE;
     }
 
     @Override

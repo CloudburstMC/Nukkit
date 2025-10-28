@@ -570,9 +570,9 @@ public abstract class Entity extends Location implements Metadatable {
         ListTag<FloatTag> rotationList = this.namedTag.getList("Rotation", FloatTag.class);
         ListTag<DoubleTag> motionList = this.namedTag.getList("Motion", DoubleTag.class);
         float correctedYaw = rotationList.get(0).data;
-        if (!(correctedYaw >= 0 && correctedYaw <= 360)) correctedYaw = 0;
+        if (!(correctedYaw >= -360 && correctedYaw <= 360)) correctedYaw = 0;
         float correctedPitch = rotationList.get(1).data;
-        if (!(correctedPitch >= 0 && correctedPitch <= 360)) correctedPitch = 0;
+        if (!(correctedPitch >= -360 && correctedPitch <= 360)) correctedPitch = 0;
         this.setPositionAndRotation(
                 this.temporalVector.setComponents(
                         posList.get(0).data,

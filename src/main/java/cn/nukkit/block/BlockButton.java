@@ -124,11 +124,18 @@ public abstract class BlockButton extends BlockFlowable implements Faceable {
 
     @Override
     public boolean onBreak(Item item) {
-        if (isActivated()) {
-            this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
+        if (!super.onBreak(item)) {
+            return false;
         }
 
-        return super.onBreak(item);
+        if (isActivated()) {
+            this.level.getServer().getPluginManager().callEvent(new BlockRedstoneEvent(this, 15, 0));
+
+            this.level.updateAroundRedstone(this, null);
+            this.level.updateAroundRedstone(getSideVec(getFacing().getOpposite()), null);
+        }
+
+        return true;
     }
 
     @Override

@@ -196,7 +196,7 @@ public class EntityHuman extends EntityHumanType {
                 this.setSkin(newSkin);
             }
 
-            this.uuid = Utils.dataToUUID(String.valueOf(this.getId()).getBytes(StandardCharsets.UTF_8), this.skin
+            this.uuid = Utils.dataToUUID(String.valueOf(this.getId()).getBytes(StandardCharsets.UTF_8), this.getSkin()
                     .getSkinData().data, this.getNameTag().getBytes(StandardCharsets.UTF_8));
         }
 
@@ -212,18 +212,18 @@ public class EntityHuman extends EntityHumanType {
     public void saveNBT() {
         super.saveNBT();
 
-        if (skin != null) {
+        if (this.getSkin() != null) {
             CompoundTag skinTag = new CompoundTag()
                     .putByteArray("Data", this.getSkin().getSkinData().data)
                     .putInt("SkinImageWidth", this.getSkin().getSkinData().width)
                     .putInt("SkinImageHeight", this.getSkin().getSkinData().height)
-                    .putString("ModelId", this.skin.getSkinId())
+                    .putString("ModelId", this.getSkin().getSkinId())
                     .putString("CapeId", this.getSkin().getCapeId())
                     .putByteArray("CapeData", this.getSkin().getCapeData().data)
                     .putInt("CapeImageWidth", this.getSkin().getCapeData().width)
                     .putInt("CapeImageHeight", this.getSkin().getCapeData().height)
                     .putByteArray("SkinResourcePatch", this.getSkin().getSkinResourcePatch().getBytes(StandardCharsets.UTF_8))
-                    .putByteArray("GeometryData", this.skin.getGeometryData().getBytes(StandardCharsets.UTF_8))
+                    .putByteArray("GeometryData", this.getSkin().getGeometryData().getBytes(StandardCharsets.UTF_8))
                     .putByteArray("SkinAnimationData", this.getSkin().getAnimationData().getBytes(StandardCharsets.UTF_8))
                     .putBoolean("PremiumSkin", this.getSkin().isPremium())
                     .putBoolean("PersonaSkin", this.getSkin().isPersona())
@@ -289,16 +289,16 @@ public class EntityHuman extends EntityHumanType {
         if (this != player && !this.hasSpawned.containsKey(player.getLoaderId())) {
             this.hasSpawned.put(player.getLoaderId(), player);
 
-            if (!this.skin.isValid()) {
+            if (!this.getSkin().isValid()) {
                 throw new IllegalStateException(this.getClass().getSimpleName() + " must have a valid skin set");
             }
 
             if (this instanceof Player) {
                 this.server.updatePlayerListData(
-                        new PlayerListPacket.Entry(this.uuid, this.getId(), ((Player) this).getDisplayName(), this.skin, ((Player) this).getLoginChainData().getXUID(), ((Player) this).getLocatorBarColor()),
+                        new PlayerListPacket.Entry(this.uuid, this.getId(), ((Player) this).getDisplayName(), this.getSkin(), ((Player) this).getLoginChainData().getXUID(), ((Player) this).getLocatorBarColor()),
                         new Player[]{player});
             } else {
-                this.server.updatePlayerListData(this.uuid, this.getId(), this.getName(), this.skin, new Player[]{player});
+                this.server.updatePlayerListData(this.uuid, this.getId(), this.getName(), this.getSkin(), new Player[]{player});
             }
 
             AddPlayerPacket pk = new AddPlayerPacket();
