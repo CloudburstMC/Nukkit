@@ -56,7 +56,7 @@ public class BlockCandle extends BlockTransparentMeta {
     @Override
     public int onUpdate(int type) {
         if (type == Level.BLOCK_UPDATE_NORMAL) {
-            if (!isSupportValidBelow()) {
+            if (false && !isSupportValidBelow()) { // Follow vanilla behavior even if it's broken
                 this.getLevel().useBreakOn(this);
                 return Level.BLOCK_UPDATE_NORMAL;
             }

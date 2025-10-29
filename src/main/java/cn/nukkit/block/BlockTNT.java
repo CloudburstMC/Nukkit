@@ -8,12 +8,13 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.Sound;
-import cn.nukkit.math.NukkitRandom;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
 import cn.nukkit.utils.BlockColor;
+
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Created on 2015/12/8 by xtypr.
@@ -64,11 +65,9 @@ public class BlockTNT extends BlockSolid {
         prime(fuse, null);
     }
 
-    private static final NukkitRandom RANDOM = new NukkitRandom();
-
     public void prime(int fuse, Entity source) {
         this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
-        double mot = RANDOM.nextSignedFloat() * 6.283185307179586;
+        double mot = (ThreadLocalRandom.current().nextFloat() * 2 - 1) * 6.283185307179586;
         CompoundTag nbt = new CompoundTag()
                 .putList(new ListTag<DoubleTag>("Pos")
                         .add(new DoubleTag("", this.x + 0.5))
@@ -120,12 +119,12 @@ public class BlockTNT extends BlockSolid {
     public BlockColor getColor() {
         return BlockColor.TNT_BLOCK_COLOR;
     }
-    
+
     @Override
     public boolean hasEntityCollision() {
         return true;
     }
-    
+
     @Override
     public void onEntityCollide(Entity entity) {
         if (entity instanceof EntityArrow && entity.isOnFire()) {

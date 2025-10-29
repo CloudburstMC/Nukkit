@@ -2585,7 +2585,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             @Override
             public void onRun() {
-                this.event = new PlayerAsyncPreLoginEvent(username, uuid, loginChainData, skin, playerInstance.getAddress(), playerInstance.getPort());
+                this.event = new PlayerAsyncPreLoginEvent(username, uuid, loginChainData, playerInstance.getSkin(), playerInstance.getAddress(), playerInstance.getPort());
                 server.getPluginManager().callEvent(this.event);
             }
 
@@ -3954,7 +3954,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             BlockEntityItemFrame itemFrame1 = (BlockEntityItemFrame) be;
 
                             if (itemFrame1.getItem() instanceof ItemMap && ((ItemMap) itemFrame1.getItem()).getMapId() == pk.mapId) {
-                                ((ItemMap) itemFrame1.getItem()).sendImage(this);
+                                ((ItemMap) itemFrame1.getItem()).trySendImage(this);
                                 return;
                             }
                         }
@@ -4006,7 +4006,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             }
 
                             map.setImage(image);
-                            map.sendImage(this);
+                            map.trySendImage(this);
                         } catch (Exception ex) {
                             this.getServer().getLogger().debug(username + ": there was an error while generating map image", ex);
                         }
