@@ -1,74 +1,74 @@
-# Advanced configuration file for Nukkit
-# Some of these settings are safe, others can break your server if modified incorrectly
-# New settings/defaults won't appear automatically on this file when upgrading
+# Nukkit gelişmiş konfigürasyon dosyaları
+# Bazı ayarlar güvenilir değil, yanlış modifiye edilirse sunucunuzun bozulmasına sebep olabilir.
+# Güncelleme sırasında bu dosyada yeni ayarlar otomatik olarak gözükmeyecektir.
 
 settings:
- #Multi-language setting
- #Available: eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, idn, cze, tur, fin
+ #Çoklu dil ayarı
+ #Kullanılabilenler: eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, idn, cze, tur, fin
  language: "eng"
- #Whether to send all strings translated to server locale or let the device handle them
+ #Çevirilen tüm yazıları sunucuya mı göndermek yoksa cihazın bunları işlemesine izin mi vermek
  force-language: false
  shutdown-message: "Server closed"
- #Allow listing plugins via Query
+ #Query yoluyla eklentilerin listelenmesine izin verir
  query-plugins: true
- #Show a console message when a plugin uses deprecated API methods
+ #Bir eklenti deprecated API metotları kullanıyorsa konsola yazdırır
  deprecated-verbose: true
- #Number of AsyncTask workers
- #If set to auto, it'll try to detect the number of cores (and at least 4)
+ #AsyncTask worker sayısı
+ #Otomatik olarak ayarlanırsa, çekirdek sayısını (en az 4) algılamaya çalışır
  async-workers: auto
 
 network:
- #Threshold for batching packets, in bytes. Only these packets will be compressed
- #Set to 0 to compress everything, -1 to disable
+ #Paketleri toplu işleme eşiği, bayt cinsinden. Sadece bu paketler sıkıştırılır.
+ #Her şeyi sıkıştırmak için 0, devre dışı bırakmak için -1 olarak ayarlayın.
  batch-threshold: 256
- #Compression level used of Zlib when sending batched packets. Higher = more CPU, less bandwidth usage
+ #Toplu paketleri gönderirken Zlib'in kullandığı sıkıştırma düzeyi. Yüksek = daha fazla CPU, daha az bant genişliği
  compression-level: 5
- #Enable high performance packet compression using Snappy (experimental)
+ #Snappy kullanarak yüksek performanslı paket sıkıştırmayı etkinleştirir (deneysel).
  compression-use-snappy: false
- #Enable network encryption
+ #Ağ şifrelemesini etkinleştirir
  encryption: true
 
 debug:
- #If > 1, it will show debug messages in the console
+ #Eğer > 1 ise konsolda hata ayıklama mesajları gösterilir
  level: 1
 
 level-settings:
- #The default format that levels will use when created
+ #Dünyalar oluşturulurken kullanılacak format
  default-format: leveldb
- #Automatically change levels tick rate to maintain 20 ticks per second
+ #Otomatik olarak saniyede 20 tick tutmak için dünya tick hızını değiştirir
  auto-tick-rate: true
  auto-tick-rate-limit: 20
- #Sets the base tick rate (1 = 20 ticks per second, 2 = 10 ticks per second, etc.)
+ #Temel tick hızını ayarlar (1 = saniyede 20 tick, 2 = saniyede 10 tick vb.)
  base-tick-rate: 1
- #Tick all players each tick even when other settings disallow this
+ #Diğer ayarlar izin vermese bile her tickte oyuncuları tickler
  always-tick-players: false
 
 chunk-sending:
- #Amount of chunks sent to players per tick
+ # Her tikte oyunculara gönderilen chunk miktarı
  per-tick: 4
- #Amount of chunks that need to be sent before spawning the player
+ #Oyuncu doğmadan önce gönderilmesi gereken chunk miktarı
  spawn-threshold: 56
- #Save a serialized copy of the chunk in memory for faster sending
- #Useful in mostly-static worlds where lots of players join at the same time
+ #Daha hızlı chunk gönderimi için chunkun serialize edilmiş bir kopyasını bellekte saklar
+ #Aynı anda çok sayıda oyuncunun katıldığı, çoğunlukla statik dünyalarda kullanışlıdır.
  cache-chunks: false
 
 chunk-ticking:
- #Max amount of chunks processed each tick
+ #Her tikte işlenen maksimum chunk miktarı
  per-tick: 40
- #Radius of chunks around a player to tick
+ #Bir oyuncunun çevresinde ticklenecek chunkların yarıçapı
  tick-radius: 3
  clear-tick-list: false
 
 chunk-generation:
- #Max. amount of chunks in the waiting queue to be generated
+ #Oluşturulacak bekleme kuyruğundaki maksimum chunk sayısı
  queue-size: 8
- #Max. amount of chunks in the waiting queue to be populated
+ #Doldurulacak bekleme kuyruğundaki maksimum chunk sayısı
  population-queue-size: 8
 
 leveldb:
- #Use native LevelDB implementation for better performance
+ #Daha iyi performans için yerel LevelDB sistemini kullanır
  use-native: false
- #Set LevelDB memory cache size
+ #LevelDB bellek cache boyutunu ayarlar
  cache-size-mb: 80
 
 ticks-per:
@@ -76,23 +76,22 @@ ticks-per:
  autosave: 6000
 
 player:
- #If true, player data will be saved as players/playername.dat
- #If false, nukkit won't save player data as "dat" files, in order that plugins can do something on it.
+ #Eğer true ise, oyuncu verileri players/playername.dat olarak kaydedilir
+ #Eğer false ise, nukkit eklentilerin bu veriler üzerinde işlem yapabilmesi için oyuncu verilerini "dat" dosyaları üzerinden kaydetmez.
  save-player-data: true
- #The time between skin change action in seconds, set to 0 if you dont want the cooldown
+ #Skin değiştirmesi arasındaki saniye cinsinden bekleme süresi, eğer istemiyorsanız 0 olarak ayarlayın
  skin-change-cooldown: 15
- #Attacking entities resets sprinting, you can disable that here
+ #Saldıran varlıklar koşmayı bırakır, bunu buradan devre dışı bırakabilirsiniz
  attack-stop-sprint: true
 
 aliases:
- #Aliases for commands
- #Examples:
+ #Komutlar için takma adlar
+ #Örnekler:
  #showtheversion: version
  #savestop: [save-all, stop]
 
 worlds:
- #Worlds that the server will use. Options are specific to the chosen generator, and may result in broken generation or
- #be ignored completely.
+ # Sunucunun kullanacağı dünyalar. Seçilen jeneratöre ait ayarlar bozuk jenerasyona sebep olabilir veya sayılmayabilir.
  world:
   #seed: 404
   generator: normal
