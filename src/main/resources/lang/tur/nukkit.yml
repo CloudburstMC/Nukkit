@@ -72,7 +72,7 @@ leveldb:
  cache-size-mb: 80
 
 ticks-per:
- #How often worlds and player data are saved when auto-save=on in server.properties
+ #server.properties dosyasında auto-save=on olduğunda dünyalar ve oyuncu verilerini ne sıklıkla kaydedileceğini ayarlar
  autosave: 6000
 
 player:
