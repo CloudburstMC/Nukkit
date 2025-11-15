@@ -4,8 +4,10 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemDye;
+import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.particle.BoneMealParticle;
+import cn.nukkit.level.particle.DestroyBlockParticle;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
@@ -100,9 +102,13 @@ public class BlockDoublePlant extends BlockFlowable {
         if ((this.getDamage() & TOP_HALF_BITMASK) == TOP_HALF_BITMASK) { // Top half
             Block down = down();
             if (down instanceof BlockDoublePlant) {
-                this.getLevel().useBreakOn(down);
+                this.getLevel().useBreakOn(down, item, null, true);
             }
         } else {
+            Block up = up();
+            if (up instanceof BlockDoublePlant) {
+                this.getLevel().addParticle(new DestroyBlockParticle(this.add(0.5, 1), this));
+            }
             this.getLevel().setBlock(this, Block.get(BlockID.AIR), true, true);
         }
 
@@ -175,5 +181,15 @@ public class BlockDoublePlant extends BlockFlowable {
 
     public Item toItem() {
         return new ItemBlock(this, this.getDamage() & 0x07, 1);
+    }
+
+    @Override
+    public int getToolType() {
+        return ItemTool.TYPE_SHEARS;
+    }
+
+    @Override
+    public boolean breakWhenPushed() {
+        return true;
     }
 }
