@@ -76,17 +76,26 @@ public abstract class ItemTool extends Item implements ItemDurable {
                 block.getToolType() == ItemTool.TYPE_HOE && this.isHoe() ||
                 block.getToolType() == ItemTool.TYPE_SWORD && this.isSword() ||
                 block.getToolType() == ItemTool.TYPE_SHEARS && this.isShears()
-                ) {
+        ) {
             this.meta++;
-        } else if (this.isSword() && block.getHardness() > 0) {
-            this.meta += 2;
-        } else if (this.isHoe()) {
-            if (block.getId() == GRASS || block.getId() == DIRT) {
-                this.meta++;
-            }
-        } else {
-            this.meta++;
+            return true;
         }
+
+        if (this.isSword() && block.getHardness() > 0) {
+            this.meta += 2;
+            return true;
+        }
+
+        if (this.isHoe() && ((block.getId() == GRASS || block.getId() == DIRT))) {
+            this.meta++;
+            return true;
+        }
+
+        if (block.getId() == TALL_GRASS || block.getId() == FLOWER || block.getId() == DOUBLE_PLANT) {
+            return true;
+        }
+
+        this.meta++;
         return true;
     }
 
