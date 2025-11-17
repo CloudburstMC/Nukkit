@@ -1,7 +1,7 @@
 [versions]
 junit = "5.9.2"
-log4j = "2.20.0"
-jline = "3.22.0"
+log4j = "2.25.2"
+jline = "3.30.6"
 fastutilmaps = "8.5.15-SNAPSHOT"
 
 [libraries]
