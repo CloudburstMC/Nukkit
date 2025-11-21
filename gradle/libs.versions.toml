@@ -5,7 +5,7 @@ jline = "3.22.0"
 fastutilmaps = "8.5.15-SNAPSHOT"
 
 [libraries]
-network = { group = "org.cloudburstmc.netty", name = "netty-transport-raknet", version = "1.0.0.CR3-SNAPSHOT" }
+network = { group = "org.cloudburstmc.netty", name = "netty-transport-raknet", version = "1.0.0.CR3-20251031.125212-22" }
 epoll = { group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.101.Final" }
 fastutil = { group = "it.unimi.dsi", name = "fastutil-core", version = "8.5.15" }
 fastutil-int-short-maps = { group = "org.cloudburstmc.fastutil.maps", name = "int-short-maps", version.ref = "fastutilmaps" }

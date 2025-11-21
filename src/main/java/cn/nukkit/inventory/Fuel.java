@@ -64,6 +64,9 @@ public abstract class Fuel {
         duration.put(Item.MANGROVE_CHEST_BOAT, (short) 1200);
         duration.put(Item.OAK_CHEST_BOAT, (short) 1200);
         duration.put(Item.SPRUCE_CHEST_BOAT, (short) 1200);
+        duration.put(Item.CHERRY_CHEST_BOAT, (short) 1200);
+        duration.put(Item.PALE_OAK_CHEST_BOAT, (short) 1200);
+        duration.put(Item.BAMBOO_CHEST_RAFT, (short) 1200);
         duration.put(Item.BLAZE_ROD, (short) 2400);
         duration.put(Item.BROWN_MUSHROOM_BLOCK, (short) 300);
         duration.put(Item.RED_MUSHROOM_BLOCK, (short) 300);
@@ -76,6 +79,8 @@ public abstract class Fuel {
         duration.put(Item.ACACIA_DOOR, (short) 200);
         duration.put(Item.DARK_OAK_DOOR, (short) 200);
         duration.put(Item.MANGROVE_DOOR, (short) 200);
+        duration.put(Item.BAMBOO_DOOR, (short) 200);
+        duration.put(Item.CHERRY_DOOR, (short) 200);
         duration.put(Item.BANNER, (short) 300);
         duration.put(Item.CROSSBOW, (short) 200);
         duration.put(Item.DEAD_BUSH, (short) 100);
@@ -86,6 +91,8 @@ public abstract class Fuel {
         duration.put(Item.DARKOAK_SIGN, (short) 200);
         duration.put(Item.JUNGLE_SIGN, (short) 200);
         duration.put(Item.MANGROVE_SIGN, (short) 200);
+        duration.put(Item.BAMBOO_SIGN, (short) 200);
+        duration.put(Item.CHERRY_SIGN, (short) 200);
 
         /* New blocks use negative IDs in their item form */
         duration.put(255 - BlockID.DRIED_KELP_BLOCK, (short) 4000);
@@ -100,6 +107,7 @@ public abstract class Fuel {
         duration.put(255 - BlockID.SMITHING_TABLE, (short) 300);
         duration.put(255 - BlockID.COMPOSTER, (short) 300);
         duration.put(255 - BlockID.LOOM, (short) 300);
+        duration.put(255 - BlockID.CHISELED_BOOKSHELF, (short) 300);
         duration.put(255 - BlockID.WOOD_BARK, (short) 300);
         duration.put(255 - BlockID.STRIPPED_OAK_LOG, (short) 300);
         duration.put(255 - BlockID.STRIPPED_SPRUCE_LOG, (short) 300);
@@ -108,24 +116,32 @@ public abstract class Fuel {
         duration.put(255 - BlockID.STRIPPED_ACACIA_LOG, (short) 300);
         duration.put(255 - BlockID.STRIPPED_DARK_OAK_LOG, (short) 300);
         duration.put(255 - BlockID.STRIPPED_MANGROVE_LOG, (short) 300);
+        duration.put(255 - BlockID.STRIPPED_BAMBOO_BLOCK, (short) 300);
+        duration.put(255 - BlockID.STRIPPED_CHERRY_LOG, (short) 300);
         duration.put(255 - BlockID.SPRUCE_TRAPDOOR, (short) 300);
         duration.put(255 - BlockID.BIRCH_TRAPDOOR, (short) 300);
         duration.put(255 - BlockID.JUNGLE_TRAPDOOR, (short) 300);
         duration.put(255 - BlockID.ACACIA_TRAPDOOR, (short) 300);
         duration.put(255 - BlockID.DARK_OAK_TRAPDOOR, (short) 300);
         duration.put(255 - BlockID.MANGROVE_TRAPDOOR, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_TRAPDOOR, (short) 300);
+        duration.put(255 - BlockID.CHERRY_TRAPDOOR, (short) 300);
         duration.put(255 - BlockID.SPRUCE_BUTTON, (short) 300);
         duration.put(255 - BlockID.BIRCH_BUTTON, (short) 300);
         duration.put(255 - BlockID.JUNGLE_BUTTON, (short) 300);
         duration.put(255 - BlockID.ACACIA_BUTTON, (short) 300);
         duration.put(255 - BlockID.DARK_OAK_BUTTON, (short) 300);
         duration.put(255 - BlockID.MANGROVE_BUTTON, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_BUTTON, (short) 300);
+        duration.put(255 - BlockID.CHERRY_BUTTON, (short) 300);
         duration.put(255 - BlockID.SPRUCE_PRESSURE_PLATE, (short) 300);
         duration.put(255 - BlockID.BIRCH_PRESSURE_PLATE, (short) 300);
         duration.put(255 - BlockID.JUNGLE_PRESSURE_PLATE, (short) 300);
         duration.put(255 - BlockID.ACACIA_PRESSURE_PLATE, (short) 300);
         duration.put(255 - BlockID.DARK_OAK_PRESSURE_PLATE, (short) 300);
         duration.put(255 - BlockID.MANGROVE_PRESSURE_PLATE, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_PRESSURE_PLATE, (short) 300);
+        duration.put(255 - BlockID.CHERRY_PRESSURE_PLATE, (short) 300);
         duration.put(255 - BlockID.AZALEA, (short) 100);
         duration.put(255 - BlockID.FLOWERING_AZALEA, (short) 100);
         duration.put(255 - BlockID.MANGROVE_WOOD, (short) 300);
@@ -135,5 +151,26 @@ public abstract class Fuel {
         duration.put(255 - BlockID.MANGROVE_STAIRS, (short) 300);
         duration.put(255 - BlockID.MANGROVE_SLAB, (short) 300);
         duration.put(255 - BlockID.MANGROVE_DOUBLE_SLAB, (short) 300);
+        duration.put(255 - BlockID.MANGROVE_PROPAGULE, (short) 100);
+        duration.put(255 - BlockID.BAMBOO_BLOCK, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_PLANKS, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_FENCE, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_FENCE_GATE, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_STAIRS, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_SLAB, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_DOUBLE_SLAB, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_SAPLING, (short) 50);
+        duration.put(255 - BlockID.BAMBOO_MOSAIC, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_MOSAIC_STAIRS, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_MOSAIC_SLAB, (short) 300);
+        duration.put(255 - BlockID.BAMBOO_MOSAIC_DOUBLE_SLAB, (short) 300);
+        duration.put(255 - BlockID.CHERRY_WOOD, (short) 300);
+        duration.put(255 - BlockID.CHERRY_PLANKS, (short) 300);
+        duration.put(255 - BlockID.CHERRY_FENCE, (short) 300);
+        duration.put(255 - BlockID.CHERRY_FENCE_GATE, (short) 300);
+        duration.put(255 - BlockID.CHERRY_STAIRS, (short) 300);
+        duration.put(255 - BlockID.CHERRY_SLAB, (short) 300);
+        duration.put(255 - BlockID.CHERRY_DOUBLE_SLAB, (short) 300);
+        duration.put(255 - BlockID.CHERRY_SAPLING, (short) 100);
     }
 }

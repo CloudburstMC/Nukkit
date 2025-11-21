@@ -37,7 +37,7 @@ public class ItemFirework extends Item {
 
                 CompoundTag ex = new CompoundTag()
                         .putByteArray("FireworkColor", new byte[]{(byte) DyeColor.BLACK.getDyeData()})
-                        .putByteArray("FireworkFade", new byte[]{})
+                        .putByteArray("FireworkFade", new byte[0])
                         .putBoolean("FireworkFlicker", false)
                         .putBoolean("FireworkTrail", false)
                         .putByte("FireworkType", FireworkExplosion.ExplosionType.CREEPER_SHAPED.ordinal());

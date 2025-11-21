@@ -6564,10 +6564,12 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             // Don't trust the client to handle this
-            this.moveBlockUIContents(Player.ANVIL_WINDOW_ID); // LOOM_WINDOW_ID is the same as ANVIL_WINDOW_ID?
+            this.moveBlockUIContents(Player.ANVIL_WINDOW_ID);
             this.moveBlockUIContents(Player.ENCHANT_WINDOW_ID);
             this.moveBlockUIContents(Player.BEACON_WINDOW_ID);
+            this.moveBlockUIContents(Player.LOOM_WINDOW_ID);
             this.moveBlockUIContents(Player.SMITHING_WINDOW_ID);
+            this.moveBlockUIContents(Player.GRINDSTONE_WINDOW_ID);
             this.playerUIInventory.clearAll();
 
             if (this.craftingGrid instanceof BigCraftingGrid && this.connected) {

@@ -46,7 +46,7 @@ public class WeatherCommand extends VanillaCommand {
                 return true;
             }
         } else {
-            seconds = 600 * 20;
+            seconds = 600;
         }
 
         if (sender instanceof Player) {
