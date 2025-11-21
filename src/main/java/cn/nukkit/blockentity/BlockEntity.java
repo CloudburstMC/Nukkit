@@ -127,10 +127,6 @@ public abstract class BlockEntity extends Position {
         Class<? extends BlockEntity> clazz = knownBlockEntities.get(type);
         if (clazz != null) {
 
-            if (clazz == null) {
-                return null;
-            }
-
             for (Constructor<?> constructor : clazz.getConstructors()) {
                 if (blockEntity != null) {
                     break;

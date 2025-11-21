@@ -9,7 +9,7 @@ public class TranslationContainer extends TextContainer implements Cloneable {
     protected String[] params;
 
     public TranslationContainer(String text) {
-        this(text, new String[]{});
+        this(text, new String[0]);
     }
 
     public TranslationContainer(String text, String params) {
