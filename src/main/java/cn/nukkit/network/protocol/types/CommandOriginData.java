@@ -2,7 +2,6 @@ package cn.nukkit.network.protocol.types;
 
 import lombok.ToString;
 
-import java.util.OptionalLong;
 import java.util.UUID;
 
 /**
@@ -15,20 +14,13 @@ public final class CommandOriginData {
     public final Origin type;
     public final UUID uuid;
     public final String requestId;
-    private final Long varlong;
+    public final Long playerId;
 
-    public CommandOriginData(Origin type, UUID uuid, String requestId, Long varlong) {
+    public CommandOriginData(Origin type, UUID uuid, String requestId, Long playerId) {
         this.type = type;
         this.uuid = uuid;
         this.requestId = requestId;
-        this.varlong = varlong;
-    }
-
-    public OptionalLong getVarLong() {
-        if (varlong == null) {
-            return OptionalLong.empty();
-        }
-        return OptionalLong.of(varlong);
+        this.playerId = playerId;
     }
 
     public enum Origin {

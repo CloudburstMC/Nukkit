@@ -27,6 +27,7 @@ public class MobEffectPacket extends DataPacket {
     public boolean particles = true;
     public int duration = 0;
     public long tick;
+    public boolean ambient;
 
     @Override
     public void decode() {
@@ -43,5 +44,6 @@ public class MobEffectPacket extends DataPacket {
         this.putBoolean(this.particles);
         this.putVarInt(this.duration);
         this.putUnsignedVarLong(this.tick);
+        this.putBoolean(this.ambient);
     }
 }

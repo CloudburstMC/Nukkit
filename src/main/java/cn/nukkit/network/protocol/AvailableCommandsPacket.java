@@ -1,11 +1,9 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.command.data.*;
-import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
 import java.util.*;
-import java.util.function.ObjIntConsumer;
 
 /**
  * @author MagicDroidX
@@ -15,10 +13,6 @@ import java.util.function.ObjIntConsumer;
 public class AvailableCommandsPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.AVAILABLE_COMMANDS_PACKET;
-
-    private static final ObjIntConsumer<BinaryStream> WRITE_BYTE = (s, v) -> s.putByte((byte) v);
-    private static final ObjIntConsumer<BinaryStream> WRITE_SHORT = BinaryStream::putLShort;
-    private static final ObjIntConsumer<BinaryStream> WRITE_INT = BinaryStream::putLInt;
 
     public static final int ARG_FLAG_VALID = 0x100000;
     public static final int ARG_FLAG_ENUM = 0x200000;
@@ -47,6 +41,8 @@ public class AvailableCommandsPacket extends DataPacket {
 
     public Map<String, CommandDataVersions> commands;
     public final Map<String, List<String>> softEnums = new HashMap<>();
+
+    private static final String[] PERMISSION_LEVEL = {"any", "gamedirectors", "admin", "host", "owner", "internal"};
 
     @Override
     public byte pid() {
@@ -94,15 +90,6 @@ public class AvailableCommandsPacket extends DataPacket {
         List<CommandEnum> enums = new ArrayList<>(enumsSet);
         List<String> postFixes = new ArrayList<>(postFixesSet);
 
-        ObjIntConsumer<BinaryStream> indexWriter;
-        if (enumValues.size() < 256) {
-            indexWriter = WRITE_BYTE;
-        } else if (enumValues.size() < 65536) {
-            indexWriter = WRITE_SHORT;
-        } else {
-            indexWriter = WRITE_INT;
-        }
-
         this.putUnsignedVarInt(enumValues.size());
         enumValues.forEach(this::putString);
 
@@ -116,7 +103,7 @@ public class AvailableCommandsPacket extends DataPacket {
             putString(cmdEnum.getName());
 
             List<String> values = cmdEnum.getValues();
-            putUnsignedVarInt(values.size());
+            this.putUnsignedVarInt(values.size());
 
             for (String val : values) {
                 int i = enumValues.indexOf(val);
@@ -125,7 +112,7 @@ public class AvailableCommandsPacket extends DataPacket {
                     throw new IllegalStateException("Enum value '" + val + "' not found");
                 }
 
-                indexWriter.accept(this, i);
+                this.putLInt(i);
             }
         });
 
@@ -138,7 +125,7 @@ public class AvailableCommandsPacket extends DataPacket {
             putString(name);
             putString(data.description);
             putLShort(data.flags);
-            putByte((byte) data.permission);
+            putString(PERMISSION_LEVEL[data.permission]);
 
             putLInt(data.aliases == null ? -1 : enums.indexOf(data.aliases));
 
@@ -150,8 +137,6 @@ public class AvailableCommandsPacket extends DataPacket {
                 putUnsignedVarInt(overload.input.parameters.length);
 
                 for (CommandParameter parameter : overload.input.parameters) {
-                    putString(parameter.name);
-
                     int type = 0;
                     if (parameter.postFix != null) {
                         int i = postFixes.indexOf(parameter.postFix);
@@ -172,6 +157,7 @@ public class AvailableCommandsPacket extends DataPacket {
                         }
                     }
 
+                    putString(parameter.name);
                     putLInt(type);
                     putBoolean(parameter.optional);
                     putByte(parameter.options);

@@ -50,6 +50,10 @@ public class EntityElderGuardian extends EntitySwimmingMob {
             drops.add(Item.get(Item.PRISMARINE_SHARD, 0, 1));
         }
 
+        if (Utils.rand(1, 100) <= 20) {
+            drops.add(Item.get(Item.TIDE_ARMOR_TRIM_SMITHING_TEMPLATE, 0, 1));
+        }
+
         if (this.lastDamageCause instanceof EntityDamageByEntityEvent) {
             if (((EntityDamageByEntityEvent) this.lastDamageCause).getDamager() instanceof Player) {
                 drops.add(Item.get(Item.SPONGE, BlockSponge.WET, 1));
