@@ -30,7 +30,7 @@ public abstract class ObjectNetherTree extends ObjectTree {
     public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
         int maxBlockY = level.getMaxBlockY();
 
-        if (y >= maxBlockY) {
+        if (y + treeHeight >= maxBlockY) {
             return;
         }
 

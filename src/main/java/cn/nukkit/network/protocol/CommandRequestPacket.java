@@ -39,16 +39,15 @@ public class CommandRequestPacket extends DataPacket {
     public void decode() {
         this.command = this.getString();
 
-        CommandOriginData.Origin type = CommandOriginData.Origin.values()[this.getVarInt()];
+        this.getString();
+        CommandOriginData.Origin type = CommandOriginData.Origin.PLAYER;
+
         UUID uuid = this.getUUID();
         String requestId = this.getString();
-        Long varLong = null;
-        if (type == CommandOriginData.Origin.DEV_CONSOLE || type == CommandOriginData.Origin.TEST) {
-            varLong = this.getVarLong();
-        }
-        this.data = new CommandOriginData(type, uuid, requestId, varLong);
+        Long playerId = this.getLLong();
+        this.data = new CommandOriginData(type, uuid, requestId, playerId);
         this.internal = this.getBoolean();
-        this.getVarInt(); // version
+        this.getString(); // version
     }
 
     @Override

@@ -2191,7 +2191,9 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     public void dropExpOrb(Vector3 source, int exp, Vector3 motion, int delay) {
         if (exp > 0) {
             Random rand = ThreadLocalRandom.current();
-            for (int split : EntityXPOrb.splitIntoOrbSizes(exp)) {
+            while (exp > 0) {
+                int split = EntityXPOrb.getMaxOrbSize(exp);
+                exp -= split;
                 CompoundTag nbt = Entity.getDefaultNBT(source, motion == null ? new Vector3(
                                 (rand.nextDouble() * 0.2 - 0.1) * 2,
                                 rand.nextDouble() * 0.4,
