@@ -916,4 +916,13 @@ public class BinaryStream {
         }
         this.putBoolean(!experiments.isEmpty());
     }
+
+    public <T> void putOptionalNull(T object, BiConsumer<BinaryStream, T> consumer) {
+        if (object != null) {
+            this.putBoolean(true);
+            consumer.accept(this, object);
+        } else {
+            this.putBoolean(false);
+        }
+    }
 }

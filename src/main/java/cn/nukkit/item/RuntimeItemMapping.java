@@ -112,7 +112,7 @@ public class RuntimeItemMapping {
         LegacyEntry legacyEntry = this.runtime2Legacy.get(runtimeId);
         if (legacyEntry == null) {
             //throw new IllegalArgumentException("Unknown runtime2Legacy mapping: " + runtimeId);
-            log.warn("Unknown runtime2Legacy mapping: " + runtimeId);
+            log.debug("Unknown runtime2Legacy mapping: " + runtimeId); // TODO: resolve unknown recipes and enable this as warning again
             return new LegacyEntry(0, false, 0);
         }
         return legacyEntry;

@@ -129,9 +129,9 @@ public class Binary {
                     stream.putLFloat(((FloatEntityData) d).getData());
                     break;
                 case Entity.DATA_TYPE_STRING:
-                    String s = ((StringEntityData) d).getData();
-                    stream.putUnsignedVarInt(s.getBytes(StandardCharsets.UTF_8).length);
-                    stream.put(s.getBytes(StandardCharsets.UTF_8));
+                    byte[] s = ((StringEntityData) d).getData().getBytes(StandardCharsets.UTF_8);
+                    stream.putUnsignedVarInt(s.length);
+                    stream.put(s);
                     break;
                 case Entity.DATA_TYPE_NBT:
                     NBTEntityData slot = (NBTEntityData) d;

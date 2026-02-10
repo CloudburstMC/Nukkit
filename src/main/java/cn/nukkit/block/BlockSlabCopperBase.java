@@ -42,11 +42,6 @@ public abstract class BlockSlabCopperBase extends BlockSlab implements Waxable, 
     }
 
     @Override
-    public double getResistance() {
-        return 6;
-    }
-
-    @Override
     public int getToolType() {
         return ItemTool.TYPE_PICKAXE;
     }

@@ -15,7 +15,7 @@ public class BlockStairsSmoothRedSandstone extends BlockStairsRedSandstone {
 
     @Override
     public String getName() {
-        return "Smooth RedSand stone Stairs";
+        return "Smooth Red Sandstone Stairs";
     }
 
     @Override

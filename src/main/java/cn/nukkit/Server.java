@@ -1095,7 +1095,7 @@ public class Server {
     }
 
     public void sendRecipeList(Player player) {
-        player.dataPacket(CraftingManager.packet);
+        player.dataPacket(craftingManager.getCachedPacket());
     }
 
     private void checkTickUpdates(int currentTick) {

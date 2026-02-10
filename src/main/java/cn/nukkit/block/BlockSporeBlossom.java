@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Level;
 import cn.nukkit.math.BlockFace;
@@ -33,7 +34,10 @@ public class BlockSporeBlossom extends BlockTransparent {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (Block.canConnectToFullSolid(this.up())) {
-            return super.place(item, block, target, face, fx, fy, fz, player);
+            if (super.place(item, block, target, face, fx, fy, fz, player)) {
+                BlockEntity.createBlockEntity(BlockEntity.SPORE_BLOSSOM, this.getChunk(), BlockEntity.getDefaultCompound(this, BlockEntity.SPORE_BLOSSOM));
+                return true;
+            }
         }
         return false;
     }

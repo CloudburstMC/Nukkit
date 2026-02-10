@@ -9,7 +9,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 
-public class ShearsDispenseBehaviour extends DefaultDispenseBehavior {
+public class ShearsDispenseBehavior extends DefaultDispenseBehavior {
 
     @Override
     public Item dispense(BlockDispenser block, BlockFace face, Item item) {

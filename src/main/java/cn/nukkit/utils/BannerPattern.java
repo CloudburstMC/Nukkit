@@ -87,7 +87,9 @@ public class BannerPattern {
         PATTERN_CREEPER("cre"),
         PATTERN_SKULL("sku"),
         PATTERN_FLOWER("flo"),
-        PATTERN_MOJANG("moj");
+        PATTERN_MOJANG("moj"),
+        PATTERN_FLOW("flw"),
+        PATTERN_GUSTER("gus");
 
         private final static Map<String, Type> BY_NAME = new HashMap<>();
 

@@ -5,8 +5,9 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.math.BlockFace;
+import cn.nukkit.utils.BlockColor;
 
-public class BlockMangroveRootsMuddy extends BlockMangroveRoots {
+public class BlockMangroveRootsMuddy extends BlockSolid {
 
     @Override
     public String getName() {
@@ -24,23 +25,8 @@ public class BlockMangroveRootsMuddy extends BlockMangroveRoots {
     }
 
     @Override
-    public int getBurnChance() {
-        return 0;
-    }
-
-    @Override
-    public int getBurnAbility() {
-        return 0;
-    }
-
-    @Override
     public Item toItem() {
         return new ItemBlock(Block.get(this.getId(), 0), 0);
-    }
-
-    @Override
-    public WaterloggingType getWaterloggingType() {
-        return WaterloggingType.NO_WATERLOGGING;
     }
 
     @Override
@@ -73,5 +59,20 @@ public class BlockMangroveRootsMuddy extends BlockMangroveRoots {
             default:
                 return BlockFace.Axis.Y;
         }
+    }
+
+    @Override
+    public double getHardness() {
+        return 0.7;
+    }
+
+    @Override
+    public double getResistance() {
+        return 0.7;
+    }
+
+    @Override
+    public BlockColor getColor() {
+        return BlockColor.SPRUCE_BLOCK_COLOR;
     }
 }

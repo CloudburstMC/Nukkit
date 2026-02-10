@@ -7,7 +7,7 @@ import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemPotion;
 import cn.nukkit.math.BlockFace;
 
-public class PotionDispenseBehaviour extends DefaultDispenseBehavior {
+public class PotionDispenseBehavior extends DefaultDispenseBehavior {
 
     @Override
     public Item dispense(BlockDispenser block, BlockFace face, Item item) {

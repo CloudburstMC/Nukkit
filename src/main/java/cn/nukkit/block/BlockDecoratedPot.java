@@ -66,7 +66,7 @@ public class BlockDecoratedPot extends BlockTransparentMeta {
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         this.setDamage(FACES[player != null ? player.getDirection().getHorizontalIndex() : 0]);
         if (this.getLevel().setBlock(this, this, true, true)) {
-            BlockEntity.createBlockEntity(BlockEntity.BEACON, this.getChunk(), BlockEntity.getDefaultCompound(this, BlockEntity.DECORATED_POT));
+            BlockEntity.createBlockEntity(BlockEntity.DECORATED_POT, this.getChunk(), BlockEntity.getDefaultCompound(this, BlockEntity.DECORATED_POT));
             return true;
         }
         return false;

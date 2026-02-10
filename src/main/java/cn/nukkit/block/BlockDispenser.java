@@ -189,7 +189,7 @@ public class BlockDispenser extends BlockSolidMeta implements Faceable {
             inv.setItem(slot, result);
 
             // TODO: Better solution. Give back empty buckets if a stack was in original slot.
-            if (result.getId() == Item.HONEY_BOTTLE || result.getId() == Item.GLASS_BOTTLE || (result.getId() == Item.BUCKET && result.getDamage() > 0)) {
+            if (result.getId() == Item.HONEY_BOTTLE || result.getId() == Item.GLASS_BOTTLE || result.getId() == Item.POTION || (result.getId() == Item.BUCKET && result.getDamage() > 0)) {
                 Item[] invFull = inv.addItem(original.decrement(result.count));
                 for (Item drop : invFull) {
                     DispenseBehaviorRegister.getBehavior(-1).dispense(this, getBlockFace(), drop);

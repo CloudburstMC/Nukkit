@@ -1,5 +1,7 @@
 package cn.nukkit.entity.data;
 
+import cn.nukkit.Nukkit;
+import cn.nukkit.Server;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.math.Vector3f;
 
@@ -35,6 +37,8 @@ public class Vector3fEntityData extends EntityData<Vector3f> {
             this.x = data.x;
             this.y = data.y;
             this.z = data.z;
+        } else if (Nukkit.DEBUG > 1) {
+            Server.getInstance().getLogger().warning("Vector3fEntityData setData called with null. This was allowed but does not reset the value.", new Throwable(""));
         }
     }
 

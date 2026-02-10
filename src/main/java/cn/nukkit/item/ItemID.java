@@ -345,7 +345,9 @@ public interface ItemID {
     int BRUSH = 735;
     int HONEYCOMB = 736;
     int HONEY_BOTTLE = 737;
-    //
+    int RECORD_PRECIPICE = 738;
+    int RECORD_CREATOR = 739;
+    int RECORD_CREATOR_MUSIC_BOX = 740;
     int LODESTONECOMPASS = 741;
     int LODESTONE_COMPASS = 741;
     int NETHERITE_INGOT = 742;
@@ -368,7 +370,15 @@ public interface ItemID {
     int RECORD_PIGSTEP = 759;
     int NETHER_SPROUTS = 760;
     int GOAT_HORN = 761;
-    //
+    int ARMADILLO_SCUTE = 762;
+    int WOLF_ARMOR = 763;
+    int TRIAL_KEY = 764;
+    int OMINOUS_TRIAL_KEY = 765;
+    int BREEZE_ROD = 766;
+    int MACE = 767;
+    int WIND_CHARGE = 768;
+    int OMINOUS_BOTTLE = 769;
+    int TORCHFLOWER_SEEDS = 770;
     int AMETHYST_SHARD = 771;
     int SPYGLASS = 772;
     int RECORD_OTHERSIDE = 773;

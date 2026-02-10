@@ -34,7 +34,7 @@ public class BlockDeepslate extends BlockSolidMeta {
 
     @Override
     public double getResistance() {
-        return 6;
+        return 30;
     }
 
     @Override

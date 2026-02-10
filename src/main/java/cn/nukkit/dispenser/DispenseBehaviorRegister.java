@@ -36,8 +36,9 @@ public final class DispenseBehaviorRegister {
         registerBehavior(ItemID.SPAWN_EGG, new SpawnEggDispenseBehavior());
         registerBehavior(BlockID.TNT, new TNTDispenseBehavior());
         registerBehavior(ItemID.FIRE_CHARGE, new FireChargeDispenseBehavior());
-        registerBehavior(ItemID.SHEARS, new ShearsDispenseBehaviour());
-        registerBehavior(ItemID.POTION, new PotionDispenseBehaviour());
+        registerBehavior(ItemID.SHEARS, new ShearsDispenseBehavior());
+        registerBehavior(ItemID.POTION, new PotionDispenseBehavior());
+        registerBehavior(ItemID.GLASS_BOTTLE, new GlassBottleDispenseBehavior());
         registerBehavior(ItemID.ARROW, new ProjectileDispenseBehavior("Arrow") {
             @Override
             protected double getMotion() {

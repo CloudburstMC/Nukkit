@@ -2,6 +2,7 @@ package cn.nukkit.entity.mob;
 
 import cn.nukkit.Player;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityMobWithTool;
 import cn.nukkit.entity.EntitySmite;
 import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
@@ -14,10 +15,12 @@ import cn.nukkit.utils.Utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EntitySkeleton extends EntityWalkingMob implements EntitySmite {
+public class EntitySkeleton extends EntityWalkingMob implements EntitySmite, EntityMobWithTool {
 
     public static final int NETWORK_ID = 34;
 
+    private Item tool;
+    private Item offhand;
 
     public EntitySkeleton(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -41,7 +44,7 @@ public class EntitySkeleton extends EntityWalkingMob implements EntitySmite {
 
     @Override
     public float getHeight() {
-        return 1.99f;
+        return 1.9f;
     }
 
     @Override
@@ -80,5 +83,32 @@ public class EntitySkeleton extends EntityWalkingMob implements EntitySmite {
                 }
             }
         }
+    }
+
+    @Override
+    public void spawnTo(Player player) {
+        super.spawnTo(player);
+
+        this.sendHandItems(player);
+    }
+
+    @Override
+    public Item getTool() {
+        return this.tool;
+    }
+
+    @Override
+    public void setTool(Item tool) {
+        this.tool = tool;
+    }
+
+    @Override
+    public Item getOffhand() {
+        return this.offhand;
+    }
+
+    @Override
+    public void setOffhand(Item offhand) {
+        this.offhand = offhand;
     }
 }

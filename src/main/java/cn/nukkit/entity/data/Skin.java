@@ -1,5 +1,6 @@
 package cn.nukkit.entity.data;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Server;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.utils.*;
@@ -114,7 +115,9 @@ public class Skin {
 
     public void setSkinId(String skinId) {
         if (skinId == null || skinId.trim().isEmpty()) {
-            Server.getInstance().getLogger().debug("Skin ID cannot be empty! ", new Throwable(""));
+            if (Nukkit.DEBUG > 1) {
+                Server.getInstance().getLogger().debug("Skin ID cannot be empty! ", new Throwable(""));
+            }
             return;
         }
         this.skinId = skinId;

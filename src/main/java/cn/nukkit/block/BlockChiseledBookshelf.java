@@ -1,9 +1,12 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
+import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.BlockColor;
 
 public class BlockChiseledBookshelf extends BlockSolidMeta {
@@ -72,5 +75,14 @@ public class BlockChiseledBookshelf extends BlockSolidMeta {
     @Override
     public boolean canBePushed() {
         return false; // prevent item loss issue with pistons until a working implementation
+    }
+
+    @Override
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        if (this.getLevel().setBlock(this, this, true, true)) {
+            BlockEntity.createBlockEntity(BlockEntity.CHISELED_BOOKSHELF, this.getChunk(), BlockEntity.getDefaultCompound(this, BlockEntity.CHISELED_BOOKSHELF));
+            return true;
+        }
+        return false;
     }
 }

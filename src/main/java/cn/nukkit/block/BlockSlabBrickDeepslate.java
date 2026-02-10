@@ -30,11 +30,6 @@ public class BlockSlabBrickDeepslate extends BlockSlab {
     }
     
     @Override
-    public double getResistance() {
-        return 6;
-    }
-    
-    @Override
     public boolean canHarvestWithHand() {
         return false;
     }

@@ -18,7 +18,7 @@ public abstract class BlockCopperBase extends BlockSolid implements Oxidizable, 
 
     @Override
     public double getResistance() {
-        return 6;
+        return 30;
     }
 
     @Override

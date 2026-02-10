@@ -1,5 +1,6 @@
 package cn.nukkit.item;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
@@ -43,7 +44,9 @@ public class ItemMap extends Item {
     public void setImage(BufferedImage image) {
         try {
             if (this.getMapId() == 0) {
-                Server.getInstance().getLogger().debug("Uninitialized map", new Throwable(""));
+                if (Nukkit.DEBUG > 1) {
+                    Server.getInstance().getLogger().debug("Uninitialized map", new Throwable(""));
+                }
                 this.initItem();
             }
 
