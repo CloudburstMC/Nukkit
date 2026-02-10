@@ -2,7 +2,7 @@ package cn.nukkit.block;
 
 public class BlockCopperExposedWaxed extends BlockCopperExposed {
 
-    public BlockCopperExposedWaxed( ) {
+    public BlockCopperExposedWaxed() {
         // Does nothing
     }
 

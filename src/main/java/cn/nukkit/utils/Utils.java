@@ -49,7 +49,7 @@ public class Utils {
             file.createNewFile();
         }
         try (FileOutputStream stream = new FileOutputStream(file)) {
-            byte[] buffer = new byte[1024];
+            byte[] buffer = new byte[8192];
             int length;
             while ((length = content.read(buffer)) != -1) {
                 stream.write(buffer, 0, length);

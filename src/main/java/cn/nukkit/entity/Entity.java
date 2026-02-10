@@ -5,6 +5,8 @@ import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockFire;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.block.BlockPointedDripstone;
+import cn.nukkit.block.properties.DripstoneThickness;
 import cn.nukkit.entity.custom.CustomEntity;
 import cn.nukkit.entity.custom.EntityDefinition;
 import cn.nukkit.entity.custom.EntityManager;
@@ -1996,6 +1998,8 @@ public abstract class Entity extends Location implements Metadatable {
                         damage -= (damage * 0.5f);
                     } else if (floor == BlockID.SLIME_BLOCK || floor == BlockID.COBWEB || floor == BlockID.SCAFFOLDING || floor == BlockID.SWEET_BERRY_BUSH) {
                         damage = 0;
+                    } else if (down instanceof BlockPointedDripstone && ((BlockPointedDripstone) down).getThickness() == DripstoneThickness.TIP) {
+                        damage = Math.max(damage, (float) Math.floor(Math.ceil(fallDistance * 2 - 2) - 3 - (this.hasEffect(Effect.JUMP) ? this.getEffect(Effect.JUMP).getAmplifier() + 1 : 0)));
                     }
 
                     if (damage > 0) {
@@ -2419,7 +2423,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public boolean setPositionAndRotation(Vector3 pos, double yaw, double pitch) {
-        return this.setPositionAndRotation(pos, yaw, pitch, yaw);
+        return this.setPositionAndRotation(pos, yaw, pitch, 0);
     }
 
     public boolean setPositionAndRotation(Vector3 pos, double yaw, double pitch, double headYaw) {
@@ -2432,7 +2436,7 @@ public abstract class Entity extends Location implements Metadatable {
     }
 
     public void setRotation(double yaw, double pitch) {
-        this.setRotation(yaw, pitch, yaw);
+        this.setRotation(yaw, pitch, 0);
     }
 
     public void setRotation(double yaw, double pitch, double headYaw) {

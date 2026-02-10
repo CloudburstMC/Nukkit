@@ -42,6 +42,7 @@ public class RuntimeItems {
             JsonObject convertData = itemMapping.getAsJsonObject(legacyName);
             for (String damageStr : convertData.keySet()) {
                 String identifier = convertData.get(damageStr).getAsString();
+                if ("protocol".equals(identifier)) continue;
                 int damage = Integer.parseInt(damageStr);
                 mappingEntries.put(identifier, new MappingEntry(legacyName, damage));
             }

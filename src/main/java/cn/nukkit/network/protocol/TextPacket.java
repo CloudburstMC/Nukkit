@@ -78,6 +78,11 @@ public class TextPacket extends DataPacket {
 
         this.putBoolean(this.isLocalized || type == TYPE_TRANSLATION);
 
+        // 1.21.130 doesn't allow empty messages
+        if (this.message.isEmpty()) {
+            this.message = " ";
+        }
+
         switch (this.type) {
             case TYPE_RAW:
             case TYPE_TIP:

@@ -3,6 +3,7 @@ package cn.nukkit.entity.mob;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.utils.Utils;
 
 public class EntityBreeze extends EntityFlyingMob {
 
@@ -35,7 +36,7 @@ public class EntityBreeze extends EntityFlyingMob {
 
     @Override
     public Item[] getDrops() {
-        return new Item[]{/*Item.get(Item.BREEZE_ROD, 0, Utils.rand(1, 2))*/};
+        return new Item[]{Item.get(Item.BREEZE_ROD, 0, Utils.rand(1, 2))};
     }
 
     @Override

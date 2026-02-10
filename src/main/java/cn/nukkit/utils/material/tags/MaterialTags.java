@@ -105,7 +105,7 @@ public class MaterialTags {
         return tags.get(tag);
     }
 
-    protected static Set<String> getVanillaDefinitions(String tag) {
+    public static Set<String> getVanillaDefinitions(String tag) {
         return vanillaTagDefinitions.get(tag);
     }
 }

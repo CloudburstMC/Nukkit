@@ -6,7 +6,8 @@ import cn.nukkit.item.ItemRecord;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
-import cn.nukkit.network.protocol.LevelSoundEventPacket;
+import cn.nukkit.network.protocol.PlaySoundPacket;
+import cn.nukkit.network.protocol.StopSoundPacket;
 
 import java.util.Objects;
 
@@ -49,61 +50,23 @@ public class BlockEntityJukebox extends BlockEntitySpawnable {
 
     public void play() {
         if (this.recordItem instanceof ItemRecord) {
-            switch (this.recordItem.getId()) {
-                case Item.RECORD_13:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_13);
-                    break;
-                case Item.RECORD_CAT:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_CAT);
-                    break;
-                case Item.RECORD_BLOCKS:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_BLOCKS);
-                    break;
-                case Item.RECORD_CHIRP:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_CHIRP);
-                    break;
-                case Item.RECORD_FAR:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_FAR);
-                    break;
-                case Item.RECORD_MALL:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_MALL);
-                    break;
-                case Item.RECORD_MELLOHI:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_MELLOHI);
-                    break;
-                case Item.RECORD_STAL:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_STAL);
-                    break;
-                case Item.RECORD_STRAD:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_STRAD);
-                    break;
-                case Item.RECORD_WARD:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_WARD);
-                    break;
-                case Item.RECORD_11:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_11);
-                    break;
-                case Item.RECORD_WAIT:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_WAIT);
-                    break;
-                case Item.RECORD_PIGSTEP:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_PIGSTEP);
-                    break;
-                case Item.RECORD_OTHERSIDE:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_OTHERSIDE);
-                    break;
-                case Item.RECORD_5:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_5);
-                    break;
-                case Item.RECORD_RELIC:
-                    this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_RECORD_RELIC);
-                    break;
-            }
+            PlaySoundPacket pk = new PlaySoundPacket();
+            pk.name = ((ItemRecord) this.recordItem).getSoundId();
+            pk.volume = 1;
+            pk.pitch = 1;
+            pk.x = (int) this.x;
+            pk.y = (int) this.y;
+            pk.z = (int) this.z;
+            this.level.addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
         }
     }
 
     public void stop() {
-        this.getLevel().addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_STOP_RECORD);
+        if (this.recordItem instanceof ItemRecord) {
+            StopSoundPacket pk = new StopSoundPacket();
+            pk.name = ((ItemRecord) this.recordItem).getSoundId();
+            this.level.addChunkPacket(this.getChunkX(), this.getChunkZ(), pk);
+        }
     }
 
     public void dropItem() {

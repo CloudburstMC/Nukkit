@@ -46,11 +46,6 @@ public class BlockSlabWarped extends BlockSlab {
     }
 
     @Override
-    public double getResistance() {
-        return 3;
-    }
-
-    @Override
     public Item toItem() {
         return new ItemBlock(Block.get(this.getId(), 0), 0);
     }

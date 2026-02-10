@@ -3524,11 +3524,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             long index = entry.getKey();
             if (!this.unloadQueue.containsKey(index)) {
                 FullChunk chunk = entry.getValue();
-                int X = chunk.getX();
-                int Z = chunk.getZ();
-                if (!this.isSpawnChunk(X, Z)) {
-                    this.unloadChunkRequest(X, Z, true);
-                }
+                this.unloadChunkRequest(chunk.getX(), chunk.getZ(), true);
             }
         }
 

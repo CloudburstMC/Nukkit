@@ -53,11 +53,6 @@ public class BlockSlabCrimson extends BlockSlab {
     }
 
     @Override
-    public double getResistance() {
-        return 3;
-    }
-
-    @Override
     public BlockColor getColor() {
         return BlockColor.NETHERRACK_BLOCK_COLOR;
     }
