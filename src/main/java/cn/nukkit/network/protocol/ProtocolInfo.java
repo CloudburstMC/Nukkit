@@ -14,11 +14,11 @@ public interface ProtocolInfo {
      * Actual Minecraft protocol version
      */
     @SuppressWarnings("UnnecessaryBoxing")
-    int CURRENT_PROTOCOL = Integer.valueOf("898"); // DO NOT REMOVE BOXING
+    int CURRENT_PROTOCOL = Integer.valueOf("924"); // DO NOT REMOVE BOXING
 
-    List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(897, CURRENT_PROTOCOL);
+    List<Integer> SUPPORTED_PROTOCOLS = Ints.asList(CURRENT_PROTOCOL);
 
-    String MINECRAFT_VERSION_NETWORK = "1.21.130";
+    String MINECRAFT_VERSION_NETWORK = "1.26.0";
     String MINECRAFT_VERSION = 'v' + MINECRAFT_VERSION_NETWORK;
 
     byte BATCH_PACKET = (byte) 0xff;

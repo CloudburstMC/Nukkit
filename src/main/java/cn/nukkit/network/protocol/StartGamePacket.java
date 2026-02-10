@@ -168,10 +168,6 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(false); // Experimental Gameplay
         this.putByte(this.chatRestrictionLevel);
         this.putBoolean(this.disablePlayerInteractions);
-        this.putString(""); // ServerId
-        this.putString(""); // WorldId
-        this.putString(""); // ScenarioId
-        this.putString(""); // OwnerId
         /* Level settings end */
         this.putString(this.levelId);
         this.putString(this.worldName);
@@ -191,5 +187,12 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(this.clientSideGenerationEnabled);
         this.putBoolean(false); // blockIdsAreHashed
         this.putBoolean(true); // isServerAuthSounds
+        this.putBoolean(false); // no server join info
+        /* ServerTelemetryData start */
+        this.putString("");
+        this.putString("");
+        this.putString("");
+        this.putString("");
+        /* ServerTelemetryData end */
     }
 }

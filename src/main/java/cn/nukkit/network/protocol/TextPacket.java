@@ -40,24 +40,15 @@ public class TextPacket extends DataPacket {
 
         switch (this.getByte()) {
             case 0: // MessageOnly
-                for (int i = 0; i < 6; i++) {
-                    this.getString();
-                }
                 this.type = (byte) getByte();
                 this.message = this.getString();
                 break;
             case 1: // AuthorAndMessage
-                for (int i = 0; i < 3; i++) {
-                    this.getString();
-                }
                 this.type = (byte) getByte();
                 this.source = this.getString();
                 this.message = this.getString();
                 break;
             case 2: // MessageAndParams
-                for (int i = 0; i < 3; i++) {
-                    this.getString();
-                }
                 this.type = (byte) getByte();
                 this.message = this.getString();
                 int paramCount = (int) this.getUnsignedVarInt();
@@ -95,12 +86,6 @@ public class TextPacket extends DataPacket {
             case TYPE_OBJECT_WHISPER:
             case TYPE_OBJECT_ANNOUNCEMENT:
                 this.putByte((byte) 0); // MessageOnly
-                this.putString("raw");
-                this.putString("tip");
-                this.putString("systemMessage");
-                this.putString("textObjectWhisper");
-                this.putString("textObjectAnnouncement");
-                this.putString("textObject");
                 this.putByte(this.type);
                 this.putString(this.message);
                 break;
@@ -109,9 +94,6 @@ public class TextPacket extends DataPacket {
             case TYPE_WHISPER:
             case TYPE_ANNOUNCEMENT:
                 this.putByte((byte) 1); // AuthorAndMessage
-                this.putString("chat");
-                this.putString("whisper");
-                this.putString("announcement");
                 this.putByte(this.type);
                 this.putString(this.source);
                 this.putString(this.message);
@@ -121,9 +103,6 @@ public class TextPacket extends DataPacket {
             case TYPE_POPUP:
             case TYPE_JUKEBOX_POPUP:
                 this.putByte((byte) 2); // MessageAndParams
-                this.putString("translate");
-                this.putString("popup");
-                this.putString("jukeboxPopup");
                 this.putByte(this.type);
                 this.putString(this.message);
                 this.putUnsignedVarInt(this.parameters.length);
