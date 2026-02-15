@@ -1,0 +1,12 @@
+daysUntilStale: 20
+daysUntilClose: 5
+exemptLabels:
+  - "stale: skip"
+staleLabel: "inactive"
+markComment: >
+  This issue has been automatically marked as stale because it has not had
+  recent activity. It will be closed if no further activity occurs.
+closeComment: >
+  This issue has been automatically closed because it has not had activity in
+  a long time. If the issue still applies to the most recent supported
+  version, please open a new issue referencing this original issue.
