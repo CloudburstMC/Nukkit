@@ -92,6 +92,7 @@ public class MaterialTags {
     public static final MaterialTag WOODEN_SLABS = register("minecraft:wooden_slabs", new LazilyInitializedMaterialTag("minecraft:wooden_slabs"));
     public static final MaterialTag WOODEN_TIER = register("minecraft:wooden_tier", new LazilyInitializedMaterialTag("minecraft:wooden_tier"));
     public static final MaterialTag WOOL = register("minecraft:wool", new LazilyInitializedMaterialTag("minecraft:wool"));
+    public static final MaterialTag EGG = register("minecraft:egg", new LazilyInitializedMaterialTag("minecraft:egg"));
 
     public static MaterialTag register(String tagName, MaterialTag tag) {
         if (tags.containsKey(tagName)) {

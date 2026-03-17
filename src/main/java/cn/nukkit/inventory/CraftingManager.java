@@ -193,6 +193,16 @@ public class CraftingManager {
                                             case "minecraft:tnt":
                                                 inputItem = Item.get(BlockID.SAND, 0, 1);
                                                 break;
+                                            // TODO: bedrock allows alternative materials for some trim duplication
+                                            case "minecraft:dune_armor_trim_smithing_template_duplicate":
+                                                inputItem = Item.get(BlockID.SANDSTONE, 0, 1);
+                                                break;
+                                            case "minecraft:spire_armor_trim_smithing_template_duplicate":
+                                                inputItem = Item.get(BlockID.PURPUR_BLOCK, 0, 1);
+                                                break;
+                                            case "minecraft:tide_armor_trim_smithing_template_duplicate":
+                                                inputItem = Item.get(BlockID.PRISMARINE, 0, 1);
+                                                break;
                                         }
                                         if (Nukkit.DEBUG > 1 && inputItem == null) {
                                             MainLogger.getLogger().debug("Missing shaped ingredient complex_alias: " + recipe);

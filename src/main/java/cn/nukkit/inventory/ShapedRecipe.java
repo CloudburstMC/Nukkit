@@ -84,7 +84,7 @@ public class ShapedRecipe implements CraftingRecipe {
         this.shape = shape;
 
         for (Map.Entry<Character, Item> entry : ingredients.entrySet()) {
-            this.setIngredient(entry.getKey(), entry.getValue());
+            this.setIngredient(entry.getKey(), entry.getValue().clone()); // Clone because reused to expand legacy meta in recipes
         }
 
         this.ingredientsAggregate = new ArrayList<>();
