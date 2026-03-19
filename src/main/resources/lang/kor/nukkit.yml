@@ -81,7 +81,7 @@ player:
  save-player-data: true
  #스킨 변경 작업 간 시간(초)입니다. 대기 시간을 원하지 않으면 0으로 설정합니다
  skin-change-cooldown: 15
- #개체를 공격하면 달리기가 초기화되며, 여기에서 사용하지 않도록 설정할 수 있습니다
+ #개체를 공격하면 달리기가 초기화됩니다. 여기에서 사용하지 않도록 설정할 수 있습니다
  attack-stop-sprint: true
 
 aliases:
