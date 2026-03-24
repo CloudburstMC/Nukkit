@@ -1,5 +1,6 @@
 package cn.nukkit.utils;
 
+import cn.nukkit.entity.data.Skin;
 import com.google.gson.JsonObject;
 
 import java.util.UUID;
@@ -48,4 +49,6 @@ public interface LoginChainData {
     JsonObject getRawData();
 
     String getTitleId();
+
+    Skin getSkin();
 }

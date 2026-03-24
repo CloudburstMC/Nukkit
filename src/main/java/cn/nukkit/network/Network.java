@@ -159,7 +159,7 @@ public class Network {
             try {
                 pk.decode();
 
-                if (Nukkit.DEBUG > 1 && pk.offset < pk.getRawBuffer().length) {
+                if (Nukkit.DEBUG > 1 && packetId != ProtocolInfo.LOGIN_PACKET && pk.offset < pk.getRawBuffer().length) {
                     log.debug(pk.getClass().getSimpleName() + " still has " + (pk.getRawBuffer().length - pk.offset) + " bytes to read!");
                 }
             } catch (Exception e) {

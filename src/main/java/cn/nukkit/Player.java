@@ -141,8 +141,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private boolean loginPacketReceived;
     protected boolean networkSettingsRequested;
     public int gamemode;
-    protected long randomClientId;
-    private String unverifiedUsername = "";
 
     protected final BiMap<Inventory, Integer> windows = HashBiMap.create();
     protected final BiMap<Integer, Inventory> windowIndex = windows.inverse();
@@ -430,7 +428,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      */
     @Deprecated
     public Long getClientId() {
-        return randomClientId;
+        return loginChainData.getClientId();
     }
 
     @Override
@@ -2945,7 +2943,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.networkSettingsRequested = true;
 
                 if (this.getNetworkSession().getCompression() != CompressionProvider.NONE) {
-                    this.getServer().getLogger().debug((this.username == null ? this.unverifiedUsername : this.username) +
+                    this.getServer().getLogger().debug(this.username +
                             ": got a RequestNetworkSettingsPacket but compression is already set");
                     return;
                 }
@@ -2978,7 +2976,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 this.loginPacketReceived = true;
 
                 LoginPacket loginPacket = (LoginPacket) packet;
-                this.unverifiedUsername = TextFormat.clean(loginPacket.username);
 
                 if (!this.networkSettingsRequested) {
                     this.close("", "Invalid login sequence: login packet before network settings");
@@ -2997,50 +2994,33 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     return;
                 }
 
-                if (loginPacket.skin == null) {
-                    this.close("", "disconnectionScreen.invalidSkin");
-                    return;
-                }
-
-                if (this.server.getOnlinePlayersCount() >= this.server.getMaxPlayers() && this.kick(PlayerKickEvent.Reason.SERVER_FULL, "disconnectionScreen.serverFull", false)) {
-                    return;
-                }
-
                 try {
-                    // TODO: Why do we read this separately?
                     this.loginChainData = ClientChainData.read(loginPacket);
                 } catch (ClientChainData.TooBigSkinException ex) {
                     this.close("", "disconnectionScreen.invalidSkin");
                     return;
+                } catch (Exception ex) {
+                    getServer().getLogger().logException(ex);
+                    this.close("", "disconnectionScreen.noReason");
+                    return;
                 }
 
-                server.getLogger().debug("Name: " + this.unverifiedUsername + " Protocol: " + loginPacket.getProtocol() + " Version: " + loginChainData.getGameVersion());
+                server.getLogger().debug("Name: " + loginChainData.getUsername() + " Version: " + loginChainData.getGameVersion());
 
                 if (!loginChainData.isXboxAuthed() && server.xboxAuth) {
                     this.close("", "disconnectionScreen.notAuthenticated");
                     return;
                 }
 
-                // Do not set username before the user is authenticated
-                this.username = this.unverifiedUsername;
-                this.unverifiedUsername = null;
-                this.displayName = this.username;
-                this.iusername = this.username.toLowerCase(Locale.ROOT);
-                this.setDataProperty(new StringEntityData(DATA_NAMETAG, this.username), false);
-
-                this.randomClientId = loginPacket.clientId;
-                this.uuid = loginPacket.clientUUID;
-                this.rawUUID = Binary.writeUUID(this.uuid);
-
                 boolean valid = true;
-                int len = loginPacket.username.length();
-                if (len > 16 || len < 3 || loginPacket.username.trim().isEmpty()) {
+                int len = loginChainData.getUsername().length();
+                if (len > 16 || len < 3 || loginChainData.getUsername().trim().isEmpty()) {
                     valid = false;
                 }
 
                 if (valid) {
                     for (int i = 0; i < len; i++) {
-                        char c = loginPacket.username.charAt(i);
+                        char c = loginChainData.getUsername().charAt(i);
                         if ((c >= 'a' && c <= 'z') ||
                                 (c >= 'A' && c <= 'Z') ||
                                 (c >= '0' && c <= '9') ||
@@ -3054,13 +3034,27 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
                 }
 
-                if (!valid || Objects.equals(this.iusername, "rcon") || Objects.equals(this.iusername, "console")) {
+                String lowerCaseName = loginChainData.getUsername().toLowerCase(Locale.ROOT);
+                if (!valid || Objects.equals(lowerCaseName, "rcon") || Objects.equals(lowerCaseName, "console")) {
                     this.close("", "disconnectionScreen.invalidName");
                     return;
                 }
 
-                Skin skin = loginPacket.skin;
-                if (!skin.isValid()) {
+                // Do not set username before the user is authenticated
+                this.username = loginChainData.getUsername();
+                this.displayName = this.username;
+                this.iusername = lowerCaseName;
+                this.setDataProperty(new StringEntityData(DATA_NAMETAG, this.username), false);
+
+                this.uuid = loginChainData.getClientUUID();
+                this.rawUUID = Binary.writeUUID(this.uuid);
+
+                if (this.server.getOnlinePlayersCount() >= this.server.getMaxPlayers() && this.kick(PlayerKickEvent.Reason.SERVER_FULL, "disconnectionScreen.serverFull", false)) {
+                    return;
+                }
+
+                Skin skin = loginChainData.getSkin();
+                if (skin == null || !skin.isValid()) {
                     this.close("", "disconnectionScreen.invalidSkin");
                     return;
                 }
@@ -5416,7 +5410,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().unsubscribeFromPermission(Server.BROADCAST_CHANNEL_USERS, this);
             this.spawned = false;
             this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logOut",
-                    TextFormat.AQUA + (this.username == null ? this.unverifiedUsername : this.username) + TextFormat.WHITE,
+                    TextFormat.AQUA + this.username + TextFormat.WHITE,
                     this.getAddress(),
                     String.valueOf(this.getPort()),
                     this.getServer().getLanguage().translateString(reason)));
@@ -5444,7 +5438,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         this.server.removePlayer(this);
 
         if (this.loggedIn) {
-            this.server.getLogger().warning("Player is still logged in: " + (this.username == null ? this.unverifiedUsername : this.username));
+            this.server.getLogger().warning("Player is still logged in: " + this.username);
             this.interfaz.close(this, notify ? reason : "");
             this.server.removeOnlinePlayer(this);
             this.loggedIn = false;
