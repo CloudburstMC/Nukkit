@@ -1,5 +1,6 @@
 package cn.nukkit.inventory.transaction;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.GrindItemEvent;
 import cn.nukkit.inventory.GrindstoneInventory;
@@ -11,7 +12,6 @@ import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.Getter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class GrindstoneTransaction extends InventoryTransaction {
@@ -22,37 +22,42 @@ public class GrindstoneTransaction extends InventoryTransaction {
     private Item ingredientItem;
     @Getter
     private Item outputItem;
-    private final List<Item> outputItemCheck = new ArrayList<>();
 
     public GrindstoneTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
-
-        for (InventoryAction action : actions) {
-            if (action instanceof SlotChangeAction) {
-                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
-                if (!(slotChangeAction.getInventory() instanceof GrindstoneInventory)) {
-                    this.outputItemCheck.add(slotChangeAction.getTargetItemUnsafe());
-                }
-            }
-        }
     }
 
     @Override
     public void addAction(InventoryAction action) {
-        super.addAction(action);
         if (action instanceof GrindstoneItemAction) {
             switch (((GrindstoneItemAction) action).getType()) {
                 case NetworkInventoryAction.SOURCE_TYPE_ANVIL_INPUT:
+                    if (this.equipmentItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for equipmentItem");
+                        return;
+                    }
                     this.equipmentItem = action.getTargetItem();
                     break;
                 case NetworkInventoryAction.SOURCE_TYPE_ANVIL_MATERIAL:
+                    if (this.ingredientItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for ingredientItem");
+                        return;
+                    }
                     this.ingredientItem = action.getTargetItem();
                     break;
                 case NetworkInventoryAction.SOURCE_TYPE_ANVIL_RESULT:
+                    if (this.outputItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for outputItem");
+                        return;
+                    }
                     this.outputItem = action.getSourceItem();
                     break;
             }
         }
+        super.addAction(action);
     }
 
     @Override
@@ -72,10 +77,19 @@ public class GrindstoneTransaction extends InventoryTransaction {
             return false;
         }
 
-        for (Item check : this.outputItemCheck) {
-            if (check != null && !this.outputItem.equals(check)) {
-                source.getServer().getLogger().debug("Illegal output");
-                return false;
+        for (InventoryAction action : actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                if (!(slotChangeAction.getInventory() instanceof GrindstoneInventory)) {
+                    Item item = slotChangeAction.getTargetItemUnsafe();
+                    if (item != null && !item.isNull() && !this.outputItem.equals(item)) {
+                        this.invalid = true;
+                        if (Nukkit.DEBUG > 1) {
+                            source.getServer().getLogger().debug("Illegal output " + item);
+                        }
+                        return false;
+                    }
+                }
             }
         }
 
@@ -88,7 +102,7 @@ public class GrindstoneTransaction extends InventoryTransaction {
 
     @Override
     public boolean execute() {
-        if (this.invalid || this.hasExecuted() || !this.canExecute()) {
+        if (this.hasExecuted() || !this.canExecute() || this.invalid) {
             this.source.removeAllWindows(false);
             this.sendInventories();
             return false;
@@ -111,6 +125,7 @@ public class GrindstoneTransaction extends InventoryTransaction {
             }
         }
 
+        this.hasExecuted = true;
         return true;
     }
 

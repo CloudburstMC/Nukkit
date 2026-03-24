@@ -3,6 +3,7 @@ package cn.nukkit.item.enchantment;
 /**
  * @author Nukkit Project Team
  */
+@Deprecated
 public class EnchantmentEntry {
 
     private final Enchantment[] enchantments;

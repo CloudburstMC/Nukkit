@@ -2,6 +2,8 @@ package cn.nukkit.item;
 
 import cn.nukkit.potion.Effect;
 
+import javax.annotation.Nullable;
+
 /**
  * @author MagicDroidX
  * Nukkit Project
@@ -20,6 +22,33 @@ public class ItemArrow extends Item {
         super(ARROW, meta, count, "Arrow");
     }
 
+    public Effect[] getEffects() {
+        Effect slowness, resistance;
+
+        switch (this.getDamage()) {
+            case 38:
+                slowness = Effect.getEffect(Effect.SLOWNESS).setAmplifier(3).setDuration(40);
+                resistance = Effect.getEffect(Effect.DAMAGE_RESISTANCE).setAmplifier(2).setDuration(40);
+                return new Effect[]{slowness, resistance};
+            case 39:
+                slowness = Effect.getEffect(Effect.SLOWNESS).setAmplifier(3).setDuration(100);
+                resistance = Effect.getEffect(Effect.DAMAGE_RESISTANCE).setAmplifier(2).setDuration(100);
+                return new Effect[]{slowness, resistance};
+            case 40:
+                slowness = Effect.getEffect(Effect.SLOWNESS).setAmplifier(5).setDuration(40);
+                resistance = Effect.getEffect(Effect.DAMAGE_RESISTANCE).setAmplifier(3).setDuration(40);
+                return new Effect[]{slowness, resistance};
+        }
+
+        Effect effect = getEffect(this.getDamage());
+        if (effect == null) {
+            return new Effect[0];
+        }
+
+        return new Effect[]{effect};
+    }
+
+    @Nullable
     public static Effect getEffect(int meta) {
         switch (meta) {
             case 6:
@@ -55,13 +84,13 @@ public class ItemArrow extends Item {
             case 21:
                 return Effect.getEffect(Effect.WATER_BREATHING).setDuration(1200);
             case 22:
-                return Effect.getEffect(Effect.HEALING).setDuration(1);
+                return Effect.getEffect(Effect.HEALING);
             case 23:
-                return Effect.getEffect(Effect.HEALING).setAmplifier(1).setDuration(1);
+                return Effect.getEffect(Effect.HEALING).setAmplifier(1);
             case 24:
-                return Effect.getEffect(Effect.HARMING).setDuration(1);
+                return Effect.getEffect(Effect.HARMING);
             case 25:
-                return Effect.getEffect(Effect.HARMING).setAmplifier(1).setDuration(1);
+                return Effect.getEffect(Effect.HARMING).setAmplifier(1);
             case 26:
                 return Effect.getEffect(Effect.POISON).setDuration(100);
             case 27:

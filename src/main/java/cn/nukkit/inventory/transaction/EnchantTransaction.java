@@ -18,7 +18,6 @@ import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -27,26 +26,17 @@ public class EnchantTransaction extends InventoryTransaction {
 
     private Item inputItem;
     private Item outputItem;
-    private final List<Item> outputItemCheck = new ArrayList<>();
+    protected Item materialItem;
 
     private int cost = -1;
 
     public EnchantTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
-
-        for (InventoryAction action : actions) {
-            if (action instanceof SlotChangeAction) {
-                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
-                if (!(slotChangeAction.getInventory() instanceof EnchantInventory)) {
-                    this.outputItemCheck.add(slotChangeAction.getTargetItemUnsafe());
-                }
-            }
-        }
     }
 
     @Override
     public boolean canExecute() {
-        if (!(matchItems(false, true) && !this.invalid && !this.actions.isEmpty())) {
+        if (!super.canExecute()) {
             return false;
         }
 
@@ -71,10 +61,19 @@ public class EnchantTransaction extends InventoryTransaction {
             return false;
         }
 
-        for (Item check : this.outputItemCheck) {
-            if (check != null && !this.outputItem.equals(check)) {
-                source.getServer().getLogger().debug("Illegal output");
-                return false;
+        for (InventoryAction action : actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                if (!(slotChangeAction.getInventory() instanceof EnchantInventory)) {
+                    Item item = slotChangeAction.getTargetItemUnsafe();
+                    if (item != null && !item.isNull() && !this.outputItem.equals(item)) {
+                        this.invalid = true;
+                        if (Nukkit.DEBUG > 1) {
+                            source.getServer().getLogger().debug("Illegal output " + item);
+                        }
+                        return false;
+                    }
+                }
             }
         }
 
@@ -114,8 +113,8 @@ public class EnchantTransaction extends InventoryTransaction {
     @Override
     public boolean execute() {
         // This will validate the enchant conditions
-        if (this.invalid || this.hasExecuted() || !this.canExecute()) {
-            source.removeAllWindows(false);
+        if (this.hasExecuted() || !this.canExecute() || this.invalid) {
+            this.source.removeAllWindows(false);
             this.sendInventories();
             return false;
         }
@@ -148,21 +147,39 @@ public class EnchantTransaction extends InventoryTransaction {
         if (!source.isCreative()) {
             source.setExperience(source.getExperience(), source.getExperienceLevel() - ev.getXpCost());
         }
+
+        this.hasExecuted = true;
         return true;
     }
 
     @Override
     public void addAction(InventoryAction action) {
-        super.addAction(action);
         if (action instanceof EnchantingAction) {
             switch (((EnchantingAction) action).getType()) {
                 case NetworkInventoryAction.SOURCE_TYPE_ENCHANT_INPUT:
+                    if (this.inputItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for inputItem");
+                        return;
+                    }
                     this.inputItem = action.getTargetItem(); // Input sent as newItem
                     break;
                 case NetworkInventoryAction.SOURCE_TYPE_ENCHANT_OUTPUT:
+                    if (this.outputItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for outputItem");
+                        return;
+                    }
                     this.outputItem = action.getSourceItem(); // Output sent as oldItem
                     break;
                 case NetworkInventoryAction.SOURCE_TYPE_ENCHANT_MATERIAL:
+                    if (this.materialItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for materialItem");
+                        return;
+                    }
+                    this.materialItem = action.getTargetItem();
+
                     if (action.getTargetItemUnsafe().getId() == Item.AIR) {
                         this.cost = action.getSourceItemUnsafe().count;
                     } else {
@@ -170,8 +187,8 @@ public class EnchantTransaction extends InventoryTransaction {
                     }
                     break;
             }
-
         }
+        super.addAction(action);
     }
 
     @Override

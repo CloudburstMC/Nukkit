@@ -8,7 +8,6 @@ import cn.nukkit.entity.item.*;
 import cn.nukkit.entity.mob.EntityBlaze;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
-import cn.nukkit.item.ItemArrow;
 import cn.nukkit.level.MovingObjectPosition;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.AxisAlignedBB;
@@ -118,7 +117,7 @@ public abstract class EntityProjectile extends Entity {
             }
 
             if (this instanceof EntityArrow && entity instanceof EntityLiving) {
-                addEffectFromTippedArrow(entity, ItemArrow.getEffect(((EntityArrow) this).getData()), ev.getFinalDamage());
+                addEffectFromTippedArrow(entity, (EntityArrow) this, ev.getFinalDamage());
             }
         }
 

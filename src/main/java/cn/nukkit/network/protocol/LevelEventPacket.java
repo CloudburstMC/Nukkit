@@ -53,7 +53,19 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_SOUND_POINTED_DRIPSTONE_LAND = 1064;
     public static final int EVENT_SOUND_DYE_USED = 1065;
     public static final int EVENT_SOUND_INK_SAC_USED = 1066;
+    public static final int EVENT_SOUND_AMETHYST_RESONATE = 1067;
 
+    public static final int EVENT_QUEUE_CUSTOM_MUSIC = 1900;
+    public static final int EVENT_PLAY_CUSTOM_MUSIC = 1901;
+    public static final int EVENT_STOP_CUSTOM_MUSIC = 1902;
+    public static final int EVENT_SET_MUSIC_VOLUME = 1903;
+
+    public static final int EVENT_PARTICLES_SHOOT = 2000;
+    public static final int EVENT_PARTICLES_DESTROY_BLOCK = 2001;
+    public static final int EVENT_PARTICLES_POTION_SPLASH = 2002;
+    public static final int EVENT_PARTICLES_EYE_OF_ENDER_DEATH = 2003;
+    public static final int EVENT_PARTICLES_MOB_BLOCK_SPAWN = 2004;
+    public static final int EVENT_PARTICLE_CROP_GROWTH = 2005;
     public static final int EVENT_GUARDIAN_CURSE = 2006;
     public static final int EVENT_PARTICLE_DEATH_SMOKE = 2007;
     public static final int EVENT_PARTICLE_BLOCK_FORCE_FIELD = 2008;
@@ -88,6 +100,7 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_PARTICLE_SCULK_CHARGE = 2037;
     public static final int EVENT_PARTICLE_SCULK_CHARGE_POP = 2038;
     public static final int EVENT_PARTICLE_SONIC_EXPLOSION = 2039;
+    public static final int EVENT_PARTICLE_DUST_PLUME = 2040;
 
     public static final int EVENT_SOUND_BUTTON_CLICK = 3500;
     public static final int EVENT_SOUND_EXPLODE = 3501;
@@ -129,13 +142,32 @@ public class LevelEventPacket extends DataPacket {
     public static final int EVENT_BLOCK_START_BREAK = 3600;
     public static final int EVENT_BLOCK_STOP_BREAK = 3601;
     public static final int EVENT_BLOCK_UPDATE_BREAK = 3602;
+    public static final int EVENT_PARTICLES_CRACK_BLOCK_DOWN = 3603;
+    public static final int EVENT_PARTICLES_CRACK_BLOCK_UP = 3604;
+    public static final int EVENT_PARTICLES_CRACK_BLOCK_NORTH = 3605;
+    public static final int EVENT_PARTICLES_CRACK_BLOCK_SOUTH = 3606;
+    public static final int EVENT_PARTICLES_CRACK_BLOCK_WEST = 3607;
+    public static final int EVENT_PARTICLES_CRACK_BLOCK_EAST = 3608;
+    public static final int EVENT_PARTICLES_SHOOT_WHITE_SMOKE = 3609;
+    public static final int EVENT_PARTICLES_BREEZE_WIND_EXPLOSION = 3610;
+    public static final int EVENT_PARTICLES_TRIAL_SPAWNER_DETECTION = 3611;
+    public static final int EVENT_PARTICLES_TRIAL_SPAWNER_SPAWNING = 3612;
+    public static final int EVENT_PARTICLES_TRIAL_SPAWNER_EJECTING = 3613;
+    public static final int EVENT_PARTICLES_WIND_EXPLOSION = 3614;
+    public static final int EVENT_PARTICLES_TRIAL_SPAWNER_DETECTION_CHARGED = 3615;
+    public static final int EVENT_PARTICLES_TRIAL_SPAWNER_BECOME_CHARGED = 3616;
+    public static final int EVENT_ALL_PLAYERS_SLEEPING = 3617;
 
     public static final int EVENT_SET_DATA = 4000;
 
-    public static final int EVENT_PLAYERS_SLEEPING = 9800;
     public static final int EVENT_SLEEPING_PLAYERS = 9801;
 
     public static final int EVENT_JUMP_PREVENTED = 9810;
+    public static final int EVENT_ANIMATION_VAULT_ACTIVATE = 9811;
+    public static final int EVENT_ANIMATION_VAULT_DEACTIVATE = 9812;
+    public static final int EVENT_ANIMATION_VAULT_EJECT_ITEM = 9813;
+    public static final int EVENT_ANIMATION_SPAWN_COBWEB = 9814;
+    public static final int EVENT_PARTICLE_SMASH_ATTACK_GROUND_DUST = 9815;
 
     public static final int EVENT_ADD_PARTICLE_MASK = 0x4000;
 

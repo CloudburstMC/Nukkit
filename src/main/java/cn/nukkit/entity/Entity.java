@@ -14,6 +14,7 @@ import cn.nukkit.entity.data.*;
 import cn.nukkit.entity.item.EntityItem;
 import cn.nukkit.entity.item.EntityMinecartEmpty;
 import cn.nukkit.entity.item.EntityVehicle;
+import cn.nukkit.entity.projectile.EntityArrow;
 import cn.nukkit.event.Event;
 import cn.nukkit.event.entity.*;
 import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -21,6 +22,7 @@ import cn.nukkit.event.player.PlayerInteractEvent;
 import cn.nukkit.event.player.PlayerInteractEvent.Action;
 import cn.nukkit.event.player.PlayerTeleportEvent;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemArrow;
 import cn.nukkit.item.ItemID;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.level.GameRule;
@@ -915,42 +917,40 @@ public abstract class Entity extends Location implements Metadatable {
         }
     }
 
-    protected static void addEffectFromTippedArrow(Entity entity, Effect effect, float damage) {
-        if (effect == null) {
-            return;
-        }
+    protected static void addEffectFromTippedArrow(Entity entity, EntityArrow arrow, float damage) {
+        for (Effect effect : new ItemArrow(arrow.getData()).getEffects()) {
+            Effect oldEffect = entity.effects.get(effect.getId());
 
-        Effect oldEffect = entity.effects.get(effect.getId());
+            EntityPotionEffectEvent event = new EntityPotionEffectEvent(
+                    entity,
+                    oldEffect,
+                    effect,
+                    oldEffect == null ? EntityPotionEffectEvent.Action.ADDED : EntityPotionEffectEvent.Action.CHANGED,
+                    EntityPotionEffectEvent.Cause.ARROW);
 
-        EntityPotionEffectEvent event = new EntityPotionEffectEvent(
-                entity,
-                oldEffect,
-                effect,
-                oldEffect == null ? EntityPotionEffectEvent.Action.ADDED : EntityPotionEffectEvent.Action.CHANGED,
-                EntityPotionEffectEvent.Cause.ARROW);
+            entity.getServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
+                continue;
+            }
 
-        entity.getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return;
-        }
-
-        switch (effect.getId()) {
-            case Effect.HEALING:
-                if (entity.isAlive()) { // Avoid dupes
-                    entity.heal(new EntityRegainHealthEvent(entity, 4 * (effect.getAmplifier() + 1), EntityRegainHealthEvent.CAUSE_MAGIC));
-                }
-                break;
-            case Effect.HARMING:
-                float attackDamage = (effect.getAmplifier() < 1 ? 6 : 12) - damage;
-                if (attackDamage > 0) {
-                    EntityDamageEvent ev = new EntityDamageEvent(entity, DamageCause.MAGIC, attackDamage);
-                    entity.attack(ev);
-                }
-                break;
-            default:
-                effect.add(entity);
-                entity.effects.put(effect.getId(), effect);
-                entity.recalculateEffectColor();
+            switch (effect.getId()) {
+                case Effect.HEALING:
+                    if (entity.isAlive()) { // Avoid dupes
+                        entity.heal(new EntityRegainHealthEvent(entity, 4 * (effect.getAmplifier() + 1), EntityRegainHealthEvent.CAUSE_MAGIC));
+                    }
+                    break;
+                case Effect.HARMING:
+                    float attackDamage = (effect.getAmplifier() < 1 ? 6 : 12) - damage;
+                    if (attackDamage > 0) {
+                        EntityDamageEvent ev = new EntityDamageEvent(entity, DamageCause.MAGIC, attackDamage);
+                        entity.attack(ev);
+                    }
+                    break;
+                default:
+                    effect.add(entity);
+                    entity.effects.put(effect.getId(), effect);
+                    entity.recalculateEffectColor();
+            }
         }
     }
 

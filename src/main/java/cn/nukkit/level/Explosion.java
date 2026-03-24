@@ -395,7 +395,7 @@ public class Explosion {
         double tDeltaY = direction.getY() == 0 ? 0 : stepY / direction.getY();
         double tDeltaZ = direction.getZ() == 0 ? 0 : stepZ / direction.getZ();
 
-        double radius = start.distance(end);
+        double radiusSquared = start.distanceSquared(end);
 
         while (true) {
             Block block = level.getBlock(current);
@@ -405,21 +405,21 @@ public class Explosion {
             }
 
             if (tMaxX < tMaxY && tMaxX < tMaxZ) {
-                if (tMaxX > radius) {
+                if (tMaxX * tMaxX > radiusSquared) {
                     break;
                 }
 
                 current.x += stepX;
                 tMaxX += tDeltaX;
             } else if (tMaxY < tMaxZ) {
-                if (tMaxY > radius) {
+                if (tMaxY * tMaxY > radiusSquared) {
                     break;
                 }
 
                 current.y += stepY;
                 tMaxY += tDeltaY;
             } else {
-                if (tMaxZ > radius) {
+                if (tMaxZ * tMaxZ > radiusSquared) {
                     break;
                 }
 

@@ -16,6 +16,9 @@ import cn.nukkit.item.enchantment.damage.EnchantmentDamageSmite;
 import cn.nukkit.item.enchantment.loot.EnchantmentLootDigging;
 import cn.nukkit.item.enchantment.loot.EnchantmentLootFishing;
 import cn.nukkit.item.enchantment.loot.EnchantmentLootWeapon;
+import cn.nukkit.item.enchantment.mace.EnchantmentMaceBreach;
+import cn.nukkit.item.enchantment.mace.EnchantmentMaceDensity;
+import cn.nukkit.item.enchantment.mace.EnchantmentMaceWindBurst;
 import cn.nukkit.item.enchantment.protection.*;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentChanneling;
 import cn.nukkit.item.enchantment.trident.EnchantmentTridentImpaling;
@@ -72,6 +75,10 @@ public abstract class Enchantment implements Cloneable {
     public static final int ID_CROSSBOW_QUICK_CHARGE = 35;
     public static final int ID_SOUL_SPEED = 36;
     public static final int ID_SWIFT_SNEAK = 37;
+    public static final int ID_WIND_BURST = 38;
+    public static final int ID_DENSITY = 39;
+    public static final int ID_BREACH = 40;
+    public static final int ID_LUNGE = 41;
 
     public static void init() {
         enchantments[ID_PROTECTION_ALL] = new EnchantmentProtectionAll();
@@ -112,6 +119,10 @@ public abstract class Enchantment implements Cloneable {
         enchantments[ID_CROSSBOW_QUICK_CHARGE] = new EnchantmentCrossbowQuickCharge();
         enchantments[ID_SOUL_SPEED] = new EnchantmentSoulSpeed();
         enchantments[ID_SWIFT_SNEAK] = new EnchantmentSwiftSneak();
+        enchantments[ID_WIND_BURST] = new EnchantmentMaceWindBurst();
+        enchantments[ID_DENSITY] = new EnchantmentMaceDensity();
+        enchantments[ID_BREACH] = new EnchantmentMaceBreach();
+        enchantments[ID_LUNGE] = new EnchantmentLunge();
     }
 
     public static Enchantment get(int id) {

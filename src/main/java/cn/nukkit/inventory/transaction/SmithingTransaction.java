@@ -1,5 +1,6 @@
 package cn.nukkit.inventory.transaction;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.SmithItemEvent;
 import cn.nukkit.inventory.Inventory;
@@ -11,7 +12,6 @@ import cn.nukkit.inventory.transaction.action.SmithingItemAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -22,37 +22,46 @@ public class SmithingTransaction extends InventoryTransaction {
     private Item equipmentItem;
     private Item ingredientItem;
     private Item outputItem;
-    private Item templateItem;
-    private final List<Item> outputItemCheck = new ArrayList<>();
+    protected Item templateItem;
 
     public SmithingTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
-
-        for (InventoryAction action : actions) {
-            if (action instanceof SlotChangeAction) {
-                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
-                if (!(slotChangeAction.getInventory() instanceof SmithingInventory)) {
-                    this.outputItemCheck.add(slotChangeAction.getTargetItemUnsafe());
-                }
-            }
-        }
     }
 
     @Override
     public void addAction(InventoryAction action) {
-        super.addAction(action);
         if (action instanceof SmithingItemAction) {
             switch (((SmithingItemAction) action).getType()) {
                 case 0: // input
+                    if (this.equipmentItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for equipmentItem");
+                        return;
+                    }
                     this.equipmentItem = action.getTargetItem();
                     break;
                 case 1: // ingredient
+                    if (this.ingredientItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for ingredientItem");
+                        return;
+                    }
                     this.ingredientItem = action.getTargetItem();
                     break;
                 case 2: // result
+                    if (this.outputItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for outputItem");
+                        return;
+                    }
                     this.outputItem = action.getSourceItem();
                     break;
                 case 3: // template
+                    if (this.templateItem != null && !this.templateItem.equals(action.getTargetItemUnsafe())) { // "hack"
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for templateItem");
+                        return;
+                    }
                     this.templateItem = action.getTargetItem();
                     break;
             }
@@ -61,14 +70,20 @@ public class SmithingTransaction extends InventoryTransaction {
             if (creativeAction.getActionType() == 0
                     && creativeAction.getSourceItemUnsafe().isNull()
                     && !creativeAction.getTargetItemUnsafe().isNull() && creativeAction.getTargetItemUnsafe().getId() == ItemID.NETHERITE_INGOT) {
+                if (this.ingredientItem != null) {
+                    this.invalid = true;
+                    source.getServer().getLogger().debug("Duplicate addAction for ingredientItem");
+                    return;
+                }
                 this.ingredientItem = action.getTargetItem();
             }
         }
+        super.addAction(action);
     }
 
     @Override
     public boolean canExecute() {
-        if (!(matchItems(true, false) && !this.invalid && !this.actions.isEmpty())) {
+        if (!super.canExecute()) {
             return false;
         }
 
@@ -83,10 +98,19 @@ public class SmithingTransaction extends InventoryTransaction {
             return false;
         }
 
-        for (Item check : this.outputItemCheck) {
-            if (check != null && !check.isNull() && !this.outputItem.equals(check)) {
-                source.getServer().getLogger().debug("Illegal output");
-                return false;
+        for (InventoryAction action : actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                if (!(slotChangeAction.getInventory() instanceof SmithingInventory)) {
+                    Item item = slotChangeAction.getTargetItemUnsafe();
+                    if (item != null && !item.isNull() && !this.outputItem.equals(item)) {
+                        this.invalid = true;
+                        if (Nukkit.DEBUG > 1) {
+                            source.getServer().getLogger().debug("Illegal output " + item);
+                        }
+                        return false;
+                    }
+                }
             }
         }
 
@@ -102,7 +126,7 @@ public class SmithingTransaction extends InventoryTransaction {
 
     @Override
     public boolean execute() {
-        if (this.invalid || this.hasExecuted() || !this.canExecute()) {
+        if (this.hasExecuted() || !this.canExecute() || this.invalid) {
             this.source.removeAllWindows(false);
             this.sendInventories();
             return false;
@@ -125,9 +149,8 @@ public class SmithingTransaction extends InventoryTransaction {
             }
         }
 
-        if (inventory != null) {
-            inventory.sendContents(source);
-        }
+
+        this.hasExecuted = true;
         return true;
     }
 

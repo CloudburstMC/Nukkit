@@ -42,14 +42,17 @@ public class MaterialTags {
     public static final MaterialTag BOOKSHELF_BOOKS = register("minecraft:bookshelf_books", new LazilyInitializedMaterialTag("minecraft:bookshelf_books"));
     public static final MaterialTag CHAINMAIL_TIER = register("minecraft:chainmail_tier", new LazilyInitializedMaterialTag("minecraft:chainmail_tier"));
     public static final MaterialTag COALS = register("minecraft:coals", new LazilyInitializedMaterialTag("minecraft:coals"));
+    public static final MaterialTag COPPER_TIER = register("minecraft:copper_tier", new LazilyInitializedMaterialTag("minecraft:copper_tier"));
     public static final MaterialTag CRIMSON_STEMS = register("minecraft:crimson_stems", new LazilyInitializedMaterialTag("minecraft:crimson_stems"));
     public static final MaterialTag DECORATED_POT_SHERDS = register("minecraft:decorated_pot_sherds", new LazilyInitializedMaterialTag("minecraft:decorated_pot_sherds"));
     public static final MaterialTag DIAMOND_TIER = register("minecraft:diamond_tier", new LazilyInitializedMaterialTag("minecraft:diamond_tier"));
     public static final MaterialTag DIGGER = register("minecraft:digger", new LazilyInitializedMaterialTag("minecraft:digger"));
     public static final MaterialTag DOOR = register("minecraft:door", new LazilyInitializedMaterialTag("minecraft:door"));
+    public static final MaterialTag EGG = register("minecraft:egg", new LazilyInitializedMaterialTag("minecraft:egg"));
     public static final MaterialTag GOLDEN_TIER = register("minecraft:golden_tier", new LazilyInitializedMaterialTag("minecraft:golden_tier"));
     public static final MaterialTag HANGING_ACTOR = register("minecraft:hanging_actor", new LazilyInitializedMaterialTag("minecraft:hanging_actor"));
     public static final MaterialTag HANGING_SIGN = register("minecraft:hanging_sign", new LazilyInitializedMaterialTag("minecraft:hanging_sign"));
+    public static final MaterialTag HARNESS = register("minecraft:harness", new LazilyInitializedMaterialTag("minecraft:harness"));
     public static final MaterialTag HORSE_ARMOR = register("minecraft:horse_armor", new LazilyInitializedMaterialTag("minecraft:horse_armor"));
     public static final MaterialTag IRON_TIER = register("minecraft:iron_tier", new LazilyInitializedMaterialTag("minecraft:iron_tier"));
     public static final MaterialTag IS_ARMOR = register("minecraft:is_armor", new LazilyInitializedMaterialTag("minecraft:is_armor"));
@@ -61,7 +64,9 @@ public class MaterialTags {
     public static final MaterialTag IS_MEAT = register("minecraft:is_meat", new LazilyInitializedMaterialTag("minecraft:is_meat"));
     public static final MaterialTag IS_MINECART = register("minecraft:is_minecart", new LazilyInitializedMaterialTag("minecraft:is_minecart"));
     public static final MaterialTag IS_PICKAXE = register("minecraft:is_pickaxe", new LazilyInitializedMaterialTag("minecraft:is_pickaxe"));
+    public static final MaterialTag IS_SHEARS = register("minecraft:is_shears", new LazilyInitializedMaterialTag("minecraft:is_shears"));
     public static final MaterialTag IS_SHOVEL = register("minecraft:is_shovel", new LazilyInitializedMaterialTag("minecraft:is_shovel"));
+    public static final MaterialTag IS_SPEAR = register("minecraft:is_spear", new LazilyInitializedMaterialTag("minecraft:is_spear"));
     public static final MaterialTag IS_SWORD = register("minecraft:is_sword", new LazilyInitializedMaterialTag("minecraft:is_sword"));
     public static final MaterialTag IS_TOOL = register("minecraft:is_tool", new LazilyInitializedMaterialTag("minecraft:is_tool"));
     public static final MaterialTag IS_TRIDENT = register("minecraft:is_trident", new LazilyInitializedMaterialTag("minecraft:is_trident"));
@@ -70,7 +75,9 @@ public class MaterialTags {
     public static final MaterialTag LOGS = register("minecraft:logs", new LazilyInitializedMaterialTag("minecraft:logs"));
     public static final MaterialTag LOGS_THAT_BURN = register("minecraft:logs_that_burn", new LazilyInitializedMaterialTag("minecraft:logs_that_burn"));
     public static final MaterialTag MANGROVE_LOGS = register("minecraft:mangrove_logs", new LazilyInitializedMaterialTag("minecraft:mangrove_logs"));
+    public static final MaterialTag METAL_NUGGETS = register("minecraft:metal_nuggets", new LazilyInitializedMaterialTag("minecraft:metal_nuggets"));
     public static final MaterialTag MUSIC_DISC = register("minecraft:music_disc", new LazilyInitializedMaterialTag("minecraft:music_disc"));
+    public static final MaterialTag NAUTILUS_ARMOR = register("minecraft:nautilus_armor", new LazilyInitializedMaterialTag("minecraft:nautilus_armor"));
     public static final MaterialTag NETHERITE_TIER = register("minecraft:netherite_tier", new LazilyInitializedMaterialTag("minecraft:netherite_tier"));
     public static final MaterialTag PLANKS = register("minecraft:planks", new LazilyInitializedMaterialTag("minecraft:planks"));
     public static final MaterialTag SAND = register("minecraft:sand", new LazilyInitializedMaterialTag("minecraft:sand"));
@@ -92,7 +99,6 @@ public class MaterialTags {
     public static final MaterialTag WOODEN_SLABS = register("minecraft:wooden_slabs", new LazilyInitializedMaterialTag("minecraft:wooden_slabs"));
     public static final MaterialTag WOODEN_TIER = register("minecraft:wooden_tier", new LazilyInitializedMaterialTag("minecraft:wooden_tier"));
     public static final MaterialTag WOOL = register("minecraft:wool", new LazilyInitializedMaterialTag("minecraft:wool"));
-    public static final MaterialTag EGG = register("minecraft:egg", new LazilyInitializedMaterialTag("minecraft:egg"));
 
     public static MaterialTag register(String tagName, MaterialTag tag) {
         if (tags.containsKey(tagName)) {

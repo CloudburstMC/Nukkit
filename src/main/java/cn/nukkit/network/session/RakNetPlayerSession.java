@@ -142,10 +142,6 @@ public class RakNetPlayerSession extends SimpleChannelInboundHandler<RakMessage>
             return;
         }
 
-        if (!(packet instanceof BatchPacket)) {
-            packet.tryEncode();
-        }
-
         this.outbound.offer(packet);
     }
 
@@ -172,6 +168,10 @@ public class RakNetPlayerSession extends SimpleChannelInboundHandler<RakMessage>
             List<DataPacket> toBatch = new ObjectArrayList<>();
             DataPacket packet;
             while ((packet = this.outbound.poll()) != null) {
+                if (!(packet instanceof BatchPacket)) {
+                    packet.tryEncode();
+                }
+
                 if (packet instanceof DisconnectPacket) {
                     byte[] buf = packet.getBuffer();
                     BinaryStream batched = new BinaryStream(new byte[5 + buf.length]).reset();
