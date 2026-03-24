@@ -102,12 +102,14 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
         int powerLevel = getPowerLevel();
         //In seconds
         int duration = (9 + (powerLevel << 1)) * 20;
+        int range = 10 + powerLevel * 10;
+        double rangeSquared = range * range;
 
         for (Map.Entry<Long, Player> entry : this.level.getPlayers().entrySet()) {
             Player p = entry.getValue();
 
             //If the player is in range
-            if (p.distance(this) < 10 + powerLevel * 10) {
+            if (p.distanceSquared(this) < rangeSquared) {
                 Effect e;
 
                 if (getPrimaryPower() != 0) {

@@ -126,6 +126,10 @@ public enum AuthInputAction {
     /**
      * @since v765
      */
+    HOTBAR_ONLY_TOUCH,
+    /**
+     * @since v765
+     */
     JUMP_RELEASED_RAW,
     /**
      * @since v765

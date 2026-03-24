@@ -89,7 +89,7 @@ public class EntityWitherSkeleton extends EntityWalkingMob implements EntitySmit
         if (this.lastDamageCause instanceof EntityDamageByChildEntityEvent) {
             Entity damager;
             if (((EntityDamageByChildEntityEvent) this.lastDamageCause).getChild() instanceof EntityArrow && (damager = ((EntityDamageByChildEntityEvent) this.lastDamageCause).getDamager()) instanceof Player) {
-                if (new Vector2(this.x, this.z).distance(new Vector2(damager.x, damager.z)) >= 50) {
+                if (new Vector2(this.x, this.z).distanceSquared(damager.x, damager.z) >= 2500) { // 50 blocks
                     ((Player) damager).awardAchievement("snipeSkeleton");
                 }
             }

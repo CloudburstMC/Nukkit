@@ -198,7 +198,10 @@ public class BlockVector3 implements Cloneable {
     }
 
     public double distanceSquared(double x, double y, double z) {
-        return Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2) + Math.pow(this.z - z, 2);
+        double dx = this.x - x;
+        double dy = this.y - y;
+        double dz = this.z - z;
+        return dx * dx + dy * dy + dz * dz;
     }
 
     @Override

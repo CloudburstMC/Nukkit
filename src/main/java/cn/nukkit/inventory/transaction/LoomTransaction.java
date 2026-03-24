@@ -21,11 +21,15 @@ public class LoomTransaction extends InventoryTransaction {
 
     @Override
     public void addAction(InventoryAction action) {
-        super.addAction(action);
-
         if (action instanceof LoomItemAction) {
-            outputItem = action.getSourceItem();
+            if (this.outputItem != null) {
+                this.invalid = true;
+                source.getServer().getLogger().debug("Duplicate addAction for outputItem");
+                return;
+            }
+            this.outputItem = action.getSourceItem();
         }
+        super.addAction(action);
     }
 
     @Override

@@ -204,7 +204,7 @@ public class EntityAreaEffectCloud extends Entity {
         this.fireProof = true;
         //this.setDataFlag(DATA_FLAGS, DATA_FLAG_FIRE_IMMUNE, true);
         //this.setDataFlag(DATA_FLAGS, DATA_FLAG_IMMOBILE, true);
-        this.setDataProperty(new ShortEntityData(DATA_AREA_EFFECT_CLOUD_PARTICLE_ID, 32), false);
+        this.setDataProperty(new IntEntityData(DATA_AREA_EFFECT_CLOUD_PARTICLE_ID, 32), false);
         this.setDataProperty(new LongEntityData(DATA_SPAWN_TIME, this.level.getCurrentTick()), false);
         this.setDataProperty(new IntEntityData(DATA_PICKUP_COUNT, 0), false);
 

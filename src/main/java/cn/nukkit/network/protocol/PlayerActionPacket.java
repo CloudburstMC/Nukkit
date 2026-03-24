@@ -69,7 +69,7 @@ public class PlayerActionPacket extends DataPacket {
         this.putVarInt(this.action);
         this.putBlockVector3(this.x, this.y, this.z);
         if (this.resultPosition == null) {
-            this.putBlockVector3(new BlockVector3());
+            this.putBlockVector3(0, 0, 0);
         } else {
             this.putBlockVector3(this.resultPosition);
         }

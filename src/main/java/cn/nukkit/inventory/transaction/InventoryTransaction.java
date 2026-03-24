@@ -1,5 +1,6 @@
 package cn.nukkit.inventory.transaction;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.inventory.InventoryClickEvent;
@@ -19,6 +20,7 @@ import java.util.*;
 public class InventoryTransaction {
 
     protected boolean invalid;
+
     protected boolean hasExecuted;
 
     protected Player source;
@@ -50,6 +52,7 @@ public class InventoryTransaction {
         return source;
     }
 
+    @Deprecated
     public long getCreationTime() {
         return 0; // unused
     }
@@ -67,8 +70,8 @@ public class InventoryTransaction {
     }
 
     public void addAction(InventoryAction action) {
-        if (invalid) {
-            Server.getInstance().getLogger().debug("Failed to add InventoryAction for " + source.getName() + ": previous run was marked as invalid");
+        if (this.invalid) {
+            if (Nukkit.DEBUG > 1) Server.getInstance().getLogger().debug("Failed to add " + action.getClass().getSimpleName() + " for " + source.getName() + ": previous run was marked as invalid");
             return;
         }
 
@@ -78,14 +81,14 @@ public class InventoryTransaction {
             Item targetItem = slotChangeAction.getTargetItemUnsafe();
             Item sourceItem = slotChangeAction.getSourceItemUnsafe();
             if (targetItem.getCount() > targetItem.getMaxStackSize() || sourceItem.getCount() > sourceItem.getMaxStackSize()) {
-                invalid = true;
-                Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": illegal item stack size");
+                this.invalid = true;
+                if (Nukkit.DEBUG > 1) Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": illegal item stack size");
                 return;
             }
 
             if (!slotChangeAction.getInventory().allowedToAdd(targetItem)) {
-                invalid = true;
-                Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": " + slotChangeAction.getInventory().getName() + " inventory doesn't allow item " + targetItem.getId());
+                this.invalid = true;
+                if (Nukkit.DEBUG > 1) Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": " + slotChangeAction.getInventory().getName() + " inventory doesn't allow item " + targetItem.getId());
                 return;
             }
 
@@ -93,8 +96,8 @@ public class InventoryTransaction {
                 int slot = slotChangeAction.getSlot();
                 if (slot == 36 || slot == 37 || slot == 38 || slot == 39) {
                     if (sourceItem.hasEnchantment(Enchantment.ID_BINDING_CURSE)) {
-                        invalid = true;
-                        Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": armor has binding curse");
+                        this.invalid = true;
+                        if (Nukkit.DEBUG > 1) Server.getInstance().getLogger().debug("Failed to add SlotChangeAction for " + source.getName() + ": armor has binding curse");
                         return;
                     }
                 }
@@ -140,22 +143,18 @@ public class InventoryTransaction {
         this.inventories.add(inventory);
     }
 
-    protected boolean matchItems(boolean clientAuthTrim, boolean clientAuthLapis) {
+    protected boolean matchItems() {
         List<Item> haveItems = new ArrayList<>();
         List<Item> needItems = new ArrayList<>();
 
         for (InventoryAction action : this.actions) {
+            if (!action.isValid(this.source)) {
+                this.invalid = true;
+                return false;
+            }
+
             if (action.getTargetItemUnsafe().getId() != Item.AIR) {
                 needItems.add(action.getTargetItem());
-            }
-
-            if (clientAuthTrim && action instanceof SlotChangeAction) {
-                ((SlotChangeAction) action).setSmithingClientAuth(true);
-            }
-
-            if (!action.isValid(this.source)) {
-                invalid = true;
-                return false;
             }
 
             if (action.getSourceItemUnsafe().getId() != Item.AIR) {
@@ -180,16 +179,20 @@ public class InventoryTransaction {
             }
         }
 
-        if (clientAuthLapis) {
-            haveItems.removeIf(item -> item.getId() == Item.DYE && item.getDamage() == ItemDye.LAPIS_LAZULI);
+        if (this instanceof EnchantTransaction) {
+            haveItems.removeIf(item -> item.getId() == Item.DYE && item.getDamage() == ItemDye.LAPIS_LAZULI &&
+                    item.equals(((EnchantTransaction) this).materialItem));
         }
 
-        if (clientAuthTrim) {
+        if (this instanceof SmithingTransaction) {
             needItems.removeIf(item -> (item.getId() == Item.NETHERITE_UPGRADE_SMITHING_TEMPLATE || (item.getId() >= Item.COAST_ARMOR_TRIM_SMITHING_TEMPLATE &&
-                    item.getId() <= Item.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE)) && item.getDamage() == 0 && item.getCount() <= 1);
+                    item.getId() <= Item.FLOW_ARMOR_TRIM_SMITHING_TEMPLATE)) && item.getDamage() == 0 && item.getCount() <= 1 &&
+                    item.equals(((SmithingTransaction) this).templateItem));
         }
 
-        return needItems.isEmpty() && haveItems.isEmpty();
+        boolean valid = needItems.isEmpty() && haveItems.isEmpty();
+        if (!valid && Nukkit.DEBUG > 1) source.getServer().getLogger().debug("!matchItems " + needItems + " / " + haveItems);
+        return valid;
     }
 
     protected void sendInventories() {
@@ -202,8 +205,7 @@ public class InventoryTransaction {
     }
 
     public boolean canExecute() {
-        return matchItems(false, false) && !this.invalid && !this.actions.isEmpty();
-
+        return matchItems() && !this.invalid && !this.actions.isEmpty();
     }
 
     protected boolean callExecuteEvent() {
@@ -248,12 +250,12 @@ public class InventoryTransaction {
     }
 
     public boolean execute() {
-        if (invalid || this.hasExecuted() || !this.canExecute()) {
+        if (this.hasExecuted() || !this.canExecute() || this.invalid) {
             this.sendInventories();
             return false;
         }
 
-        if (!callExecuteEvent()) {
+        if (!this.callExecuteEvent()) {
             this.sendInventories();
             return true;
         }

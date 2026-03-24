@@ -1,5 +1,6 @@
 package cn.nukkit.event;
 
+import cn.nukkit.Server;
 import cn.nukkit.utils.EventException;
 
 /**
@@ -11,7 +12,7 @@ import cn.nukkit.utils.EventException;
  * when a event happens, this procedure is called a <b>listener</b>.
  * <p>
  * Nukkit调用事件的处理器时，会通过参数的类型判断需要被监听的事件。<br>
- * When Nukkit is calling a handler, the event needed to listen is judged by the type of the parameter. 
+ * When Nukkit is calling a handler, the event needed to listen is judged by the type of the parameter.
  * <p>
  * 关于监听器的实现，参阅：{@link Listener} <br>
  * For the way to implement a listener, see: {@link cn.nukkit.event.Listener}
@@ -45,5 +46,13 @@ public abstract class Event {
             throw new EventException("Event is not Cancellable");
         }
         isCancelled = value;
+    }
+
+    /**
+     * Shortcut for PluginManager.callEvent
+     */
+    public final Event call() {
+        Server.getInstance().getPluginManager().callEvent(this);
+        return this;
     }
 }

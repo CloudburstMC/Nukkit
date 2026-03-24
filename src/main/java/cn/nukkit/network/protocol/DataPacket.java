@@ -86,14 +86,13 @@ public abstract class DataPacket extends BinaryStream implements Cloneable {
 
     void decodeUnsupported() {
         if (Nukkit.DEBUG > 1) {
-            Server.getInstance().getLogger().debug("Warning: decode() not implemented for " + this.getClass().getName());
+            Server.getInstance().getLogger().debug("Warning: decode() not implemented for " + this.getClass().getName(), new Throwable(""));
         }
     }
 
     void encodeUnsupported() {
         if (Nukkit.DEBUG > 1) {
-            Server.getInstance().getLogger().debug("Warning: encode() not implemented for " + this.getClass().getName());
-            Thread.dumpStack();
+            Server.getInstance().getLogger().debug("Warning: encode() not implemented for " + this.getClass().getName(), new Throwable(""));
         }
     }
 }

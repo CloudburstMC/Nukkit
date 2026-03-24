@@ -103,7 +103,9 @@ public class Vector2f {
     }
 
     public double distanceSquared(float x, float y) {
-        return Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2);
+        double dx = this.x - x;
+        double dy = this.y - y;
+        return dx * dx + dy * dy;
     }
 
     public double distanceSquared(Vector2f vector) {

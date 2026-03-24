@@ -40,6 +40,5 @@ public class LoomItemAction extends InventoryAction {
 
     @Override
     public void onExecuteFail(Player source) {
-        inventory.sendContents(source);
     }
 }

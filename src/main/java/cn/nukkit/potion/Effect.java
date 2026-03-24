@@ -9,6 +9,7 @@ import cn.nukkit.event.entity.EntityDamageEvent.DamageCause;
 import cn.nukkit.event.entity.EntityRegainHealthEvent;
 import cn.nukkit.network.protocol.MobEffectPacket;
 
+import javax.annotation.Nullable;
 import java.util.Locale;
 
 /**
@@ -54,6 +55,13 @@ public class Effect implements Cloneable {
     public static final int BAD_OMEN = 28;
     public static final int VILLAGE_HERO = 29;
     public static final int DARKNESS = 30;
+    public static final int TRIAL_OMEN = 31;
+    public static final int WIND_CHARGED = 32;
+    public static final int WEAVING = 33;
+    public static final int OOZING = 34;
+    public static final int INFESTED = 35;
+    public static final int RAID_OMEN = 36;
+    public static final int BREATH_OF_THE_NAUTILUS = 37;
 
     protected static Effect[] effects;
 
@@ -90,8 +98,16 @@ public class Effect implements Cloneable {
         effects[Effect.BAD_OMEN] = new Effect(Effect.BAD_OMEN, "%effect.badOmen", 11, 97, 56, true);
         effects[Effect.VILLAGE_HERO] = new Effect(Effect.VILLAGE_HERO, "%effect.villageHero", 68, 255, 68).setVisible(false);
         effects[Effect.DARKNESS] = new Effect(Effect.DARKNESS, "%effect.darkness", 41, 39, 33, true).setVisible(false);
+        effects[Effect.TRIAL_OMEN] = new Effect(Effect.TRIAL_OMEN, "%effect.trial_omen", 0, 0, 0);
+        effects[Effect.WIND_CHARGED] = new Effect(Effect.WIND_CHARGED, "%effect.wind_charged", 0, 0, 0, true);
+        effects[Effect.WEAVING] = new Effect(Effect.WEAVING, "%effect.weaving", 0, 0, 0, true);
+        effects[Effect.OOZING] = new Effect(Effect.OOZING, "%effect.oozing", 0, 0, 0, true);
+        effects[Effect.INFESTED] = new Effect(Effect.INFESTED, "%effect.infested", 0, 0, 0, true);
+        effects[Effect.RAID_OMEN] = new Effect(Effect.RAID_OMEN, "%effect.raid_omen", 0, 0, 0);
+        effects[Effect.BREATH_OF_THE_NAUTILUS] = new Effect(Effect.BREATH_OF_THE_NAUTILUS, "%effect.breath_of_the_nautilus", 0, 0, 0);
     }
 
+    @Nullable
     public static Effect getEffect(int id) {
         if (id >= 0 && id < effects.length && effects[id] != null) {
             return effects[id].clone();
@@ -100,6 +116,7 @@ public class Effect implements Cloneable {
         }
     }
 
+    @Nullable
     public static Effect getEffectByName(String name) {
         name = name.trim().replace(' ', '_').replace("minecraft:", "");
         try {

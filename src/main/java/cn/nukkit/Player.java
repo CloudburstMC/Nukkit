@@ -42,12 +42,15 @@ import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
 import cn.nukkit.item.*;
 import cn.nukkit.item.custom.CustomItemManager;
 import cn.nukkit.item.enchantment.Enchantment;
+import cn.nukkit.item.enchantment.mace.EnchantmentMace;
 import cn.nukkit.lang.TextContainer;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.*;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.level.format.generic.BaseFullChunk;
+import cn.nukkit.level.particle.GenericParticle;
 import cn.nukkit.level.particle.ItemBreakParticle;
+import cn.nukkit.level.particle.Particle;
 import cn.nukkit.level.particle.PunchBlockParticle;
 import cn.nukkit.math.*;
 import cn.nukkit.metadata.MetadataValue;
@@ -385,7 +388,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * Set last spin attack tick to current tick
      */
     public void onSpinAttack(int riptideLevel) {
-        this.riptideTicks = 50 + (riptideLevel << 5);
+        this.riptideTicks = 40 * riptideLevel;
     }
 
     /**
@@ -1384,12 +1387,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             log.trace("Outbound {}: {}", this.getName(), dataPacket);
         }
 
-        if (dataPacket instanceof BatchPacket) {
-            this.networkSession.sendPacket(dataPacket);
-        } else {
-            // Make sure packets always go to BatchingHelper so they are not reordered
-            this.server.batchPackets(new Player[]{this}, new DataPacket[]{dataPacket});
-        }
+        this.server.sendPacketOrdered(this, dataPacket);
         return true;
     }
 
@@ -1442,10 +1440,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
         Entity[] e = this.level.getNearbyEntities(this.boundingBox.grow(2, 1, 2), this);
         for (Entity p : e) {
-            if (p instanceof Player) {
-                if (((Player) p).sleeping != null && pos.distance(((Player) p).sleeping) <= 0.1) {
-                    return false;
-                }
+            if (p instanceof Player && pos.equals(((Player) p).sleeping)) {
+                return false;
             }
         }
 
@@ -2133,7 +2129,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
             Enchantment frostWalker = boots.getEnchantment(Enchantment.ID_FROST_WALKER);
             if (frostWalker != null && frostWalker.getLevel() > 0 && !this.isSpectator() && this.y > this.level.getMinBlockY() && this.y <= this.level.getMaxBlockY()) {
+                ThreadLocalRandom random = ThreadLocalRandom.current();
                 int radius = 2 + frostWalker.getLevel();
+
                 for (int coordX = this.getFloorX() - radius; coordX < this.getFloorX() + radius + 1; coordX++) {
                     for (int coordZ = this.getFloorZ() - radius; coordZ < this.getFloorZ() + radius + 1; coordZ++) {
                         Block block = level.getBlock(this.chunk, coordX, this.getFloorY() - 1, coordZ, true);
@@ -2142,7 +2140,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                             server.getPluginManager().callEvent(waterFrostEvent);
                             if (!waterFrostEvent.isCancelled()) {
                                 level.setBlockAt((int) block.x, (int) block.y, (int) block.z, Block.ICE_FROSTED, 0);
-                                level.scheduleUpdate(level.getBlock(this.chunk, (int) block.getX(), (int) block.getY(), (int) block.getZ(), true), ThreadLocalRandom.current().nextInt(20, 40));
+                                level.scheduleUpdate(level.getBlock(this.chunk, (int) block.getX(), (int) block.getY(), (int) block.getZ(), true), random.nextInt(20, 40));
                             }
                         }
                     }
@@ -2435,7 +2433,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             if (this.isUsingItem()) {
                 Item food = this.getInventory().getItemInHandFast();
 
-                if (food instanceof ItemEdible) {
+                if (food instanceof ItemEdible || food instanceof ItemPotion || food instanceof ItemBucket) {
                     EntityEventPacket pk = new EntityEventPacket();
                     pk.eid = this.id;
                     pk.event = EntityEventPacket.EATING_ITEM;
@@ -4041,17 +4039,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         fixedPacket.isRepairItemPart = true;
                         fixedPacket.actions = new NetworkInventoryAction[8];
 
-                        Item fromIngredient = smithingInventory.getIngredient().clone();
+                        Item fromIngredient = smithingInventory.getIngredient();
                         Item toIngredient = fromIngredient.decrement(1);
 
-                        Item fromEquipment = smithingInventory.getEquipment().clone();
+                        Item fromEquipment = smithingInventory.getEquipment();
                         Item toEquipment = fromEquipment.decrement(1);
 
-                        Item fromTemplate = smithingInventory.getTemplate().clone();
+                        Item fromTemplate = smithingInventory.getTemplate();
                         Item toTemplate = fromTemplate.decrement(1);
 
                         Item fromResult = Item.get(Item.AIR);
-                        Item toResult = smithingInventory.getResult().clone();
+                        Item toResult = smithingInventory.getResult();
 
                         NetworkInventoryAction action = new NetworkInventoryAction();
                         action.windowId = ContainerIds.UI;
@@ -4077,7 +4075,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         if (this.getLoginChainData().getUIProfile() == 0) {
                             // We can't know whether shift click was used so we must make sure we won't overwrite item in cursor inventory
                             Item[] drops = this.inventory.addItem(this.playerUIInventory.getItemFast(0)); // Cloned in addItem
-                            this.playerUIInventory.getCursorInventory().clear(0);
+                            this.playerUIInventory.clear(0);
 
                             for (Item drop : drops) {
                                 this.level.dropItem(this, drop);
@@ -4218,11 +4216,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                         if (this.smithingTransaction.canExecute()) {
                             if (this.smithingTransaction.execute()) {
-                                Collection<Player> players = level.getChunkPlayers(getChunkX(), getChunkZ()).values();
-                                players.remove(this);
-                                if (!players.isEmpty()) {
-                                    level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_SMITHING_TABLE_USE);
-                                }
+                                level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_SMITHING_TABLE_USE);
                             }
                             this.smithingTransaction = null;
                         }
@@ -4236,11 +4230,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                         }
                         if (this.grindstoneTransaction.canExecute()) {
                             if (this.grindstoneTransaction.execute()) {
-                                Collection<Player> players = level.getChunkPlayers(getChunkX(), getChunkZ()).values();
-                                players.remove(this);
-                                if (!players.isEmpty()) {
-                                    level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_GRINDSTONE_USE);
-                                }
+                                level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_GRINDSTONE_USE);
                             }
                             this.grindstoneTransaction = null;
                         }
@@ -4563,7 +4553,35 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                                 }
 
                                 EntityDamageByEntityEvent entityDamageByEntityEvent = new EntityDamageByEntityEvent(this, target, DamageCause.ENTITY_ATTACK, damage, knockBack, enchantments);
-                                entityDamageByEntityEvent.setWeapon(item);
+                                level.addLevelSoundEvent(this, LevelSoundEventPacket.SOUND_BLOCK_SMITHING_TABLE_USE);
+
+                                boolean smashAttack = false;
+
+                                if (item instanceof ItemMace && !this.isGliding()) {
+                                    double height = this.highestPosition - target.y;
+
+                                    if (height >= 1.5) {
+                                        smashAttack = true;
+
+                                        int smashDamage = 6; // normal damage
+                                        for (int i = 0; i <= height; i++) {
+                                            if (i < 3) { // 4 extra damage for each of the first 3 blocks fallen
+                                                smashDamage += 4;
+                                            } else if (i < 8) { // 2 extra damage for each of the next 5 blocks fallen
+                                                smashDamage += 2;
+                                            } else { // 1 extra damage for each block fallen after that
+                                                smashDamage += 1;
+                                            }
+                                        }
+
+                                        int density = item.getEnchantmentLevel(EnchantmentMace.ID_DENSITY);
+                                        if (density > 0) { // 0.5 per block fallen per level of enchantment
+                                            smashDamage += (int) (0.5 * height * density);
+                                        }
+
+                                        entityDamageByEntityEvent.setDamage(smashDamage);
+                                    }
+                                }
 
                                 if (this.isSpectator()) {
                                     entityDamageByEntityEvent.setCancelled();
@@ -4581,6 +4599,30 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                 for (Enchantment enchantment : item.getEnchantments()) {
                                     enchantment.doPostAttack(this, target);
+                                }
+
+                                if (smashAttack) {
+                                    int windBurst = item.getEnchantmentLevel(Enchantment.ID_WIND_BURST);
+                                    if (windBurst > 0) {
+                                        Vector3 knockback = new Vector3(this.motionX, this.motionY, this.motionZ);
+
+                                        knockback.x /= 2d;
+                                        knockback.y /= 2d;
+                                        knockback.z /= 2d;
+
+                                        knockback.y += windBurst == 1 ? 1.2 : windBurst == 2 ? 1.75 : (1.15 + 0.35 * windBurst);
+
+                                        this.resetFallDistance();
+
+                                        this.setMotion(knockback);
+
+                                        this.riptideTicks = 40 * windBurst;
+
+                                        target.getLevel().addParticle(new GenericParticle(target, Particle.TYPE_WIND_EXPLOSION));
+                                    }
+
+                                    target.getLevel().addLevelEvent(target, LevelEventPacket.EVENT_PARTICLE_SMASH_ATTACK_GROUND_DUST);
+                                    target.getLevel().addLevelSoundEvent(target, LevelSoundEventPacket.SOUND_MACE_SMASH_AIR);
                                 }
 
                                 if (item.isTool() && !this.isCreative()) {

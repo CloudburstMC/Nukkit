@@ -6,11 +6,9 @@ import cn.nukkit.block.Block;
 import cn.nukkit.event.block.AnvilDamageEvent;
 import cn.nukkit.event.block.AnvilDamageEvent.DamageCause;
 import cn.nukkit.event.inventory.RepairItemEvent;
-import cn.nukkit.inventory.AnvilInventory;
-import cn.nukkit.inventory.FakeBlockMenu;
-import cn.nukkit.inventory.Inventory;
-import cn.nukkit.inventory.transaction.action.InventoryAction;
+import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.action.RepairItemAction;
+import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.enchantment.Enchantment;
@@ -21,7 +19,6 @@ import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -30,21 +27,11 @@ public class RepairItemTransaction extends InventoryTransaction {
     private Item inputItem;
     private Item materialItem;
     private Item outputItem;
-    private final List<Item> outputItemCheck = new ArrayList<>();
 
     private int cost;
 
     public RepairItemTransaction(Player source, List<InventoryAction> actions) {
         super(source, actions);
-
-        for (InventoryAction action : actions) {
-            if (action instanceof SlotChangeAction) {
-                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
-                if (!(slotChangeAction.getInventory() instanceof AnvilInventory)) {
-                    this.outputItemCheck.add(slotChangeAction.getTargetItemUnsafe());
-                }
-            }
-        }
     }
 
     @Override
@@ -64,10 +51,19 @@ public class RepairItemTransaction extends InventoryTransaction {
             return false;
         }
 
-        for (Item check : this.outputItemCheck) {
-            if (check != null && !this.outputItem.equals(check)) {
-                source.getServer().getLogger().debug("Illegal output");
-                return false;
+        for (InventoryAction action : actions) {
+            if (action instanceof SlotChangeAction) {
+                SlotChangeAction slotChangeAction = (SlotChangeAction) action;
+                if (!(slotChangeAction.getInventory() instanceof AnvilInventory)) {
+                    Item item = slotChangeAction.getTargetItemUnsafe();
+                    if (item != null && !item.isNull() && !this.outputItem.equals(item)) {
+                        this.invalid = true;
+                        if (Nukkit.DEBUG > 1) {
+                            source.getServer().getLogger().debug("Illegal output " + item);
+                        }
+                        return false;
+                    }
+                }
             }
         }
 
@@ -80,7 +76,7 @@ public class RepairItemTransaction extends InventoryTransaction {
 
     @Override
     public boolean execute() {
-        if (this.invalid || this.hasExecuted() || !this.canExecute()) {
+        if (this.hasExecuted() || !this.canExecute() || this.invalid) {
             this.source.removeAllWindows(false);
             this.sendInventories();
             return false;
@@ -139,25 +135,42 @@ public class RepairItemTransaction extends InventoryTransaction {
         if (!this.source.isCreative()) {
             this.source.setExperience(this.source.getExperience(), this.source.getExperienceLevel() - event.getCost());
         }
+
+        this.hasExecuted = true;
         return true;
     }
 
     @Override
     public void addAction(InventoryAction action) {
-        super.addAction(action);
         if (action instanceof RepairItemAction) {
             switch (((RepairItemAction) action).getType()) {
                 case NetworkInventoryAction.SOURCE_TYPE_ANVIL_INPUT:
+                    if (this.inputItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for inputItem");
+                        return;
+                    }
                     this.inputItem = action.getTargetItem();
                     break;
                 case NetworkInventoryAction.SOURCE_TYPE_ANVIL_RESULT:
+                    if (this.outputItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for outputItem");
+                        return;
+                    }
                     this.outputItem = action.getSourceItem();
                     break;
                 case NetworkInventoryAction.SOURCE_TYPE_ANVIL_MATERIAL:
+                    if (this.materialItem != null) {
+                        this.invalid = true;
+                        source.getServer().getLogger().debug("Duplicate addAction for materialItem");
+                        return;
+                    }
                     this.materialItem = action.getTargetItem();
                     break;
             }
         }
+        super.addAction(action);
     }
 
     private boolean checkRecipeValid() {
@@ -177,7 +190,7 @@ public class RepairItemTransaction extends InventoryTransaction {
                 int maxRepairDamage = this.inputItem.getMaxDurability() / 4;
                 int repairDamage = Math.min(this.inputItem.getDamage(), maxRepairDamage);
                 if (repairDamage <= 0) {
-                    source.getServer().getLogger().debug("failed: repair damage");
+                    source.getServer().getLogger().debug("failed: repair damage: " + repairDamage);
                     return false;
                 }
 
@@ -186,8 +199,8 @@ public class RepairItemTransaction extends InventoryTransaction {
                     damage = damage - repairDamage;
                     repairDamage = Math.min(damage, maxRepairDamage);
                 }
-                if (this.outputItem.getDamage() != damage) {
-                    source.getServer().getLogger().debug("failed: durable damage");
+                if (this.outputItem.getDamage() != damage && this.outputItem.getDamage() != damage + 1) {
+                    source.getServer().getLogger().debug("failed: durable damage: " + this.outputItem.getDamage() + " != " + damage);
                     return false;
                 }
             } else {
@@ -344,7 +357,9 @@ public class RepairItemTransaction extends InventoryTransaction {
             }
         }
         if (this.outputItem.getRepairCost() != nextBaseRepairCost) {
-            this.source.getServer().getLogger().debug("Got unexpected base cost " + this.outputItem.getRepairCost() + " from " + this.source.getName() + "(expected " + nextBaseRepairCost + ')');
+            if (Nukkit.DEBUG > 1) {
+                this.source.getServer().getLogger().debug("Got unexpected base cost " + this.outputItem.getRepairCost() + " from " + this.source.getName() + "(expected " + nextBaseRepairCost + ")");
+            }
             return false;
         }
 

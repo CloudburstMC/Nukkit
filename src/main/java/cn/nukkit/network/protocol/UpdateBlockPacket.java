@@ -46,6 +46,7 @@ public class UpdateBlockPacket extends DataPacket {
         this.putUnsignedVarInt(dataLayer);
     }
 
+    @Deprecated
     public static class Entry {
         public final int x;
         public final int z;

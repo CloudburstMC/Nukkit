@@ -34,7 +34,7 @@ public class EnchantCommand extends VanillaCommand {
                         "aqua_affinity", "depth_strider", "sharpness", "smite", "bane_of_arthropods", "knockback", "fire_aspect", "looting", "efficiency",
                         "silk_touch", "durability", "fortune", "power", "punch", "flame", "infinity", "luck_of_the_sea", "lure", "frost_walker", "mending",
                         "binding_curse", "vanishing_curse", "impaling", "loyalty", "riptide", "channeling", "multishot", "piercing", "quick_charge",
-                        "soul_speed", "swift_sneak")),
+                        "soul_speed", "swift_sneak", "wind_burst", "density", "breach", "lunge")),
                 CommandParameter.newType("level", true, CommandParamType.INT)
         });
     }
@@ -159,6 +159,14 @@ public class EnchantCommand extends VanillaCommand {
                 return 36;
             case "swift_sneak":
                 return 37;
+            case "wind_burst":
+                return Enchantment.ID_WIND_BURST;
+            case "density":
+                return Enchantment.ID_DENSITY;
+            case "breach":
+                return Enchantment.ID_BREACH;
+            case "lunge":
+                return Enchantment.ID_LUNGE;
             default:
                 return Integer.parseInt(value);
         }

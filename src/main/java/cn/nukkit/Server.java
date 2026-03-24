@@ -18,6 +18,7 @@ import cn.nukkit.entity.weather.EntityLightning;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.event.level.LevelInitEvent;
 import cn.nukkit.event.level.LevelLoadEvent;
+import cn.nukkit.event.server.BatchPacketsEvent;
 import cn.nukkit.event.server.PlayerDataSerializeEvent;
 import cn.nukkit.event.server.QueryRegenerateEvent;
 import cn.nukkit.event.server.ServerStopEvent;
@@ -50,7 +51,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
-import cn.nukkit.network.BatchingHelper;
 import cn.nukkit.network.Network;
 import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
@@ -199,7 +199,6 @@ public class Server {
     private Watchdog watchdog;
     private final DB nameLookup;
     private PlayerDataSerializer playerDataSerializer;
-    private final BatchingHelper batchingHelper;
     private final Set<String> ignoredPackets = new HashSet<>();
 
     /**
@@ -451,8 +450,6 @@ public class Server {
         this.scheduler = new ServerScheduler();
 
         this.console.setExecutingCommands(true); // Scheduler needs to be ready
-
-        this.batchingHelper = new BatchingHelper();
 
         if (this.getPropertyBoolean("enable-rcon", false)) {
             try {
@@ -710,23 +707,33 @@ public class Server {
     }
 
     public static void broadcastPacket(Collection<Player> players, DataPacket packet) {
-        packet.tryEncode();
-
         for (Player player : players) {
             player.dataPacket(packet);
         }
     }
 
     public static void broadcastPacket(Player[] players, DataPacket packet) {
-        packet.tryEncode();
-
         for (Player player : players) {
             player.dataPacket(packet);
         }
     }
 
+    @Deprecated
     public void batchPackets(Player[] players, DataPacket[] packets) {
-        this.batchingHelper.batchPackets(this, players, packets);
+        for (DataPacket packet : packets) {
+            for (Player player : players) {
+                sendPacketOrdered(player, packet);
+            }
+        }
+    }
+
+    void sendPacketOrdered(Player player, DataPacket packet) {
+        //noinspection deprecation
+        if (new BatchPacketsEvent(new Player[]{player}, new DataPacket[]{packet}, true).call().isCancelled()) {
+            return;
+        }
+
+        player.getNetworkSession().sendPacket(packet);
     }
 
     /**
@@ -893,9 +900,6 @@ public class Server {
             this.getLogger().debug("Closing console...");
             this.consoleThread.interrupt();
 
-            this.getLogger().debug("Closing BatchingHelper...");
-            this.batchingHelper.shutdown();
-
             this.getLogger().debug("Stopping network interfaces...");
             for (SourceInterface interfaz : this.network.getInterfaces()) {
                 interfaz.shutdown();
@@ -1055,7 +1059,7 @@ public class Server {
         PlayerListPacket pk = new PlayerListPacket();
         pk.type = PlayerListPacket.TYPE_ADD;
         pk.entries = new PlayerListPacket.Entry[]{playerListEntry};
-        this.batchPackets(players, new DataPacket[]{pk}); // This is sent "directly" so it always gets through before possible TYPE_REMOVE packet for NPCs etc.
+        Server.broadcastPacket(players, pk);
     }
 
     public void updatePlayerListData(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Collection<Player> players) {
@@ -2743,6 +2747,10 @@ public class Server {
         Entity.registerEntity("Armadillo", EntityArmadillo.class);
         Entity.registerEntity("HappyGhast", EntityHappyGhast.class);
         Entity.registerEntity("CopperGolem", EntityCopperGolem.class);
+        Entity.registerEntity("Nautilus", EntityNautilus.class);
+        Entity.registerEntity("ZombieNautilus", EntityZombieNautilus.class);
+        Entity.registerEntity("Parched", EntityParched.class);
+        Entity.registerEntity("CamelHusk", EntityCamelHusk.class);
         //Vehicles
         Entity.registerEntity("MinecartRideable", EntityMinecartEmpty.class);
         Entity.registerEntity("MinecartChest", EntityMinecartChest.class);
