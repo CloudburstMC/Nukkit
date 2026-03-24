@@ -23,4 +23,5 @@ public class UseItemData implements TransactionData {
     public Vector3f clickPos;
     public int blockRuntimeId;
     public int clientInteractPrediction;
+    public int clientCooldownState;
 }

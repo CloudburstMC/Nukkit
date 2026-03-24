@@ -722,7 +722,7 @@ public class BinaryStream {
     }
 
     public BlockVector3 getBlockVector3() {
-        return new BlockVector3(this.getVarInt(), (int) this.getUnsignedVarInt(), this.getVarInt());
+        return new BlockVector3(this.getVarInt(), this.getVarInt(), this.getVarInt());
     }
 
     public BlockVector3 getSignedBlockPosition() {
@@ -741,7 +741,7 @@ public class BinaryStream {
 
     public void putBlockVector3(int x, int y, int z) {
         this.putVarInt(x);
-        this.putUnsignedVarInt(Integer.toUnsignedLong(y)); // we have even negative coordinates
+        this.putVarInt(y);
         this.putVarInt(z);
     }
 

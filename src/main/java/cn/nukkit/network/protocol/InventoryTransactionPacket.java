@@ -100,7 +100,8 @@ public class InventoryTransactionPacket extends DataPacket {
                 itemData.playerPos = this.getVector3fAsVector3();
                 itemData.clickPos = this.getVector3f();
                 itemData.blockRuntimeId = (int) this.getUnsignedVarInt();
-                itemData.clientInteractPrediction = (int) this.getUnsignedVarInt();
+                itemData.clientInteractPrediction = this.getByte();
+                itemData.clientCooldownState = this.getByte();
 
                 this.transactionData = itemData;
                 break;
