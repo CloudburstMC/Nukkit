@@ -13,6 +13,10 @@ public interface Waxable {
     Location getLocation();
 
     default boolean onActivate(Item item, Player player) {
+        if (item == null || player == null) {
+            return false;
+        }
+
         boolean waxed = isWaxed();
         if ((item.getId() != ItemID.HONEYCOMB || waxed) && (!item.isAxe() || !waxed)) {
             return false;

@@ -223,10 +223,12 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     }
 
     public boolean toggle(Player player) {
-        DoorToggleEvent ev = new DoorToggleEvent(this, player);
-        level.getServer().getPluginManager().callEvent(ev);
-        if (ev.isCancelled()) {
-            return false;
+        if (player != null) {
+            DoorToggleEvent ev = new DoorToggleEvent(this, player);
+            level.getServer().getPluginManager().callEvent(ev);
+            if (ev.isCancelled()) {
+                return false;
+            }
         }
         this.setDamage(this.getDamage() ^ TRAPDOOR_OPEN_BIT);
         level.setBlock(this, this, true, true);

@@ -336,6 +336,11 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_WASD_AIR_CONTROLLED = 122;
     public static final int DATA_FLAG_DOES_SERVER_AUTH_ONLY_DISMOUNT = 123;
     public static final int DATA_FLAG_BODY_ROTATION_ALWAYS_FOLLOWS_HEAD = 124;
+    public static final int DATA_FLAG_CAN_USE_VERTICAL_MOVEMENT_ACTION = 125;
+    public static final int DATA_FLAG_BODY_ROTATION_LOCKED_TO_VEHICLE = 126;
+    public static final int DATA_FLAG_USES_LEGACY_FRICTION = 127;
+    public static final int DATA_FLAG_USES_UNIFORM_AIR_DRAG = 128;
+    public static final int DATA_FLAG_NAMEPLATE_DEPTH_TESTED = 129;
 
     public static final double STEP_CLIP_MULTIPLIER = 0.4;
 
@@ -432,6 +437,7 @@ public abstract class Entity extends Location implements Metadatable {
     public boolean justCreated;
     public boolean fireProof;
     public boolean invulnerable;
+    private boolean collidable;
 
     // Allow certain entities to be ticked only when a nearby block is updated or the entity is moving already
     // 1 = has pending update, 3 = update on block update only, 5 = update on block update + schedule occasional updates
@@ -2942,5 +2948,16 @@ public abstract class Entity extends Location implements Metadatable {
      */
     public boolean ignoredAsSaveReason() {
         return false;
+    }
+
+    public void setCollidable(boolean collidable) {
+        if (this.collidable != collidable) {
+            this.collidable = collidable;
+            setDataFlag(DATA_FLAGS_EXTENDED, DATA_FLAG_COLLIDABLE);
+        }
+    }
+
+    public boolean isCollidable() {
+        return this.collidable;
     }
 }

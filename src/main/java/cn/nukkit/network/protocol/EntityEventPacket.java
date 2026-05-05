@@ -1,5 +1,7 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.math.Vector3f;
+import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
 /**
@@ -70,6 +72,9 @@ public class EntityEventPacket extends DataPacket {
     public static final int GROW_UP = 76;
     public static final int VIBRATION_DETECTED = 77;
     public static final int DRINK_MILK = 78;
+    public static final int SHAKE_WETNESS_STOP = 79;
+    public static final int KINETIC_DAMAGE_DEALT = 80;
+    public static final int HURT_WITHOUT_RECEIVING_DAMAGE = 81;
 
     @Override
     public byte pid() {
@@ -79,12 +84,16 @@ public class EntityEventPacket extends DataPacket {
     public long eid;
     public int event;
     public int data = 0;
+    public Vector3f fireAtPosition;
 
     @Override
     public void decode() {
         this.eid = this.getEntityRuntimeId();
         this.event = this.getByte();
         this.data = this.getVarInt();
+        if (this.getBoolean()) {
+            this.fireAtPosition = this.getVector3f();
+        }
     }
 
     @Override
@@ -93,5 +102,6 @@ public class EntityEventPacket extends DataPacket {
         this.putEntityRuntimeId(this.eid);
         this.putByte((byte) this.event);
         this.putVarInt(this.data);
+        this.putOptionalNull(this.fireAtPosition, BinaryStream::putVector3f);
     }
 }

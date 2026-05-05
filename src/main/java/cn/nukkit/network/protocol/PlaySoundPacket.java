@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
 @ToString
@@ -13,6 +14,7 @@ public class PlaySoundPacket extends DataPacket {
     public int z;
     public float volume;
     public float pitch;
+    public Long serverSoundHandle;
 
     @Override
     public byte pid() {
@@ -31,5 +33,6 @@ public class PlaySoundPacket extends DataPacket {
         this.putBlockVector3(this.x << 3, this.y << 3, this.z << 3);
         this.putLFloat(this.volume);
         this.putLFloat(this.pitch);
+        this.putOptionalNull(this.serverSoundHandle, BinaryStream::putLLong);
     }
 }

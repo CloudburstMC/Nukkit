@@ -40,6 +40,8 @@ public class EntityShulker extends EntityWalkingMob {
         } else {
             this.dataProperties.putInt(DATA_VARIANT, 16);
         }
+
+        this.setCollidable(true);
     }
 
     @Override

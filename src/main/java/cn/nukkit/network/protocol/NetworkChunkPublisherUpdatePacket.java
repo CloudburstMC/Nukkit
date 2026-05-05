@@ -26,6 +26,6 @@ public class NetworkChunkPublisherUpdatePacket extends DataPacket {
         this.reset();
         this.putSignedBlockPosition(position);
         this.putUnsignedVarInt(radius);
-        this.putInt(0); // Saved chunks
+        this.putLInt(0); // Saved chunks
     }
 }

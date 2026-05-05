@@ -162,8 +162,6 @@ public class Flat extends Generator {
     }
 
     private void generateChunk(FullChunk chunk) {
-        chunk.setGenerated();
-
         for (int Z = 0; Z < 16; ++Z) {
             for (int X = 0; X < 16; ++X) {
                 chunk.setBiomeId(X, Z, biome);

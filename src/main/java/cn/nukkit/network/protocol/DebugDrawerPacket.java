@@ -42,6 +42,7 @@ public class DebugDrawerPacket extends DataPacket {
             putOptionalNull(shape.getScale(), BinaryStream::putLFloat);
             putOptionalNull(shape.getRotation(), BinaryStream::putVector3f);
             putOptionalNull(shape.getTotalTimeLeft(), BinaryStream::putLFloat);
+            putOptionalNull(shape.getMaximumRenderDistance(), BinaryStream::putLFloat);
 
             if (shape.getColor() != null) {
                 putBoolean(true);
@@ -92,6 +93,16 @@ public class DebugDrawerPacket extends DataPacket {
                 case TEXT:
                     DebugText text = (DebugText) shape;
                     putString(text.getText());
+                    putBoolean(text.isUseRotation());
+
+                    if (text.getBackgroundColor() != null) {
+                        putBoolean(true);
+                        putLInt(text.getBackgroundColor().getRGB());
+                    } else putBoolean(false);
+
+                    putBoolean(text.isDepthTest());
+                    putBoolean(text.isShowBackface());
+                    putBoolean(text.isShowTextBackface());
                     break;
             }
         }

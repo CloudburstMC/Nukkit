@@ -1,6 +1,9 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
+import lombok.Getter;
+
+import java.util.UUID;
 
 /**
  * @author MagicDroidX
@@ -12,9 +15,25 @@ public class FurnaceRecipe implements Recipe {
 
     private Item ingredient;
 
+    @Getter
+    private String recipeId;
+
+    @Getter
+    private UUID id;
+
+    @Getter
+    private final int networkId;
+
+    @Deprecated
     public FurnaceRecipe(Item result, Item ingredient) {
+        this(null, result, ingredient);
+    }
+
+    public FurnaceRecipe(String recipeId, Item result, Item ingredient) {
         this.output = result.clone();
         this.ingredient = ingredient.clone();
+        this.recipeId = recipeId;
+        this.networkId = ++CraftingManager.NEXT_NETWORK_ID;
     }
 
     public void setInput(Item item) {
@@ -38,5 +57,13 @@ public class FurnaceRecipe implements Recipe {
     @Override
     public RecipeType getType() {
         return this.ingredient.hasMeta() ? RecipeType.FURNACE_DATA : RecipeType.FURNACE;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+
+        if (this.recipeId == null) {
+            this.recipeId = this.getId().toString();
+        }
     }
 }

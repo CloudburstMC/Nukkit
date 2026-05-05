@@ -268,7 +268,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected int lastChorusFruitTeleport = 20;
     protected int lastFireworkBoost = 20;
     public long lastSkinChange = -1;
-    private double lastRightClickTime;
+    private long lastRightClickTime;
     public long lastBreak = -1; // When last block break was started
     private BlockVector3 lastBreakPosition = new BlockVector3();
     public Block breakingBlock; // Block player is breaking currently
@@ -974,7 +974,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return whether the player is currently using an item
      */
     public boolean isUsingItem() {
-        return this.startAction > -1 && this.getDataFlag(DATA_FLAGS, DATA_FLAG_ACTION);
+        return this.startAction > -1;
     }
 
     /**
@@ -982,6 +982,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @param value is using item
      */
     public void setUsingItem(boolean value) {
+        if (!value && this.startAction < 0) {
+            return;
+        }
+
         this.startAction = value ? this.server.getTick() : -1;
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_ACTION, value);
     }
@@ -2057,6 +2061,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             }
 
             this.onGround = this.level.hasCollisionBlocks(this, bb);
+
+            if (!this.onGround) {
+                for (Entity e : level.getNearbyEntities(bb, this)) { // nearby not colliding because canCollideWith is overridden as false
+                    if (e != this && e.isCollidable() && this.y >= e.y + e.getHeight() - 0.1) {
+                        this.onGround = true;
+                        break;
+                    }
+                }
+            }
         }
 
         this.isCollided = this.onGround;
@@ -4298,17 +4311,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                         switch (useItemData.actionType) {
                             case InventoryTransactionPacket.USE_ITEM_ACTION_CLICK_BLOCK:
+                                this.breakingBlock = null;
+                                this.setUsingItem(false);
+
                                 // Hack: Fix client spamming right clicks
-                                if ((lastRightClickPos != null && this.getInventory().getItemInHandFast().getBlockId() == BlockID.AIR && System.currentTimeMillis() - lastRightClickTime < 200.0 && blockVector.distanceSquared(lastRightClickPos) < 0.00001)) {
+                                long time = System.currentTimeMillis();
+                                if (lastRightClickPos != null && time - lastRightClickTime < 125 && lastRightClickPos.equals(blockVector) && this.getInventory().getItemInHandFast().getBlockId() == BlockID.AIR) {
                                     return;
                                 }
 
                                 lastRightClickPos = blockVector;
-                                lastRightClickTime = System.currentTimeMillis();
-
-                                this.breakingBlock = null;
-
-                                this.setUsingItem(false);
+                                lastRightClickTime = time;
 
                                 // We don't seem to verify useItemData.clickPos so don't use it for anything important
                                 if (this.canInteract(blockVector.add(0.5, 0.5, 0.5), this.isCreative() ? 14 : 8)) {
@@ -5425,9 +5438,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
             }
 
-            for (Player player : this.server.getOnlinePlayers().values()) {
-                if (!player.canSee(this)) {
-                    player.showPlayer(this);
+            if (this.getUniqueId() != null) {
+                for (Player player : this.server.getOnlinePlayers().values()) {
+                    if (!player.canSee(this)) {
+                        player.showPlayer(this);
+                    }
                 }
             }
 

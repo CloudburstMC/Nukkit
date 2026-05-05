@@ -111,6 +111,7 @@ public abstract class Particle extends Vector3 {
     public static final int TYPE_GREEN_FLAME = 98;
     public static final int TYPE_PAUSE_MOB_GROWTH = 99;
     public static final int TYPE_RESET_MOB_GROWTH = 100;
+    public static final int TYPE_SULFUR_CUBE = 101;
 
     public Particle() {
         super(0, 0, 0);

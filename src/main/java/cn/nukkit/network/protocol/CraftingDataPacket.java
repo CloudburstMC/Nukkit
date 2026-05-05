@@ -75,6 +75,10 @@ public class CraftingDataPacket extends DataPacket {
             if (networkType == RecipeType.SMITHING_TRANSFORM) {
                 networkType = RecipeType.REPAIR;
             }
+
+            if (networkType == RecipeType.FURNACE || networkType == RecipeType.FURNACE_DATA) {
+                networkType = RecipeType.SHAPELESS;
+            }
             this.putVarInt(networkType.ordinal());
 
             switch (recipe.getType()) {
@@ -123,12 +127,16 @@ public class CraftingDataPacket extends DataPacket {
                 case FURNACE_DATA:
                     FurnaceRecipe furnace = (FurnaceRecipe) recipe;
                     Item input = furnace.getInput();
-                    this.putVarInt(input.getId());
-                    if (recipe.getType() == RecipeType.FURNACE_DATA) {
-                        this.putVarInt(input.getDamage());
-                    }
+                    this.putString(furnace.getId().toString());
+                    this.putUnsignedVarInt(1); // Ingredients length
+                    this.putRecipeIngredient(input);
+                    this.putUnsignedVarInt(1); // Results length
                     this.putSlot(furnace.getResult(), true);
-                    this.putString(CRAFTING_TAG_FURNACE);
+                    this.putUUID(furnace.getId());
+                    this.putString(recipe instanceof SmokerRecipe ? CRAFTING_TAG_SMOKER : recipe instanceof BlastFurnaceRecipe ? CRAFTING_TAG_BLAST_FURNACE : CRAFTING_TAG_FURNACE);
+                    this.putVarInt(0); // priority
+                    this.putByte((byte) 1); // Requirement ordinal, 1 = ALWAYS_UNLOCKED
+                    this.putUnsignedVarInt(furnace.getNetworkId());
                     break;
                 case MULTI:
                     this.putUUID(((MultiRecipe) recipe).getId());
