@@ -19,7 +19,7 @@ public class BlockStonecutterBlock extends BlockSolidMeta implements Faceable {
 
     @Override
     public String getName() {
-        return "Stonecutter Block";
+        return "Stonecutter";
     }
 
     @Override

@@ -2,6 +2,7 @@ package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
 import io.netty.util.collection.CharObjectHashMap;
+import lombok.Getter;
 
 import java.util.*;
 
@@ -17,7 +18,8 @@ public class ShapedRecipe implements CraftingRecipe {
 
     private final List<Item> ingredientsAggregate;
 
-    private long least, most;
+    @Getter
+    private UUID id;
 
     private final String[] shape;
     private final int priority;
@@ -26,12 +28,14 @@ public class ShapedRecipe implements CraftingRecipe {
 
     private final int networkId;
 
+    @Deprecated
     public ShapedRecipe(Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults) {
         this(null, 1, primaryResult, shape, ingredients, extraResults);
     }
 
-    public ShapedRecipe(String recipeId, int priority, Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults) {
-        this(recipeId, priority, primaryResult, shape, ingredients, extraResults, null);
+    @Deprecated
+    public ShapedRecipe(String recipeId, int priority, Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults, Integer networkId) {
+        this(recipeId, priority, primaryResult, shape, ingredients, extraResults);
     }
 
     /**
@@ -45,12 +49,10 @@ public class ShapedRecipe implements CraftingRecipe {
      *                         This accepts an array of Items, indexed by character. Every unique character (except space) in the shape
      *                         array MUST have a corresponding item in this list. Space character is automatically treated as air.
      * @param extraResults<br> List of additional result items to leave in the crafting grid afterwards. Used for things like cake recipe
-     *                         empty buckets.
-     * @param networkId        Unique network id of this recipe. If null, a new networkId will be assigned to this recipe.
-     *
+     *                         empty buckets.*
      *                         Note: Recipes **do not** need to be square. Do NOT add padding for empty rows/columns.
      */
-    public ShapedRecipe(String recipeId, int priority, Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults, Integer networkId) {
+    public ShapedRecipe(String recipeId, int priority, Item primaryResult, String[] shape, Map<Character, Item> ingredients, List<Item> extraResults) {
         this.recipeId = recipeId;
         this.priority = priority;
         int rowCount = shape.length;
@@ -105,7 +107,7 @@ public class ShapedRecipe implements CraftingRecipe {
             }
         }
         this.ingredientsAggregate.sort(CraftingManager.recipeComparator);
-        this.networkId = networkId != null ? networkId : ++CraftingManager.NEXT_NETWORK_ID;
+        this.networkId = ++CraftingManager.NEXT_NETWORK_ID;
     }
 
     public int getWidth() {
@@ -127,14 +129,8 @@ public class ShapedRecipe implements CraftingRecipe {
     }
 
     @Override
-    public UUID getId() {
-        return new UUID(least, most);
-    }
-
-    @Override
     public void setId(UUID uuid) {
-        this.least = uuid.getLeastSignificantBits();
-        this.most = uuid.getMostSignificantBits();
+        this.id = uuid;
 
         if (this.recipeId == null) {
             this.recipeId = getId().toString();

@@ -1,6 +1,7 @@
 package cn.nukkit.network.protocol;
 
 import cn.nukkit.math.Vector3f;
+import cn.nukkit.utils.BinaryStream;
 import lombok.ToString;
 
 @ToString
@@ -591,6 +592,8 @@ public class LevelSoundEventPacket extends DataPacket {
     public static final int SOUND_NETHERITE_SPEAR_USE = 596;
     public static final int SOUND_PAUSE_GROWTH = 597;
     public static final int SOUND_RESET_GROWTH = 598;
+    public static final int SOUND_PUSHED_BY_PLAYER = 599;
+    public static final int SOUND_BOUNCE = 600;
 
     public int sound;
     public float x;
@@ -601,6 +604,7 @@ public class LevelSoundEventPacket extends DataPacket {
     public boolean isBabyMob;
     public boolean isGlobal;
     public long entityUniqueId = -1;
+    public Vector3f fireAtPosition;
 
     @Override
     public void decode() {
@@ -614,6 +618,9 @@ public class LevelSoundEventPacket extends DataPacket {
         this.isBabyMob = this.getBoolean();
         this.isGlobal = this.getBoolean();
         this.entityUniqueId = this.getLLong();
+        if (this.getBoolean()) {
+            this.fireAtPosition = this.getVector3f();
+        }
     }
 
     @Override
@@ -626,6 +633,7 @@ public class LevelSoundEventPacket extends DataPacket {
         this.putBoolean(this.isBabyMob);
         this.putBoolean(this.isGlobal);
         this.putLLong(this.entityUniqueId);
+        this.putOptionalNull(this.fireAtPosition, BinaryStream::putVector3f);
     }
 
     @Override

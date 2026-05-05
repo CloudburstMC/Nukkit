@@ -95,15 +95,48 @@ public class ItemDye extends Item {
 
     @Deprecated
     public static BlockColor getColor(int meta) {
-        return DyeColor.getByDyeData(meta).getColor();
+        switch (meta) {
+            case BLACK_NEW:
+                return DyeColor.BLACK.getColor();
+            case BROWN_NEW:
+                return DyeColor.BROWN.getColor();
+            case BLUE_NEW:
+                return DyeColor.BLUE.getColor();
+            case WHITE_NEW:
+                return DyeColor.WHITE.getColor();
+            default:
+                return DyeColor.getByDyeData(meta).getColor();
+        }
     }
 
     public DyeColor getDyeColor() {
-        return DyeColor.getByDyeData(meta);
+        switch (meta) {
+            case BLACK_NEW:
+                return DyeColor.BLACK;
+            case BROWN_NEW:
+                return DyeColor.BROWN;
+            case BLUE_NEW:
+                return DyeColor.BLUE;
+            case WHITE_NEW:
+                return DyeColor.WHITE;
+            default:
+                return DyeColor.getByDyeData(meta);
+        }
     }
 
     @Deprecated
     public static String getColorName(int meta) {
-        return DyeColor.getByDyeData(meta).getName();
+        switch (meta) {
+            case BLACK_NEW:
+                return DyeColor.BLACK.getName();
+            case BROWN_NEW:
+                return DyeColor.BROWN.getName();
+            case BLUE_NEW:
+                return DyeColor.BLUE.getName();
+            case WHITE_NEW:
+                return DyeColor.WHITE.getName();
+            default:
+                return DyeColor.getByDyeData(meta).getName();
+        }
     }
 }

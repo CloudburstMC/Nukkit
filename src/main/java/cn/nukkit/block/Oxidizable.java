@@ -87,6 +87,10 @@ public interface Oxidizable {
 
 
     default boolean onActivate(Item item, Player player) {
+        if (item == null || player == null) {
+            return false;
+        }
+
         if (!item.isAxe()) {
             return false;
         }

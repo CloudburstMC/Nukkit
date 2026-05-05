@@ -21,8 +21,6 @@ public class InventorySlotPacket extends DataPacket {
     public int slot;
     public Item item;
 
-    private static final Item EMPTY_STORAGE_ITEM = Item.get(Item.AIR);
-
     @Override
     public void decode() {
         this.decodeUnsupported();
@@ -33,9 +31,8 @@ public class InventorySlotPacket extends DataPacket {
         this.reset();
         this.putUnsignedVarInt(this.inventoryId);
         this.putUnsignedVarInt(this.slot);
-        this.putByte((byte) 0); // fullContainerName.id
-        this.putBoolean(false); // fullContainerName.optional.present
-        this.putSlot(EMPTY_STORAGE_ITEM);
-        this.putSlot(this.item);
+        this.putBoolean(false); // optional full container name present
+        this.putBoolean(false); // optional storage item present
+        this.putNetworkItemStackDescriptor(this.item);
     }
 }

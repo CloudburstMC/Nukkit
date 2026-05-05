@@ -23,9 +23,9 @@ public class InteractPacket extends DataPacket {
         this.action = this.getByte();
         this.target = this.getEntityRuntimeId();
         if (this.getBoolean()) {
-            this.x = this.getFloat();
-            this.y = this.getFloat();
-            this.z = this.getFloat();
+            this.x = this.getLFloat();
+            this.y = this.getLFloat();
+            this.z = this.getLFloat();
         }
     }
 

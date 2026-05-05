@@ -5,14 +5,10 @@ import cn.nukkit.block.BlockID;
 import cn.nukkit.event.inventory.FurnaceSmeltEvent;
 import cn.nukkit.inventory.FurnaceRecipe;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemArmor;
 import cn.nukkit.item.ItemBlock;
-import cn.nukkit.item.ItemTool;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
-import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
-import it.unimi.dsi.fastutil.ints.IntSet;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -33,43 +29,16 @@ public class BlockEntityBlastFurnace extends BlockEntityFurnace {
         return blockID == Block.BLAST_FURNACE || blockID == Block.LIT_BLAST_FURNACE;
     }
 
-    private static final IntSet CAN_SMELT_EXCLUDING_TOOLS_AND_ARMOR = new IntOpenHashSet(new int[]{
-            Item.IRON_ORE, Item.GOLD_ORE, Item.DIAMOND_ORE, Item.LAPIS_ORE, Item.REDSTONE_ORE, Item.COAL_ORE, Item.EMERALD_ORE, Item.QUARTZ_ORE,
-            255 - Block.NETHER_GOLD_ORE, 255 - Block.ANCIENT_DEBRIS, Item.RAW_COPPER, Item.RAW_IRON, Item.RAW_GOLD,
-            255 - Block.DEEPSLATE_COAL_ORE, 255 - Block.DEEPSLATE_IRON_ORE, 255 - Block.DEEPSLATE_GOLD_ORE, 255 - Block.DEEPSLATE_LAPIS_ORE,
-            255 - Block.DEEPSLATE_EMERALD_ORE, 255 - Block.DEEPSLATE_COPPER_ORE, 255 - Block.DEEPSLATE_REDSTONE_ORE, 255 - Block.DEEPSLATE_DIAMOND_ORE
-    });
-
     @Override
     public boolean onUpdate() {
         if (this.closed) {
             return false;
         }
 
-        Item raw = this.inventory.getSmelting();
-        // TODO: blast furnace recipes
-        if (!CAN_SMELT_EXCLUDING_TOOLS_AND_ARMOR.contains(raw.getId()) && !(raw instanceof ItemTool && (raw.getTier() == ItemTool.TIER_IRON || raw.getTier() == ItemTool.TIER_GOLD)) && !(raw instanceof ItemArmor && raw.getTier() >= ItemArmor.TIER_IRON && raw.getTier() <= ItemArmor.TIER_GOLD)) {
-            if (burnTime > 0) {
-                burnTime--;
-                burnDuration = (int) Math.ceil((float) burnTime / maxTime * 100);
-
-                if (burnTime == 0) {
-                    Block block = this.level.getBlock(this.chunk, (int) x, (int) y, (int) z, true);
-                    if (block.getId() == BlockID.LIT_BLAST_FURNACE) {
-                        this.level.setBlock(this, Block.get(BlockID.BLAST_FURNACE, block.getDamage()), true);
-                    }
-                    return false;
-                }
-            }
-
-            cookTime = 0;
-            sendPacket();
-            return true;
-        }
-
         boolean ret = false;
+        Item raw = this.inventory.getSmelting();
         Item product = this.inventory.getResult();
-        FurnaceRecipe smelt = this.server.getCraftingManager().matchFurnaceRecipe(raw);
+        FurnaceRecipe smelt = this.server.getCraftingManager().matchBlastFurnaceRecipe(raw);
         boolean canSmelt = (smelt != null && raw.getCount() > 0 && ((smelt.getResult().equals(product) && product.getCount() < product.getMaxStackSize()) || product.getId() == Item.AIR));
 
         Item fuel;

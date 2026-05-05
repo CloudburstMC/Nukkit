@@ -2,36 +2,43 @@ package cn.nukkit.network.protocol.types.debugshape;
 
 import cn.nukkit.math.Vector3f;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import org.checkerframework.checker.nullness.qual.Nullable;
 
-import javax.annotation.Nullable;
-import java.awt.*;
+import java.awt.Color;
 
 @Getter
+@Data
 @AllArgsConstructor
 public class DebugShape {
 
-    private final long id;
-
+    private long id;
     /**
      * @since v859
      */
-    private final Integer dimension;
     @Nullable
-    private final Vector3f position;
+    private Integer dimension;
     @Nullable
-    private final Float scale;
+    private Vector3f position;
     @Nullable
-    private final Vector3f rotation;
+    private Float scale;
     @Nullable
-    private final Float totalTimeLeft;
+    private Vector3f rotation;
     @Nullable
-    private final Color color;
+    private Float totalTimeLeft;
     @Nullable
-    private final Long attachedToEntityId;
+    private Color color;
+    @Nullable
+    private Long attachedToEntityId;
+    @Nullable
+    private Float maximumRenderDistance;
+
+    public DebugShape() {
+    }
 
     public DebugShape(long id) {
-        this(id, 0, null, null, null, null, null, null);
+        this.id = id;
     }
 
     public Type getType() {

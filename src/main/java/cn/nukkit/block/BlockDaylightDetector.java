@@ -48,12 +48,12 @@ public class BlockDaylightDetector extends BlockTransparent {
     public Item toItem() {
         return new ItemBlock(Block.get(this.getId(), 0), 0);
     }
-    
+
     @Override
     public boolean isPowerSource() {
         return true;
     }
-    
+
     @Override
     public int getWeakPower(BlockFace face) {
         int time = level.getTime() % Level.TIME_FULL;
@@ -81,7 +81,7 @@ public class BlockDaylightDetector extends BlockTransparent {
             if (type == Level.BLOCK_UPDATE_SCHEDULED) {
                 this.level.updateAroundRedstone(this, null);
             }
-            this.level.scheduleUpdate(this, 40);
+            this.level.scheduleUpdate(this, 20);
         }
         return 0;
     }
@@ -94,9 +94,7 @@ public class BlockDaylightDetector extends BlockTransparent {
     @Override
     public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
         if (this.getLevel().setBlock(this, this, true, true)) {
-            this.level.scheduleUpdate(this, 40);
-
-
+            this.level.scheduleUpdate(this, 20);
             return true;
         }
         return false;

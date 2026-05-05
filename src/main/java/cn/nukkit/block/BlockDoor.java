@@ -284,11 +284,13 @@ public abstract class BlockDoor extends BlockTransparentMeta implements Faceable
     }
 
     public boolean toggle(Player player) {
-        DoorToggleEvent event = new DoorToggleEvent(this, player);
-        this.getLevel().getServer().getPluginManager().callEvent(event);
+        if (player != null) {
+            DoorToggleEvent event = new DoorToggleEvent(this, player);
+            this.getLevel().getServer().getPluginManager().callEvent(event);
 
-        if (event.isCancelled()) {
-            return false;
+            if (event.isCancelled()) {
+                return false;
+            }
         }
 
         Block down;

@@ -34,6 +34,8 @@ public class EntityHuman extends EntityHumanType {
     public static final int DATA_PLAYER_BUTTON_TEXT = 40;
 
     protected UUID uuid;
+    @SuppressWarnings("DeprecatedIsStillUsed")
+    @Deprecated
     protected byte[] rawUUID;
 
     protected Skin skin;

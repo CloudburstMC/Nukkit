@@ -59,7 +59,7 @@ public class BlockRedstoneLamp extends BlockSolid {
                 return 0;
             }
             if (this.level.isBlockPowered(this)) {
-                this.level.setBlock(this, Block.get(LIT_REDSTONE_LAMP), false, false);
+                this.level.setBlock(this, Block.get(LIT_REDSTONE_LAMP), false, true);
                 return 1;
             }
         }

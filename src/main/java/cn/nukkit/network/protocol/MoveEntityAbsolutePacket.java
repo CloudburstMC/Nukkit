@@ -22,6 +22,7 @@ public class MoveEntityAbsolutePacket extends DataPacket {
     public boolean onGround;
     public boolean teleport;
     public boolean forceMoveLocalEntity;
+    public boolean forceCompletion;
 
     @Override
     public byte pid() {
@@ -35,6 +36,7 @@ public class MoveEntityAbsolutePacket extends DataPacket {
         onGround = (flags & 0x01) != 0;
         teleport = (flags & 0x02) != 0;
         forceMoveLocalEntity = (flags & 0x04) != 0;
+        forceCompletion = (flags & 0x08) != 0;
         Vector3f v = this.getVector3f();
         this.x = v.x;
         this.y = v.y;
@@ -57,6 +59,9 @@ public class MoveEntityAbsolutePacket extends DataPacket {
         }
         if (forceMoveLocalEntity) {
             flags |= 0x04;
+        }
+        if (forceCompletion) {
+            flags |= 0x08;
         }
         this.putByte(flags);
         this.putVector3f((float) this.x, (float) this.y, (float) this.z);

@@ -30,7 +30,10 @@ public class EntityDamageByEntityEvent extends EntityDamageEvent {
         super(entity, cause, damage);
         this.damager = damager;
         this.knockBack = knockBack;
-        this.addAttackerModifiers(damager);
+
+        if (cause == DamageCause.ENTITY_ATTACK) {
+            this.addAttackerModifiers(damager);
+        }
     }
 
     public EntityDamageByEntityEvent(Entity damager, Entity entity, DamageCause cause, Map<DamageModifier, Float> modifiers, float knockBack) {
@@ -42,7 +45,10 @@ public class EntityDamageByEntityEvent extends EntityDamageEvent {
         this.damager = damager;
         this.knockBack = knockBack;
         this.enchantments = enchantments;
-        this.addAttackerModifiers(damager);
+
+        if (cause == DamageCause.ENTITY_ATTACK) {
+            this.addAttackerModifiers(damager);
+        }
     }
 
     protected void addAttackerModifiers(Entity damager) {

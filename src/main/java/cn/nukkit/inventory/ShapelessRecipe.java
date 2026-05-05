@@ -1,6 +1,7 @@
 package cn.nukkit.inventory;
 
 import cn.nukkit.item.Item;
+import lombok.Getter;
 
 import java.util.*;
 
@@ -14,7 +15,8 @@ public class ShapelessRecipe implements CraftingRecipe {
 
     private final Item output;
 
-    private long least, most;
+    @Getter
+    private UUID id;
 
     private final List<Item> ingredients;
     private final List<Item> ingredientsAggregate;
@@ -23,15 +25,17 @@ public class ShapelessRecipe implements CraftingRecipe {
 
     private final int networkId;
 
+    @Deprecated
     public ShapelessRecipe(Item result, Collection<Item> ingredients) {
         this(null, 10, result, ingredients);
     }
 
-    public ShapelessRecipe(String recipeId, int priority, Item result, Collection<Item> ingredients) {
-        this(recipeId, priority, result, ingredients, null);
+    @Deprecated
+    public ShapelessRecipe(String recipeId, int priority, Item result, Collection<Item> ingredients, Integer networkId) {
+        this(recipeId, priority, result, ingredients);
     }
 
-    public ShapelessRecipe(String recipeId, int priority, Item result, Collection<Item> ingredients, Integer networkId) {
+    public ShapelessRecipe(String recipeId, int priority, Item result, Collection<Item> ingredients) {
         this.recipeId = recipeId;
         this.priority = priority;
         this.output = result.clone();
@@ -61,7 +65,7 @@ public class ShapelessRecipe implements CraftingRecipe {
         }
 
         this.ingredientsAggregate.sort(CraftingManager.recipeComparator);
-        this.networkId = networkId != null ? networkId : ++CraftingManager.NEXT_NETWORK_ID;
+        this.networkId = ++CraftingManager.NEXT_NETWORK_ID;
     }
 
     @Override
@@ -75,14 +79,8 @@ public class ShapelessRecipe implements CraftingRecipe {
     }
 
     @Override
-    public UUID getId() {
-        return new UUID(least, most);
-    }
-
-    @Override
     public void setId(UUID uuid) {
-        this.least = uuid.getLeastSignificantBits();
-        this.most = uuid.getMostSignificantBits();
+        this.id = uuid;
 
         if (this.recipeId == null) {
             this.recipeId = this.getId().toString();

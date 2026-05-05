@@ -2661,6 +2661,7 @@ public class Server {
         Entity.registerEntity("FishingHook", EntityFishingHook.class);
         Entity.registerEntity("EnderEye", EntityEnderEye.class);
         Entity.registerEntity("AreaEffectCloud", EntityAreaEffectCloud.class);
+        Entity.registerEntity("WindCharge", EntityWindCharge.class);
         //Monsters
         Entity.registerEntity("Blaze", EntityBlaze.class);
         Entity.registerEntity("Creeper", EntityCreeper.class);
@@ -2914,6 +2915,7 @@ public class Server {
         this.viewDistance = this.getPropertyInt("view-distance", 10);
         this.port = this.getPropertyInt("server-port", 19132);
         this.ip = this.getPropertyString("server-ip", "0.0.0.0");
+        if (this.ip.trim().isEmpty()) this.ip = "0.0.0.0";
         this.spawnRadius = this.getPropertyInt("spawn-protection", 16);
 
         this.setAutoSave(this.getPropertyBoolean("auto-save", true));
