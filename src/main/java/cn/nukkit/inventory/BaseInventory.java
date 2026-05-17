@@ -105,18 +105,31 @@ public abstract class BaseInventory implements Inventory {
     @Override
     public Item getItem(int index) {
         Item get = this.slots.get(index);
-        return get == null ? new ItemBlock(Block.get(BlockID.AIR), null, 0) : get.clone();
+        return get == null || get.isNull() ? new ItemBlock(Block.get(BlockID.AIR), null, 0) : get.clone();
     }
 
     @Override
     public Item getItemFast(int index) {
         Item get = this.slots.get(index);
-        return get == null ? air : get;
+        return get == null || get.isNull() ? air : get;
     }
 
     @Override
     public Map<Integer, Item> getContents() {
-        return new HashMap<>(this.slots);
+        Map<Integer, Item> newSlotMap = new HashMap<>(this.slots.size());
+        for (Map.Entry<Integer, Item> itemEntry : this.slots.entrySet()) {
+            int index = itemEntry.getKey();
+            if (index < 0 || index >= this.size) {
+                continue;
+            }
+
+            Item item = itemEntry.getValue();
+            if (item == null || item.isNull()) {
+                continue;
+            }
+            newSlotMap.put(itemEntry.getKey(), item);
+        }
+        return newSlotMap;
     }
 
     @Override
@@ -150,7 +163,11 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public boolean setItem(int index, Item item, boolean send) {
-        //item = item.clone();
+        if (item == null) {
+            return this.clear(index, send);
+        }
+
+        item = item.clone();
         if (index < 0 || index >= this.size) {
             return false;
         } else if (item.getId() == 0 || item.getCount() <= 0) {
@@ -255,7 +272,7 @@ public abstract class BaseInventory implements Inventory {
             this.setItem(slot, item);
         }
     }
-    
+
     @Override
     public boolean canAddItem(Item item) {
         int count = item.getCount();
@@ -406,7 +423,7 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public void clearAll() {
-        for (Integer index : this.getContents().keySet()) {
+        for (Integer index : new ArrayList<>(this.slots.keySet())) {
             this.clear(index);
         }
     }
@@ -486,12 +503,14 @@ public abstract class BaseInventory implements Inventory {
 
     @Override
     public boolean isFull() {
-        if (this.slots.size() < this.getSize()) {
-            return false;
-        }
+        for (int i = 0; i < this.getSize(); ++i) {
+            Item item = this.slots.get(i);
+            if (item == null || item.isNull()) {
+                return false;
+            }
 
-        for (Item item : this.slots.values()) {
-            if (item == null || item.getId() == 0 || item.getCount() < item.getMaxStackSize() || item.getCount() < this.maxStackSize) {
+            int maxStackSize = Math.min(item.getMaxStackSize(), this.getMaxStackSize());
+            if (item.getCount() < maxStackSize) {
                 return false;
             }
         }
@@ -515,17 +534,18 @@ public abstract class BaseInventory implements Inventory {
     }
 
     public int getFreeSpace(Item item) {
-        int maxStackSize = Math.min(item.getMaxStackSize(), this.maxStackSize);
-        int space = (this.getSize() - this.slots.size()) * maxStackSize;
+        int maxStackSize = Math.min(item.getMaxStackSize(), this.getMaxStackSize());
+        int space = 0;
 
-        for (Item slot : this.getContents().values()) {
-            if (slot == null || slot.getId() == 0) {
+        for (int i = 0; i < this.getSize(); ++i) {
+            Item slot = this.slots.get(i);
+            if (slot == null || slot.isNull()) {
                 space += maxStackSize;
                 continue;
             }
 
             if (slot.equals(item, true, true)) {
-                space += maxStackSize - slot.getCount();
+                space += Math.max(0, maxStackSize - slot.getCount());
             }
         }
 

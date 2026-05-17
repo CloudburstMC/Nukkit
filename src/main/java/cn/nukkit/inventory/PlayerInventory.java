@@ -14,6 +14,7 @@ import cn.nukkit.item.ItemBlock;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.ContainerIds;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 /**
@@ -204,7 +205,7 @@ public class PlayerInventory extends BaseInventory {
     }
 
     public boolean setArmorItem(int index, Item item, boolean ignoreArmorEvents) {
-        return this.setItem(this.getSize() + index, item, ignoreArmorEvents);
+        return this.setItem(this.getSize() + index, item, true, ignoreArmorEvents);
     }
 
     public Item getHelmet() {
@@ -262,13 +263,17 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public boolean setItem(int index, Item item, boolean send) {
+        return setItem(index, item, send, false);
+    }
+
+    private boolean setItem(int index, Item item, boolean send, boolean ignoreArmorEvents) {
         if (index < 0 || index >= this.size) {
             return false;
-        } else if (item.getId() == 0 || item.getCount() <= 0) {
+        } else if (item == null || item.getId() == 0 || item.getCount() <= 0) {
             return this.clear(index, send);
         }
 
-        if (index >= this.getSize()) { // Armor change
+        if (!ignoreArmorEvents && index >= this.getSize()) { // Armor change
             EntityArmorChangeEvent ev = new EntityArmorChangeEvent(this.getHolder(), this.getItem(index), item, index);
             Server.getInstance().getPluginManager().callEvent(ev);
             if (ev.isCancelled() && this.getHolder() != null) {
@@ -294,9 +299,13 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public boolean clear(int index, boolean send) {
-        Item old = this.slots.get(index);
-        if (old != null) {
+        if (index < 0 || index >= this.size) {
+            this.slots.remove(index);
+            return true;
+        }
+        if (this.slots.containsKey(index)) {
             Item item = new ItemBlock(Block.get(BlockID.AIR), null, 0);
+            Item old = this.getItem(index);
             if (index >= this.getSize() && index < this.size) {
                 EntityArmorChangeEvent ev = new EntityArmorChangeEvent(this.getHolder(), old, item, index);
                 Server.getInstance().getPluginManager().callEvent(ev);
@@ -346,8 +355,7 @@ public class PlayerInventory extends BaseInventory {
 
     @Override
     public void clearAll() {
-        int limit = this.getSize() + 4;
-        for (int index = 0; index < limit; ++index) {
+        for (Integer index : new ArrayList<>(this.slots.keySet())) {
             this.clear(index);
         }
         getHolder().getOffhandInventory().clearAll();
@@ -387,7 +395,7 @@ public class PlayerInventory extends BaseInventory {
                 items[i] = new ItemBlock(Block.get(BlockID.AIR), null, 0);
             }
 
-            if (items[i].getId() == Item.AIR) {
+            if (items[i].isNull()) {
                 this.clear(this.getSize() + i);
             } else {
                 this.setItem(this.getSize() + i, items[i]);

@@ -61,30 +61,39 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
 
     @Override
     public Item getItem(int index) {
-        return index < this.left.getSize() ? this.left.getItem(index) : this.right.getItem(index - this.right.getSize());
+        return index < this.left.getSize() ? this.left.getItem(index) : this.right.getItem(index - this.left.getSize());
     }
 
     @Override
     public Item getItemFast(int index) {
-        return index < this.left.getSize() ? this.left.getItemFast(index) : this.right.getItemFast(index - this.right.getSize());
+        return index < this.left.getSize() ? this.left.getItemFast(index) : this.right.getItemFast(index - this.left.getSize());
     }
 
     @Override
     public boolean setItem(int index, Item item, boolean send) {
-        return index < this.left.getSize() ? this.left.setItem(index, item, send) : this.right.setItem(index - this.right.getSize(), item, send);
+        return index < this.left.getSize() ? this.left.setItem(index, item, send) : this.right.setItem(index - this.left.getSize(), item, send);
     }
 
     @Override
     public boolean clear(int index) {
-        return index < this.left.getSize() ? this.left.clear(index) : this.right.clear(index - this.right.getSize());
+        return this.clear(index, true);
+    }
+
+    @Override
+    public boolean clear(int index, boolean send) {
+        return index < this.left.getSize() ? this.left.clear(index, send) : this.right.clear(index - this.left.getSize(), send);
     }
 
     @Override
     public Map<Integer, Item> getContents() {
         Map<Integer, Item> contents = new HashMap<>();
 
-        for (int i = 0; i < this.getSize(); ++i) {
-            contents.put(i, this.getItem(i));
+        for (Map.Entry<Integer, Item> entry : this.left.getContents().entrySet()) {
+            contents.put(entry.getKey(), entry.getValue());
+        }
+
+        for (Map.Entry<Integer, Item> entry : this.right.getContents().entrySet()) {
+            contents.put(entry.getKey() + this.left.getSize(), entry.getValue());
         }
 
         return contents;

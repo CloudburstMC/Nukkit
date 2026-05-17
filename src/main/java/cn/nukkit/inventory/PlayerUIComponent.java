@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -60,8 +61,13 @@ public class PlayerUIComponent extends BaseInventory {
 
     @Override
     public Map<Integer, Item> getContents() {
-        Map<Integer, Item> contents = playerUI.getContents();
-        contents.keySet().removeIf(slot -> slot < offset || slot > offset + size);
+        Map<Integer, Item> contents = new HashMap<>();
+        for (Map.Entry<Integer, Item> entry : playerUI.getContents().entrySet()) {
+            int slot = entry.getKey();
+            if (slot >= offset && slot < offset + size) {
+                contents.put(slot - offset, entry.getValue());
+            }
+        }
         return contents;
     }
 
