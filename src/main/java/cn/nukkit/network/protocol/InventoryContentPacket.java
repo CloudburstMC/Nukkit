@@ -47,10 +47,10 @@ public class InventoryContentPacket extends DataPacket {
         this.putUnsignedVarInt(this.inventoryId);
         this.putUnsignedVarInt(this.slots.length);
         for (Item slot : this.slots) {
-            this.putSlot(slot);
+            this.putNetworkItemStackDescriptor(slot);
         }
         this.putByte((byte) 0); // fullContainerName.id
         this.putBoolean(false); // fullContainerName.optional.present
-        this.putSlot(EMPTY_STORAGE_ITEM);
+        this.putNetworkItemStackDescriptor(EMPTY_STORAGE_ITEM);
     }
 }

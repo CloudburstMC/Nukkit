@@ -133,7 +133,7 @@ public class BlockTrapdoor extends BlockTransparentMeta implements Faceable {
     }
 
     private AxisAlignedBB getRelativeBoundingBox() {
-        return BOUNDING_BOX_DAMAGE[this.getDamage()];
+        return BOUNDING_BOX_DAMAGE[this.getDamage() >= BOUNDING_BOX_DAMAGE.length ? 0 : this.getDamage()];
     }
 
     @Override

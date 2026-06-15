@@ -599,6 +599,10 @@ public class BinaryStream {
     }
 
     public void putNetworkItemStackDescriptor(Item item) {
+        if (item == null) {
+            item = Item.get(Item.AIR);
+        }
+
         int id = item.getId();
         int meta = item.getDamage();
         boolean isBlock = item instanceof ItemBlock;

@@ -31,6 +31,7 @@ public class DimensionDataPacket extends DataPacket {
             this.putVarInt(definition.getMaximumHeight());
             this.putVarInt(definition.getMinimumHeight());
             this.putVarInt(definition.getGeneratorType());
+            this.putVarInt(definition.getDimensionType());
         }
     }
 }

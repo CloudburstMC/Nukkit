@@ -64,13 +64,14 @@ public class Skin {
 
     private boolean isValidSkin() {
         try {
-            return (skinId != null && !skinId.trim().isEmpty() && skinId.length() < 100) &&
-                    (skinData != null && skinData.width >= 64 && skinData.height >= 32 && skinData.data.length >= SINGLE_SKIN_SIZE) &&
-                    (geometryData != null && !geometryData.isEmpty()) &&
+            return skinId != null && !skinId.trim().isEmpty() && skinId.length() < 100 &&
+                    skinData != null && skinData.width >= 64 && skinData.height >= 32 && skinData.data.length >= SINGLE_SKIN_SIZE &&
+                    geometryData != null && !geometryData.isEmpty() &&
                     ((geometryData.getBytes(StandardCharsets.UTF_8).length <= MAX_DATA_SIZE &&
-                            skinData.data.length <= MAX_DATA_SIZE &&
+                            skinData.width <= 512 && skinData.height <= 512 && skinData.data.length <= MAX_DATA_SIZE &&
                             (capeData == null || capeData.data.length <= MAX_DATA_SIZE) &&
-                            (animationData == null || animationData.getBytes(StandardCharsets.UTF_8).length <= MAX_DATA_SIZE))) &&
+                            (animationData == null || animationData.getBytes(StandardCharsets.UTF_8).length <= MAX_DATA_SIZE) &&
+                            animations.size() < 100 && personaPieces.size() < 100 && tintColors.size() < 100)) &&
                     (playFabId == null || playFabId.length() < 100) &&
                     (capeId == null || capeId.length() < 100) &&
                     (skinColor == null || skinColor.length() < 100) &&

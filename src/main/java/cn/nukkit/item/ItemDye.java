@@ -9,7 +9,7 @@ import cn.nukkit.utils.DyeColor;
  * @author MagicDroidX
  * Nukkit Project
  */
-public class ItemDye extends Item {
+public class ItemDye extends Item implements ItemTrimMaterial {
 
     @Deprecated
     public static final int WHITE = DyeColor.WHITE.getDyeData();
@@ -138,5 +138,10 @@ public class ItemDye extends Item {
             default:
                 return DyeColor.getByDyeData(meta).getName();
         }
+    }
+
+    @Override
+    public ItemTrimMaterial.Type getMaterial() {
+        return this.meta == LAPIS_LAZULI ? Type.LAPIS : null;
     }
 }

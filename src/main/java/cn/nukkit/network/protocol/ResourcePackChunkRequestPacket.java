@@ -9,12 +9,21 @@ public class ResourcePackChunkRequestPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.RESOURCE_PACK_CHUNK_REQUEST_PACKET;
 
+    public String version;
     public UUID packId;
     public int chunkIndex;
 
     @Override
     public void decode() {
-        this.packId = UUID.fromString(this.getString());
+        String[] parts = this.getString().split("_", 3);
+        String uuidString = parts[0];
+        if (uuidString.length() > 36) {
+            throw new IllegalArgumentException("Invalid packId");
+        }
+        if (parts.length > 1) {
+            this.version = parts[1];
+        }
+        this.packId = UUID.fromString(uuidString);
         this.chunkIndex = this.getLInt();
     }
 

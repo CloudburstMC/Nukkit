@@ -69,19 +69,12 @@ public class NetworkInventoryAction {
     public NetworkInventoryAction read(InventoryTransactionPacket packet) {
         this.sourceType = (int) packet.getUnsignedVarInt();
 
+        if (packet.getBoolean() && packet.getBoolean()) this.windowId = (byte) packet.getByte(); // signed byte
+        if (packet.getBoolean() && packet.getBoolean()) this.flags = packet.getUnsignedVarInt();
+
         switch (this.sourceType) {
-            case SOURCE_CONTAINER:
-                this.windowId = packet.getVarInt();
-                break;
-            case SOURCE_WORLD:
-                this.flags = packet.getUnsignedVarInt();
-                break;
-            case SOURCE_CREATIVE:
-                break;
             case SOURCE_CRAFT_SLOT:
             case SOURCE_TODO:
-                this.windowId = packet.getVarInt();
-
                 switch (this.windowId) {
                     case SOURCE_TYPE_CRAFTING_RESULT:
                     case SOURCE_TYPE_CRAFTING_USE_INGREDIENT:
@@ -102,33 +95,10 @@ public class NetworkInventoryAction {
         }
 
         this.inventorySlot = (int) packet.getUnsignedVarInt();
-        this.oldItem = packet.getSlot();
-        this.newItem = packet.getSlot();
+        this.oldItem = packet.getNetworkItemStackDescriptor();
+        this.newItem = packet.getNetworkItemStackDescriptor();
 
         return this;
-    }
-
-    public void write(InventoryTransactionPacket packet) {
-        packet.putUnsignedVarInt(this.sourceType);
-
-        switch (this.sourceType) {
-            case SOURCE_CONTAINER:
-                packet.putVarInt(this.windowId);
-                break;
-            case SOURCE_WORLD:
-                packet.putUnsignedVarInt(this.flags);
-                break;
-            case SOURCE_CREATIVE:
-                break;
-            case SOURCE_CRAFT_SLOT:
-            case SOURCE_TODO:
-                packet.putVarInt(this.windowId);
-                break;
-        }
-
-        packet.putUnsignedVarInt(this.inventorySlot);
-        packet.putSlot(this.oldItem);
-        packet.putSlot(this.newItem);
     }
 
     public InventoryAction createInventoryAction(Player player) {

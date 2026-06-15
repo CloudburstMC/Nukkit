@@ -1199,7 +1199,7 @@ public abstract class Entity extends Location implements Metadatable {
         }
 
         if (!this.hasSpawned.containsKey(player.getLoaderId())) {
-            Boolean hasChunk = player.usedChunks.get(Level.chunkHash(this.chunk.getX(), this.chunk.getZ()));
+            Boolean hasChunk = player.usedChunks.get(this.chunk.getIndex());
             if (hasChunk != null && hasChunk) {
                 player.dataPacket(createAddEntityPacket());
                 this.hasSpawned.put(player.getLoaderId(), player);

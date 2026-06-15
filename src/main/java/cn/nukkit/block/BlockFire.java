@@ -151,10 +151,10 @@ public class BlockFire extends BlockFlowable {
             this.getLevel().scheduleUpdate(this, this.tickRate() + random.nextInt(10));
 
             if (!forever && !this.canNeighborBurn()) {
-                if (!this.isBlockTopFacingSurfaceSolid(this.down()) || meta > 3) {
+                if (!this.isBlockTopFacingSurfaceSolid(down) || meta > 3) {
                     this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
                 }
-            } else if (!forever && !(this.down().getBurnAbility() > 0) && meta == 15 && random.nextInt(4) == 0) {
+            } else if (!forever && down.getBurnAbility() <= 0 && meta == 15 && random.nextInt(4) == 0) {
                 this.getLevel().setBlock(this, Block.get(BlockID.AIR), true);
             } else {
                 int o = 0;
@@ -204,8 +204,9 @@ public class BlockFire extends BlockFlowable {
                                         this.level.getServer().getPluginManager().callEvent(e);
 
                                         if (!e.isCancelled()) {
-                                            this.getLevel().setBlock(block, Block.get(FIRE, damage), true);
-                                            this.getLevel().scheduleUpdate(block, this.tickRate());
+                                            Block target = Block.get(FIRE, damage);
+                                            this.getLevel().setBlock(block, target, true);
+                                            this.getLevel().scheduleUpdate(target, this.tickRate());
                                         }
                                     }
                                 }
@@ -238,8 +239,9 @@ public class BlockFire extends BlockFlowable {
                 this.level.getServer().getPluginManager().callEvent(e);
 
                 if (!e.isCancelled()) {
-                    this.getLevel().setBlock(block, Block.get(FIRE, meta), true);
-                    this.getLevel().scheduleUpdate(block, this.tickRate());
+                    Block target = Block.get(FIRE, meta);
+                    this.getLevel().setBlock(block, target, true);
+                    this.getLevel().scheduleUpdate(target, this.tickRate());
                 }
             } else {
                 BlockBurnEvent ev = new BlockBurnEvent(block);

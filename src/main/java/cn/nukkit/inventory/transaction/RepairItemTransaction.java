@@ -82,10 +82,7 @@ public class RepairItemTransaction extends InventoryTransaction {
             return false;
         }
         AnvilInventory inventory = (AnvilInventory) getSource().getWindowById(Player.ANVIL_WINDOW_ID);
-
-        if (inventory.getCost() != this.cost && !this.source.isCreative()) {
-            this.source.getServer().getLogger().debug("Got unexpected cost " + inventory.getCost() + " from " + this.source.getName() + " (expected " + this.cost + ')');
-        }
+        inventory.setCost(this.cost);
 
         RepairItemEvent event = new RepairItemEvent(inventory, this.inputItem, this.outputItem, this.materialItem, this.cost, this.source);
         this.source.getServer().getPluginManager().callEvent(event);
