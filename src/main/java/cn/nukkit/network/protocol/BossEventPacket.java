@@ -40,7 +40,7 @@ public class BossEventPacket extends DataPacket {
     public short darkenScreen;
     public int color;
     public int overlay;
-    
+
     @Override
     public byte pid() {
         return NETWORK_ID;
@@ -49,61 +49,25 @@ public class BossEventPacket extends DataPacket {
     @Override
     public void decode() {
         this.bossEid = this.getEntityUniqueId();
-        this.type = (int) this.getUnsignedVarInt();
-        switch (this.type) {
-            case TYPE_REGISTER_PLAYER:
-            case TYPE_UNREGISTER_PLAYER:
-            case TYPE_QUERY:
-                this.playerEid = this.getEntityUniqueId();
-                break;
-            case TYPE_SHOW:
-                this.title = this.getString();
-                this.filteredTitle = this.getString();
-                this.healthPercent = this.getLFloat();
-            case TYPE_UPDATE_PROPERTIES:
-                this.darkenScreen = (short) this.getLShort();
-            case TYPE_TEXTURE:
-                this.color = (int) this.getUnsignedVarInt();
-                this.overlay = (int) this.getUnsignedVarInt();
-                break;
-            case TYPE_HEALTH_PERCENT:
-                this.healthPercent = this.getLFloat();
-                break;
-            case TYPE_TITLE:
-                this.title = this.getString();
-                this.filteredTitle = this.getString();
-                break;
-        }
+        this.playerEid = this.getEntityUniqueId();
+        this.type = this.getByte();
+        this.title = this.getString();
+        this.filteredTitle = this.getString();
+        this.healthPercent = this.getLFloat();
+        this.color = this.getByte();
+        this.overlay = this.getByte();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putEntityUniqueId(this.bossEid);
-        this.putUnsignedVarInt(this.type);
-        switch (this.type) {
-            case TYPE_REGISTER_PLAYER:
-            case TYPE_UNREGISTER_PLAYER:
-            case TYPE_QUERY:
-                this.putEntityUniqueId(this.playerEid);
-                break;
-            case TYPE_SHOW:
-                this.putString(this.title);
-                this.putString(this.filteredTitle);
-                this.putLFloat(this.healthPercent);
-            case TYPE_UPDATE_PROPERTIES:
-                this.putLShort(this.darkenScreen);
-            case TYPE_TEXTURE:
-                this.putUnsignedVarInt(this.color);
-                this.putUnsignedVarInt(this.overlay);
-                break;
-            case TYPE_HEALTH_PERCENT:
-                this.putLFloat(this.healthPercent);
-                break;
-            case TYPE_TITLE:
-                this.putString(this.title);
-                this.putString(this.filteredTitle);
-                break;
-        }
+        this.putEntityUniqueId(this.playerEid);
+        this.putByte((byte) this.type);
+        this.putString(this.title);
+        this.putString(this.filteredTitle);
+        this.putLFloat(this.healthPercent);
+        this.putByte((byte) this.color);
+        this.putByte((byte) this.overlay);
     }
 }

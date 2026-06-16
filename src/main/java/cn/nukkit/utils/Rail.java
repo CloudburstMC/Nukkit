@@ -93,8 +93,10 @@ public final class Rail {
             return ASCENDING_EAST;
         }
 
+        private static final Orientation[] CURVED_O = new Orientation[]{CURVED_SOUTH_EAST, CURVED_SOUTH_WEST, CURVED_NORTH_WEST, CURVED_NORTH_EAST};
+
         public static Orientation curved(BlockFace f1, BlockFace f2) {
-            for (Orientation o : new Orientation[]{CURVED_SOUTH_EAST, CURVED_SOUTH_WEST, CURVED_NORTH_WEST, CURVED_NORTH_EAST}) {
+            for (Orientation o : CURVED_O) {
                 if (o.connectingDirections.contains(f1) && o.connectingDirections.contains(f2)) {
                     return o;
                 }
@@ -102,8 +104,10 @@ public final class Rail {
             return CURVED_SOUTH_EAST;
         }
 
+        private static final Orientation[] STRAIGHT_OR_CURVED_O = new Orientation[]{STRAIGHT_NORTH_SOUTH, STRAIGHT_EAST_WEST, CURVED_SOUTH_EAST, CURVED_SOUTH_WEST, CURVED_NORTH_WEST, CURVED_NORTH_EAST};
+
         public static Orientation straightOrCurved(BlockFace f1, BlockFace f2) {
-            for (Orientation o : new Orientation[]{STRAIGHT_NORTH_SOUTH, STRAIGHT_EAST_WEST, CURVED_SOUTH_EAST, CURVED_SOUTH_WEST, CURVED_NORTH_WEST, CURVED_NORTH_EAST}) {
+            for (Orientation o : STRAIGHT_OR_CURVED_O) {
                 if (o.connectingDirections.contains(f1) && o.connectingDirections.contains(f2)) {
                     return o;
                 }

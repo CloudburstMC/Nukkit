@@ -60,7 +60,7 @@ public class ClientboundMapItemDataPacket extends DataPacket {
         if (eids.length > 0) {
             update |= ENTITIES_UPDATE;
         }
-        if (decorators.length > 0) {
+        if (decorators.length > 0 || trackedEntities.length > 0) {
             update |= DECORATIONS_UPDATE;
         }
 

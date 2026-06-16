@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 import lombok.ToString;
 
@@ -27,21 +28,21 @@ public class MobArmorEquipmentPacket extends DataPacket {
     public void decode() {
         this.eid = this.getEntityRuntimeId();
         this.slots = new Item[4];
-        this.slots[0] = this.getSlot();
-        this.slots[1] = this.getSlot();
-        this.slots[2] = this.getSlot();
-        this.slots[3] = this.getSlot();
-        this.body = this.getSlot();
+        this.slots[0] = this.getNetworkItemStackDescriptor();
+        this.slots[1] = this.getNetworkItemStackDescriptor();
+        this.slots[2] = this.getNetworkItemStackDescriptor();
+        this.slots[3] = this.getNetworkItemStackDescriptor();
+        this.body = this.getNetworkItemStackDescriptor();
     }
 
     @Override
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(this.eid);
-        this.putSlot(this.slots[0]);
-        this.putSlot(this.slots[1]);
-        this.putSlot(this.slots[2]);
-        this.putSlot(this.slots[3]);
-        this.putSlot(this.body);
+        this.putNetworkItemStackDescriptor(this.slots[0]);
+        this.putNetworkItemStackDescriptor(this.slots[1]);
+        this.putNetworkItemStackDescriptor(this.slots[2]);
+        this.putNetworkItemStackDescriptor(this.slots[3]);
+        this.putNetworkItemStackDescriptor(this.body);
     }
 }

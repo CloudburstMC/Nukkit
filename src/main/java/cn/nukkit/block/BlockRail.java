@@ -82,23 +82,34 @@ public class BlockRail extends BlockFlowable implements Faceable {
             if (railsAmount <= 2) {
                 return 0;
             }
-            boolean power = level.isBlockPowered(this);
             List<BlockRail> rails = new ArrayList<>(railsAround.keySet());
             List<BlockFace> faces = new ArrayList<>(railsAround.values());
             if (railsAmount == 4) {
                 if (this.isAbstract()) {
-                    if (power) {
-                        this.setDamage(this.connect(rails.get(faces.indexOf(NORTH)), NORTH, rails.get(faces.indexOf(WEST)), WEST).metadata());
+                    if (level.isBlockPowered(this)) {
+                        int i = faces.indexOf(NORTH);
+                        int i2 = faces.indexOf(WEST);
+                        if (i != -1 && i2 != -1) {
+                            this.setDamage(this.connect(rails.get(i), NORTH, rails.get(i2), WEST).metadata());
+                        }
                     } else {
-                        this.setDamage(this.connect(rails.get(faces.indexOf(SOUTH)), SOUTH, rails.get(faces.indexOf(EAST)), EAST).metadata());
+                        int i = faces.indexOf(SOUTH);
+                        int i2 = faces.indexOf(EAST);
+                        if (i != -1 && i2 != -1) {
+                            this.setDamage(this.connect(rails.get(i), SOUTH, rails.get(i2), EAST).metadata());
+                        }
                     }
                 } else {
-                    this.setDamage(this.connect(rails.get(faces.indexOf(EAST)), EAST, rails.get(faces.indexOf(WEST)), WEST).metadata());
+                    int i = faces.indexOf(EAST);
+                    int i2 = faces.indexOf(WEST);
+                    if (i != -1 && i2 != -1) {
+                        this.setDamage(this.connect(rails.get(i), EAST, rails.get(i2), WEST).metadata());
+                    }
                 }
             } else if (!railsAround.isEmpty()) {
                 if (this.isAbstract()) {
                     Optional<Orientation> optional;
-                    if (power) {
+                    if (level.isBlockPowered(this)) {
                         optional = Stream.of(CURVED_NORTH_WEST, CURVED_SOUTH_WEST, CURVED_NORTH_EAST)
                                 .filter(o -> faces.containsAll(o.connectingDirections()))
                                 .findFirst();
@@ -163,9 +174,17 @@ public class BlockRail extends BlockFlowable implements Faceable {
             this.setDamage(this.connect(other, railsAround.get(other)).metadata());
         } else if (railsAround.size() == 4) {
             if (this.isAbstract()) {
-                this.setDamage(this.connect(rails.get(faces.indexOf(SOUTH)), SOUTH, rails.get(faces.indexOf(EAST)), EAST).metadata());
+                int i = faces.indexOf(SOUTH);
+                int i2 = faces.indexOf(EAST);
+                if (i != -1 && i2 != -1) {
+                    this.setDamage(this.connect(rails.get(i), SOUTH, rails.get(i2), EAST).metadata());
+                }
             } else {
-                this.setDamage(this.connect(rails.get(faces.indexOf(EAST)), EAST, rails.get(faces.indexOf(WEST)), WEST).metadata());
+                int i = faces.indexOf(EAST);
+                int i2 = faces.indexOf(WEST);
+                if (i != -1 && i2 != -1) {
+                    this.setDamage(this.connect(rails.get(i), EAST, rails.get(i2), WEST).metadata());
+                }
             }
         } else if (!railsAround.isEmpty()) {
             if (this.isAbstract()) {

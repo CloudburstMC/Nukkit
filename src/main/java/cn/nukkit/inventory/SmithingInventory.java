@@ -5,6 +5,7 @@ import cn.nukkit.Server;
 import cn.nukkit.item.*;
 import cn.nukkit.level.Position;
 
+import javax.annotation.Nullable;
 import java.util.Arrays;
 
 /**
@@ -38,8 +39,13 @@ public class SmithingInventory extends FakeBlockUIComponent {
         return recipe.getFinalResult(getEquipment(), getTemplate());
     }
 
+    @Nullable
     private Item getTrimOutputItem() {
         Item ingredient = getIngredient();
+        if (ingredient instanceof ItemDye && ingredient.getDamage() != ItemDye.LAPIS_LAZULI) {
+            return null;
+        }
+
         Item template = getTemplate();
 
         if (ingredient instanceof ItemTrimMaterial && template instanceof ItemTrimPattern) {

@@ -4,6 +4,7 @@ import cn.nukkit.inventory.transaction.data.ReleaseItemData;
 import cn.nukkit.inventory.transaction.data.TransactionData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemOnEntityData;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.ToString;
@@ -63,22 +64,34 @@ public class InventoryTransactionPacket extends DataPacket {
     @Override
     public void decode() {
         this.legacyRequestId = this.getVarInt();
-        if (legacyRequestId < -1 && (legacyRequestId & 1) == 0) {
+
+        if (this.getBoolean() && legacyRequestId < -1 && (legacyRequestId & 1) == 0) {
             int length = (int) this.getUnsignedVarInt();
             if (length > 4096) {
-                throw new RuntimeException("Too many inventory transactions in one packet");
+                throw new RuntimeException("Too many legacy inventory transactions in one packet");
             }
 
             for (int i = 0; i < length; i++) {
-                this.getByte();
-                int bufLen = (int) this.getUnsignedVarInt();
-                this.get(bufLen);
+                this.getByte(); // container id
+                this.getByteArray();
             }
         }
 
+        if (!this.getBoolean()) {
+            throw new IllegalStateException("Expected InventoryTransactionType");
+        }
         this.transactionType = (int) this.getUnsignedVarInt();
 
-        this.actions = new NetworkInventoryAction[Math.min((int) this.getUnsignedVarInt(), 4096)];
+        if (!this.getBoolean()) {
+            throw new IllegalStateException("Expected InventoryActionData");
+        }
+
+        int length = (int) this.getUnsignedVarInt();
+        if (length > 4096) {
+            throw new RuntimeException("Too many inventory transactions in one packet");
+        }
+
+        this.actions = new NetworkInventoryAction[length];
         for (int i = 0; i < this.actions.length; i++) {
             this.actions[i] = new NetworkInventoryAction().read(this);
         }
@@ -91,12 +104,12 @@ public class InventoryTransactionPacket extends DataPacket {
             case TYPE_USE_ITEM:
                 UseItemData itemData = new UseItemData();
 
-                itemData.actionType = (int) this.getUnsignedVarInt();
-                itemData.triggerType = (int) this.getUnsignedVarInt();
+                itemData.actionType = this.getVarInt();
+                itemData.triggerType = this.getByte();
                 itemData.blockPos = this.getBlockVector3();
-                itemData.face = this.getBlockFace();
+                itemData.face = BlockFace.fromIndex(this.getByte());
                 itemData.hotbarSlot = this.getVarInt();
-                itemData.itemInHand = this.getSlot();
+                itemData.itemInHand = this.getNetworkItemStackDescriptor();
                 itemData.playerPos = this.getVector3fAsVector3();
                 itemData.clickPos = this.getVector3f();
                 itemData.blockRuntimeId = (int) this.getUnsignedVarInt();
@@ -109,9 +122,9 @@ public class InventoryTransactionPacket extends DataPacket {
                 UseItemOnEntityData useItemOnEntityData = new UseItemOnEntityData();
 
                 useItemOnEntityData.entityRuntimeId = this.getEntityRuntimeId();
-                useItemOnEntityData.actionType = (int) this.getUnsignedVarInt();
+                useItemOnEntityData.actionType = this.getVarInt();
                 useItemOnEntityData.hotbarSlot = this.getVarInt();
-                useItemOnEntityData.itemInHand = this.getSlot();
+                useItemOnEntityData.itemInHand = this.getNetworkItemStackDescriptor();
                 useItemOnEntityData.playerPos = this.getVector3fAsVector3();
                 useItemOnEntityData.clickPos = this.getVector3fAsVector3();
 
@@ -120,9 +133,9 @@ public class InventoryTransactionPacket extends DataPacket {
             case TYPE_RELEASE_ITEM:
                 ReleaseItemData releaseItemData = new ReleaseItemData();
 
-                releaseItemData.actionType = (int) getUnsignedVarInt();
-                releaseItemData.hotbarSlot = getVarInt();
-                releaseItemData.itemInHand = this.getSlot();
+                releaseItemData.actionType = this.getVarInt();
+                releaseItemData.hotbarSlot = this.getVarInt();
+                releaseItemData.itemInHand = this.getNetworkItemStackDescriptor();
                 releaseItemData.headRot = this.getVector3fAsVector3();
 
                 this.transactionData = releaseItemData;

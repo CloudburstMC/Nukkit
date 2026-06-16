@@ -20,10 +20,18 @@ public class ResourcePackClientResponsePacket extends DataPacket {
     @Override
     public void decode() {
         this.responseStatus = (byte) this.getByte();
-        this.packEntries = new Entry[Math.min(this.getLShort(), 1024)];
+        int count = this.getLShort();
+        if (count > 1024) throw new IllegalArgumentException("Too many entries");
+        this.packEntries = new Entry[count];
         for (int i = 0; i < this.packEntries.length; i++) {
             String[] entry = this.getString().split("_", 3);
-            this.packEntries[i] = new Entry(UUID.fromString(entry[0]), entry[1]);
+
+            String uuidString = entry[0];
+            if (uuidString.length() > 36) {
+                throw new IllegalArgumentException("Invalid packId");
+            }
+
+            this.packEntries[i] = new Entry(UUID.fromString(uuidString), entry[1]);
         }
     }
 

@@ -6,7 +6,7 @@ fastutilmaps = "8.5.15-SNAPSHOT"
 
 [libraries]
 network = { group = "org.cloudburstmc.netty", name = "netty-transport-raknet", version = "1.0.0.CR3-20260421.213623-35" }
-epoll = { group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.131.Final" }
+epoll = { group = "io.netty", name = "netty-transport-native-epoll", version = "4.1.133.Final" }
 fastutil = { group = "it.unimi.dsi", name = "fastutil-core", version = "8.5.15" }
 fastutil-int-short-maps = { group = "org.cloudburstmc.fastutil.maps", name = "int-short-maps", version.ref = "fastutilmaps" }
 fastutil-long-byte-maps = { group = "org.cloudburstmc.fastutil.maps", name = "long-byte-maps", version.ref = "fastutilmaps" }
@@ -21,7 +21,7 @@ jopt-simple = { group = "net.sf.jopt-simple", name = "jopt-simple", version = "5
 blockstateupdater = { group = "org.cloudburstmc", name = "block-state-updater", version = "1.21.40-SNAPSHOT" }
 lmbda = { group = "org.lanternpowered", name = "lmbda", version = "2.0.0" }
 noise = { group = "net.daporkchop.lib", name = "noise", version = "0.5.6-SNAPSHOT" }
-lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.36" }
+lombok = { group = "org.projectlombok", name = "lombok", version = "1.18.46" }
 
 # Logging dependencies
 log4j-api = { group = "org.apache.logging.log4j", name = "log4j-api", version.ref = "log4j" }

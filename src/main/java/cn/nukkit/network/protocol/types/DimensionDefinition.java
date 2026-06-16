@@ -9,4 +9,5 @@ public class DimensionDefinition {
     int maximumHeight;
     int minimumHeight;
     int generatorType;
+    int dimensionType;
 }

@@ -2,8 +2,11 @@ package cn.nukkit.item;
 
 import lombok.Getter;
 
+import javax.annotation.Nullable;
+
 public interface ItemTrimMaterial {
 
+    @Nullable
     Type getMaterial();
 
     enum Type {

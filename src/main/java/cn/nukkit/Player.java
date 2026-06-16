@@ -2733,9 +2733,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             nbt.putString("Level", this.level.getName());
             Vector3 sp = this.level.getProvider().getSpawn();
             nbt.getList("Pos", DoubleTag.class)
-                    .add(new DoubleTag("0", sp.x))
-                    .add(new DoubleTag("1", sp.y))
-                    .add(new DoubleTag("2", sp.z));
+                    .add(0, new DoubleTag("0", sp.x))
+                    .add(1, new DoubleTag("1", sp.y))
+                    .add(2, new DoubleTag("2", sp.z));
         } else {
             this.setLevel(level);
         }
@@ -3017,6 +3017,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 server.getLogger().debug("Name: " + loginChainData.getUsername() + " Version: " + loginChainData.getGameVersion());
+
+                if (loginChainData.getUsername() == null || loginChainData.getClientUUID() == null) {
+                    this.close("", "Invalid login data");
+                    return;
+                }
 
                 if (!loginChainData.isXboxAuthed() && server.xboxAuth) {
                     this.close("", "disconnectionScreen.notAuthenticated");
@@ -3786,31 +3791,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 animatePacket.eid = this.getId();
                 animatePacket.action = animationEvent.getAnimationType();
                 Server.broadcastPacket(this.getViewers().values(), animatePacket);
-                return;
-            case ProtocolInfo.ENTITY_EVENT_PACKET:
-                if (!this.spawned || !this.isAlive()) {
-                    return;
-                }
-
-                EntityEventPacket entityEventPacket = (EntityEventPacket) packet;
-
-                if (entityEventPacket.event != EntityEventPacket.ENCHANT) {
-                    this.craftingType = CRAFTING_SMALL;
-                }
-
-                switch (entityEventPacket.event) {
-                    case EntityEventPacket.ENCHANT:
-                        if (entityEventPacket.eid != this.id) {
-                            this.getServer().getLogger().debug(username + ": entity event eid mismatch");
-                            return;
-                        }
-
-                        Inventory inventory = this.getWindowById(ANVIL_WINDOW_ID);
-                        if (inventory instanceof AnvilInventory) {
-                            ((AnvilInventory) inventory).setCost(-entityEventPacket.data);
-                        }
-                        return;
-                }
                 return;
             case ProtocolInfo.COMMAND_REQUEST_PACKET:
                 if (!this.spawned || !this.isAlive()) {
@@ -4809,7 +4789,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 if (emotePacket.runtimeId != this.id) {
                     this.getServer().getLogger().debug(username + ": EmotePacket eid mismatch");
                     return;
-                } else if (emotePacket.emoteID == null || emotePacket.emoteID.isEmpty() || emotePacket.emoteID.length() > 100) {
+                } else if (emotePacket.emoteID == null || emotePacket.emoteID.length() != 36) {
                     this.getServer().getLogger().debug(username + " EmotePacket invalid emote id: " + emotePacket.emoteID);
                     return;
                 }
