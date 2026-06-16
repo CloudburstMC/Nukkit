@@ -1054,7 +1054,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
         try {
             Item item = (Item) super.clone();
             item.tags = this.tags.clone();
-            item.cachedNBT = this.cachedNBT == null ? null : this.cachedNBT.copy();
+            item.cachedNBT = null;
             item.persistentContainer = null;
             return item;
         } catch (CloneNotSupportedException e) {
