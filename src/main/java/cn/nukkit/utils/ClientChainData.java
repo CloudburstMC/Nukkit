@@ -401,8 +401,8 @@ public final class ClientChainData implements LoginChainData {
 
     private static PersonaPiece getPersonaPiece(JsonObject object) {
         String pieceId = object.get("PieceId").getAsString();
-        String pieceType = object.get("PieceType").getAsString();
-        String packId = object.get("PackId").getAsString();
+        PersonaPieceType pieceType = PersonaPieceType.fromName(object.get("PieceType").getAsString());
+        UUID packId = UUID.fromString(object.get("PackId").getAsString());
         boolean isDefault = object.get("IsDefault").getAsBoolean();
         String productId = object.get("ProductId").getAsString();
         return new PersonaPiece(pieceId, pieceType, packId, isDefault, productId);

@@ -38,7 +38,8 @@ public class ResourcePacksInfoPacket extends DataPacket {
     }
 
     private void encodeResourcePacks(ResourcePack[] packs) {
-        this.putLShort(packs.length);
+        this.putUnsignedVarInt(packs.length);
+
         for (ResourcePack entry : packs) {
             this.putUUID(entry.getPackId());
             this.putString(entry.getPackVersion());

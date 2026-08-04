@@ -15,13 +15,18 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public static final int FLAG_HAS_PITCH = 0b100000;
 
     public long eid;
-    public int flags = 0;
-    public float x = 0;
-    public float y = 0;
-    public float z = 0;
-    public double yawDelta = 0;
-    public double headYawDelta = 0;
-    public double pitchDelta = 0;
+    public int flags;
+    public float x;
+    public float y;
+    public float z;
+    public double yawDelta;
+    public double headYawDelta;
+    public double pitchDelta;
+
+    private boolean onGround;
+    private boolean forceMove;
+    private boolean forceMoveLocalEntity;
+    private boolean forceCompletion;
 
     @Override
     public byte pid() {
@@ -37,18 +42,26 @@ public class MoveEntityDeltaPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putEntityRuntimeId(this.eid);
-        this.putByte((byte) flags);
+
         putCoordinate(FLAG_HAS_X, this.x);
         putCoordinate(FLAG_HAS_Y, this.y);
         putCoordinate(FLAG_HAS_Z, this.z);
         putRotation(FLAG_HAS_YAW, this.yawDelta);
         putRotation(FLAG_HAS_HEAD_YAW, this.headYawDelta);
         putRotation(FLAG_HAS_PITCH, this.pitchDelta);
+
+        this.putBoolean(this.onGround);
+        this.putBoolean(this.forceMove);
+        this.putBoolean(this.forceMoveLocalEntity);
+        this.putBoolean(this.forceCompletion);
     }
 
     private void putCoordinate(int flag, float value) {
         if ((flags & flag) != 0) {
+            this.putBoolean(true);
             this.putLFloat(value);
+        } else {
+            this.putBoolean(false);
         }
     }
 

@@ -7,16 +7,16 @@ import cn.nukkit.network.protocol.types.*;
 import lombok.Getter;
 import lombok.ToString;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @ToString
 @Getter
 public class PlayerAuthInputPacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.PLAYER_AUTH_INPUT_PACKET;
+
+    private static final Vector2f EMPTY_VECTOR2F = new Vector2f();
+    private static final Vector3f EMPTY_VECTOR3F = new Vector3f();
 
     private float yaw;
     private float pitch;
@@ -31,11 +31,11 @@ public class PlayerAuthInputPacket extends DataPacket {
     private Vector3f delta;
     private final Map<PlayerActionType, PlayerBlockActionData> blockActionData = new EnumMap<>(PlayerActionType.class);
     private long predictedVehicle;
-    private Vector2f analogMoveVector;
-    private Vector2f vehicleRotation;
-    private Vector2f interactRotation;
-    private Vector3f cameraOrientation;
-    private Vector2f rawMoveVector;
+    private Vector2f analogMoveVector = EMPTY_VECTOR2F;
+    private Vector2f vehicleRotation = EMPTY_VECTOR2F;
+    private Vector2f interactRotation = EMPTY_VECTOR2F;
+    private Vector3f cameraOrientation = EMPTY_VECTOR3F;
+    private Vector2f rawMoveVector = EMPTY_VECTOR2F;
 
     @Override
     public byte pid() {
@@ -50,26 +50,37 @@ public class PlayerAuthInputPacket extends DataPacket {
         this.motion = new Vector2(this.getLFloat(), this.getLFloat());
         this.headYaw = this.getLFloat();
 
-        long inputData = this.getUnsignedVarLong();
-        for (int i = 0; i < AuthInputAction.size(); i++) {
-            if ((inputData & (1L << i)) != 0) {
-                this.inputData.add(AuthInputAction.from(i));
+        if (this.getBoolean()) {
+            int len = (int) this.getUnsignedVarInt();
+            for (int i = 0; i < len; i++) {
+                this.inputData.add(AuthInputAction.from(this.getVarInt()));
             }
         }
 
         this.inputMode = InputMode.fromOrdinal((int) this.getUnsignedVarInt());
         this.playMode = ClientPlayMode.fromOrdinal((int) this.getUnsignedVarInt());
 
-        this.interactionModel = AuthInteractionModel.fromOrdinal((int) this.getUnsignedVarInt());
+        this.interactionModel = AuthInteractionModel.fromOrdinal(this.getVarInt());
 
         this.interactRotation = this.getVector2f();
 
         this.tick = this.getUnsignedVarLong();
         this.delta = this.getVector3f();
 
-        if (this.inputData.contains(AuthInputAction.PERFORM_BLOCK_ACTIONS)) {
-            int arraySize = this.getVarInt();
-            if (arraySize > 256) throw new IllegalArgumentException("PlayerAuthInputPacket PERFORM_BLOCK_ACTIONS is too long: " + arraySize);
+        if (this.getBoolean() && this.getBoolean()) {
+            throw new IllegalStateException("PERFORM_ITEM_INTERACTION unsupported in legacy mode");
+        }
+
+        if (this.getBoolean() && this.getBoolean()) {
+            throw new IllegalStateException("PERFORM_ITEM_STACK_REQUEST unsupported in legacy mode");
+        }
+
+        if ((this.getBoolean() && this.getBoolean())) {
+            int arraySize = (int) this.getUnsignedVarInt();
+            if (arraySize > 100) {
+                throw new IllegalArgumentException("PlayerAuthInputPacket PERFORM_BLOCK_ACTIONS is too long: " + arraySize);
+            }
+
             for (int i = 0; i < arraySize; i++) {
                 PlayerActionType type = PlayerActionType.from(this.getVarInt());
                 switch (type) {
@@ -81,18 +92,23 @@ public class PlayerAuthInputPacket extends DataPacket {
                         this.blockActionData.put(type, new PlayerBlockActionData(type, this.getSignedBlockPosition(), this.getVarInt()));
                         break;
                     default:
-                        this.blockActionData.put(type, new PlayerBlockActionData(type, null, -1));
+                        throw new IllegalStateException("Unexpected " + type);
                 }
             }
         }
 
-        if (this.inputData.contains(AuthInputAction.IN_CLIENT_PREDICTED_IN_VEHICLE)) {
+        if (this.getBoolean() && this.getBoolean()) {
             this.vehicleRotation = this.getVector2f();
+        }
+
+        if (this.getBoolean() && this.getBoolean()) {
             this.predictedVehicle = this.getVarLong();
         }
 
         this.analogMoveVector = this.getVector2f();
+
         this.cameraOrientation = this.getVector3f();
+
         this.rawMoveVector = this.getVector2f();
     }
 

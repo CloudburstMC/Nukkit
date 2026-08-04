@@ -341,6 +341,7 @@ public abstract class Entity extends Location implements Metadatable {
     public static final int DATA_FLAG_USES_LEGACY_FRICTION = 127;
     public static final int DATA_FLAG_USES_UNIFORM_AIR_DRAG = 128;
     public static final int DATA_FLAG_NAMEPLATE_DEPTH_TESTED = 129;
+    public static final int DATA_FLAG_NOT_PICKABLE_FROM_INSIDE = 130;
 
     public static final double STEP_CLIP_MULTIPLIER = 0.4;
 

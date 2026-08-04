@@ -130,7 +130,7 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(false); // isCreatedInEditor
         this.putBoolean(false); // isExportedFromEditor
         this.putVarInt(this.dayCycleStopTime);
-        this.putVarInt(this.eduEditionOffer);
+        this.putUnsignedVarInt(this.eduEditionOffer);
         this.putBoolean(this.hasEduFeaturesEnabled);
         this.putString(""); // Education Edition Product ID
         this.putLFloat(this.rainLevel);
@@ -142,11 +142,11 @@ public class StartGamePacket extends DataPacket {
         this.putVarInt(this.platformBroadcastIntent);
         this.putBoolean(this.commandsEnabled);
         this.putBoolean(this.isTexturePacksRequired);
-        this.putGameRules(this.gameRules, true);
+        this.putGameRules(this.gameRules);
         this.putExperiments(this.experiments);
         this.putBoolean(this.bonusChest);
         this.putBoolean(this.hasStartWithMapEnabled);
-        this.putVarInt(this.permissionLevel);
+        this.putByte((byte) this.permissionLevel);
         this.putLInt(this.serverChunkTickRange);
         this.putBoolean(this.hasLockedBehaviorPack);
         this.putBoolean(this.hasLockedResourcePack);
@@ -188,8 +188,9 @@ public class StartGamePacket extends DataPacket {
         this.put(EMPTY_UUID); // worldTemplateId
         this.putBoolean(this.clientSideGenerationEnabled);
         this.putBoolean(false); // blockIdsAreHashed
+        /* NetworkPermissions start */
         this.putBoolean(true); // isServerAuthSounds
-        this.putBoolean(false); // LoggingChat
+        /* NetworkPermissions end */
         this.putBoolean(false); // no server join info
         /* ServerTelemetryData start */
         this.putString("");

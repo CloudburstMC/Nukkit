@@ -40,7 +40,7 @@ public class AddPlayerPacket extends DataPacket {
     public int gameType = Server.getInstance().getGamemode();
     public EntityMetadata metadata = new EntityMetadata();
     public String deviceId = "";
-    public int buildPlatform = -1;
+    public int buildPlatform = 1;
 
     @Override
     public void decode() {

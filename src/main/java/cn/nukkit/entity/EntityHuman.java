@@ -175,8 +175,8 @@ public class EntityHuman extends EntityHumanType {
                     for (CompoundTag piece : pieces.getAll()) {
                         newSkin.getPersonaPieces().add(new PersonaPiece(
                                 piece.getString("PieceId"),
-                                piece.getString("PieceType"),
-                                piece.getString("PackId"),
+                                PersonaPieceType.fromName(piece.getString("PieceType")),
+                                UUID.fromString(piece.getString("PackId")),
                                 piece.getBoolean("IsDefault"),
                                 piece.getString("ProductId")
                         ));
@@ -254,8 +254,8 @@ public class EntityHuman extends EntityHumanType {
                 ListTag<CompoundTag> piecesTag = new ListTag<>("PersonaPieces");
                 for (PersonaPiece piece : personaPieces) {
                     piecesTag.add(new CompoundTag().putString("PieceId", piece.id)
-                            .putString("PieceType", piece.type)
-                            .putString("PackId", piece.packId)
+                            .putString("PieceType", piece.type.getSerializeName())
+                            .putString("PackId", piece.packId.toString())
                             .putBoolean("IsDefault", piece.isDefault)
                             .putString("ProductId", piece.productId));
                 }
@@ -266,9 +266,9 @@ public class EntityHuman extends EntityHumanType {
                 ListTag<CompoundTag> tintsTag = new ListTag<>("PieceTintColors");
                 for (PersonaPieceTint tint : tints) {
                     ListTag<StringTag> colors = new ListTag<>("Colors");
-                    colors.setAll(tint.colors.stream().map(s -> new StringTag("", s)).collect(Collectors.toList()));
+                    colors.setAll(tint.getColors().stream().map(s -> new StringTag("", s)).collect(Collectors.toList()));
                     tintsTag.add(new CompoundTag()
-                            .putString("PieceType", tint.pieceType)
+                            .putString("PieceType", tint.getPieceType().getSerializeName())
                             .putList(colors));
                 }
             }

@@ -32,9 +32,9 @@ public class GameRulesChangedPacket extends DataPacket {
     public void encode() {
         this.reset();
         if (gameRulesMap == null) { // For compatibility
-            putGameRules(gameRules, false);
+            putGameRules(gameRules);
         } else {
-            putGameRulesMap(gameRulesMap, false);
+            putGameRulesMap(gameRulesMap);
         }
     }
 }

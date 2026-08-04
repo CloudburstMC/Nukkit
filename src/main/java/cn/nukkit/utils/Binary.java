@@ -113,6 +113,7 @@ public class Binary {
 
 
             stream.putUnsignedVarInt(id);
+            stream.putUnsignedVarInt(d.getType()); // 26.40 intentional
             stream.putUnsignedVarInt(d.getType());
 
             switch (d.getType()) {

@@ -17,10 +17,20 @@ public class ResourcePackClientResponsePacket extends DataPacket {
     public byte responseStatus;
     public Entry[] packEntries;
 
+    private static final String[] RESPONSE_STATUS = {"cancel", "downloading", "downloadingfinished", "resourcepackstackfinished"};
+
     @Override
     public void decode() {
         this.responseStatus = (byte) this.getByte();
-        int count = this.getLShort();
+        this.responseStatus += 1;
+
+        this.getString(); // type enum string
+
+        if (this.responseStatus != STATUS_SEND_PACKS) {
+            return;
+        }
+
+        int count = (int) this.getUnsignedVarInt();
         if (count > 1024) throw new IllegalArgumentException("Too many entries");
         this.packEntries = new Entry[count];
         for (int i = 0; i < this.packEntries.length; i++) {
@@ -39,7 +49,16 @@ public class ResourcePackClientResponsePacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putByte(this.responseStatus);
-        this.putLShort(this.packEntries.length);
+        this.responseStatus -= 1;
+
+        this.putString(RESPONSE_STATUS[this.responseStatus]);
+
+        if (this.responseStatus != STATUS_SEND_PACKS) {
+            return;
+        }
+
+        this.putUnsignedVarInt(this.packEntries.length);
+
         for (Entry entry : this.packEntries) {
             this.putString(entry.uuid.toString() + '_' + entry.version);
         }

@@ -6,6 +6,8 @@ import cn.nukkit.nbt.stream.FastByteArrayOutputStream;
 import cn.nukkit.utils.*;
 import com.google.common.base.Preconditions;
 import com.google.gson.Gson;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.awt.*;
@@ -35,6 +37,8 @@ public class Skin {
     public static final String GEOMETRY_CUSTOM = convertLegacyGeometryName("geometry.humanoid.custom");
     public static final String GEOMETRY_CUSTOM_SLIM = convertLegacyGeometryName("geometry.humanoid.customSlim");
 
+    private static final Color DEFAULT_COLOR = new Color(0, true);
+
     private boolean noPlayFab; // Don't attempt to generate missing play fab id multiple times
     private String fullSkinId;
     private String skinId;
@@ -52,14 +56,18 @@ public class Skin {
     private boolean capeOnClassic;
     private boolean primaryUser = true;
     private String capeId;
-    private String skinColor = "#0";
+    private Color color;
+    private String skinColor;
     private String armSize = "wide";
     private boolean trusted = true;
     private String geometryDataEngineVersion = "0.0.0";
     private boolean overridingPlayerAppearance = true;
+    @Getter
+    @Setter
+    private String profileHash = "";
 
     public boolean isValid() {
-        return isValidSkin() && isValidResourcePatch();
+        return isValidSkin() && isValidResourcePatch() && isValidGeometry();
     }
 
     private boolean isValidSkin() {
@@ -77,7 +85,8 @@ public class Skin {
                     (skinColor == null || skinColor.length() < 100) &&
                     (armSize == null || armSize.length() < 100) &&
                     (fullSkinId == null || fullSkinId.length() < 200) &&
-                    (geometryDataEngineVersion == null || geometryDataEngineVersion.length() < 100);
+                    (geometryDataEngineVersion == null || geometryDataEngineVersion.length() < 100) &&
+                    (profileHash == null || profileHash.length() < 100);
         } catch (Exception ex) {
             Server.getInstance().getLogger().logException(ex);
             return false;
@@ -88,6 +97,9 @@ public class Skin {
         if (skinResourcePatch == null || skinResourcePatch.length() > 1000) {
             return false;
         }
+        if (skinResourcePatch == GEOMETRY_CUSTOM) {
+            return true;
+        }
         try {
             Map<String, Object> geometry = (Map<String, Object>) GSON.fromJson(skinResourcePatch, Map.class).get("geometry");
             if (geometry == null) {
@@ -97,6 +109,18 @@ public class Skin {
         } catch (ClassCastException e) {
             return false;
         }
+    }
+
+    private boolean isValidGeometry() {
+        if (geometryData == null || geometryData.length() < 2) {
+            return false;
+        }
+        try {
+            GSON.fromJson(geometryData, Object.class);
+        } catch (Exception ex) {
+            return false;
+        }
+        return true;
     }
 
     public SerializedImage getSkinData() {
@@ -117,7 +141,7 @@ public class Skin {
     public void setSkinId(String skinId) {
         if (skinId == null || skinId.trim().isEmpty()) {
             if (Nukkit.DEBUG > 1) {
-                Server.getInstance().getLogger().debug("Skin ID cannot be empty! ", new Throwable(""));
+                Server.getInstance().getLogger().warning("Skin ID cannot be empty! ", new Throwable(""));
             }
             return;
         }
@@ -160,9 +184,6 @@ public class Skin {
     }
 
     public String getSkinResourcePatch() {
-        if (this.skinResourcePatch == null) {
-            return "";
-        }
         return skinResourcePatch;
     }
 
@@ -204,8 +225,8 @@ public class Skin {
     }
 
     public String getGeometryData() {
-        if (geometryData == null) {
-            return "";
+        if (geometryData == null || geometryData.length() < 2) {
+            return "{}";
         }
         return geometryData;
     }
@@ -292,11 +313,37 @@ public class Skin {
     }
 
     public String getSkinColor() {
+        if (skinColor == null || skinColor.isEmpty()) {
+            if (color != null && color.getAlpha() != 0) {
+                skinColor = String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+            } else {
+                skinColor = "#0";
+            }
+        }
         return skinColor;
     }
 
     public void setSkinColor(String skinColor) {
         this.skinColor = skinColor;
+    }
+
+    public Color getColor() {
+        if (color == null) {
+            if (skinColor != null && !skinColor.isEmpty()) {
+                if (skinColor.equals("#0")) {
+                    color = new Color(0, true);
+                } else {
+                    color = new Color((int) Long.parseLong(skinColor.startsWith("#") ? skinColor.substring(1) : skinColor, 16), true);
+                }
+            } else {
+                color = DEFAULT_COLOR;
+            }
+        }
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
     }
 
     public String getArmSize() {
