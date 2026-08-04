@@ -1429,7 +1429,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      * @return network latency in milliseconds
      */
     public int getPing() {
-        return this.interfaz.getNetworkLatency(this);
+        return (int) this.getNetworkSession().getPing();
     }
 
     /**
@@ -3214,6 +3214,11 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 PlayerAuthInputPacket authPacket = (PlayerAuthInputPacket) packet;
+                if (!Double.isFinite(authPacket.getPosition().x) || !Double.isFinite(authPacket.getPosition().y) || !Double.isFinite(authPacket.getPosition().z) || !Double.isFinite(authPacket.getYaw()) || !Double.isFinite(authPacket.getPitch()) || !Double.isFinite(authPacket.getHeadYaw())) {
+                    server.getLogger().debug(username + ": infinite input position");
+                    return;
+                }
+
                 if (!authPacket.getBlockActionData().isEmpty()) {
                     for (PlayerBlockActionData action : authPacket.getBlockActionData().values()) {
                         BlockVector3 blockPos = action.getPosition();
@@ -4550,7 +4555,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                                 boolean smashAttack = false;
 
-                                if (item instanceof ItemMace && !this.isGliding()) {
+                                if (item instanceof ItemMace && !(this.speed == null || this.speed.y <= 0) && !this.isGliding() && !this.adventureSettings.get(Type.FLYING)) {
                                     double height = this.highestPosition - target.y;
 
                                     if (height >= 1.5) {

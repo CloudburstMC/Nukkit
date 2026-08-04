@@ -27,7 +27,7 @@ public class Data2dSerializer {
 
     public static void deserialize(DB db, ChunkBuilder builder) {
         byte[] data2d = db.get(LevelDBKey.DATA_2D.getKey(builder.getX(), builder.getZ(), builder.getProvider().getLevel().getDimension()));
-        int[] heightMap = new int[512];
+        int[] heightMap = new int[256];
         byte[] biomes = new byte[256];
 
         if (data2d != null) {

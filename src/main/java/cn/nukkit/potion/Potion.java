@@ -119,7 +119,7 @@ public class Potion implements Cloneable {
         potions[Potion.TURTLE_MASTER_II] = new Potion(Potion.TURTLE_MASTER_II, 2, 20);
         potions[Potion.SLOW_FALLING] = new Potion(Potion.SLOW_FALLING, 1, 90);
         potions[Potion.SLOW_FALLING_LONG] = new Potion(Potion.SLOW_FALLING_LONG, 1, 240);
-        potions[Potion.SLOWNESS_IV] = new Potion(Potion.SLOWNESS, 4, 20);
+        potions[Potion.SLOWNESS_IV] = new Potion(Potion.SLOWNESS_IV, 4, 20);
         potions[Potion.WIND_CHARGED] = new Potion(Potion.WIND_CHARGED, 1, 180);
         potions[Potion.WEAVING] = new Potion(Potion.WEAVING, 1, 180);
         potions[Potion.OOZING] = new Potion(Potion.OOZING, 1, 180);
@@ -366,6 +366,10 @@ public class Potion implements Cloneable {
             case INFESTED:
                 effect = Effect.getEffect(Effect.INFESTED);
                 break;
+            case SLOW_FALLING:
+            case SLOW_FALLING_LONG:
+                effect = Effect.getEffect(Effect.SLOW_FALLING);
+                break;
         }
 
         if (effect == null) {
@@ -375,7 +379,7 @@ public class Potion implements Cloneable {
         Potion potion = getPotion(potionType);
         if (potion != null) {
             if (potion.getLevel() > 1) {
-                effect.setAmplifier(1);
+                effect.setAmplifier(potion.getLevel() - 1);
             }
 
             if (potion.getDuration() > 0) {

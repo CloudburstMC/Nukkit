@@ -81,6 +81,7 @@ public class RepairItemTransaction extends InventoryTransaction {
             this.sendInventories();
             return false;
         }
+
         AnvilInventory inventory = (AnvilInventory) getSource().getWindowById(Player.ANVIL_WINDOW_ID);
         inventory.setCost(this.cost);
 
@@ -166,6 +167,12 @@ public class RepairItemTransaction extends InventoryTransaction {
                     this.materialItem = action.getTargetItem();
                     break;
             }
+        } else if (!(action instanceof SlotChangeAction)) {
+            this.invalid = true;
+            if (Nukkit.DEBUG > 1) {
+                source.getServer().getLogger().debug(this.getClass().getSimpleName() + " unexpected addAction: " + action);
+            }
+            return;
         }
         super.addAction(action);
     }
@@ -282,7 +289,7 @@ public class RepairItemTransaction extends InventoryTransaction {
                 }
 
                 Enchantment[] outputEnchantments = this.outputItem.getEnchantments();
-                if (hasIncompatibleEnchantments && !hasCompatibleEnchantments || enchantments.size() != outputEnchantments.length) {
+                if (hasIncompatibleEnchantments && !hasCompatibleEnchantments || enchantments.size() < outputEnchantments.length) {
                     source.getServer().getLogger().debug("failed: enchantments");
                     return false;
                 }

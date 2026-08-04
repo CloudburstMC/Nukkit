@@ -1,6 +1,5 @@
 package cn.nukkit.level.format.leveldb.structure;
 
-import cn.nukkit.level.format.leveldb.LevelDBConstants;
 import cn.nukkit.level.format.leveldb.LevelDBProvider;
 import cn.nukkit.level.format.leveldb.serializer.ChunkDataLoader;
 import cn.nukkit.level.util.PalettedBlockStorage;
@@ -30,7 +29,6 @@ public class ChunkBuilder {
     private boolean has3dBiomes;
     private int[] heightMap;
     private int state = STATE_NEW;
-    private int chunkVersion = LevelDBConstants.LATEST_CHUNK_VERSION;
 
     private boolean dirty;
 
@@ -129,11 +127,6 @@ public class ChunkBuilder {
         return this;
     }
 
-    public ChunkBuilder chunkVersion(int chunkVersion) {
-        this.chunkVersion = chunkVersion;
-        return this;
-    }
-
     public LevelDBChunk build() {
         if (this.sections == null) throw new NullPointerException("sections");
         if (this.biomes == null && this.biomes3d == null) throw new NullPointerException("biomes");
@@ -159,10 +152,6 @@ public class ChunkBuilder {
 
     public boolean has3dBiomes() {
         return this.has3dBiomes;
-    }
-
-    public int getChunkVersion() {
-        return this.chunkVersion;
     }
 
     public String debugString() {

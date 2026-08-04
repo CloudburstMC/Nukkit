@@ -45,7 +45,7 @@ public class Config {
     /**
      * List of supported config file formats and their types
      */
-    public static final Map<String, Integer> format = new TreeMap<>();
+    public static final Map<String, Integer> format = new HashMap<>();
 
     static {
         format.put("properties", Config.PROPERTIES);

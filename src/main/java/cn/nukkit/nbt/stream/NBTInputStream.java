@@ -1,6 +1,8 @@
 package cn.nukkit.nbt.stream;
 
 import cn.nukkit.utils.VarInt;
+import it.unimi.dsi.fastutil.bytes.ByteArrayList;
+import lombok.Getter;
 
 import java.io.DataInput;
 import java.io.DataInputStream;
@@ -18,6 +20,8 @@ public class NBTInputStream implements DataInput, AutoCloseable {
     private final DataInputStream stream;
     private final ByteOrder endianness;
     private final boolean network;
+    @Getter
+    private boolean readSafely = true;
 
     public NBTInputStream(InputStream stream) {
         this(stream, ByteOrder.BIG_ENDIAN);
@@ -31,6 +35,14 @@ public class NBTInputStream implements DataInput, AutoCloseable {
         this.stream = stream instanceof DataInputStream ? (DataInputStream) stream : new DataInputStream(stream);
         this.endianness = endianness;
         this.network = network;
+    }
+
+    /**
+     * Set reading with allocation limits on
+     */
+    public NBTInputStream readSafely() {
+        this.readSafely = true;
+        return this;
     }
 
     public ByteOrder getEndianness() {
@@ -144,20 +156,21 @@ public class NBTInputStream implements DataInput, AutoCloseable {
 
     @Override
     public String readUTF() throws IOException {
-        int length = network ? (int) VarInt.readUnsignedVarInt(stream) : this.readUnsignedShort();
-        byte[] bytes = new byte[length];
-        this.stream.read(bytes);
-        return new String(bytes, StandardCharsets.UTF_8);
-    }
+        int length = this.network ? (int) VarInt.readUnsignedVarInt(this.stream) : this.readUnsignedShort();
 
-    public String readUTF(int maxLen) throws IOException {
-        int length = network ? (int) VarInt.readUnsignedVarInt(stream) : this.readUnsignedShort();
-        if (length > maxLen) {
-            throw new RuntimeException("Input too long!");
+        if (this.isReadSafely() && length > 64) {
+            ByteArrayList list = new ByteArrayList(64);
+
+            for (int i = 0; i < length; i++) {
+                list.add(this.stream.readByte());
+            }
+
+            return new String(list.toArray(new byte[0]), StandardCharsets.UTF_8);
+        } else {
+            byte[] bytes = new byte[length];
+            this.stream.read(bytes);
+            return new String(bytes, StandardCharsets.UTF_8);
         }
-        byte[] bytes = new byte[length];
-        this.stream.read(bytes);
-        return new String(bytes, StandardCharsets.UTF_8);
     }
 
     public int available() throws IOException {

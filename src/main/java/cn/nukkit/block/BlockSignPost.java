@@ -16,7 +16,6 @@ import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import cn.nukkit.network.protocol.OpenSignPacket;
 import cn.nukkit.utils.BlockColor;
-import cn.nukkit.utils.DyeColor;
 import cn.nukkit.utils.Faceable;
 
 /**
@@ -158,7 +157,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
 
     @Override
     public boolean onActivate(Item item, Player player) {
-        if (item.getId() == Item.DYE) {
+        if (item instanceof ItemDye) {
             BlockEntity blockEntity = this.level.getBlockEntityIfLoaded(player == null ? null : player.chunk, this);
             if (!(blockEntity instanceof BlockEntitySign)) {
                 return false;
@@ -196,7 +195,7 @@ public class BlockSignPost extends BlockTransparentMeta implements Faceable {
                 return true;
             }
 
-            BlockColor color = DyeColor.getByDyeData(meta).getSignColor();
+            BlockColor color = ((ItemDye) item).getDyeColor().getSignColor();
             if (color.equals(sign.getColor())) {
                 /*if (player != null) {
                     sign.spawnTo(player);
