@@ -12,8 +12,9 @@ public class SetScorePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.SET_SCORE_PACKET;
 
-    public Action action;
     public final List<ScoreInfo> infos = new ObjectArrayList<>();
+
+    private static final String[] TYPES = {"remove", "changeplayer", "changeentity", "changefakeplayer"};
 
     @Override
     public byte pid() {
@@ -28,28 +29,37 @@ public class SetScorePacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte((byte) this.action.ordinal());
+
         this.putUnsignedVarInt(this.infos.size());
 
         for (ScoreInfo info : this.infos) {
+            this.putUnsignedVarInt(info.type.ordinal());
+            this.putString(TYPES[info.type.ordinal()]);
+
             this.putVarLong(info.scoreboardId);
-            this.putString(info.objectiveId);
-            this.putLInt(info.score);
 
-            if (this.action == Action.SET) {
-                this.putByte((byte) info.type.ordinal());
-
-                switch (info.type) {
-                    case PLAYER:
-                    case ENTITY:
-                        this.putEntityUniqueId(info.entityId);
-                        break;
-                    case FAKE:
-                        this.putString(info.name);
-                        break;
-                    default:
-                        throw new IllegalArgumentException("Invalid score info type");
-                }
+            switch (info.type) {
+                case INVALID:
+                    if (info.objectiveId != null && !info.objectiveId.isEmpty()) {
+                        this.putBoolean(true);
+                        this.putString(info.objectiveId);
+                    } else {
+                        this.putBoolean(false);
+                    }
+                    break;
+                case PLAYER:
+                case ENTITY:
+                    this.putString(info.objectiveId);
+                    this.putLInt(info.score);
+                    this.putEntityUniqueId(info.entityId);
+                    break;
+                case FAKE:
+                    this.putString(info.objectiveId);
+                    this.putLInt(info.score);
+                    this.putString(info.name);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid score info type");
             }
         }
     }
@@ -84,6 +94,21 @@ public class SetScorePacket extends DataPacket {
             this.score = score;
             this.type = ScorerType.FAKE;
             this.name = name;
+            this.entityId = -1;
+        }
+
+        /**
+         * Score info for score removal
+         * @param scoreboardId scoreboard id
+         * @param objectiveId objective id
+         * @param score score
+         */
+        public ScoreInfo(long scoreboardId, String objectiveId, int score) {
+            this.scoreboardId = scoreboardId;
+            this.objectiveId = objectiveId;
+            this.score = score;
+            this.type = ScorerType.INVALID;
+            this.name = null;
             this.entityId = -1;
         }
 

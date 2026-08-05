@@ -3189,7 +3189,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 dataPacket.chunkIndex = requestPacket.chunkIndex;
                 dataPacket.data = resourcePack.getPackChunk(RESOURCE_PACK_CHUNK_SIZE * requestPacket.chunkIndex, RESOURCE_PACK_CHUNK_SIZE);
                 dataPacket.progress = (long) RESOURCE_PACK_CHUNK_SIZE * requestPacket.chunkIndex;
-                this.dataPacket(dataPacket);
+                this.forceDataPacket(dataPacket, null);
                 return;
             case ProtocolInfo.PLAYER_SKIN_PACKET:
                 PlayerSkinPacket skinPacket = (PlayerSkinPacket) packet;

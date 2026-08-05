@@ -15,6 +15,7 @@ public class PlaySoundPacket extends DataPacket {
     public float volume;
     public float pitch;
     public Long serverSoundHandle;
+    public int loopCount;
 
     @Override
     public byte pid() {
@@ -33,6 +34,7 @@ public class PlaySoundPacket extends DataPacket {
         this.putBlockVector3(this.x << 3, this.y << 3, this.z << 3);
         this.putLFloat(this.volume);
         this.putLFloat(this.pitch);
+        this.putVarInt(this.loopCount);
         this.putOptionalNull(this.serverSoundHandle, BinaryStream::putLLong);
     }
 }

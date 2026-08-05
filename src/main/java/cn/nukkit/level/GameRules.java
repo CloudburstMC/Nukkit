@@ -175,33 +175,29 @@ public class GameRules {
     public enum Type {
         UNKNOWN {
             @Override
-            void write(BinaryStream pk, Value value, boolean startGame) {
+            void write(BinaryStream pk, Value value) {
             }
         },
         BOOLEAN {
             @Override
-            void write(BinaryStream pk, Value value, boolean startGame) {
+            void write(BinaryStream pk, Value value) {
                 pk.putBoolean(value.getValueAsBoolean());
             }
         },
         INTEGER {
             @Override
-            void write(BinaryStream pk, Value value, boolean startGame) {
-                if (startGame) {
-                    pk.putVarInt(value.getValueAsInteger());
-                } else {
-                    pk.putLInt(value.getValueAsInteger());
-                }
+            void write(BinaryStream pk, Value value) {
+                pk.putLInt(value.getValueAsInteger());
             }
         },
         FLOAT {
             @Override
-            void write(BinaryStream pk, Value value, boolean startGame) {
+            void write(BinaryStream pk, Value value) {
                 pk.putLFloat(value.getValueAsFloat());
             }
         };
 
-        abstract void write(BinaryStream pk, Value value, boolean startGame);
+        abstract void write(BinaryStream pk, Value value);
     }
 
     public static class Value<T> {
@@ -254,10 +250,10 @@ public class GameRules {
             return (Float) value;
         }
 
-        public void write(BinaryStream pk, boolean startGame) {
+        public void write(BinaryStream pk) {
             pk.putBoolean(this.canBeChanged);
             pk.putUnsignedVarInt(type.ordinal());
-            type.write(pk, this, startGame);
+            type.write(pk, this);
         }
     }
 }

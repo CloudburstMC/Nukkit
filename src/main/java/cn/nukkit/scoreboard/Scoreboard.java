@@ -225,18 +225,17 @@ public class Scoreboard {
         this.isHoldingUpdates = false;
 
         SetScorePacket pk = null;
-        SetScorePacket.Action lastAction = null;
 
         for (QueuedScoreUpdate update : this.queuedUpdates) {
-            if (update.action != lastAction) {
-                if (pk != null) {
-                    Server.broadcastPacket(this.viewers, pk);
-                }
+            if (pk == null) {
                 pk = new SetScorePacket();
             }
-            lastAction = update.action;
-            pk.action = update.action;
-            pk.infos.add(new SetScorePacket.ScoreInfo(update.currentScoreId, this.objectiveId, update.currentScoreValue, update.scorer));
+
+            if (update.action == SetScorePacket.Action.REMOVE) {
+                pk.infos.add(new SetScorePacket.ScoreInfo(update.currentScoreId, this.objectiveId, update.currentScoreValue));
+            } else {
+                pk.infos.add(new SetScorePacket.ScoreInfo(update.currentScoreId, this.objectiveId, update.currentScoreValue, update.scorer));
+            }
         }
 
         if (pk != null) {
@@ -273,8 +272,11 @@ public class Scoreboard {
         }
 
         SetScorePacket pk = new SetScorePacket();
-        pk.action = action;
-        pk.infos.add(new SetScorePacket.ScoreInfo(score.id, this.objectiveId, score.score, scorer));
+        if (action == SetScorePacket.Action.REMOVE) {
+            pk.infos.add(new SetScorePacket.ScoreInfo(score.id, this.objectiveId, score.score));
+        } else {
+            pk.infos.add(new SetScorePacket.ScoreInfo(score.id, this.objectiveId, score.score, scorer));
+        }
         Server.broadcastPacket(this.viewers, pk);
     }
 
@@ -296,11 +298,9 @@ public class Scoreboard {
         }
 
         SetScorePacket pk = new SetScorePacket();
-        pk.action = SetScorePacket.Action.REMOVE;
         for (Map.Entry<String, Score> entry : this.scores.entrySet()) {
-            String scorer = entry.getKey();
             Score score = entry.getValue();
-            pk.infos.add(new SetScorePacket.ScoreInfo(score.id, this.objectiveId, score.score, scorer));
+            pk.infos.add(new SetScorePacket.ScoreInfo(score.id, this.objectiveId, score.score));
         }
         Server.broadcastPacket(this.viewers, pk);
     }
@@ -319,7 +319,6 @@ public class Scoreboard {
         player.dataPacket(objectivePacket);
 
         SetScorePacket scorePacket = new SetScorePacket();
-        scorePacket.action = SetScorePacket.Action.SET;
         for (Map.Entry<String, Score> entry : this.scores.entrySet()) {
             String scorer = entry.getKey();
             Score score = entry.getValue();

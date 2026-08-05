@@ -1,5 +1,6 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.Server;
 import cn.nukkit.entity.data.Skin;
 import lombok.ToString;
 
@@ -17,7 +18,8 @@ public class PlayerListPacket extends DataPacket {
     public static final byte TYPE_ADD = 0;
     public static final byte TYPE_REMOVE = 1;
 
-    public byte type;
+    @Deprecated
+    public byte type = -1; // for legacy reasons allow using this to override type of all entries
     public Entry[] entries = new Entry[0];
 
     @Override
@@ -28,11 +30,22 @@ public class PlayerListPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
-        this.putByte(this.type);
+
+        if (this.entries.length == 0) {
+            this.putUnsignedVarInt(0);
+            Server.getInstance().getLogger().debug("PlayerListPacket with no entries");
+            return;
+        }
+
         this.putUnsignedVarInt(this.entries.length);
-        switch (type) {
-            case TYPE_ADD:
-                for (Entry entry : this.entries) {
+
+        for (Entry entry : this.entries) {
+            byte entryType = this.type == -1 ? entry.type : this.type;
+            this.putUnsignedVarInt(entryType == TYPE_ADD ? 1 : 0);
+
+            switch (entryType) {
+                case TYPE_ADD:
+                    this.putByte(entryType);
                     this.putUUID(entry.uuid);
                     this.putVarLong(entry.entityId);
                     this.putString(entry.name);
@@ -44,15 +57,14 @@ public class PlayerListPacket extends DataPacket {
                     this.putBoolean(entry.isHost);
                     this.putBoolean(entry.isSubClient);
                     this.putLInt(entry.color.getRGB());
-                }
-                for (Entry entry : this.entries) { // WTF Mojang
-                    this.putBoolean(entry.skin.isTrusted());
-                }
-                break;
-            case TYPE_REMOVE:
-                for (Entry entry : this.entries) {
+                    break;
+                case TYPE_REMOVE:
+                    this.putByte(entryType);
                     this.putUUID(entry.uuid);
-                }
+                    break;
+                default:
+                    throw new IllegalArgumentException("entryType: " + entryType);
+            }
         }
     }
 
@@ -64,19 +76,21 @@ public class PlayerListPacket extends DataPacket {
     @ToString
     public static class Entry {
 
+        public byte type;
         public final UUID uuid;
-        public long entityId = 0;
+        public long entityId;
         public String name = "";
         public Skin skin;
         public String xboxUserId = "";
         public String platformChatId = "";
-        public int buildPlatform = -1;
+        public int buildPlatform = 1;
         public boolean isTeacher;
         public boolean isHost;
         public boolean isSubClient;
         public Color color;
 
         public Entry(UUID uuid) {
+            this.type = TYPE_REMOVE;
             this.uuid = uuid;
         }
 
@@ -89,6 +103,7 @@ public class PlayerListPacket extends DataPacket {
         }
 
         public Entry(UUID uuid, long entityId, String name, Skin skin, String xboxUserId, Color color) {
+            this.type = TYPE_ADD;
             this.uuid = uuid;
             this.entityId = entityId;
             this.name = name;

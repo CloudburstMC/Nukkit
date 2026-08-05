@@ -16,6 +16,8 @@ public class LevelChunkPacket extends DataPacket {
         return NETWORK_ID;
     }
 
+    private static final long[] EMPTY_long = new long[0];
+
     public int chunkX;
     public int chunkZ;
     public int dimension;
@@ -23,7 +25,7 @@ public class LevelChunkPacket extends DataPacket {
     public boolean cacheEnabled;
     public boolean requestSubChunks;
     public int subChunkLimit;
-    public long[] blobIds;
+    public long[] blobIds = EMPTY_long;
     public byte[] data;
 
     @Override
@@ -34,23 +36,25 @@ public class LevelChunkPacket extends DataPacket {
     @Override
     public void encode() {
         this.reset();
+
         this.putVarInt(this.chunkX);
         this.putVarInt(this.chunkZ);
         this.putVarInt(this.dimension);
-        if (!this.requestSubChunks) {
-            this.putUnsignedVarInt(this.subChunkCount);
-        } else if (this.subChunkLimit < 0) {
-            this.putUnsignedVarInt(-1);
+
+        this.putUnsignedVarInt(this.subChunkCount);
+
+        if (this.requestSubChunks) {
+            this.putBoolean(true);
+            this.putVarInt(this.subChunkLimit);
         } else {
-            this.putUnsignedVarInt(-2);
-            this.putUnsignedVarInt(this.subChunkLimit);
+            this.putBoolean(false);
         }
+
         this.putBoolean(cacheEnabled);
-        if (this.cacheEnabled) {
-            this.putUnsignedVarInt(blobIds.length);
-            for (long blobId : blobIds) {
-                this.putLLong(blobId);
-            }
+
+        this.putUnsignedVarInt(blobIds.length);
+        for (long blobId : blobIds) {
+            this.putLLong(blobId);
         }
         this.putByteArray(this.data);
     }

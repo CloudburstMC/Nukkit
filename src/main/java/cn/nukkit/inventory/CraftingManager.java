@@ -599,7 +599,11 @@ public class CraftingManager {
             if (recipe instanceof ShapedRecipe) {
                 pk.addShapedRecipe((ShapedRecipe) recipe);
             } else if (recipe instanceof ShapelessRecipe) {
-                pk.addShapelessRecipe((ShapelessRecipe) recipe);
+                if (recipe instanceof SmithingRecipe) {
+                    pk.addSmithingRecipe((SmithingRecipe) recipe);
+                } else {
+                    pk.addShapelessRecipe((ShapelessRecipe) recipe);
+                }
             } else if (recipe instanceof FurnaceRecipe) {
                 pk.addFurnaceRecipe((FurnaceRecipe) recipe);
             }

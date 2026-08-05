@@ -8,7 +8,6 @@ public class AnvilDamagePacket extends DataPacket {
 
     public static final byte NETWORK_ID = ProtocolInfo.ANVIL_DAMAGE_PACKET;
 
-    public int damage;
     public int x;
     public int y;
     public int z;
@@ -20,7 +19,6 @@ public class AnvilDamagePacket extends DataPacket {
 
     @Override
     public void decode() {
-        this.damage = this.getByte();
         BlockVector3 vec = this.getBlockVector3();
         this.x = vec.x;
         this.y = vec.y;

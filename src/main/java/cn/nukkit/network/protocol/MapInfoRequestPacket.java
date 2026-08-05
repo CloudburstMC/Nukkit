@@ -20,6 +20,7 @@ public class MapInfoRequestPacket extends DataPacket {
     @Override
     public void decode() {
         mapId = this.getEntityUniqueId();
+        this.getLInt(); // pixels count
     }
 
     @Override

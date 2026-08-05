@@ -4,7 +4,7 @@ import cn.nukkit.math.BlockVector3;
 import cn.nukkit.utils.Utils;
 import lombok.ToString;
 
-import java.awt.*;
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 
 /**
@@ -56,79 +56,100 @@ public class ClientboundMapItemDataPacket extends DataPacket {
         this.reset();
         this.putEntityUniqueId(mapId);
 
-        int update = 0;
-        if (eids.length > 0) {
-            update |= ENTITIES_UPDATE;
-        }
-        if (decorators.length > 0 || trackedEntities.length > 0) {
-            update |= DECORATIONS_UPDATE;
-        }
-
-        if (image != null || colors.length > 0) {
-            update |= TEXTURE_UPDATE;
-        }
-
-        this.putUnsignedVarInt(update);
         this.putByte(this.dimensionId);
         this.putBoolean(this.isLocked);
-        this.putSignedBlockPosition(origin);
+        this.putSignedBlockPosition(this.origin);
 
-        if ((update & ENTITIES_UPDATE) != 0) {
-            this.putUnsignedVarInt(eids.length);
-            for (long eid : eids) {
+        if (this.eids.length > 0) {
+            this.putBoolean(true);
+            this.putUnsignedVarInt(this.eids.length);
+            for (long eid : this.eids) {
                 this.putEntityUniqueId(eid);
             }
-        }
-        if ((update & (ENTITIES_UPDATE | TEXTURE_UPDATE | DECORATIONS_UPDATE)) != 0) {
-            this.putByte(this.scale);
+        } else {
+            this.putBoolean(false);
         }
 
-        if ((update & DECORATIONS_UPDATE) != 0) {
-            this.putUnsignedVarInt(trackedEntities.length);
-            for (MapTrackedObject object : trackedEntities) {
+        this.putBoolean(true);
+        this.putByte(this.scale);
+
+        if (this.trackedEntities.length > 0) {
+            this.putBoolean(true);
+            this.putUnsignedVarInt(this.trackedEntities.length);
+            for (MapTrackedObject object : this.trackedEntities) {
                 this.putLInt(object.type);
-                if (object.type == MapTrackedObject.TYPE_BLOCK) {
-                    this.putBlockVector3(object.x, object.y, object.z);
-                } else if (object.type == MapTrackedObject.TYPE_ENTITY) {
+
+                if (object.type == MapTrackedObject.TYPE_ENTITY) {
+                    this.putBoolean(true);
                     this.putEntityUniqueId(object.entityUniqueId);
+                    this.putBoolean(false);
+                } else if (object.type == MapTrackedObject.TYPE_BLOCK) {
+                    this.putBoolean(false);
+                    this.putBoolean(true);
+                    this.putBlockVector3(object.x, object.y, object.z);
                 } else {
                     throw new IllegalArgumentException("Unknown map object type " + object.type);
                 }
             }
+        } else {
+            this.putBoolean(false);
+        }
 
-            this.putUnsignedVarInt(decorators.length);
-
-            for (MapDecorator decorator : decorators) {
+        if (this.decorators.length > 0) {
+            this.putBoolean(true);
+            this.putUnsignedVarInt(this.decorators.length);
+            for (MapDecorator decorator : this.decorators) {
                 this.putByte(decorator.icon);
                 this.putByte(decorator.rotation);
                 this.putByte(decorator.offsetX);
                 this.putByte(decorator.offsetZ);
                 this.putString(decorator.label);
-                this.putUnsignedVarInt(decorator.color.getRGB());
+                this.putLInt(decorator.color.getRGB()); //toABGR?
             }
+        } else {
+            this.putBoolean(false);
         }
 
-        if ((update & TEXTURE_UPDATE) != 0) {
-            this.putVarInt(width);
-            this.putVarInt(height);
-            this.putVarInt(offsetX);
-            this.putVarInt(offsetZ);
+        if (this.width != 0) {
+            this.putBoolean(true);
+            this.putVarInt(this.width);
+        } else {
+            this.putBoolean(false);
+        }
 
-            this.putUnsignedVarInt((long) width * height);
+        if (this.height != 0) {
+            this.putBoolean(true);
+            this.putVarInt(this.height);
+        } else {
+            this.putBoolean(false);
+        }
 
-            if (image != null) {
-                for (int y = 0; y < width; y++) {
-                    for (int x = 0; x < height; x++) {
-                        this.putUnsignedVarInt(Utils.toABGR(this.image.getRGB(x, y)));
-                    }
-                }
+        this.putBoolean(true);
+        this.putVarInt(this.offsetX);
 
-                image.flush();
-            } else {
-                for (int color : colors) {
-                    this.putUnsignedVarInt(color);
+        this.putBoolean(true);
+        this.putVarInt(this.offsetZ);
+
+        if (this.image != null) {
+            this.putBoolean(true);
+            this.putUnsignedVarInt((long) this.width * this.height);
+
+            for (int y = 0; y < this.width; y++) {
+                for (int x = 0; x < this.height; x++) {
+                    this.putLInt((int) Utils.toABGR(this.image.getRGB(x, y)));
                 }
             }
+
+            this.image.flush();
+        } else if (this.colors.length != 0) {
+            this.putBoolean(true);
+            this.putUnsignedVarInt(this.colors.length);
+
+            for (int color : this.colors) {
+                this.putLInt(color);
+            }
+        } else {
+            this.putBoolean(false);
         }
     }
 

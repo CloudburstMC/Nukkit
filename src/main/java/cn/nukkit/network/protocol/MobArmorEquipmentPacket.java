@@ -1,6 +1,5 @@
 package cn.nukkit.network.protocol;
 
-import cn.nukkit.Server;
 import cn.nukkit.item.Item;
 import lombok.ToString;
 

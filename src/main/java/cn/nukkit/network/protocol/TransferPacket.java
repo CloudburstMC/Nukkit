@@ -21,6 +21,7 @@ public class TransferPacket extends DataPacket {
         this.putString(address);
         this.putLShort(port);
         this.putBoolean(false); // reloadWorld
+        this.putBoolean(false); // has gatheringsConfig
     }
 
     @Override
