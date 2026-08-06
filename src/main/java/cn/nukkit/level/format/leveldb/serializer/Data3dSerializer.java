@@ -44,8 +44,7 @@ public class Data3dSerializer {
             return;
         }
 
-
-        int[] heightMap = new int[512];
+        int[] heightMap = new int[256];
         PalettedBlockStorage[] biomes = new PalettedBlockStorage[dimensionData.getHeight() >> 4];
 
         ByteBuf buffer = ByteBufAllocator.DEFAULT.ioBuffer(data3d.length);

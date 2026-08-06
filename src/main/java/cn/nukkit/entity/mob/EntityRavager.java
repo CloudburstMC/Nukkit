@@ -1,5 +1,6 @@
 package cn.nukkit.entity.mob;
 
+import cn.nukkit.item.Item;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 
@@ -34,6 +35,11 @@ public class EntityRavager extends EntityWalkingMob {
 
     @Override
     public int getKillExperience() {
-        return 0;
+        return 20;
+    }
+
+    @Override
+    public Item[] getDrops() {
+        return new Item[]{Item.get(Item.SADDLE, 0, 1)};
     }
 }

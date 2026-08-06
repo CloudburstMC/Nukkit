@@ -3,6 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.Player;
 import cn.nukkit.block.properties.OxidizationLevel;
 import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
 import cn.nukkit.utils.BlockColor;
 
@@ -10,7 +11,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public abstract class BlockSlabCopperBase extends BlockSlab implements Waxable, Oxidizable {
-    
+
     public BlockSlabCopperBase(int meta, int doubleSlab) {
         super(meta, doubleSlab);
     }
@@ -83,4 +84,19 @@ public abstract class BlockSlabCopperBase extends BlockSlab implements Waxable, 
     }
 
     protected abstract int getCopperId(boolean waxed, OxidizationLevel oxidizationLevel);
+
+    @Override
+    public boolean hasTopBit() {
+        return (this.getDamage() & 0x01) == 1;
+    }
+
+    @Override
+    public void setTopBit(boolean topBit) {
+        this.setDamage(topBit ? 1 : 0);
+    }
+
+    @Override
+    public Item toItem() {
+        return new ItemBlock(Block.get(this.getId(), 0), 0);
+    }
 }

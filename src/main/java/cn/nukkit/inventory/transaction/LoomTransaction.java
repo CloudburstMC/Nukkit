@@ -1,11 +1,13 @@
 package cn.nukkit.inventory.transaction;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.event.inventory.LoomItemEvent;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.LoomInventory;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.LoomItemAction;
+import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
 
@@ -28,6 +30,12 @@ public class LoomTransaction extends InventoryTransaction {
                 return;
             }
             this.outputItem = action.getSourceItem();
+        } else if (!(action instanceof SlotChangeAction)) {
+            this.invalid = true;
+            if (Nukkit.DEBUG > 1) {
+                source.getServer().getLogger().debug(this.getClass().getSimpleName() + " unexpected addAction: " + action);
+            }
+            return;
         }
         super.addAction(action);
     }
@@ -43,14 +51,14 @@ public class LoomTransaction extends InventoryTransaction {
             return false;
         }
 
-        if (outputItem == null) {
+        if (outputItem == null || outputItem.isNull()) {
             return false;
         }
 
         LoomInventory loomInventory = (LoomInventory) inventory;
         Item banner = loomInventory.getBanner();
         Item dye = loomInventory.getDye();
-        if (banner.getId() != Item.BANNER || dye.getId() != Item.DYE || banner.getDamage() != outputItem.getDamage()) {
+        if (banner.getId() != Item.BANNER || outputItem.getId() != Item.BANNER || dye.getId() != Item.DYE || banner.getDamage() != outputItem.getDamage()) {
             return false;
         }
 

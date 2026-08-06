@@ -106,11 +106,11 @@ public class BlockAnvil extends BlockFallableMeta implements Faceable {
     public Item toItem() {
         int damage = this.getDamage();
         if (damage >= 4 && damage <= 7) {
-            return new ItemBlock(this, this.getDamage() & 0x04);
+            return new ItemBlock(Block.get(this.getId(), 4), 4);
         } else if (damage >= 8 && damage <= 11) {
-            return new ItemBlock(this, this.getDamage() & 0x08);
+            return new ItemBlock(Block.get(this.getId(), 8), 8);
         } else {
-            return new ItemBlock(this);
+            return new ItemBlock(Block.get(this.getId(), 0), 0);
         }
     }
 

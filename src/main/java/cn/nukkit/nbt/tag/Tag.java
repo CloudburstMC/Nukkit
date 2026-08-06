@@ -82,7 +82,7 @@ public abstract class Tag {
         byte type = dis.readByte();
         if (type == 0) return new EndTag();
 
-        String name = dis.readUTF(1024);
+        String name = dis.readUTF();
 
         Tag tag = newTag(type, name);
 

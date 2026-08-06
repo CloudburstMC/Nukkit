@@ -15,6 +15,7 @@ import cn.nukkit.item.ItemTool;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
+import it.unimi.dsi.fastutil.ints.IntOpenHashSet;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -89,10 +90,48 @@ public class EnchantTransaction extends InventoryTransaction {
             return false;
         }
 
-        for (Enchantment e : outputItem.getEnchantments()) {
+        if (this.inputItem.hasEnchantments()) {
+            source.getServer().getLogger().debug("Illegal enchantment input has enchantments");
+            return false;
+        }
+
+        Enchantment[] enchantments = this.outputItem.getEnchantments();
+        if (enchantments.length < 1 || enchantments.length > 4) {
+            source.getServer().getLogger().debug("Illegal enchantment count: " + enchantments.length);
+            return false;
+        }
+
+        IntOpenHashSet added = new IntOpenHashSet(4, 1);
+        for (Enchantment e : enchantments) {
             if (e.isTreasure()) {
-                source.getServer().getLogger().debug("Illegal treasure enchantment");
+                source.getServer().getLogger().debug("Illegal treasure enchantment: " + e.getId());
                 return false;
+            }
+
+            if (!added.add(e.getId())) {
+                source.getServer().getLogger().debug("Illegal duplicate enchantment: " + e.getId());
+                return false;
+            }
+
+            if (e.getLevel() < 1 || e.getLevel() > e.getMaxLevel()) {
+                source.getServer().getLogger().debug("Illegal enchantment level " + e.getLevel() + " for " + e.getId());
+                return false;
+            }
+
+            if (this.inputItem.getId() != Item.BOOK && !e.canEnchant(this.inputItem)) {
+                source.getServer().getLogger().debug("Illegal incompatible enchantment: " + e.getId());
+                return false;
+            }
+
+            for (Enchantment e2 : enchantments) {
+                if (e == e2) {
+                    continue;
+                }
+
+                if (!e.isCompatibleWith(e2)) {
+                    source.getServer().getLogger().debug("Illegal enchantment " + e.getId() + " incompatible with " + e2.getId());
+                    return false;
+                }
             }
         }
 
@@ -187,6 +226,12 @@ public class EnchantTransaction extends InventoryTransaction {
                     }
                     break;
             }
+        } else if (!(action instanceof SlotChangeAction)) {
+            this.invalid = true;
+            if (Nukkit.DEBUG > 1) {
+                source.getServer().getLogger().debug(this.getClass().getSimpleName() + " unexpected addAction: " + action);
+            }
+            return;
         }
         super.addAction(action);
     }

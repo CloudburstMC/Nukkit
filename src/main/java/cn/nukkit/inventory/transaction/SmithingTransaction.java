@@ -77,6 +77,12 @@ public class SmithingTransaction extends InventoryTransaction {
                 }
                 this.ingredientItem = action.getTargetItem();
             }
+        } else if (!(action instanceof SlotChangeAction)) {
+            this.invalid = true;
+            if (Nukkit.DEBUG > 1) {
+                source.getServer().getLogger().debug(this.getClass().getSimpleName() + " unexpected addAction: " + action);
+            }
+            return;
         }
         super.addAction(action);
     }

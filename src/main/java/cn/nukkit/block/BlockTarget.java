@@ -71,8 +71,12 @@ public class BlockTarget extends BlockSolid {
     @Override
     public int getWeakPower(BlockFace face) {
         for (Entity e : level.getCollidingEntities(new SimpleAxisAlignedBB(x - 0.000001, y - 0.000001, z - 0.000001, x + 1.000001, y + 1.000001, z + 1.000001))) {
-            if (e instanceof EntityProjectile && ((level.getServer().getTick() - ((EntityProjectile) e).getCollidedTick()) < ((e instanceof EntityArrow || e instanceof EntityThrownTrident) ? 10 : 4))) {
-                return 10;
+            if (e instanceof EntityProjectile) {
+                EntityProjectile projectile = (EntityProjectile) e;
+                boolean isArrowTrident = e instanceof EntityArrow || e instanceof EntityThrownTrident;
+                if (projectile.getCollidedTick() > 0 && level.getServer().getTick() - projectile.getCollidedTick() < (isArrowTrident ? 20 : 8)) {
+                    return 10;
+                }
             }
         }
 
@@ -88,12 +92,8 @@ public class BlockTarget extends BlockSolid {
     public void onEntityCollide(Entity entity) {
         if (entity instanceof EntityProjectile) {
             this.level.updateAroundRedstone(this, null);
-
-            if (entity instanceof EntityArrow || entity instanceof EntityThrownTrident) {
-                this.level.scheduleUpdate(this, 10);
-            } else {
-                this.level.scheduleUpdate(this, 4);
-            }
+            boolean isArrowTrident = entity instanceof EntityArrow || entity instanceof EntityThrownTrident;
+            this.level.scheduleUpdate(this, isArrowTrident ? 20 : 8);
         }
     }
 

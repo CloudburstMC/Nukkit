@@ -84,7 +84,10 @@ public class DoubleChestInventory extends ContainerInventory implements Inventor
         Map<Integer, Item> contents = new HashMap<>();
 
         for (int i = 0; i < this.getSize(); ++i) {
-            contents.put(i, this.getItem(i));
+            Item item = this.getItem(i);
+            if (item.getId() != Item.AIR) {
+                contents.put(i, item);
+            }
         }
 
         return contents;

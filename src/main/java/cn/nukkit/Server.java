@@ -144,7 +144,7 @@ public class Server {
     private final ResourcePackManager resourcePackManager;
     private final ConsoleCommandSender consoleSender;
 
-    private boolean hasStopped;
+    private volatile boolean hasStopped;
     private final AtomicBoolean isRunning = new AtomicBoolean(true);
     private int tickCounter;
     private long nextTick;
@@ -858,11 +858,10 @@ public class Server {
         if (this.hasStopped) {
             return;
         }
+        this.hasStopped = true;
 
         try {
             isRunning.compareAndSet(true, false);
-
-            this.hasStopped = true;
 
             ServerStopEvent serverStopEvent = new ServerStopEvent();
             pluginManager.callEvent(serverStopEvent);

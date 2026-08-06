@@ -1,8 +1,13 @@
 package cn.nukkit.level.generator.object.tree;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.level.ChunkManager;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.NukkitRandom;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class ObjectAzaleaTree extends ObjectTree {
 
@@ -28,75 +33,155 @@ public class ObjectAzaleaTree extends ObjectTree {
     }
 
     @Override
-    public void placeObject(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-        int treeHeight = random.nextBoundedInt(2) + 2;
+    public void placeObject(
+            ChunkManager level,
+            int x,
+            int y,
+            int z,
+            NukkitRandom random
+    ) {
+        level.setBlockAt(
+                x,
+                y - 1,
+                z,
+                Block.ROOTED_DIRT
+        );
 
-        int i2 = y + treeHeight;
-        int maxBlockY = level.getMaxBlockY();
+        int freeTreeHeight =
+                4 + random.nextRange(0, 2);
 
-        if (i2 + 2 >= maxBlockY) {
-            return;
-        }
+        BlockFace direction =
+                BlockFace.Plane.HORIZONTAL.random(random);
 
-        for (int il = 0; il <= treeHeight + 1; il++) { // +1 to stop leaves decay
-            placeLogAt(level, x, il + y, z);
-        }
+        int trunkTop = freeTreeHeight - 1;
 
-        level.setBlockAt(x, y - 1, z, BlockID.ROOTED_DIRT);
+        int cx = x;
+        int cy = y;
+        int cz = z;
 
-        // Adapted from https://github.com/PowerNukkitX/PowerNukkitX/blob/master/src/main/java/cn/nukkit/level/generator/object/ObjectAzaleaTree.java
+        List<int[]> foliageAttachments = new ArrayList<>();
 
-        for (int i3 = -2; i3 <= 1; ++i3) {
-            for (int l3 = -2; l3 <= 1; ++l3) {
-                int k4 = 1;
-                int offsetX = random.nextRange(0, 1);
-                int offsetY = random.nextRange(0, 1);
-                int offsetZ = random.nextRange(0, 1);
-                this.placeLeafAt(level, x + i3 + offsetX, i2 + k4 + offsetY, z + l3 + offsetZ, random);
-                this.placeLeafAt(level, x - i3 + offsetX, i2 + k4 + offsetY, z + l3 + offsetZ, random);
-                this.placeLeafAt(level, x + i3 + offsetX, i2 + k4 + offsetY, z - l3 + offsetZ, random);
-                this.placeLeafAt(level, x - i3 + offsetX, i2 + k4 + offsetY, z - l3 + offsetZ, random);
+        for (int i = 0; i <= trunkTop; i++) {
+            if (i + 1 >= trunkTop + random.nextRange(0, 1)) {
 
-                k4 = 0;
-                this.placeLeafAt(level, x + i3, i2 + k4, z + l3, random);
-                this.placeLeafAt(level, x - i3, i2 + k4, z + l3, random);
-                this.placeLeafAt(level, x + i3, i2 + k4, z - l3, random);
-                this.placeLeafAt(level, x - i3, i2 + k4, z - l3, random);
-
-                k4 = 1;
-                this.placeLeafAt(level, x + i3, i2 + k4, z + l3, random);
-                this.placeLeafAt(level, x - i3, i2 + k4, z + l3, random);
-                this.placeLeafAt(level, x + i3, i2 + k4, z - l3, random);
-                this.placeLeafAt(level, x - i3, i2 + k4, z - l3, random);
-
-                k4 = 2;
-                offsetX = random.nextRange(-1, 0);
-                offsetY = random.nextRange(-1, 0);
-                offsetZ = random.nextRange(-1, 0);
-
-                this.placeLeafAt(level, x + i3 + offsetX, i2 + k4 + offsetY, z + l3 + offsetZ, random);
-                this.placeLeafAt(level, x - i3 + offsetX, i2 + k4 + offsetY, z + l3 + offsetZ, random);
-                this.placeLeafAt(level, x + i3 + offsetX, i2 + k4 + offsetY, z - l3 + offsetZ, random);
-                this.placeLeafAt(level, x - i3 + offsetX, i2 + k4 + offsetY, z - l3 + offsetZ, random);
+                cx += direction.getXOffset();
+                cz += direction.getZOffset();
             }
+
+            if (overridable(level.getBlockIdAt(cx, cy, cz))) {
+                level.setBlockAt(
+                        cx,
+                        cy,
+                        cz,
+                        Block.LOG,
+                        0
+                );
+            }
+
+            if (i >= 3) {
+
+                foliageAttachments.add(new int[]{
+                        cx,
+                        cy,
+                        cz
+                });
+            }
+
+
+            cy++;
         }
 
-        // Always hide trunk
-        this.placeLeafAt(level, x, i2 + 2, z, random);
-    }
+        int bendLength = random.nextRange(1, 2);
 
-    private void placeLogAt(ChunkManager level, int x, int y, int z) {
-        if (overridable(level.getBlockIdAt(x, y, z))) {
-            level.setBlockAt(x, y, z, this.getTrunkBlock(), 0);
+        for (int i = 0; i <= bendLength; i++) {
+
+            int axisMeta = 0;
+            switch (direction.getAxis()) {
+                case X:
+                    axisMeta = 4;
+                    break;
+                case Z:
+                    axisMeta = 8;
+                    break;
+            }
+
+            if (level.getBlockIdAt(cx, cy, cz) == Block.AIR) {
+                level.setBlockAt(
+                        cx,
+                        cy,
+                        cz,
+                        Block.LOG,
+                        axisMeta
+                );
+            }
+
+            foliageAttachments.add(new int[]{
+                    cx,
+                    cy,
+                    cz
+            });
+
+            cx += direction.getXOffset();
+            cz += direction.getZOffset();
+        }
+
+        for (int[] attachment : foliageAttachments) {
+            createAzaleaLeaves(
+                    level,
+                    attachment[0],
+                    attachment[1],
+                    attachment[2],
+                    random
+            );
         }
     }
 
-    private void placeLeafAt(ChunkManager level, int x, int y, int z, NukkitRandom random) {
-        if (level.getBlockIdAt(x, y, z) == BlockID.AIR) {
-            if (random.nextBoundedInt(3) == 0) {
-                level.setBlockAt(x, y, z, BlockID.AZALEA_LEAVES_FLOWERED, 0);
-            } else {
-                level.setBlockAt(x, y, z, BlockID.AZALEA_LEAVES, 0);
+    private static void createAzaleaLeaves(
+            ChunkManager level,
+            int x,
+            int y,
+            int z,
+            NukkitRandom random
+    ) {
+        int radius = 3;
+        int height = 2;
+
+        for (int i = 0; i < 50; i++) {
+
+            int dx =
+                    random.nextRange(0, radius - 1)
+                            - random.nextRange(0, radius - 1);
+
+            int dy =
+                    random.nextRange(0, height - 1)
+                            - random.nextRange(0, height - 1);
+
+            int dz =
+                    random.nextRange(0, radius - 1)
+                            - random.nextRange(0, radius - 1);
+
+
+            int px = x + dx;
+            int py = y + dy;
+            int pz = z + dz;
+
+            if (level.getBlockIdAt(px, py, pz) == Block.AIR) {
+
+                if (random.nextRange(1, 4) == 1) {
+                    level.setBlockAt(
+                            px,
+                            py,
+                            pz,
+                            Block.AZALEA_LEAVES_FLOWERED
+                    );
+                } else {
+                    level.setBlockAt(
+                            px,
+                            py,
+                            pz,
+                            Block.AZALEA_LEAVES
+                    );
+                }
             }
         }
     }

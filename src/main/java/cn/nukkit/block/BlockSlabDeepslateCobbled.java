@@ -1,11 +1,11 @@
 package cn.nukkit.block;
 
-public class BlockSlabDeepslateCobbled extends BlockSlab {
+public class BlockSlabDeepslateCobbled extends BlockSlabDeepslate {
 
     public BlockSlabDeepslateCobbled() {
         this(0);
     }
-    
+
     public BlockSlabDeepslateCobbled(int meta) {
         super(meta, COBBLED_DEEPSLATE_DOUBLE_SLAB);
     }

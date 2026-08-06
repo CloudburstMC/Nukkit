@@ -51,7 +51,7 @@ public class ItemEndCrystal extends Item {
             return false;
         }
 
-        Entity[] entities = level.getCollidingEntities(new SimpleAxisAlignedBB(target.x, target.y, target.z, target.x + 1, target.y + 2, target.z + 1));
+        Entity[] entities = level.getCollidingEntities(new SimpleAxisAlignedBB(target.x, target.y + 1, target.z, target.x + 1, target.y + 1.9, target.z + 1));
         if (entities.length != 0) {
             return false;
         }
