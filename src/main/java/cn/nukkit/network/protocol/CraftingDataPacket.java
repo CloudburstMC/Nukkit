@@ -203,7 +203,7 @@ public class CraftingDataPacket extends DataPacket {
         this.putUnsignedVarInt(1); // type
         this.putString("item_tag"); // type
         this.putString(itemTag);
-        this.putVarInt(32767); // meta
+        this.putVarInt(0); // meta
         this.putVarInt(1); // count
     }
 }

@@ -32,7 +32,7 @@ public class ByteArrayTag extends Tag {
     }
 
     @Override
-    public void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis, int nested) throws IOException {
         int length = dis.readInt();
 
         if (dis.isReadSafely() && length > 64) {

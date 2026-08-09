@@ -33,10 +33,10 @@ public class CompoundTag extends Tag implements Cloneable {
     }
 
     @Override
-    public void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis, int nested) throws IOException {
         tags.clear();
         Tag tag;
-        while ((tag = Tag.readNamedTag(dis)).getId() != Tag.TAG_End) {
+        while ((tag = Tag.readNamedTag(dis, nested)).getId() != Tag.TAG_End) {
             tags.put(tag.getName(), tag);
         }
     }

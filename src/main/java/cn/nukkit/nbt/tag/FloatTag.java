@@ -34,7 +34,7 @@ public class FloatTag extends NumberTag<Float> {
     }
 
     @Override
-    public void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis, int nested) throws IOException {
         data = dis.readFloat();
     }
 

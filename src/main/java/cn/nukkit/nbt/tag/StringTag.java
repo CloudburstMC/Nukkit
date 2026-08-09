@@ -25,7 +25,7 @@ public class StringTag extends Tag {
     }
 
     @Override
-    public void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis, int nested) throws IOException {
         data = dis.readUTF();
     }
 
