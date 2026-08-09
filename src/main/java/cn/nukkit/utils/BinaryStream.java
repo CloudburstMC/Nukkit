@@ -679,13 +679,14 @@ public class BinaryStream {
     public void putRecipeIngredient(Item item) {
         if (item.isNull()) {
             this.putUnsignedVarInt(0); // type
-            this.putVarInt(32767); // meta
+            this.putVarInt(0); // meta
             this.putVarInt(0); // count
         } else {
             this.putUnsignedVarInt(1); // type
             this.putString("name"); // type
-            this.putString(RuntimeItems.getMapping().toRuntime(item.getId(), item.getDamage()).getIdentifier());
-            this.putVarInt(item.getDamage());
+            RuntimeEntry runtime = RuntimeItems.getMapping().toRuntime(item.getId(), item.getDamage());
+            this.putString(runtime.getIdentifier());
+            this.putVarInt(runtime.isHasDamage() ? 0 : item.getDamage());
             this.putVarInt(item.getCount());
         }
     }

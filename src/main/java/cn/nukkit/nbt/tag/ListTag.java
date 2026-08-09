@@ -36,7 +36,7 @@ public class ListTag<T extends Tag> extends Tag {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void load(NBTInputStream dis) throws IOException {
+    public void load(NBTInputStream dis, int nested) throws IOException {
         type = dis.readByte();
         int size = dis.readInt();
 
@@ -48,7 +48,7 @@ public class ListTag<T extends Tag> extends Tag {
 
         for (int i = 0; i < size; i++) {
             Tag tag = Tag.newTag(type, null);
-            tag.load(dis);
+            tag.load(dis, nested + 1);
             tag.setName("");
             list.add((T) tag);
         }

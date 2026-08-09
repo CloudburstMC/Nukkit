@@ -34,7 +34,7 @@ public class PersonaPieceTint {
 
     public List<String> getColors() {
         if ((colors == null || colors.isEmpty()) && colorsNew != null && !colorsNew.isEmpty()) {
-            colors = new ArrayList<>(colorsNew.size());
+            List<String> colors = new ArrayList<>(colorsNew.size());
             for (Color c : colorsNew) {
                 if (c.getAlpha() == 0) {
                     colors.add("#0");
@@ -42,13 +42,14 @@ public class PersonaPieceTint {
                     colors.add(String.format("#%02x%02x%02x", c.getRed(), c.getGreen(), c.getBlue()));
                 }
             }
+            this.colors = colors;
         }
         return colors;
     }
 
     public List<Color> getColorsNew() {
         if ((colorsNew == null || colorsNew.isEmpty()) && colors != null && !colors.isEmpty()) {
-            colorsNew = new ArrayList<>(colors.size());
+            List<Color> colorsNew = new ArrayList<>(colors.size());
             for (String s : colors) {
                 if (s.equals("#0")) {
                     colorsNew.add(new Color(0, true));
@@ -56,6 +57,7 @@ public class PersonaPieceTint {
                     colorsNew.add(new Color((int) Long.parseLong(s.startsWith("#") ? s.substring(1) : s, 16), true));
                 }
             }
+            this.colorsNew = colorsNew;
         }
         return colorsNew;
     }

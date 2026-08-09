@@ -25,7 +25,7 @@ public abstract class Tag {
 
     abstract void write(NBTOutputStream dos) throws IOException;
 
-    abstract void load(NBTInputStream dis) throws IOException;
+    abstract void load(NBTInputStream dis, int nested) throws IOException;
 
     public abstract String toString();
 
@@ -79,14 +79,22 @@ public abstract class Tag {
     }
 
     public static Tag readNamedTag(NBTInputStream dis) throws IOException {
+        return readNamedTag(dis, 0);
+    }
+
+    static Tag readNamedTag(NBTInputStream dis, int nested) throws IOException {
         byte type = dis.readByte();
         if (type == 0) return new EndTag();
+
+        if (nested > 512) {
+            throw new IOException("Tag too nested");
+        }
 
         String name = dis.readUTF();
 
         Tag tag = newTag(type, name);
 
-        tag.load(dis);
+        tag.load(dis, nested + 1);
         return tag;
     }
 
