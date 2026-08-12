@@ -573,7 +573,7 @@ public class BinaryStream {
         if (id != Item.AIR && id < 256 && id != 166 && !(id == -212 && legacyEntry.getDamage() == 0) && !legacyEntry.isHasDamage() && (id == BlockID.RED_MUSHROOM_BLOCK || id == BlockID.BROWN_MUSHROOM_BLOCK)) { // ItemBlock
             int fullId = GlobalBlockPalette.getLegacyFullId(blockRuntimeId);
             if (fullId != -1) {
-                damage = fullId & 0x3f;
+                damage = fullId & Block.DATA_MASK;
             }
         }
 

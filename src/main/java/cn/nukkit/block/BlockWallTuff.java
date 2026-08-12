@@ -1,6 +1,6 @@
 package cn.nukkit.block;
 
-public class BlockWallTuff extends BlockWall {
+public class BlockWallTuff extends BlockWallIndependentID {
 
     public BlockWallTuff() {
         this(0);
