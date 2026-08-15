@@ -42,6 +42,7 @@ public class SetScorePacket extends DataPacket {
                 case INVALID:
                     if (info.objectiveId != null && !info.objectiveId.isEmpty()) {
                         this.putBoolean(true);
+                        this.putBoolean(true);
                         this.putString(info.objectiveId);
                     } else {
                         this.putBoolean(false);
