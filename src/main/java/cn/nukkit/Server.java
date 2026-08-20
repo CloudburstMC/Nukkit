@@ -58,7 +58,6 @@ import cn.nukkit.network.encryption.EncryptionUtils;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.query.QueryHandler;
 import cn.nukkit.network.rcon.RCON;
-import cn.nukkit.permission.BanEntry;
 import cn.nukkit.permission.BanList;
 import cn.nukkit.permission.DefaultPermissions;
 import cn.nukkit.permission.Permissible;
@@ -91,9 +90,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -822,12 +819,6 @@ public class Server {
         this.reloadWhitelist();
         this.operators.reload();
 
-        for (BanEntry entry : this.banByIP.getEntires().values()) {
-            try {
-                this.network.blockAddress(InetAddress.getByName(entry.getName()));
-            } catch (UnknownHostException ignore) {}
-        }
-
         log.info("Reloading plugins...");
         this.pluginManager.registerInterface(JavaPluginLoader.class);
         this.pluginManager.loadPlugins(this.pluginPath);
@@ -928,12 +919,6 @@ public class Server {
             this.queryHandler = new QueryHandler();
         }
 
-        for (BanEntry entry : this.banByIP.getEntires().values()) {
-            try {
-                this.network.blockAddress(InetAddress.getByName(entry.getName()));
-            } catch (UnknownHostException ignore) {}
-        }
-
         this.tickCounter = 0;
 
         //log.info(this.getLanguage().translateString("nukkit.server.defaultGameMode", getGamemodeString(this.getGamemode())));
@@ -963,7 +948,7 @@ public class Server {
             }
         } catch (Exception e) {
             log.error("Error whilst handling packet", e);
-            this.network.blockAddress(address.getAddress(), 300);
+            this.network.blockAddress(address, 300);
         }
     }
 
