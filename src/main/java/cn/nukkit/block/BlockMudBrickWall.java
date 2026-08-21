@@ -3,7 +3,7 @@ package cn.nukkit.block;
 import cn.nukkit.item.Item;
 import cn.nukkit.utils.BlockColor;
 
-public class BlockMudBrickWall extends BlockWall {
+public class BlockMudBrickWall extends BlockWallIndependentID {
 
     public BlockMudBrickWall() {
         this(0);

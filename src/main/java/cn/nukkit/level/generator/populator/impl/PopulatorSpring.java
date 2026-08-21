@@ -96,7 +96,7 @@ public class PopulatorSpring extends Populator {
 
             LevelProvider provider = chunk.getProvider();
             if (provider != null) {
-                Block state = Block.fullList[this.block << Block.DATA_BITS].clone();
+                Block state = Block.get(this.block);
                 state.x = x;
                 state.y = y;
                 state.z = z;
