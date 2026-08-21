@@ -203,7 +203,7 @@ public abstract class Command {
     }
 
     public boolean allowChangesFrom(CommandMap commandMap) {
-        return commandMap != null && !commandMap.equals(this.commandMap);
+        return this.commandMap == null || this.commandMap.equals(commandMap);
     }
 
     public boolean isRegistered() {
