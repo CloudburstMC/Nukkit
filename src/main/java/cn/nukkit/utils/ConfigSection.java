@@ -374,7 +374,41 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
     public boolean isList(String key) {
         return get(key) instanceof List;
     }
+    
+    /**
+     * Get Map value of config section element
+     *
+     * @param key - key (inside) current section
+     * @return
+     */
+    public Map getMap(String key) {
+        return this.getMap(key, null);
+    }
 
+    /**
+     * Get Map value of config section element
+     *
+     * @param key         - key (inside) current section
+     * @param defaultList - default value that will returned if section element is not exists
+     * @return
+     */
+    public Map getMap(String key, List defaultList) {
+        return (Map) this.get(key, defaultList);
+    }
+
+    /**
+     * Check type of section element defined by key. Return true this element is Map
+     *
+     * @param key
+     * @return
+     */
+    public boolean isMap(String key) {
+        Object val = get(key);
+        return val instanceof Map;
+    }
+
+    
+    
     /**
      * Get String List value of config section element
      *
