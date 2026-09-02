@@ -461,7 +461,14 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
     }
 
     private static double toolBreakTimeBonus0(int toolType, int toolTier, int blockId) {
-        if (toolType == ItemTool.TYPE_SWORD) return blockId == Block.COBWEB ? 15.0 : 1.0;
+        if (toolType == ItemTool.TYPE_SWORD) {
+            if (blockId == Block.COBWEB) {
+                return 15.0;
+            } else if (blockId == Block.BAMBOO) {
+                return 30.0;
+            }
+            return 1.0;
+        }
         if (toolType == ItemTool.TYPE_SHEARS) {
             if (blockId == Block.WOOL || blockId == LEAVES || blockId == LEAVES2) {
                 return 5.0;
@@ -510,6 +517,10 @@ public abstract class Block extends Position implements Metadatable, Cloneable, 
 
     private static boolean correctTool0(int blockToolType, Item item, int blockId) {
         if (item.isShears() && (blockId == COBWEB || blockId == LEAVES || blockId == LEAVES2)) {
+            return true;
+        }
+
+        if (blockId == BAMBOO && item.isSword()) {
             return true;
         }
 
