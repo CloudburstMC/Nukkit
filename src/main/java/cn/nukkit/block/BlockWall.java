@@ -305,6 +305,8 @@ public class BlockWall extends BlockTransparentMeta implements BlockPropertiesHe
             case CONDUIT:
             case STANDING_BANNER:
             case TURTLE_EGG:
+            case FLOWER_POT_BLOCK:
+            case SKULL_BLOCK:
                 return true;
 
             case END_ROD:

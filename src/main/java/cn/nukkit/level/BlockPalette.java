@@ -36,6 +36,11 @@ public class BlockPalette {
     }
 
     public void registerState(int blockId, int data, int runtimeId, CompoundTag blockState) {
+        this.registerState(blockId, data, runtimeId);
+        this.stateToLegacy.putIfAbsent(blockState, blockId << Block.DATA_BITS | data);
+    }
+
+    public void registerState(int blockId, int data, int runtimeId) {
         if (this.locked) {
             throw new IllegalStateException("Block palette is already locked!");
         }
@@ -43,7 +48,6 @@ public class BlockPalette {
         int legacyId = blockId << Block.DATA_BITS | data;
         this.legacyToRuntimeId.put(legacyId, runtimeId);
         this.runtimeIdToLegacy.putIfAbsent(runtimeId, legacyId);
-        this.stateToLegacy.putIfAbsent(blockState, legacyId);
     }
 
     public void lock() {
