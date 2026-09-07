@@ -1,5 +1,10 @@
 package cn.nukkit.level;
 
+import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockWall;
+import cn.nukkit.block.custom.properties.BlockProperties;
+import cn.nukkit.block.properties.VanillaProperties;
+import cn.nukkit.block.properties.WallConnectionType;
 import cn.nukkit.level.format.leveldb.LevelDBConstants;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.ListTag;
@@ -35,6 +40,48 @@ public class GlobalBlockPalette {
         loadBlockStates((ListTag<CompoundTag>) Utils.loadTagResource("runtime_block_states_" + LevelDBConstants.PALETTE_VERSION + ".dat"), getLeveldbBlockPalette());
     }
 
+    /**
+     * The shipped palettes only contain the default state of each wall, the connection states are derived from it.
+     * Vanilla sorts them by west, south, east, north and finally the post bit, the last one changing first.
+     */
+    private static void registerWallStates(BlockPalette blockPalette) {
+        WallConnectionType[] connections = WallConnectionType.values();
+
+        for (int id = 0; id < Block.MAX_BLOCK_ID; id++) {
+            Block block = Block.getPrototype(id, 0);
+            if (!(block instanceof BlockWall)) {
+                continue;
+            }
+
+            BlockProperties properties = ((BlockWall) block).getBlockProperties();
+            boolean typed = properties.contains(BlockWall.WALL_TYPE);
+            int typeCount = typed ? BlockWall.WallType.values().length : 1;
+
+            for (int type = 0; type < typeCount; type++) {
+                int typeMeta = typed
+                        ? properties.setValue(0, BlockWall.WALL_TYPE.getName(), BlockWall.WallType.values()[type])
+                        : 0;
+                int runtimeId = blockPalette.getRuntimeId(id, typeMeta);
+
+                for (WallConnectionType west : connections) {
+                    int westMeta = properties.setValue(typeMeta, VanillaProperties.WALL_CONNECTION_TYPE_WEST.getName(), west);
+                    for (WallConnectionType south : connections) {
+                        int southMeta = properties.setValue(westMeta, VanillaProperties.WALL_CONNECTION_TYPE_SOUTH.getName(), south);
+                        for (WallConnectionType east : connections) {
+                            int eastMeta = properties.setValue(southMeta, VanillaProperties.WALL_CONNECTION_TYPE_EAST.getName(), east);
+                            for (WallConnectionType north : connections) {
+                                int northMeta = properties.setValue(eastMeta, VanillaProperties.WALL_CONNECTION_TYPE_NORTH.getName(), north);
+                                blockPalette.registerState(id, northMeta, runtimeId++, true);
+                                blockPalette.registerState(id,
+                                        properties.setBooleanValue(northMeta, VanillaProperties.WALL_POST.getName(), true), runtimeId++, true);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private static void loadBlockStates(ListTag<CompoundTag> blockStates, BlockPalette blockPalette) {
         List<CompoundTag> stateOverloads = new ObjectArrayList<>();
         for (CompoundTag state : blockStates.getAll()) {
@@ -47,6 +94,8 @@ public class GlobalBlockPalette {
             log.debug("[{}] Registering block palette overload: {}", blockPalette.getProtocol(), state.getString("name"));
             registerBlockState(blockPalette, state, true);
         }
+
+        registerWallStates(blockPalette);
 
         blockPalette.lock(); // prevent adding new states
     }

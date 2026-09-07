@@ -1,5 +1,6 @@
 package cn.nukkit.level;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.nbt.tag.CompoundTag;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
@@ -35,14 +36,26 @@ public class BlockPalette {
     }
 
     public void registerState(int blockId, int data, int runtimeId, CompoundTag blockState) {
+        this.registerState(blockId, data, runtimeId);
+        this.stateToLegacy.putIfAbsent(blockState, blockId << Block.DATA_BITS | data);
+    }
+
+    public void registerState(int blockId, int data, int runtimeId) {
+        this.registerState(blockId, data, runtimeId, false);
+    }
+
+    public void registerState(int blockId, int data, int runtimeId, boolean replaceRuntimeMapping) {
         if (this.locked) {
             throw new IllegalStateException("Block palette is already locked!");
         }
 
-        int legacyId = blockId << 6 | data;
+        int legacyId = blockId << Block.DATA_BITS | data;
         this.legacyToRuntimeId.put(legacyId, runtimeId);
-        this.runtimeIdToLegacy.putIfAbsent(runtimeId, legacyId);
-        this.stateToLegacy.putIfAbsent(blockState, legacyId);
+        if (replaceRuntimeMapping) {
+            this.runtimeIdToLegacy.put(runtimeId, legacyId);
+        } else {
+            this.runtimeIdToLegacy.putIfAbsent(runtimeId, legacyId);
+        }
     }
 
     public void lock() {
@@ -50,12 +63,12 @@ public class BlockPalette {
     }
 
     public int getRuntimeId(int id, int meta) {
-        int legacyId = id << 6 | meta;
+        int legacyId = id << Block.DATA_BITS | meta;
         int runtimeId = this.legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
-            runtimeId = legacyToRuntimeId.get(id << 6);
+            runtimeId = legacyToRuntimeId.get(id << Block.DATA_BITS);
             if (runtimeId == -1) {
-                runtimeId = legacyToRuntimeId.get(BlockID.INFO_UPDATE << 6);
+                runtimeId = legacyToRuntimeId.get(BlockID.INFO_UPDATE << Block.DATA_BITS);
                 log.info("Missing block runtime id mappings for {}:{}", id, meta);
             }
         }
@@ -66,7 +79,7 @@ public class BlockPalette {
         int runtimeId = this.legacyToRuntimeId.get(legacyId);
         if (runtimeId == -1) {
             log.info("Missing block runtime id mappings for {}", legacyId);
-            return legacyToRuntimeId.get(BlockID.INFO_UPDATE << 6);
+            return legacyToRuntimeId.get(BlockID.INFO_UPDATE << Block.DATA_BITS);
         }
         return runtimeId;
     }
