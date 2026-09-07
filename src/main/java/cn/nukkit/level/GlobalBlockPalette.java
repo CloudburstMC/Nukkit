@@ -71,9 +71,9 @@ public class GlobalBlockPalette {
                             int eastMeta = properties.setValue(southMeta, VanillaProperties.WALL_CONNECTION_TYPE_EAST.getName(), east);
                             for (WallConnectionType north : connections) {
                                 int northMeta = properties.setValue(eastMeta, VanillaProperties.WALL_CONNECTION_TYPE_NORTH.getName(), north);
-                                blockPalette.registerState(id, northMeta, runtimeId++);
+                                blockPalette.registerState(id, northMeta, runtimeId++, true);
                                 blockPalette.registerState(id,
-                                        properties.setBooleanValue(northMeta, VanillaProperties.WALL_POST.getName(), true), runtimeId++);
+                                        properties.setBooleanValue(northMeta, VanillaProperties.WALL_POST.getName(), true), runtimeId++, true);
                             }
                         }
                     }

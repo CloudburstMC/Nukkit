@@ -41,13 +41,21 @@ public class BlockPalette {
     }
 
     public void registerState(int blockId, int data, int runtimeId) {
+        this.registerState(blockId, data, runtimeId, false);
+    }
+
+    public void registerState(int blockId, int data, int runtimeId, boolean replaceRuntimeMapping) {
         if (this.locked) {
             throw new IllegalStateException("Block palette is already locked!");
         }
 
         int legacyId = blockId << Block.DATA_BITS | data;
         this.legacyToRuntimeId.put(legacyId, runtimeId);
-        this.runtimeIdToLegacy.putIfAbsent(runtimeId, legacyId);
+        if (replaceRuntimeMapping) {
+            this.runtimeIdToLegacy.put(runtimeId, legacyId);
+        } else {
+            this.runtimeIdToLegacy.putIfAbsent(runtimeId, legacyId);
+        }
     }
 
     public void lock() {
