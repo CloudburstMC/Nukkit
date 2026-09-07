@@ -1819,7 +1819,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             return;
         }
 
-        Block block = Block.fullList[fullId];
+        Block block = Block.getPrototype(fullId >> Block.DATA_BITS, fullId & Block.DATA_MASK);
 
         this.setBlock(x, y, z, layer, block, false, false);
     }

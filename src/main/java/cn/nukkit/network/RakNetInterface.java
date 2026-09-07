@@ -30,7 +30,6 @@ import org.cloudburstmc.netty.channel.raknet.config.RakServerCookieMode;
 import org.cloudburstmc.netty.handler.codec.raknet.server.RakServerRateLimiter;
 
 import java.lang.reflect.Constructor;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -178,17 +177,17 @@ public class RakNetInterface implements AdvancedSourceInterface {
     }
 
     @Override
-    public void blockAddress(InetAddress address) {
+    public void blockAddress(InetSocketAddress address) {
         this.channels.get(0).pipeline().get(RakServerRateLimiter.class).blockAddress(address, 100, TimeUnit.DAYS);
     }
 
     @Override
-    public void blockAddress(InetAddress address, int timeout) {
+    public void blockAddress(InetSocketAddress address, int timeout) {
         this.channels.get(0).pipeline().get(RakServerRateLimiter.class).blockAddress(address, timeout, TimeUnit.SECONDS);
     }
 
     @Override
-    public void unblockAddress(InetAddress address) {
+    public void unblockAddress(InetSocketAddress address) {
         this.channels.get(0).pipeline().get(RakServerRateLimiter.class).unblockAddress(address);
     }
 

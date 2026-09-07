@@ -59,7 +59,7 @@ public class BlockStorage {
         // Convert to old data bits
         int block = value >> Block.DATA_BITS;
         int meta = value & Block.DATA_MASK;
-        value = (block << 4) + Math.min(meta, 15);
+        value = (block << 4) + (meta & 0xf);
 
         if (value >= 0x1fff) throw new IllegalArgumentException("Invalid full block " + value);
         int oldBlock = blockIds[index] & 0xff;
@@ -87,7 +87,7 @@ public class BlockStorage {
         // Convert to old data bits
         int block = value >> Block.DATA_BITS;
         int meta = value & Block.DATA_MASK;
-        value = (block << 4) + Math.min(meta, 15);
+        value = (block << 4) + (meta & 0xf);
 
         if (value >= 0x1fff) throw new IllegalArgumentException("Invalid full block " + value);
         blockIds[index] = (byte) (block & 0xff);
