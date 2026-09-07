@@ -12,8 +12,6 @@ import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.nio.file.Files;
 import java.util.Locale;
 import java.util.regex.Pattern;
@@ -106,9 +104,5 @@ public class BanIpCommand extends VanillaCommand {
                 player.kick(PlayerKickEvent.Reason.IP_BANNED, !reason.isEmpty() ? reason : "IP banned", true);
             }
         }
-
-        try {
-            sender.getServer().getNetwork().blockAddress(InetAddress.getByName(ip));
-        } catch (UnknownHostException ignore) {}
     }
 }

@@ -10,7 +10,6 @@ import io.netty.buffer.ByteBuf;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.ByteArrayInputStream;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.ProtocolException;
 import java.util.Collection;
@@ -191,19 +190,19 @@ public class Network {
         }
     }
 
-    public void blockAddress(InetAddress address) {
+    public void blockAddress(InetSocketAddress address) {
         for (AdvancedSourceInterface sourceInterface : this.advancedInterfaces) {
             sourceInterface.blockAddress(address);
         }
     }
 
-    public void blockAddress(InetAddress address, int timeout) {
+    public void blockAddress(InetSocketAddress address, int timeout) {
         for (AdvancedSourceInterface sourceInterface : this.advancedInterfaces) {
             sourceInterface.blockAddress(address, timeout);
         }
     }
 
-    public void unblockAddress(InetAddress address) {
+    public void unblockAddress(InetSocketAddress address) {
         for (AdvancedSourceInterface sourceInterface : this.advancedInterfaces) {
             sourceInterface.unblockAddress(address);
         }
