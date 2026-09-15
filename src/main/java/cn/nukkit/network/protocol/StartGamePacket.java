@@ -5,10 +5,20 @@ import cn.nukkit.network.protocol.types.ExperimentData;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Binary;
+import cn.nukkit.utils.NbtMapDeserializer;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.ToString;
+import lombok.Value;
+import org.cloudburstmc.nbt.NbtMap;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 import java.util.UUID;
 
 import java.util.List;
@@ -27,10 +37,26 @@ public class StartGamePacket extends DataPacket {
     private static final byte[] EMPTY_COMPOUND_TAG;
     private static final byte[] EMPTY_UUID;
 
+    private static final List<BlockPropertyData> vanillaBlockProperties;
+
+    @Value
+    private static class BlockPropertyData {
+        String name;
+        NbtMap properties;
+    }
+
     static {
         try {
             EMPTY_COMPOUND_TAG = NBTIO.writeNetwork(new CompoundTag(""));
             EMPTY_UUID = Binary.writeUUID(new UUID(0, 0));
+
+            try (Reader reader = new InputStreamReader(Objects.requireNonNull(StartGamePacket.class.getClassLoader().getResourceAsStream("block_properties.json")), StandardCharsets.UTF_8)) {
+                Type type = new TypeToken<List<BlockPropertyData>>(){}.getType();
+                vanillaBlockProperties = new GsonBuilder()
+                        .registerTypeAdapter(NbtMap.class, new NbtMapDeserializer())
+                        .create()
+                        .fromJson(reader, type);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -179,7 +205,11 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(true); // isServerAuthoritativeBlockBreaking
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
-        this.putUnsignedVarInt(0); // No custom blocks
+        this.putUnsignedVarInt(vanillaBlockProperties.size());
+        for (BlockPropertyData data : vanillaBlockProperties) {
+            this.putString(data.name);
+            this.putNbtTag(data.properties);
+        }
         this.putString(this.multiplayerCorrelationId);
         this.putBoolean(false); // isInventoryServerAuthoritative
         this.putString(""); // serverEngine

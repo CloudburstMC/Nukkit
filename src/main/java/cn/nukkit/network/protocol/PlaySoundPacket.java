@@ -16,6 +16,14 @@ public class PlaySoundPacket extends DataPacket {
     public float pitch;
     public Long serverSoundHandle;
     public int loopCount;
+    /**
+     * @since v2192
+     */
+    private boolean bypassListenerRangeCheck;
+    /**
+     * @since v2192
+     */
+    private Float playbackPositionSeconds;
 
     @Override
     public byte pid() {
@@ -35,6 +43,8 @@ public class PlaySoundPacket extends DataPacket {
         this.putLFloat(this.volume);
         this.putLFloat(this.pitch);
         this.putVarInt(this.loopCount);
+        this.putBoolean(this.bypassListenerRangeCheck);
         this.putOptionalNull(this.serverSoundHandle, BinaryStream::putLLong);
+        this.putOptionalNull(this.playbackPositionSeconds, BinaryStream::putLFloat);
     }
 }

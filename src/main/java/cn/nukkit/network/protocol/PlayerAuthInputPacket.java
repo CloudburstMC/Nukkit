@@ -50,11 +50,9 @@ public class PlayerAuthInputPacket extends DataPacket {
         this.motion = new Vector2(this.getLFloat(), this.getLFloat());
         this.headYaw = this.getLFloat();
 
-        if (this.getBoolean()) {
-            int len = (int) this.getUnsignedVarInt();
-            for (int i = 0; i < len; i++) {
-                this.inputData.add(AuthInputAction.from(this.getVarInt()));
-            }
+        int len = (int) this.getUnsignedVarInt();
+        for (int i = 0; i < len; i++) {
+            this.inputData.add(AuthInputAction.from(this.getVarInt()));
         }
 
         this.inputMode = InputMode.fromOrdinal((int) this.getUnsignedVarInt());
@@ -67,15 +65,15 @@ public class PlayerAuthInputPacket extends DataPacket {
         this.tick = this.getUnsignedVarLong();
         this.delta = this.getVector3f();
 
-        if (this.getBoolean() && this.getBoolean()) {
+        if (this.getBoolean()) {
             throw new IllegalStateException("PERFORM_ITEM_INTERACTION unsupported in legacy mode");
         }
 
-        if (this.getBoolean() && this.getBoolean()) {
+        if (this.getBoolean()) {
             throw new IllegalStateException("PERFORM_ITEM_STACK_REQUEST unsupported in legacy mode");
         }
 
-        if ((this.getBoolean() && this.getBoolean())) {
+        if (this.getBoolean()) {
             int arraySize = (int) this.getUnsignedVarInt();
             if (arraySize > 100) {
                 throw new IllegalArgumentException("PlayerAuthInputPacket PERFORM_BLOCK_ACTIONS is too long: " + arraySize);
@@ -97,11 +95,11 @@ public class PlayerAuthInputPacket extends DataPacket {
             }
         }
 
-        if (this.getBoolean() && this.getBoolean()) {
+        if (this.getBoolean()) {
             this.vehicleRotation = this.getVector2f();
         }
 
-        if (this.getBoolean() && this.getBoolean()) {
+        if (this.getBoolean()) {
             this.predictedVehicle = this.getVarLong();
         }
 

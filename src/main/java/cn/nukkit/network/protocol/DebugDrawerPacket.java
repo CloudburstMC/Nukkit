@@ -100,6 +100,7 @@ public class DebugDrawerPacket extends DataPacket {
                         putLInt(text.getBackgroundColor().getRGB());
                     } else putBoolean(false);
 
+                    putLFloat(text.getLineGapHeight());
                     putBoolean(text.isDepthTest());
                     putBoolean(text.isShowBackface());
                     putBoolean(text.isShowTextBackface());

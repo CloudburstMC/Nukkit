@@ -1,0 +1,4881 @@
+[
+    {
+        "name": "minecraft:light_gray_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:light_gray_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1464,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:brown_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:brown_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1474,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:pink_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:pink_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1485,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:purple_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:purple_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1433,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:yellow_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:yellow_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1410,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_gray_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:light_gray_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1487,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:purple_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:purple_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1483,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:yellow_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:yellow_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1443,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_gray_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:light_gray_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1471,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:yellow_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:yellow_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1427,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:yellow_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:yellow_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1460,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:brown_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:brown_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1418,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:yellow_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:yellow_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1493,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:pink_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:pink_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1412,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:yellow_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:yellow_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1477,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:white_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:white_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1405,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:lime_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:lime_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1461,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:white_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:white_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1420,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:magenta_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:magenta_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1450,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:white_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:white_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1470,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:white_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:white_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1436,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:white_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:white_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1486,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:gray_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:gray_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1438,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:white_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:white_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1455,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_gray_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:light_gray_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1437,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:shelf_mushroom",
+        "properties": {
+            "components": {
+                "minecraft:collision_box": {
+                    "boxes": [
+                        {
+                            "maxX": 13.0,
+                            "maxY": 11.0,
+                            "maxZ": 16.0,
+                            "minX": 3.0,
+                            "minY": 4.0,
+                            "minZ": 9.0
+                        }
+                    ],
+                    "enabled": 1
+                },
+                "minecraft:connection_rule": {
+                    "accepts_connections_from": "none",
+                    "enabled_directions": [
+                        "south",
+                        "north",
+                        "east",
+                        "west"
+                    ]
+                },
+                "minecraft:destructible_by_mining": {
+                    "value": 0.0
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "shelf_mushroom_particle",
+                    "tint_method": "none"
+                },
+                "minecraft:geometry": {
+                    "bone_visibility": { },
+                    "culling": "minecraft:culling.shelf_mushroom_small",
+                    "culling_layer": "minecraft:culling_layer.undefined",
+                    "culling_shape": "",
+                    "identifier": "minecraft:geometry.shelf_mushroom_small",
+                    "ignoreGeometryForIsSolid": 0,
+                    "isV1Fullblock": 0,
+                    "needsLegacyTopRotation": 0,
+                    "useBlockTypeLightAbsorption": 0,
+                    "uv_lock": 0
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 0,
+                            "liquidType": "water",
+                            "onLiquidTouches": "popped",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:material_instances": {
+                    "mappings": { },
+                    "materials": {
+                        "small": {
+                            "ambient_occlusion": 0.0,
+                            "packed_bools": 5,
+                            "render_method": "alpha_test_single_sided",
+                            "texture": "shelf_mushroom_small",
+                            "tint_method": "none"
+                        }
+                    }
+                },
+                "minecraft:precipitation_interactions": {
+                    "precipitation_behavior": "none"
+                },
+                "minecraft:selection_box": {
+                    "enabled": 1,
+                    "origin": [
+                        -5.0,
+                        8.0,
+                        1.0
+                    ],
+                    "size": [
+                        10.0,
+                        3.0,
+                        7.0
+                    ]
+                }
+            },
+            "menu_category": {
+                "category": "nature",
+                "group": "",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "permutations": [
+                {
+                    "components": {
+                        "minecraft:transformation": {
+                            "RX": 0,
+                            "RXP": 0.0,
+                            "RY": 2,
+                            "RYP": 0.0,
+                            "RZ": 0,
+                            "RZP": 0.0,
+                            "SX": 1.0,
+                            "SXP": 0.0,
+                            "SY": 1.0,
+                            "SYP": 0.0,
+                            "SZ": 1.0,
+                            "SZP": 0.0,
+                            "TX": 0.0,
+                            "TY": 0.0,
+                            "TZ": 0.0,
+                            "hasJsonVersionBeforeValidation": 0
+                        }
+                    },
+                    "condition": "query.block_state('growth') == 0 && query.block_state('minecraft:cardinal_direction') == 'south'"
+                },
+                {
+                    "components": {
+                        "minecraft:transformation": {
+                            "RX": 0,
+                            "RXP": 0.0,
+                            "RY": 1,
+                            "RYP": 0.0,
+                            "RZ": 0,
+                            "RZP": 0.0,
+                            "SX": 1.0,
+                            "SXP": 0.0,
+                            "SY": 1.0,
+                            "SYP": 0.0,
+                            "SZ": 1.0,
+                            "SZP": 0.0,
+                            "TX": 0.0,
+                            "TY": 0.0,
+                            "TZ": 0.0,
+                            "hasJsonVersionBeforeValidation": 0
+                        }
+                    },
+                    "condition": "query.block_state('growth') == 0 && query.block_state('minecraft:cardinal_direction') == 'west'"
+                },
+                {
+                    "components": {
+                        "minecraft:transformation": {
+                            "RX": 0,
+                            "RXP": 0.0,
+                            "RY": 3,
+                            "RYP": 0.0,
+                            "RZ": 0,
+                            "RZP": 0.0,
+                            "SX": 1.0,
+                            "SXP": 0.0,
+                            "SY": 1.0,
+                            "SYP": 0.0,
+                            "SZ": 1.0,
+                            "SZP": 0.0,
+                            "TX": 0.0,
+                            "TY": 0.0,
+                            "TZ": 0.0,
+                            "hasJsonVersionBeforeValidation": 0
+                        }
+                    },
+                    "condition": "query.block_state('growth') == 0 && query.block_state('minecraft:cardinal_direction') == 'east'"
+                },
+                {
+                    "components": {
+                        "minecraft:collision_box": {
+                            "boxes": [
+                                {
+                                    "maxX": 15.0,
+                                    "maxY": 11.0,
+                                    "maxZ": 16.0,
+                                    "minX": 1.0,
+                                    "minY": 4.0,
+                                    "minZ": 6.0
+                                }
+                            ],
+                            "enabled": 1
+                        },
+                        "minecraft:geometry": {
+                            "bone_visibility": { },
+                            "culling": "minecraft:culling.shelf_mushroom_large",
+                            "culling_layer": "minecraft:culling_layer.undefined",
+                            "culling_shape": "",
+                            "identifier": "minecraft:geometry.shelf_mushroom_large",
+                            "ignoreGeometryForIsSolid": 0,
+                            "isV1Fullblock": 0,
+                            "needsLegacyTopRotation": 0,
+                            "useBlockTypeLightAbsorption": 0,
+                            "uv_lock": 0
+                        },
+                        "minecraft:material_instances": {
+                            "mappings": { },
+                            "materials": {
+                                "large": {
+                                    "ambient_occlusion": 0.0,
+                                    "packed_bools": 5,
+                                    "render_method": "alpha_test_single_sided",
+                                    "texture": "shelf_mushroom_large",
+                                    "tint_method": "none"
+                                }
+                            }
+                        },
+                        "minecraft:selection_box": {
+                            "enabled": 1,
+                            "origin": [
+                                -7.0,
+                                6.0,
+                                -2.0
+                            ],
+                            "size": [
+                                14.0,
+                                5.0,
+                                10.0
+                            ]
+                        }
+                    },
+                    "condition": "query.block_state('growth') == 1 && query.block_state('minecraft:cardinal_direction') == 'north'"
+                },
+                {
+                    "components": {
+                        "minecraft:collision_box": {
+                            "boxes": [
+                                {
+                                    "maxX": 15.0,
+                                    "maxY": 11.0,
+                                    "maxZ": 16.0,
+                                    "minX": 1.0,
+                                    "minY": 4.0,
+                                    "minZ": 6.0
+                                }
+                            ],
+                            "enabled": 1
+                        },
+                        "minecraft:geometry": {
+                            "bone_visibility": { },
+                            "culling": "minecraft:culling.shelf_mushroom_large",
+                            "culling_layer": "minecraft:culling_layer.undefined",
+                            "culling_shape": "",
+                            "identifier": "minecraft:geometry.shelf_mushroom_large",
+                            "ignoreGeometryForIsSolid": 0,
+                            "isV1Fullblock": 0,
+                            "needsLegacyTopRotation": 0,
+                            "useBlockTypeLightAbsorption": 0,
+                            "uv_lock": 0
+                        },
+                        "minecraft:material_instances": {
+                            "mappings": { },
+                            "materials": {
+                                "large": {
+                                    "ambient_occlusion": 0.0,
+                                    "packed_bools": 5,
+                                    "render_method": "alpha_test_single_sided",
+                                    "texture": "shelf_mushroom_large",
+                                    "tint_method": "none"
+                                }
+                            }
+                        },
+                        "minecraft:selection_box": {
+                            "enabled": 1,
+                            "origin": [
+                                -7.0,
+                                6.0,
+                                -2.0
+                            ],
+                            "size": [
+                                14.0,
+                                5.0,
+                                10.0
+                            ]
+                        },
+                        "minecraft:transformation": {
+                            "RX": 0,
+                            "RXP": 0.0,
+                            "RY": 2,
+                            "RYP": 0.0,
+                            "RZ": 0,
+                            "RZP": 0.0,
+                            "SX": 1.0,
+                            "SXP": 0.0,
+                            "SY": 1.0,
+                            "SYP": 0.0,
+                            "SZ": 1.0,
+                            "SZP": 0.0,
+                            "TX": 0.0,
+                            "TY": 0.0,
+                            "TZ": 0.0,
+                            "hasJsonVersionBeforeValidation": 0
+                        }
+                    },
+                    "condition": "query.block_state('growth') == 1 && query.block_state('minecraft:cardinal_direction') == 'south'"
+                },
+                {
+                    "components": {
+                        "minecraft:collision_box": {
+                            "boxes": [
+                                {
+                                    "maxX": 15.0,
+                                    "maxY": 11.0,
+                                    "maxZ": 16.0,
+                                    "minX": 1.0,
+                                    "minY": 4.0,
+                                    "minZ": 6.0
+                                }
+                            ],
+                            "enabled": 1
+                        },
+                        "minecraft:geometry": {
+                            "bone_visibility": { },
+                            "culling": "minecraft:culling.shelf_mushroom_large",
+                            "culling_layer": "minecraft:culling_layer.undefined",
+                            "culling_shape": "",
+                            "identifier": "minecraft:geometry.shelf_mushroom_large",
+                            "ignoreGeometryForIsSolid": 0,
+                            "isV1Fullblock": 0,
+                            "needsLegacyTopRotation": 0,
+                            "useBlockTypeLightAbsorption": 0,
+                            "uv_lock": 0
+                        },
+                        "minecraft:material_instances": {
+                            "mappings": { },
+                            "materials": {
+                                "large": {
+                                    "ambient_occlusion": 0.0,
+                                    "packed_bools": 5,
+                                    "render_method": "alpha_test_single_sided",
+                                    "texture": "shelf_mushroom_large",
+                                    "tint_method": "none"
+                                }
+                            }
+                        },
+                        "minecraft:selection_box": {
+                            "enabled": 1,
+                            "origin": [
+                                -7.0,
+                                6.0,
+                                -2.0
+                            ],
+                            "size": [
+                                14.0,
+                                5.0,
+                                10.0
+                            ]
+                        },
+                        "minecraft:transformation": {
+                            "RX": 0,
+                            "RXP": 0.0,
+                            "RY": 1,
+                            "RYP": 0.0,
+                            "RZ": 0,
+                            "RZP": 0.0,
+                            "SX": 1.0,
+                            "SXP": 0.0,
+                            "SY": 1.0,
+                            "SYP": 0.0,
+                            "SZ": 1.0,
+                            "SZP": 0.0,
+                            "TX": 0.0,
+                            "TY": 0.0,
+                            "TZ": 0.0,
+                            "hasJsonVersionBeforeValidation": 0
+                        }
+                    },
+                    "condition": "query.block_state('growth') == 1 && query.block_state('minecraft:cardinal_direction') == 'west'"
+                },
+                {
+                    "components": {
+                        "minecraft:collision_box": {
+                            "boxes": [
+                                {
+                                    "maxX": 15.0,
+                                    "maxY": 11.0,
+                                    "maxZ": 16.0,
+                                    "minX": 1.0,
+                                    "minY": 4.0,
+                                    "minZ": 6.0
+                                }
+                            ],
+                            "enabled": 1
+                        },
+                        "minecraft:geometry": {
+                            "bone_visibility": { },
+                            "culling": "minecraft:culling.shelf_mushroom_large",
+                            "culling_layer": "minecraft:culling_layer.undefined",
+                            "culling_shape": "",
+                            "identifier": "minecraft:geometry.shelf_mushroom_large",
+                            "ignoreGeometryForIsSolid": 0,
+                            "isV1Fullblock": 0,
+                            "needsLegacyTopRotation": 0,
+                            "useBlockTypeLightAbsorption": 0,
+                            "uv_lock": 0
+                        },
+                        "minecraft:material_instances": {
+                            "mappings": { },
+                            "materials": {
+                                "large": {
+                                    "ambient_occlusion": 0.0,
+                                    "packed_bools": 5,
+                                    "render_method": "alpha_test_single_sided",
+                                    "texture": "shelf_mushroom_large",
+                                    "tint_method": "none"
+                                }
+                            }
+                        },
+                        "minecraft:selection_box": {
+                            "enabled": 1,
+                            "origin": [
+                                -7.0,
+                                6.0,
+                                -2.0
+                            ],
+                            "size": [
+                                14.0,
+                                5.0,
+                                10.0
+                            ]
+                        },
+                        "minecraft:transformation": {
+                            "RX": 0,
+                            "RXP": 0.0,
+                            "RY": 3,
+                            "RYP": 0.0,
+                            "RZ": 0,
+                            "RZP": 0.0,
+                            "SX": 1.0,
+                            "SXP": 0.0,
+                            "SY": 1.0,
+                            "SYP": 0.0,
+                            "SZ": 1.0,
+                            "SZP": 0.0,
+                            "TX": 0.0,
+                            "TY": 0.0,
+                            "TZ": 0.0,
+                            "hasJsonVersionBeforeValidation": 0
+                        }
+                    },
+                    "condition": "query.block_state('growth') == 1 && query.block_state('minecraft:cardinal_direction') == 'east'"
+                }
+            ],
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "bounciness": 0.75,
+                    "fall_damage_multiplier": 0.5,
+                    "is_bonemealable": 1,
+                    "size_count": 2,
+                    "type": "wall_foliage_block"
+                },
+                "block_id": 1452,
+                "material": "solid_plant"
+            }
+        }
+    },
+    {
+        "name": "minecraft:red_shrub",
+        "properties": {
+            "components": {
+                "minecraft:collision_box": {
+                    "boxes": [ ],
+                    "enabled": 0
+                },
+                "minecraft:connection_rule": {
+                    "accepts_connections_from": "none",
+                    "enabled_directions": [
+                        "south",
+                        "north",
+                        "east",
+                        "west"
+                    ]
+                },
+                "minecraft:destructible_by_mining": {
+                    "value": 0.0
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:geometry": {
+                    "bone_visibility": { },
+                    "culling": "",
+                    "culling_layer": "minecraft:culling_layer.undefined",
+                    "culling_shape": "",
+                    "identifier": "minecraft:geometry.cross",
+                    "ignoreGeometryForIsSolid": 0,
+                    "isV1Fullblock": 0,
+                    "needsLegacyTopRotation": 0,
+                    "useBlockTypeLightAbsorption": 0,
+                    "uv_lock": 0
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 0,
+                            "liquidType": "water",
+                            "onLiquidTouches": "popped",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:material_instances": {
+                    "mappings": { },
+                    "materials": {
+                        "*": {
+                            "ambient_occlusion": 0.0,
+                            "packed_bools": 5,
+                            "render_method": "alpha_test_single_sided",
+                            "texture": "red_shrub",
+                            "tint_method": "none"
+                        }
+                    }
+                },
+                "minecraft:precipitation_interactions": {
+                    "precipitation_behavior": "snowlogging"
+                },
+                "minecraft:replaceable": { },
+                "minecraft:selection_box": {
+                    "enabled": 1,
+                    "origin": [
+                        -8.0,
+                        0.0,
+                        -8.0
+                    ],
+                    "size": [
+                        16.0,
+                        16.0,
+                        16.0
+                    ]
+                }
+            },
+            "menu_category": {
+                "category": "nature",
+                "group": "",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "type": "bush_block"
+                },
+                "block_id": 1403,
+                "material": "plant"
+            }
+        }
+    },
+    {
+        "name": "minecraft:red_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:red_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1404,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:red_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:red_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1441,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:red_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:red_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1425,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:black_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:black_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1489,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_blue_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:light_blue_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1447,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:red_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:red_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1454,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:red_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:red_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1475,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:red_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:red_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1491,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:magenta_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:magenta_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1458,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:brown_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:brown_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1468,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:pink_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:pink_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1462,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:purple_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:purple_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1416,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_gray_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:light_gray_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1421,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:brown_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:brown_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1490,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:pink_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:pink_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1501,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:purple_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:purple_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1466,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:purple_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:purple_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1449,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:purple_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:purple_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1499,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:brown_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:brown_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1440,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:pink_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:pink_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1451,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:brown_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:brown_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1424,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:pink_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:pink_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1435,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:orange_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:orange_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1492,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:orange_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:orange_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1407,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:orange_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:orange_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1426,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:orange_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:orange_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1442,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:orange_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:orange_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1457,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:orange_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:orange_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1476,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:magenta_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:magenta_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1484,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:green_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:green_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1417,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:magenta_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:magenta_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1408,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:green_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:green_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1429,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:black_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:black_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1469,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_blue_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:light_blue_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1409,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:magenta_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:magenta_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1434,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:magenta_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:magenta_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1500,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:lime_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:lime_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1411,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:lime_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:lime_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1428,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:lime_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:lime_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1444,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:lime_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:lime_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1478,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:lime_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:lime_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1494,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:blue_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:blue_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1448,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_gray_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:light_gray_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1414,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:black_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:black_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1473,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_blue_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:light_blue_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1431,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_blue_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:light_blue_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1459,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_blue_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:light_blue_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1481,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:light_blue_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:light_blue_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1497,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:green_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:green_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1445,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:green_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:green_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1467,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:green_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:green_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1479,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:green_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:green_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1495,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:gray_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:gray_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1413,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:gray_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:gray_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1422,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:gray_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:gray_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1463,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:gray_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:gray_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1472,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:gray_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:gray_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1488,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:cyan_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:cyan_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1415,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:cyan_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:cyan_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1430,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:cyan_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:cyan_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1446,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    },
+    {
+        "name": "minecraft:cyan_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:cyan_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1465,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:cyan_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:cyan_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1480,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:cyan_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:cyan_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1496,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:blue_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:blue_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1406,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:blue_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:blue_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1432,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:blue_concrete_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:blue_concrete",
+                    "type": "stair_block"
+                },
+                "block_id": 1456,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:blue_concrete_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:blue_concrete_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1482,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:blue_concrete_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_pickaxe_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 1.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:blue_concrete_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1498,
+                "material": "solid",
+                "requires_correct_tool_for_drops": 1
+            }
+        }
+    },
+    {
+        "name": "minecraft:black_wool_stairs",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                },
+                "minecraft:support": {
+                    "shape": "stair"
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.stairs",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "base_block": "minecraft:black_wool",
+                    "type": "stair_block"
+                },
+                "block_id": 1419,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:black_wool_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:destruction_particles": {
+                    "particle_count": 48,
+                    "texture": "",
+                    "tint_method": "none"
+                },
+                "minecraft:liquid_detection": {
+                    "detectionRules": [
+                        {
+                            "canContainLiquid": 1,
+                            "liquidType": "water",
+                            "onLiquidTouches": "blocking",
+                            "stopsLiquidFromDirection": 0,
+                            "use_liquid_clipping": 0
+                        }
+                    ]
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 0
+                }
+            },
+            "menu_category": {
+                "category": "construction",
+                "group": "minecraft:itemGroup.name.slab",
+                "is_hidden_in_commands": 0
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:black_wool_double_slab",
+                    "is_double": 0,
+                    "type": "slab_block"
+                },
+                "block_id": 1423,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid",
+                "translucency": 0.8
+            }
+        }
+    },
+    {
+        "name": "minecraft:black_wool_double_slab",
+        "properties": {
+            "blockTags": [
+                "minecraft:is_shears_item_destructible"
+            ],
+            "components": {
+                "minecraft:destructible_by_mining": {
+                    "value": 0.8
+                },
+                "minecraft:redstone_conductivity": {
+                    "allowsWireToStepDown": 1,
+                    "redstoneConductor": 1
+                }
+            },
+            "menu_category": {
+                "category": "none",
+                "group": "",
+                "is_hidden_in_commands": 1
+            },
+            "molangVersion": 13,
+            "vanilla_block_data": {
+                "block_archetype": {
+                    "double_slab_block": "minecraft:black_wool_slab",
+                    "is_double": 1,
+                    "type": "slab_block"
+                },
+                "block_id": 1439,
+                "can_dampen_vibrations": 1,
+                "can_occlude_vibrations": 1,
+                "material": "solid"
+            }
+        }
+    }
+]
