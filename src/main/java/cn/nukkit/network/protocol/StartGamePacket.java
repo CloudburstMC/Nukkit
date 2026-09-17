@@ -1,27 +1,23 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.item.RuntimeItemMapping;
 import cn.nukkit.level.GameRules;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.types.ExperimentData;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.utils.Binary;
-import cn.nukkit.utils.NbtMapDeserializer;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.ToString;
-import lombok.Value;
-import org.cloudburstmc.nbt.NbtMap;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
-import java.util.Objects;
+import java.io.*;
+import java.nio.ByteOrder;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 @ToString
 public class StartGamePacket extends DataPacket {
@@ -37,25 +33,26 @@ public class StartGamePacket extends DataPacket {
     private static final byte[] EMPTY_COMPOUND_TAG;
     private static final byte[] EMPTY_UUID;
 
-    private static final List<BlockPropertyData> vanillaBlockProperties;
-
-    @Value
-    private static class BlockPropertyData {
-        String name;
-        NbtMap properties;
-    }
+    private static final Map<String, byte[]> vanillaBlockProperties;
 
     static {
         try {
             EMPTY_COMPOUND_TAG = NBTIO.writeNetwork(new CompoundTag(""));
             EMPTY_UUID = Binary.writeUUID(new UUID(0, 0));
 
-            try (Reader reader = new InputStreamReader(Objects.requireNonNull(StartGamePacket.class.getClassLoader().getResourceAsStream("block_properties.json")), StandardCharsets.UTF_8)) {
-                Type type = new TypeToken<List<BlockPropertyData>>(){}.getType();
-                vanillaBlockProperties = new GsonBuilder()
-                        .registerTypeAdapter(NbtMap.class, new NbtMapDeserializer())
-                        .create()
-                        .fromJson(reader, type);
+            try (InputStream stream = RuntimeItemMapping.class.getClassLoader().getResourceAsStream("data_driven_blocks.nbt")) {
+                CompoundTag nbt = NBTIO.read(new BufferedInputStream(new GZIPInputStream(stream)), ByteOrder.BIG_ENDIAN, false);
+                Map<String, Tag> tags = nbt.getTags();
+                vanillaBlockProperties = new HashMap<>(tags.size(), 1f);
+                tags.forEach((k, v) -> {
+                    try {
+                        vanillaBlockProperties.put(k, NBTIO.writeNetwork(v));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            } catch (Exception e) {
+                throw new AssertionError("Error while loading data_driven_blocks.nbt", e);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -206,9 +203,9 @@ public class StartGamePacket extends DataPacket {
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
         this.putUnsignedVarInt(vanillaBlockProperties.size());
-        for (BlockPropertyData data : vanillaBlockProperties) {
-            this.putString(data.name);
-            this.putNbtTag(data.properties);
+        for (Map.Entry<String, byte[]> data : vanillaBlockProperties.entrySet()) {
+            this.putString(data.getKey());
+            this.put(data.getValue());
         }
         this.putString(this.multiplayerCorrelationId);
         this.putBoolean(false); // isInventoryServerAuthoritative
