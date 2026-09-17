@@ -28,8 +28,8 @@ public class DimensionDataPacket extends DataPacket {
         this.putUnsignedVarInt(definitions.size());
         for (DimensionDefinition definition : definitions) {
             this.putString(definition.getId());
-            this.putVarInt(definition.getMaximumHeight());
             this.putVarInt(definition.getMinimumHeight());
+            this.putVarInt(definition.getMaximumHeight() - definition.getMinimumHeight());
             this.putVarInt(definition.getGeneratorType());
             this.putVarInt(definition.getDimensionType());
             this.putUUID(definition.getPackId());
