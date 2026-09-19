@@ -40,6 +40,11 @@ public class ListTag<T extends Tag> extends Tag {
         type = dis.readByte();
         int size = dis.readInt();
 
+        if (this.type == TAG_End) {
+            this.list = new ArrayList<>();
+            return;
+        }
+
         if (dis.isReadSafely() && size > 64) {
             list = new ArrayList<>(64);
         } else {

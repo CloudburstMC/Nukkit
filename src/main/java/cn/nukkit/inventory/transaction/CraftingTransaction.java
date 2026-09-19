@@ -1,11 +1,14 @@
 package cn.nukkit.inventory.transaction;
 
+import cn.nukkit.Nukkit;
 import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.event.inventory.CraftItemEvent;
 import cn.nukkit.inventory.BigCraftingGrid;
 import cn.nukkit.inventory.CraftingRecipe;
 import cn.nukkit.inventory.InventoryType;
+import cn.nukkit.inventory.transaction.action.CraftingTakeResultAction;
+import cn.nukkit.inventory.transaction.action.CraftingTransferMaterialAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
@@ -75,7 +78,7 @@ public class CraftingTransaction extends InventoryTransaction {
     public void setPrimaryOutput(Item item) {
         if (primaryOutput == null) {
             primaryOutput = item.clone();
-        } else if (!primaryOutput.equals(item)) {
+        } else /*if (!primaryOutput.equals(item))*/ {
             throw new RuntimeException("Primary result item has already been set and does not match the current item (expected " + primaryOutput + ", got " + item + ')');
         }
     }
@@ -199,5 +202,17 @@ public class CraftingTransaction extends InventoryTransaction {
         }
         Server.getInstance().getLogger().debug("No actions on the list");
         return false;
+    }
+
+    @Override
+    public void addAction(InventoryAction action) {
+        if (!(action instanceof CraftingTakeResultAction || action instanceof CraftingTransferMaterialAction || action instanceof SlotChangeAction)) {
+            this.invalid = true;
+            if (Nukkit.DEBUG > 1) {
+                source.getServer().getLogger().debug(this.getClass().getSimpleName() + " unexpected addAction: " + action);
+            }
+            return;
+        }
+        super.addAction(action);
     }
 }
