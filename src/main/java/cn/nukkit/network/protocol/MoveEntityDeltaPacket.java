@@ -28,6 +28,11 @@ public class MoveEntityDeltaPacket extends DataPacket {
     private boolean forceMoveLocalEntity;
     private boolean forceCompletion;
 
+    /**
+     * @since v2192
+     */
+    private long ticks;
+
     @Override
     public byte pid() {
         return NETWORK_ID;
@@ -54,6 +59,8 @@ public class MoveEntityDeltaPacket extends DataPacket {
         this.putBoolean(this.forceMove);
         this.putBoolean(this.forceMoveLocalEntity);
         this.putBoolean(this.forceCompletion);
+
+        this.putUnsignedVarLong(this.ticks);
     }
 
     private void putCoordinate(int flag, float value) {

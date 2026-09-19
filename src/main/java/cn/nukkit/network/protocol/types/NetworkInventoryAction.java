@@ -69,8 +69,8 @@ public class NetworkInventoryAction {
     public NetworkInventoryAction read(InventoryTransactionPacket packet) {
         this.sourceType = (int) packet.getUnsignedVarInt();
 
-        if (packet.getBoolean() && packet.getBoolean()) this.windowId = (byte) packet.getByte(); // signed byte
-        if (packet.getBoolean() && packet.getBoolean()) this.flags = packet.getUnsignedVarInt();
+        if (packet.getBoolean()) this.windowId = (byte) packet.getByte(); // signed byte
+        if (packet.getBoolean()) this.flags = packet.getUnsignedVarInt();
 
         switch (this.sourceType) {
             case SOURCE_CRAFT_SLOT:

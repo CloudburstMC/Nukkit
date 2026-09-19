@@ -76,7 +76,8 @@ public class CraftingManager {
             try {
                 switch (Utils.toInt(recipe.get("type"))) {
                     case 0: // shapeless
-                        if (!"crafting_table".equals(recipe.get("block"))) {
+                        String smeltingBlock = (String) recipe.get("block");
+                        if (!"crafting_table".equals(smeltingBlock) && !"furnace".equals(smeltingBlock) && !"blast_furnace".equals(smeltingBlock) && !"smoker".equals(smeltingBlock) && !"campfire".equals(smeltingBlock)) {
                             continue;
                         }
 
@@ -128,7 +129,26 @@ public class CraftingManager {
                             sorted.sort(recipeComparator);
 
                             int priority = (int) recipe.getOrDefault("priority", 0);
-                            this.registerRecipe(new ShapelessRecipe((String) recipe.get("id"), priority, outputItem, sorted));
+                            switch (smeltingBlock) {
+                                case "furnace":
+                                    if (sorted.size() != 1) throw new IllegalArgumentException("Expected single input");
+                                    this.registerRecipe(new FurnaceRecipe((String) recipe.get("id"), outputItem, sorted.get(0)));
+                                    break;
+                                case "blast_furnace":
+                                    if (sorted.size() != 1) throw new IllegalArgumentException("Expected single input");
+                                    this.registerRecipe(new BlastFurnaceRecipe((String) recipe.get("id"), outputItem, sorted.get(0)));
+                                    break;
+                                case "smoker":
+                                    if (sorted.size() != 1) throw new IllegalArgumentException("Expected single input");
+                                    this.registerRecipe(new SmokerRecipe((String) recipe.get("id"), outputItem, sorted.get(0)));
+                                    break;
+                                case "campfire":
+                                    if (sorted.size() != 1) throw new IllegalArgumentException("Expected single input");
+                                    this.registerRecipe(new CampfireRecipe(outputItem, sorted.get(0)));
+                                    break;
+                                default:
+                                    this.registerRecipe(new ShapelessRecipe((String) recipe.get("id"), priority, outputItem, sorted));
+                            }
 
                             // Inject recipes for flight duration 2 and 3 fireworks
                             if (outputItem.getId() == Item.FIREWORKS && outputItem.getCount() == 3) {
@@ -246,40 +266,7 @@ public class CraftingManager {
                         }
                         break;
                     case 3: // smelting
-                        String smeltingBlock = (String) recipe.get("block");
-                        if (!"furnace".equals(smeltingBlock) && !"blast_furnace".equals(smeltingBlock) && !"smoker".equals(smeltingBlock) && !"campfire".equals(smeltingBlock)) {
-                            continue;
-                        }
-
-                        Map input = (Map) recipe.get("input");
-                        Map output = (Map) recipe.get("output");
-                        RuntimeItemMapping.LegacyEntry furnaceInputEntry = itemMapping.fromIdentifier((String) input.get("id"));
-                        RuntimeItemMapping.LegacyEntry furnaceOutputEntry = itemMapping.fromIdentifier((String) output.get("id"));
-
-                        if (furnaceInputEntry != null && furnaceOutputEntry != null && furnaceInputEntry.getLegacyId() != 0 && furnaceOutputEntry.getLegacyId() != 0) {
-                            Item inputItem = Item.get(furnaceInputEntry.getLegacyId(), furnaceInputEntry.getDamage(), (Integer) input.getOrDefault("count", 1));
-                            Item outputItem = Item.get(furnaceOutputEntry.getLegacyId(), furnaceOutputEntry.getDamage(), (Integer) output.getOrDefault("count", 1));
-
-                            switch (smeltingBlock) {
-                                case "furnace":
-                                    this.registerRecipe(new FurnaceRecipe((String) recipe.get("id"), outputItem, inputItem));
-                                    break;
-                                case "blast_furnace":
-                                    this.registerRecipe(new BlastFurnaceRecipe((String) recipe.get("id"), outputItem, inputItem));
-                                    break;
-                                case "smoker":
-                                    this.registerRecipe(new SmokerRecipe((String) recipe.get("id"), outputItem, inputItem));
-                                    break;
-                                case "campfire":
-                                    this.registerRecipe(new CampfireRecipe(outputItem, inputItem));
-                                    break;
-                            }
-                        } else {
-                            if (Nukkit.DEBUG > 1) {
-                                MainLogger.getLogger().debug("Unknown smelting recipe: " + recipe);
-                            }
-                        }
-                        break;
+                        throw new IllegalArgumentException("Legacy smelting recipe");
                 }
             } catch (Exception e) {
                 throw new RuntimeException("Error while loading recipes", e);

@@ -33,6 +33,7 @@ public class BossEventPacket extends DataPacket {
 
     public long bossEid;
     public int type;
+    @Deprecated
     public long playerEid;
     public float healthPercent;
     public String title = "";
@@ -49,7 +50,6 @@ public class BossEventPacket extends DataPacket {
     @Override
     public void decode() {
         this.bossEid = this.getEntityUniqueId();
-        this.playerEid = this.getEntityUniqueId();
         this.type = this.getByte();
         this.title = this.getString();
         this.filteredTitle = this.getString();
@@ -62,7 +62,6 @@ public class BossEventPacket extends DataPacket {
     public void encode() {
         this.reset();
         this.putEntityUniqueId(this.bossEid);
-        this.putEntityUniqueId(this.playerEid);
         this.putByte((byte) this.type);
         this.putString(this.title);
         this.putString(this.filteredTitle);

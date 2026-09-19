@@ -2820,6 +2820,9 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             return; // Player was probably disconnected by a plugin
         }
 
+        this.forceDataPacket(JigsawStructureDataPacket.getCachedPacket(), null);
+        this.forceDataPacket(VoxelShapesPacket.getCachedPacket(), null);
+
         StartGamePacket startGamePacket = new StartGamePacket();
         startGamePacket.entityUniqueId = this.id;
         startGamePacket.entityRuntimeId = this.id;

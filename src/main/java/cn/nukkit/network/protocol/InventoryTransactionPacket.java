@@ -77,14 +77,7 @@ public class InventoryTransactionPacket extends DataPacket {
             }
         }
 
-        if (!this.getBoolean()) {
-            throw new IllegalStateException("Expected InventoryTransactionType");
-        }
         this.transactionType = (int) this.getUnsignedVarInt();
-
-        if (!this.getBoolean()) {
-            throw new IllegalStateException("Expected InventoryActionData");
-        }
 
         int length = (int) this.getUnsignedVarInt();
         if (length > 4096) {
@@ -109,6 +102,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 itemData.blockPos = this.getBlockVector3();
                 itemData.face = BlockFace.fromIndex(this.getByte());
                 itemData.hotbarSlot = this.getVarInt();
+                itemData.hand = this.getByte();
                 itemData.itemInHand = this.getNetworkItemStackDescriptor();
                 itemData.playerPos = this.getVector3fAsVector3();
                 itemData.clickPos = this.getVector3f();

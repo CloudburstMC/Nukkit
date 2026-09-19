@@ -1,6 +1,8 @@
 package cn.nukkit.network.protocol;
 
+import cn.nukkit.item.RuntimeItemMapping;
 import cn.nukkit.level.GameRules;
+import cn.nukkit.nbt.tag.Tag;
 import cn.nukkit.network.protocol.types.ExperimentData;
 import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.CompoundTag;
@@ -8,10 +10,14 @@ import cn.nukkit.utils.Binary;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.ToString;
 
-import java.io.IOException;
+import java.io.*;
+import java.nio.ByteOrder;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 
 @ToString
 public class StartGamePacket extends DataPacket {
@@ -27,10 +33,27 @@ public class StartGamePacket extends DataPacket {
     private static final byte[] EMPTY_COMPOUND_TAG;
     private static final byte[] EMPTY_UUID;
 
+    private static final Map<String, byte[]> vanillaBlockProperties;
+
     static {
         try {
             EMPTY_COMPOUND_TAG = NBTIO.writeNetwork(new CompoundTag(""));
             EMPTY_UUID = Binary.writeUUID(new UUID(0, 0));
+
+            try (InputStream stream = RuntimeItemMapping.class.getClassLoader().getResourceAsStream("data_driven_blocks.nbt")) {
+                CompoundTag nbt = NBTIO.read(new BufferedInputStream(new GZIPInputStream(stream)), ByteOrder.BIG_ENDIAN, false);
+                Map<String, Tag> tags = nbt.getTags();
+                vanillaBlockProperties = new HashMap<>(tags.size(), 1f);
+                tags.forEach((k, v) -> {
+                    try {
+                        vanillaBlockProperties.put(k, NBTIO.writeNetwork(v));
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
+            } catch (Exception e) {
+                throw new AssertionError("Error while loading data_driven_blocks.nbt", e);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -179,7 +202,11 @@ public class StartGamePacket extends DataPacket {
         this.putBoolean(true); // isServerAuthoritativeBlockBreaking
         this.putLLong(this.currentTick);
         this.putVarInt(this.enchantmentSeed);
-        this.putUnsignedVarInt(0); // No custom blocks
+        this.putUnsignedVarInt(vanillaBlockProperties.size());
+        for (Map.Entry<String, byte[]> data : vanillaBlockProperties.entrySet()) {
+            this.putString(data.getKey());
+            this.put(data.getValue());
+        }
         this.putString(this.multiplayerCorrelationId);
         this.putBoolean(false); // isInventoryServerAuthoritative
         this.putString(""); // serverEngine

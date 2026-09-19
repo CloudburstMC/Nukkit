@@ -33,6 +33,10 @@ public class DebugText extends DebugShape {
      * @since v975
      */
     boolean showTextBackface;
+    /**
+     * @since v2192
+     */
+    float lineGapHeight;
 
     public DebugText() {
     }
