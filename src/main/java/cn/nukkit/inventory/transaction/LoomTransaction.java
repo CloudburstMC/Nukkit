@@ -67,9 +67,6 @@ public class LoomTransaction extends InventoryTransaction {
         }
 
         int patternCount = outputItem.getNamedTag().getList("Patterns").size();
-        if (banner.getNamedTag() == null) {
-            return patternCount == 1;
-        }
 
         if (patternCount > 6) {
             return false;

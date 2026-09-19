@@ -111,7 +111,8 @@ public enum TextFormat {
     MATERIAL_DIAMOND('s'),
     MATERIAL_LAPIS('t'),
     MATERIAL_AMETHYST('u'),
-    MATERIAL_RESIN('v');
+    MATERIAL_RESIN('v'),
+    PARTY_BLUE('w');
 
     /**
      * The special character which prefixes all format codes. Use this if
@@ -119,7 +120,7 @@ public enum TextFormat {
      */
     public static final char ESCAPE = '\u00A7';
 
-    private static final Pattern CLEAN_PATTERN = Pattern.compile("(?i)" + ESCAPE + "[0-9A-V]");
+    private static final Pattern CLEAN_PATTERN = Pattern.compile("(?i)" + ESCAPE + "[0-9A-W]");
     private final static Map<Character, TextFormat> BY_CHAR = new HashMap<>();
 
     static {
@@ -249,7 +250,7 @@ public enum TextFormat {
                 TextFormat color = getByChar(input.charAt(index + 1));
 
                 if (color != null) {
-                    result.insert(0, color.toString());
+                    result.insert(0, color);
 
                     // Once we find a color or reset we can stop searching
                     if (color.isColor() || color.equals(RESET)) {

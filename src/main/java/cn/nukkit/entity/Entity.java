@@ -2360,6 +2360,10 @@ public abstract class Entity extends Location implements Metadatable {
 
             this.blocksAround = new ArrayList<>();
 
+            if (maxY < level.getMinBlockY() || minY > level.getMaxBlockY()) {
+                return this.blocksAround;
+            }
+
             for (int z = minZ; z <= maxZ; ++z) {
                 for (int x = minX; x <= maxX; ++x) {
                     for (int y = minY; y <= maxY; ++y) {
