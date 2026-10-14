@@ -54,7 +54,7 @@ public class BlockLeavesMangrove extends BlockLeaves {
     @Override
     public void setPersistent(boolean persistent) {
         int value = (persistent ? 1 : 0) << 1;
-        this.setDamage(this.getDamage() & ~1 | (value & 2));
+        this.setDamage(this.getDamage() & ~2 | (value & 2));
     }
 
     @Override
