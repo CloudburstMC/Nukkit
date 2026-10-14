@@ -83,10 +83,10 @@ public abstract class BlockThin extends BlockTransparent implements ConnectionBl
         double f2 = 0.4375;
         double f3 = 0.5625;
         try {
-            boolean flag = this.canConnect(this.north());
-            boolean flag1 = this.canConnect(this.south());
-            boolean flag2 = this.canConnect(this.west());
-            boolean flag3 = this.canConnect(this.east());
+            boolean flag = this.canConnect(this.north(), BlockFace.NORTH);
+            boolean flag1 = this.canConnect(this.south(), BlockFace.SOUTH);
+            boolean flag2 = this.canConnect(this.west(), BlockFace.WEST);
+            boolean flag3 = this.canConnect(this.east(), BlockFace.EAST);
             if ((!flag2 || !flag3) && (flag2 || flag3 || flag || flag1)) {
                 if (flag2) {
                     f = 0;
@@ -122,6 +122,11 @@ public abstract class BlockThin extends BlockTransparent implements ConnectionBl
     public boolean canConnect(Block block) {
         return block instanceof BlockThin
                 || block instanceof BlockGlass || block instanceof BlockGlassStained || block instanceof BlockGlassTinted
-                || (block.isSolid() && !block.isTransparent());
+                || (!(block instanceof BlockStairs) && block.isSolid() && !block.isTransparent());
+    }
+
+    @Override
+    public boolean canConnect(Block block, BlockFace face) {
+        return this.canConnect(block) || ConnectionBlock.connectsToStairs(block, face);
     }
 }

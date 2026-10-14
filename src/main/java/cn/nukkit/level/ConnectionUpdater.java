@@ -150,7 +150,7 @@ public final class ConnectionUpdater {
             }
 
             int fullId = neighbour.getFullBlock(nx & 15, y, nz & 15, Block.LAYER_NORMAL);
-            if (block.canConnect(Block.get(fullId >> Block.DATA_BITS, fullId & Block.DATA_MASK))) {
+            if (block.canConnect(Block.get(fullId >> Block.DATA_BITS, fullId & Block.DATA_MASK), ConnectionBlock.CONNECTION_FACES[i])) {
                 connections |= SIDE_BITS[i];
             }
         }

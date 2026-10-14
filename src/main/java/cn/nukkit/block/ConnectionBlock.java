@@ -1,6 +1,7 @@
 package cn.nukkit.block;
 
 import cn.nukkit.level.format.anvil.Anvil;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.utils.LevelException;
 
 /**
@@ -33,6 +34,41 @@ public interface ConnectionBlock {
 
     boolean canConnect(Block block);
 
+    /**
+     * @param face the side of this block the other block is on
+     */
+    default boolean canConnect(Block block, BlockFace face) {
+        return this.canConnect(block);
+    }
+
+    /**
+     * The four horizontal sides in the order of the connection bits.
+     */
+    BlockFace[] CONNECTION_FACES = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+
+    /**
+     * The side of a stair that is a full wall, by the data of the stair.
+     */
+    BlockFace[] STAIRS_BACK = {BlockFace.EAST, BlockFace.WEST, BlockFace.SOUTH, BlockFace.NORTH};
+
+    /**
+     * Fences and panes only connect to the solid back of a stair, not to the sides or the steps.
+     *
+     * @param face the side of the fence or pane the stair is on
+     */
+    static boolean connectsToStairs(Block block, BlockFace face) {
+        return block instanceof BlockStairs && STAIRS_BACK[block.getDamage() & 0x03] == face.getOpposite();
+    }
+
+    /**
+     * A fence gate only connects to a fence in the direction it is as wide as, not to one in front of it or behind it.
+     *
+     * @param face the side of the fence the gate is on
+     */
+    static boolean connectsToGate(Block block, BlockFace face) {
+        return block instanceof BlockFenceGate && ((BlockFenceGate) block).getBlockFace().getAxis() != face.getAxis();
+    }
+
     default int getConnections() {
         return (((Block) this).getDamage() >> this.getConnectionShift()) & CONNECTION_MASK;
     }
@@ -64,17 +100,11 @@ public interface ConnectionBlock {
 
         int connections = 0;
         try {
-            if (this.canConnect(block.north())) {
-                connections |= CONNECTION_NORTH;
-            }
-            if (this.canConnect(block.east())) {
-                connections |= CONNECTION_EAST;
-            }
-            if (this.canConnect(block.south())) {
-                connections |= CONNECTION_SOUTH;
-            }
-            if (this.canConnect(block.west())) {
-                connections |= CONNECTION_WEST;
+            for (int i = 0; i < CONNECTION_FACES.length; i++) {
+                BlockFace face = CONNECTION_FACES[i];
+                if (this.canConnect(block.getSide(face), face)) {
+                    connections |= 1 << i;
+                }
             }
         } catch (LevelException ignore) {
             return false;

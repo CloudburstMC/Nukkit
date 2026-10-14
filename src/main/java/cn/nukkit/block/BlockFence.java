@@ -68,10 +68,10 @@ public class BlockFence extends BlockTransparentMeta implements ConnectionBlock 
     }
 
     protected AxisAlignedBB recalculateBoundingBox() {
-        boolean north = this.canConnect(this.north());
-        boolean south = this.canConnect(this.south());
-        boolean west = this.canConnect(this.west());
-        boolean east = this.canConnect(this.east());
+        boolean north = this.canConnect(this.north(), BlockFace.NORTH);
+        boolean south = this.canConnect(this.south(), BlockFace.SOUTH);
+        boolean west = this.canConnect(this.west(), BlockFace.WEST);
+        boolean east = this.canConnect(this.east(), BlockFace.EAST);
         double n = north ? 0 : 0.375;
         double s = south ? 1 : 0.625;
         double w = west ? 0 : 0.375;
@@ -96,9 +96,24 @@ public class BlockFence extends BlockTransparentMeta implements ConnectionBlock 
         return 20;
     }
 
+    /**
+     * @return true if the block is a fence this fence connects to
+     */
+    protected boolean isSameKind(Block block) {
+        return block instanceof BlockFence && !(block instanceof BlockFenceNetherBrick);
+    }
+
     @Override
     public boolean canConnect(Block block) {
-        return (block instanceof BlockFence && !(block instanceof BlockFenceNetherBrick) || block instanceof BlockFenceGate) || block.isSolid() && !block.isTransparent();
+        return this.isSameKind(block) || block instanceof BlockFenceGate || !(block instanceof BlockStairs) && block.isSolid() && !block.isTransparent();
+    }
+
+    @Override
+    public boolean canConnect(Block block, BlockFace face) {
+        if (block instanceof BlockStairs) {
+            return ConnectionBlock.connectsToStairs(block, face);
+        }
+        return this.isSameKind(block) || ConnectionBlock.connectsToGate(block, face) || block.isSolid() && !block.isTransparent();
     }
 
     @Override
