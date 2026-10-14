@@ -1,8 +1,11 @@
 package cn.nukkit.block;
 
+import cn.nukkit.Player;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemBlock;
 import cn.nukkit.item.ItemTool;
+import cn.nukkit.level.Level;
+import cn.nukkit.math.BlockFace;
 import cn.nukkit.math.AxisAlignedBB;
 import cn.nukkit.math.SimpleAxisAlignedBB;
 import cn.nukkit.utils.BlockColor;
@@ -11,7 +14,7 @@ import cn.nukkit.utils.BlockColor;
  * Created on 2015/12/7 by xtypr.
  * Package cn.nukkit.block in project Nukkit .
  */
-public class BlockFence extends BlockTransparentMeta {
+public class BlockFence extends BlockTransparentMeta implements ConnectionBlock {
 
     public static final int FENCE_OAK = 0;
     public static final int FENCE_SPRUCE = 1;
@@ -93,8 +96,36 @@ public class BlockFence extends BlockTransparentMeta {
         return 20;
     }
 
+    @Override
     public boolean canConnect(Block block) {
-        return (block instanceof BlockFence || block instanceof BlockFenceGate) || block.isSolid() && !block.isTransparent();
+        return (block instanceof BlockFence && !(block instanceof BlockFenceNetherBrick) || block instanceof BlockFenceGate) || block.isSolid() && !block.isTransparent();
+    }
+
+    @Override
+    public int getConnectionShift() {
+        return 3;
+    }
+
+    @Override
+    public int getConnectionTypeCount() {
+        return this.getId() == FENCE ? 6 : 1;
+    }
+
+    @Override
+    public boolean place(Item item, Block block, Block target, BlockFace face, double fx, double fy, double fz, Player player) {
+        this.updateConnections();
+        return super.place(item, block, target, face, fx, fy, fz, player);
+    }
+
+    @Override
+    public int onUpdate(int type) {
+        if (type == Level.BLOCK_UPDATE_NORMAL) {
+            if (this.updateConnections()) {
+                this.level.setBlock(this, this, true, false);
+            }
+            return type;
+        }
+        return 0;
     }
 
     @Override
@@ -118,7 +149,7 @@ public class BlockFence extends BlockTransparentMeta {
 
     @Override
     public Item toItem() {
-        return new ItemBlock(this, this.getDamage());
+        return new ItemBlock(this, this.getTypeDamage());
     }
 
     @Override

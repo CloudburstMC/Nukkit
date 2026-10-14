@@ -1,6 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.ConnectionBlock;
 import cn.nukkit.block.BlockWall;
 import cn.nukkit.block.custom.properties.BlockProperties;
 import cn.nukkit.block.properties.VanillaProperties;
@@ -82,6 +83,36 @@ public class GlobalBlockPalette {
         }
     }
 
+    /**
+     * The shipped palettes only contain the unconnected state of fences, glass panes and iron bars. In the current
+     * palette every connection state follows its unconnected state in the order of the connection bits. The old
+     * LevelDB palette has no connection states, so all of them are mapped to the unconnected state there.
+     */
+    private static void registerConnectionStates(BlockPalette blockPalette, boolean exact) {
+        for (int id = 0; id < Block.MAX_BLOCK_ID; id++) {
+            Block prototype = Block.getPrototype(id, 0);
+            if (!(prototype instanceof ConnectionBlock)) {
+                continue;
+            }
+
+            ConnectionBlock connectionBlock = (ConnectionBlock) prototype;
+            int shift = connectionBlock.getConnectionShift();
+
+            for (int type = 0; type < connectionBlock.getConnectionTypeCount(); type++) {
+                int runtimeId = blockPalette.getRuntimeId(id, type);
+
+                for (int connections = 0; connections <= ConnectionBlock.CONNECTION_MASK; connections++) {
+                    int data = type | (connections << shift);
+                    if (exact) {
+                        blockPalette.registerState(id, data, runtimeId + connections, true);
+                    } else {
+                        blockPalette.registerState(id, data, runtimeId, false);
+                    }
+                }
+            }
+        }
+    }
+
     private static void loadBlockStates(ListTag<CompoundTag> blockStates, BlockPalette blockPalette) {
         List<CompoundTag> stateOverloads = new ObjectArrayList<>();
         for (CompoundTag state : blockStates.getAll()) {
@@ -96,6 +127,7 @@ public class GlobalBlockPalette {
         }
 
         registerWallStates(blockPalette);
+        registerConnectionStates(blockPalette, blockPalette == getCurrentBlockPalette());
 
         blockPalette.lock(); // prevent adding new states
     }
