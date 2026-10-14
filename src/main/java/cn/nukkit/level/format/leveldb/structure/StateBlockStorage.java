@@ -20,6 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.IntPredicate;
 
 public class StateBlockStorage {
     private static final Logger log = LogManager.getLogger("LevelDB-Logger");
@@ -153,6 +154,15 @@ public class StateBlockStorage {
     public BlockStateSnapshot getBlockState(int x, int y, int z) {
         int index = ChunkBuilder.getSectionIndex(x, y, z);
         return this.stateFor(this.bitArray.get(index));
+    }
+
+    public boolean containsLegacyId(IntPredicate predicate) {
+        for (BlockStateSnapshot state : this.palette) {
+            if (predicate.test(state.getLegacyId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public BlockStateSnapshot getBlockState(int index) {

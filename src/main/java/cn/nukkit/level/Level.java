@@ -3226,6 +3226,12 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
         chunk.initChunk();
 
+        try {
+            ConnectionUpdater.onChunkLoaded(this, chunk);
+        } catch (Exception e) {
+            this.server.getLogger().logException(e);
+        }
+
         /*if (!chunk.isLightPopulated() && chunk.isPopulated()) {
             this.server.getScheduler().scheduleAsyncTask(new LightPopulationTask(this, chunk));
         }*/
