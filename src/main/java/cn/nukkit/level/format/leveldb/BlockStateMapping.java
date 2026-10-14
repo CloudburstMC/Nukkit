@@ -1,6 +1,8 @@
 package cn.nukkit.level.format.leveldb;
 
+import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
+import cn.nukkit.block.ConnectionBlock;
 import cn.nukkit.level.format.leveldb.structure.BlockStateSnapshot;
 import cn.nukkit.level.format.leveldb.updater.BlockStateUpdaterChunker;
 import cn.nukkit.level.format.leveldb.updater.BlockStateUpdaterVanilla;
@@ -21,7 +23,9 @@ import org.cloudburstmc.nbt.NbtMap;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import static cn.nukkit.level.format.leveldb.LevelDBConstants.PALETTE_VERSION;
@@ -106,6 +110,9 @@ public class BlockStateMapping {
     });
     private final int version;
 
+    private static volatile byte[] connectionShifts;
+    private final Map<Integer, BlockStateSnapshot> connectedStates = new ConcurrentHashMap<>();
+
     private LegacyStateMapper legacyMapper;
 
     private int defaultRuntimeId = -1;
@@ -138,6 +145,7 @@ public class BlockStateMapping {
     public void clearMapping() {
         this.runtime2State.clear();
         this.paletteMap.clear();
+        this.connectedStates.clear();
     }
 
     public BlockStateSnapshot getState(int legacyId, int data) {
@@ -146,7 +154,41 @@ public class BlockStateMapping {
             log.warn("Can not find state! No legacy2runtime mapping for " + legacyId + ":" + data);
             return this.getDefaultState();
         }
-        return this.getState(runtimeId);
+        BlockStateSnapshot state = this.getState(runtimeId);
+        int shift = getConnectionShift(legacyId);
+        if (shift >= 0 && ((data >> shift) & ConnectionBlock.CONNECTION_MASK) != 0) {
+            return this.getConnectedState(state, legacyId, data);
+        }
+        return state;
+    }
+
+    /**
+     * Fences, glass panes and iron bars have no connection states in the palette used to save chunks. The connections
+     * are kept in the state held in memory so that they are still there when the chunk is sent to a player again,
+     * while the state that is written to the disk stays the unconnected one.
+     */
+    private BlockStateSnapshot getConnectedState(BlockStateSnapshot base, int legacyId, int data) {
+        return this.connectedStates.computeIfAbsent(legacyId << Block.DATA_BITS | data, key -> BlockStateSnapshot.builder()
+                .version(base.getVersion())
+                .vanillaState(base.getVanillaState())
+                .runtimeId(base.getRuntimeId())
+                .custom(base.isCustom())
+                .legacyId(legacyId)
+                .legacyData(data)
+                .build());
+    }
+
+    private static int getConnectionShift(int legacyId) {
+        byte[] shifts = connectionShifts;
+        if (shifts == null) {
+            shifts = new byte[Block.MAX_BLOCK_ID];
+            for (int id = 0; id < shifts.length; id++) {
+                Block prototype = Block.getPrototype(id, 0);
+                shifts[id] = (byte) (prototype instanceof ConnectionBlock ? ((ConnectionBlock) prototype).getConnectionShift() : -1);
+            }
+            connectionShifts = shifts;
+        }
+        return legacyId >= 0 && legacyId < shifts.length ? shifts[legacyId] : -1;
     }
 
     public BlockStateSnapshot getState(int runtimeId) {
