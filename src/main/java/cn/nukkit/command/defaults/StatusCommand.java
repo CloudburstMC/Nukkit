@@ -34,11 +34,12 @@ public class StatusCommand extends VanillaCommand {
         }
 
         Server server = sender.getServer();
-        sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Server status" + TextFormat.GREEN + " ----");
+        cn.nukkit.lang.BaseLang lang = server.getLanguage();
+        sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + lang.translateString("nukkit.command.status.title") + TextFormat.GREEN + " ----");
 
         long time = System.currentTimeMillis() - Nukkit.START_TIME;
 
-        sender.sendMessage(TextFormat.GOLD + "Uptime: " + formatUptime(time));
+        sender.sendMessage(TextFormat.GOLD + lang.translateString("nukkit.command.status.uptime", formatUptime(time)));
 
         TextFormat tpsColor = TextFormat.GREEN;
         float tps = server.getTicksPerSecond();
@@ -48,15 +49,15 @@ public class StatusCommand extends VanillaCommand {
             tpsColor = TextFormat.GOLD;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "TPS / Average: " + tpsColor + NukkitMath.round(tps, 2) + " / " + NukkitMath.round(server.getTicksPerSecondAverage(), 2));
+        sender.sendMessage(TextFormat.GOLD + lang.translateString("nukkit.command.status.tps", new String[]{tpsColor + String.valueOf(NukkitMath.round(tps, 2)), tpsColor + String.valueOf(NukkitMath.round(server.getTicksPerSecondAverage(), 2))}, null));
 
-        sender.sendMessage(TextFormat.GOLD + "Load / Average: " + tpsColor + server.getTickUsage() + "% / " + server.getTickUsageAverage() * 100 + '%');
+        sender.sendMessage(TextFormat.GOLD + lang.translateString("nukkit.command.status.load", new String[]{tpsColor + String.valueOf(server.getTickUsage()) + "%", tpsColor + String.valueOf(server.getTickUsageAverage() * 100) + "%"}, null));
 
         //sender.sendMessage(TextFormat.GOLD + "Network upload: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getUpload() / 1024 * 1000), 2) + " kB/s");
 
         //sender.sendMessage(TextFormat.GOLD + "Network download: " + TextFormat.GREEN + NukkitMath.round((server.getNetwork().getDownload() / 1024 * 1000), 2) + " kB/s");
 
-        sender.sendMessage(TextFormat.GOLD + "Thread count: " + TextFormat.GREEN + Thread.getAllStackTraces().size());
+        sender.sendMessage(TextFormat.GOLD + lang.translateString("nukkit.command.status.threads", TextFormat.GREEN + String.valueOf(Thread.getAllStackTraces().size())));
 
 
         Runtime runtime = Runtime.getRuntime();
@@ -70,13 +71,13 @@ public class StatusCommand extends VanillaCommand {
             usageColor = TextFormat.GOLD;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Used memory: " + usageColor + usedMB + " MB (" + NukkitMath.round(usage, 2) + "%)");
+        sender.sendMessage(TextFormat.GOLD + lang.translateString("nukkit.command.status.memory.used", usageColor + String.valueOf(usedMB) + " MB (" + NukkitMath.round(usage, 2) + "%)"));
 
-        sender.sendMessage(TextFormat.GOLD + "Total memory: " + TextFormat.RED + totalMB + " MB");
+        sender.sendMessage(TextFormat.GOLD + lang.translateString("nukkit.command.status.memory.total", TextFormat.RED + String.valueOf(totalMB) + " MB"));
 
-        sender.sendMessage(TextFormat.GOLD + "Maximum VM memory: " + TextFormat.RED + maxMB + " MB");
+        sender.sendMessage(TextFormat.GOLD + lang.translateString("nukkit.command.status.memory.max", TextFormat.RED + String.valueOf(maxMB) + " MB"));
 
-        sender.sendMessage(TextFormat.GOLD + "Available processors: " + TextFormat.GREEN + runtime.availableProcessors());
+        sender.sendMessage(TextFormat.GOLD + lang.translateString("nukkit.command.status.processors", TextFormat.GREEN + String.valueOf(runtime.availableProcessors())));
 
 
         int players = server.getOnlinePlayersCount();
@@ -86,18 +87,19 @@ public class StatusCommand extends VanillaCommand {
             playerColor = TextFormat.GOLD;
         }
 
-        sender.sendMessage(TextFormat.GOLD + "Players: " + playerColor + players + TextFormat.GREEN + " online, " +
-                TextFormat.RED + server.getMaxPlayers() + TextFormat.GREEN + " max");
+        sender.sendMessage(TextFormat.GOLD + lang.translateString("nukkit.command.status.players",
+                new String[]{playerColor + String.valueOf(players) + TextFormat.GREEN,
+                TextFormat.RED + String.valueOf(server.getMaxPlayers()) + TextFormat.GREEN}, null));
 
         for (Level level : server.getLevels().values()) {
-            sender.sendMessage(
-                    TextFormat.GOLD + "World \"" + level.getFolderName() + '"' + (!Objects.equals(level.getFolderName(), level.getName()) ? " (" + level.getName() + ')' : "") + ": " +
-                            TextFormat.RED + level.getChunks().size() + TextFormat.GREEN + " chunks, " +
-                            TextFormat.RED + level.getEntities().length + TextFormat.GREEN + " entities, " +
-                            TextFormat.RED + level.getBlockEntities().size() + TextFormat.GREEN + " block entities." +
-                            " Time " + ((level.getTickRate() > 1 || level.getTickRateTime() > 40) ? TextFormat.RED : TextFormat.YELLOW) + NukkitMath.round(level.getTickRateTime(), 2) + "ms" +
-                            (level.getTickRate() > 1 ? " (tick rate " + level.getTickRate() + ')' : "")
-            );
+            sender.sendMessage(TextFormat.GOLD + lang.translateString("nukkit.command.status.world",
+                    level.getFolderName(),
+                    !Objects.equals(level.getFolderName(), level.getName()) ? " (" + level.getName() + ')' : "",
+                    TextFormat.RED + String.valueOf(level.getChunks().size()) + TextFormat.GREEN,
+                    TextFormat.RED + String.valueOf(level.getEntities().length) + TextFormat.GREEN,
+                    TextFormat.RED + String.valueOf(level.getBlockEntities().size()) + TextFormat.GREEN,
+                    ((level.getTickRate() > 1 || level.getTickRateTime() > 40) ? TextFormat.RED : TextFormat.YELLOW) + String.valueOf(NukkitMath.round(level.getTickRateTime(), 2)) + "ms",
+                    level.getTickRate() > 1 ? lang.translateString("nukkit.command.status.world.tickRate", String.valueOf(level.getTickRate())) : ""));
         }
 
         return true;
@@ -111,6 +113,10 @@ public class StatusCommand extends VanillaCommand {
         long minutes = TimeUnit.MILLISECONDS.toMinutes(uptime);
         uptime -= TimeUnit.MINUTES.toMillis(minutes);
         long seconds = TimeUnit.MILLISECONDS.toSeconds(uptime);
-        return String.format(UPTIME_FORMAT, days, hours, minutes, seconds);
+        return Server.getInstance().getLanguage().translateString("nukkit.command.status.uptime.format",
+                TextFormat.RED + String.valueOf(days) + TextFormat.GOLD,
+                TextFormat.RED + String.valueOf(hours) + TextFormat.GOLD,
+                TextFormat.RED + String.valueOf(minutes) + TextFormat.GOLD,
+                TextFormat.RED + String.valueOf(seconds) + TextFormat.GOLD);
     }
 }

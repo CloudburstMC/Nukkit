@@ -118,7 +118,7 @@ public class RakNetPlayerSession extends SimpleChannelInboundHandler<RakMessage>
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        this.disconnect("Disconnected from Server"); // TODO: timeout reason
+        this.disconnect(Server.getInstance().getLanguage().translateString("disconnectionScreen.disconnected")); // TODO: timeout reason
     }
 
     @Override

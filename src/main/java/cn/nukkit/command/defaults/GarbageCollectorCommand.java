@@ -43,11 +43,11 @@ public class GarbageCollectorCommand extends VanillaCommand {
 
         long freedMemory = Runtime.getRuntime().freeMemory() - memory;
 
-        sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + "Garbage collection result" + TextFormat.GREEN + " ----");
-        sender.sendMessage(TextFormat.GOLD + "Chunks: " + TextFormat.RED + chunksCollected);
-        sender.sendMessage(TextFormat.GOLD + "Entities: " + TextFormat.RED + entitiesCollected);
-        sender.sendMessage(TextFormat.GOLD + "Block Entities: " + TextFormat.RED + tilesCollected);
-        sender.sendMessage(TextFormat.GOLD + "Memory freed: " + TextFormat.RED + NukkitMath.round((freedMemory / 1024d / 1024d), 2) + " MB");
+        sender.sendMessage(TextFormat.GREEN + "---- " + TextFormat.WHITE + sender.getServer().getLanguage().translateString("nukkit.command.gc.title") + TextFormat.GREEN + " ----");
+        sender.sendMessage(TextFormat.GOLD + sender.getServer().getLanguage().translateString("nukkit.command.gc.chunks", TextFormat.RED + String.valueOf(chunksCollected)));
+        sender.sendMessage(TextFormat.GOLD + sender.getServer().getLanguage().translateString("nukkit.command.gc.entities", TextFormat.RED + String.valueOf(entitiesCollected)));
+        sender.sendMessage(TextFormat.GOLD + sender.getServer().getLanguage().translateString("nukkit.command.gc.blockEntities", TextFormat.RED + String.valueOf(tilesCollected)));
+        sender.sendMessage(TextFormat.GOLD + sender.getServer().getLanguage().translateString("nukkit.command.gc.memoryFreed", TextFormat.RED + String.valueOf(NukkitMath.round((freedMemory / 1024d / 1024d), 2)) + " MB"));
         return true;
     }
 }

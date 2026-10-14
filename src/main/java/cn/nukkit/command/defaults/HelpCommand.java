@@ -114,7 +114,7 @@ public class HelpCommand extends VanillaCommand {
                 }
             }
 
-            sender.sendMessage(TextFormat.RED + "No help for " + command.toString().toLowerCase(Locale.ROOT));
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%nukkit.command.help.noHelp", command.toString().toLowerCase(Locale.ROOT)));
             return true;
         }
     }

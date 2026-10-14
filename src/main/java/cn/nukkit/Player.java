@@ -443,7 +443,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     public void setBanned(boolean value) {
         if (value) {
             this.server.getNameBans().addBan(this.username, null, null, null);
-            this.kick(PlayerKickEvent.Reason.NAME_BANNED, "You are banned!");
+            this.kick(PlayerKickEvent.Reason.NAME_BANNED, this.server.getLanguage().translateString("nukkit.player.banned"));
         } else {
             this.server.getNameBans().remove(this.username);
         }
@@ -2661,14 +2661,14 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     protected void processLogin() {
         String lowerName = this.iusername;
         if (!this.server.isWhitelisted(lowerName)) {
-            this.kick(PlayerKickEvent.Reason.NOT_WHITELISTED, "Server is white-listed");
+            this.kick(PlayerKickEvent.Reason.NOT_WHITELISTED, this.server.getLanguage().translateString("disconnectionScreen.notAllowed"));
             return;
         } else if (this.isBanned()) {
             String reason = this.server.getNameBans().getEntires().get(lowerName).getReason();
-            this.kick(PlayerKickEvent.Reason.NAME_BANNED, "You are banned!" + (reason.isEmpty() ? "" : (" Reason: " + reason)));
+            this.kick(PlayerKickEvent.Reason.NAME_BANNED, reason.isEmpty() ? this.server.getLanguage().translateString("nukkit.player.banned") : this.server.getLanguage().translateString("nukkit.player.banned.reason", reason));
             return;
         } else if (this.server.getIPBans().isBanned(this.getAddress())) {
-            this.kick(PlayerKickEvent.Reason.IP_BANNED, "Your IP is banned!");
+            this.kick(PlayerKickEvent.Reason.IP_BANNED, this.server.getLanguage().translateString("nukkit.player.bannedIp"));
             return;
         }
 
@@ -5157,7 +5157,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             String message;
             if (isAdmin) {
                 if (!this.isBanned()) {
-                    message = "Kicked!" + (!reasonString.isEmpty() ? " Reason: " + reasonString : "");
+                    message = !reasonString.isEmpty() ? this.server.getLanguage().translateString("nukkit.player.kicked.reason", reasonString) : this.server.getLanguage().translateString("nukkit.player.kicked");
                 } else {
                     message = reasonString;
                 }

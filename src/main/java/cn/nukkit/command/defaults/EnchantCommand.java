@@ -70,7 +70,7 @@ public class EnchantCommand extends VanillaCommand {
         enchantment.setLevel(enchantLevel);
         Item item = player.getInventory().getItemInHand();
         if (item.getId() <= 0) {
-            sender.sendMessage(new TranslationContainer("commands.enchant.noItem"));
+            sender.sendMessage(new TranslationContainer("commands.enchant.noItem", player.getDisplayName()));
             return true;
         }
         item.addEnchantment(enchantment);

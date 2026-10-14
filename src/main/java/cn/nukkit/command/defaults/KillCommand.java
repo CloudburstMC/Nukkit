@@ -48,7 +48,7 @@ public class KillCommand extends VanillaCommand {
             Player player = sender.getServer().getPlayerExact(args[0]);
             if (player != null) {
                 if (player.isCreative() || player.isSpectator()) {
-                    sender.sendMessage(TextFormat.RED + "No targets matched selector");
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.noTargetMatch"));
                     return true;
                 }
                 if (resetHealth(player)) {
@@ -83,7 +83,7 @@ public class KillCommand extends VanillaCommand {
                 }
                 Player p = (Player) sender;
                 if (p.isCreative() || p.isSpectator()) {
-                    sender.sendMessage(TextFormat.RED + "No targets matched selector");
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.noTargetMatch"));
                     return true;
                 }
                 if (resetHealth(p)) {
@@ -121,7 +121,7 @@ public class KillCommand extends VanillaCommand {
             }
             Player player = (Player) sender;
             if (player.isCreative() || player.isSpectator()) {
-                sender.sendMessage(TextFormat.RED + "No targets matched selector");
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.noTargetMatch"));
                 return true;
             }
             if (resetHealth(player)) {

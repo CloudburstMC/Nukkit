@@ -74,12 +74,12 @@ public class GamemodeCommand extends VanillaCommand {
         }
 
         if (!((Player) target).setGamemode(gameMode)) {
-            sender.sendMessage("Game mode update for " + target.getName() + " failed");
+            sender.sendMessage(new TranslationContainer("nukkit.command.gamemode.failed", target.getName()));
         } else {
             if (target.equals(sender)) {
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.self", Server.getGamemodeString(gameMode)));
             } else {
-                target.sendMessage(new TranslationContainer("gameMode.changed"));
+                target.sendMessage(new TranslationContainer("gameMode.changed", Server.getGamemodeString(gameMode)));
                 Command.broadcastCommandMessage(sender, new TranslationContainer("commands.gamemode.success.other", target.getName(), Server.getGamemodeString(gameMode)));
             }
         }

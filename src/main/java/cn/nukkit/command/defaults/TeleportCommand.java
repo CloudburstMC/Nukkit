@@ -62,21 +62,21 @@ public class TeleportCommand extends VanillaCommand {
             if (args.length == 1) {
                 target = sender.getServer().getPlayerExact(args[0].replace("@s", sender.getName()));
                 if (target == null) {
-                    sender.sendMessage(TextFormat.RED + "Can't find player " + args[0]);
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
                     return true;
                 }
             }
         } else {
             target = sender.getServer().getPlayerExact(args[0].replace("@s", sender.getName()));
             if (target == null) {
-                sender.sendMessage(TextFormat.RED + "Can't find player " + args[0]);
+                sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
                 return true;
             }
             if (args.length == 2) {
                 origin = target;
                 target = sender.getServer().getPlayerExact(args[1].replace("@s", sender.getName()));
                 if (target == null) {
-                    sender.sendMessage(TextFormat.RED + "Can't find player " + args[1]);
+                    sender.sendMessage(new TranslationContainer(TextFormat.RED + "%commands.generic.player.notFound"));
                     return true;
                 }
             }

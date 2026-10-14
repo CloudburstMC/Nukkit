@@ -101,7 +101,7 @@ public class BanIpCommand extends VanillaCommand {
 
         for (Player player : sender.getServer().getOnlinePlayers().values()) {
             if (player.getAddress().equals(ip)) {
-                player.kick(PlayerKickEvent.Reason.IP_BANNED, !reason.isEmpty() ? reason : "IP banned", true);
+                player.kick(PlayerKickEvent.Reason.IP_BANNED, !reason.isEmpty() ? reason : sender.getServer().getLanguage().translateString("nukkit.player.bannedIp"), true);
             }
         }
     }
