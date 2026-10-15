@@ -191,6 +191,20 @@ public class BlockStateMapping {
         return legacyId >= 0 && legacyId < shifts.length ? shifts[legacyId] : -1;
     }
 
+    /**
+     * @return the state of the runtime id, null when there is none
+     */
+    BlockStateSnapshot peekState(int runtimeId) {
+        return this.runtime2State.get(runtimeId);
+    }
+
+    /**
+     * @return the runtime ids of all registered states
+     */
+    int[] getRuntimeIds() {
+        return this.runtime2State.keySet().toIntArray();
+    }
+
     public BlockStateSnapshot getState(int runtimeId) {
         BlockStateSnapshot state = this.runtime2State.get(runtimeId);
         if (state == null) {
