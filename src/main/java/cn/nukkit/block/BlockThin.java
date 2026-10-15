@@ -120,7 +120,7 @@ public abstract class BlockThin extends BlockTransparent implements ConnectionBl
 
     @Override
     public boolean canConnect(Block block) {
-        return block instanceof BlockThin
+        return block instanceof BlockThin || block instanceof BlockWall
                 || block instanceof BlockGlass || block instanceof BlockGlassStained || block instanceof BlockGlassTinted
                 || (!(block instanceof BlockStairs) && block.isSolid() && !block.isTransparent());
     }

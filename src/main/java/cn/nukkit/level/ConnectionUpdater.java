@@ -1,6 +1,7 @@
 package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
+import cn.nukkit.block.BlockWall;
 import cn.nukkit.block.ConnectionBlock;
 import cn.nukkit.level.format.ChunkSection;
 import cn.nukkit.level.format.generic.BaseFullChunk;
@@ -9,7 +10,8 @@ import cn.nukkit.level.format.leveldb.structure.LevelDBChunkSection;
 
 /**
  * The connections of fences, glass panes and iron bars are not saved with the chunk, because the palette used to
- * save chunks has no connection states. They are worked out again when a chunk is loaded.
+ * save chunks has no connection states. Walls do save theirs, but a world converted from the anvil format has none,
+ * so they are worked out again too. All of them are worked out when a chunk is loaded.
  */
 public final class ConnectionUpdater {
 
@@ -23,7 +25,11 @@ public final class ConnectionUpdater {
     }
 
     private static boolean isConnectionBlock(int id) {
-        return id > 0 && id < Block.MAX_BLOCK_ID && Block.getPrototype(id, 0) instanceof ConnectionBlock;
+        if (id <= 0 || id >= Block.MAX_BLOCK_ID) {
+            return false;
+        }
+        Block prototype = Block.getPrototype(id, 0);
+        return prototype instanceof ConnectionBlock || prototype instanceof BlockWall;
     }
 
     /**
@@ -35,7 +41,7 @@ public final class ConnectionUpdater {
             return;
         }
 
-        process((x, z) -> level.getProvider().getLoadedChunk(x, z), chunk,
+        process(level, (x, z) -> level.getProvider().getLoadedChunk(x, z), chunk,
                 (x, y, z, block) -> level.setBlock(x, y, z, block, true, false));
     }
 
@@ -54,8 +60,15 @@ public final class ConnectionUpdater {
     }
 
     public static void process(ChunkLookup lookup, BaseFullChunk chunk, BlockSender sender) {
+        process(null, lookup, chunk, sender);
+    }
+
+    /**
+     * @param level the level of the chunk, it is only given to the blocks that are worked out
+     */
+    public static void process(Level level, ChunkLookup lookup, BaseFullChunk chunk, BlockSender sender) {
         boolean wasChanged = chunk.hasChanged();
-        boolean changed = update(lookup, chunk, null, null);
+        boolean changed = update(level, lookup, chunk, null, null);
 
         if (changed && !wasChanged) {
             // The saved chunk does not depend on the connections, no need to write it again
@@ -65,7 +78,7 @@ public final class ConnectionUpdater {
         for (int[] side : SIDES) {
             BaseFullChunk neighbour = lookup.getLoadedChunk(chunk.getX() + side[0], chunk.getZ() + side[1]);
             if (neighbour instanceof LevelDBChunk) {
-                update(lookup, neighbour, chunk, sender);
+                update(level, lookup, neighbour, chunk, sender);
             }
         }
     }
@@ -76,7 +89,7 @@ public final class ConnectionUpdater {
      * @param sender when not null the changed blocks are sent to the players that have the chunk
      * @return true if a block changed
      */
-    private static boolean update(ChunkLookup lookup, BaseFullChunk chunk, BaseFullChunk border, BlockSender sender) {
+    private static boolean update(Level level, ChunkLookup lookup, BaseFullChunk chunk, BaseFullChunk border, BlockSender sender) {
         ChunkSection[] sections = ((LevelDBChunk) chunk).getSections();
         if (sections == null) {
             return false;
@@ -102,17 +115,24 @@ public final class ConnectionUpdater {
                             continue;
                         }
 
-                        Block block = Block.get(id, fullId & Block.DATA_MASK);
-                        ConnectionBlock connectionBlock = (ConnectionBlock) block;
                         int worldX = (chunk.getX() << 4) + x;
                         int worldY = baseY + y;
                         int worldZ = (chunk.getZ() << 4) + z;
-                        int connections = getConnections(lookup, chunk, connectionBlock, worldX, worldY, worldZ);
-                        if (connections == connectionBlock.getConnections()) {
-                            continue;
-                        }
+                        Block block = blockAt(level, id, fullId & Block.DATA_MASK, worldX, worldY, worldZ);
+                        if (block instanceof BlockWall) {
+                            if (!((BlockWall) block).autoConfigureState(
+                                    face -> getBlock(level, lookup, chunk, worldX + face.getXOffset(), worldY + face.getYOffset(), worldZ + face.getZOffset()))) {
+                                continue;
+                            }
+                        } else {
+                            ConnectionBlock connectionBlock = (ConnectionBlock) block;
+                            int connections = getConnections(lookup, chunk, connectionBlock, worldX, worldY, worldZ);
+                            if (connections == connectionBlock.getConnections()) {
+                                continue;
+                            }
 
-                        connectionBlock.setConnections(connections);
+                            connectionBlock.setConnections(connections);
+                        }
                         changed = true;
                         if (sender != null) {
                             sender.send(worldX, worldY, worldZ, block);
@@ -136,6 +156,28 @@ public final class ConnectionUpdater {
         } else {
             return z == 15;
         }
+    }
+
+    private static Block blockAt(Level level, int id, int meta, int x, int y, int z) {
+        Block block = Block.get(id, meta);
+        block.x = x;
+        block.y = y;
+        block.z = z;
+        block.level = level;
+        return block;
+    }
+
+    /**
+     * The block at a position, air when its chunk is not loaded: the blocks next to it are worked out again when
+     * that chunk is loaded.
+     */
+    private static Block getBlock(Level level, ChunkLookup lookup, BaseFullChunk chunk, int x, int y, int z) {
+        BaseFullChunk found = (x >> 4) == chunk.getX() && (z >> 4) == chunk.getZ() ? chunk : lookup.getLoadedChunk(x >> 4, z >> 4);
+        if (found == null || y < 0 || y > 255 + 320) {
+            return blockAt(level, Block.AIR, 0, x, y, z);
+        }
+        int fullId = found.getFullBlock(x & 15, y, z & 15, Block.LAYER_NORMAL);
+        return blockAt(level, fullId >> Block.DATA_BITS, fullId & Block.DATA_MASK, x, y, z);
     }
 
     private static int getConnections(ChunkLookup lookup, BaseFullChunk chunk, ConnectionBlock block, int x, int y, int z) {
