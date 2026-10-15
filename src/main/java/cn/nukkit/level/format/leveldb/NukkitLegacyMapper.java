@@ -9,6 +9,7 @@ import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,12 +56,13 @@ public class NukkitLegacyMapper implements LegacyStateMapper {
     }
 
     private static final Map<String, Integer> DOOR_IDS = new ConcurrentHashMap<>();
-    private static volatile Map<String, Integer> idsByName;
+    private static volatile Map<String, List<int[]>> mappedByName;
 
     /**
-     * Other states of the shipped palette have no legacy block either, for example a sideways wood block. They
-     * are given the block of a state of the same name, with the data of the default state, so that a wood block
-     * of the right kind is loaded instead of the default block of the palette.
+     * Other states of the shipped palette have no legacy block either, for example a sideways wood block or a stem
+     * that does not face north. They are given the legacy block of the state of the same name that has the most
+     * properties in common and a legacy block of its own, so that the right kind of block is loaded and as much of
+     * the state as possible is kept (the wood type, the growth of a stem) instead of the default block of the palette.
      */
     private static int siblingFullId(int runtimeId) {
         BlockStateSnapshot snapshot = BlockStateMapping.get().peekState(runtimeId);
@@ -68,24 +70,51 @@ public class NukkitLegacyMapper implements LegacyStateMapper {
             return -1;
         }
 
-        Integer id = getIdsByName().get(snapshot.getVanillaState().getString("name"));
-        return id == null ? -1 : id << Block.DATA_BITS;
+        NbtMap vanilla = snapshot.getVanillaState();
+        List<int[]> candidates = getMappedByName().get(vanilla.getString("name"));
+        if (candidates == null) {
+            return -1;
+        }
+
+        NbtMap states = vanilla.getCompound("states");
+        int best = -1;
+        int bestMatches = -1;
+        for (int[] candidate : candidates) {
+            BlockStateSnapshot other = BlockStateMapping.get().peekState(candidate[0]);
+            if (other == null) {
+                continue;
+            }
+
+            NbtMap otherStates = other.getVanillaState().getCompound("states");
+            int matches = 0;
+            for (Map.Entry<String, Object> entry : states.entrySet()) {
+                if (entry.getValue().equals(otherStates.get(entry.getKey()))) {
+                    matches++;
+                }
+            }
+            if (matches > bestMatches) {
+                bestMatches = matches;
+                best = candidate[1];
+            }
+        }
+        return best;
     }
 
-    private static Map<String, Integer> getIdsByName() {
-        Map<String, Integer> ids = idsByName;
-        if (ids == null) {
-            ids = new ConcurrentHashMap<>();
+    private static Map<String, List<int[]>> getMappedByName() {
+        Map<String, List<int[]>> mapped = mappedByName;
+        if (mapped == null) {
+            mapped = new ConcurrentHashMap<>();
             for (int runtimeId : BlockStateMapping.get().getRuntimeIds()) {
                 int fullId = GlobalBlockPalette.getLeveldbBlockPalette().getLegacyFullId(runtimeId);
                 BlockStateSnapshot snapshot = BlockStateMapping.get().peekState(runtimeId);
                 if (fullId != -1 && snapshot != null) {
-                    ids.putIfAbsent(snapshot.getVanillaState().getString("name"), fullId >> Block.DATA_BITS);
+                    mapped.computeIfAbsent(snapshot.getVanillaState().getString("name"), key -> new ArrayList<>())
+                            .add(new int[]{runtimeId, fullId});
                 }
             }
-            idsByName = ids;
+            mappedByName = mapped;
         }
-        return ids;
+        return mapped;
     }
 
     /**
