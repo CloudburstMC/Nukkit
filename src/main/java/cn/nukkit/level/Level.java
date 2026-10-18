@@ -216,7 +216,21 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     private final Map<Long, Set<Integer>> lightQueue = new ConcurrentHashMap<>(8, 0.9f, 1);
 
     private final ConcurrentMap<Long, Int2ObjectMap<Player>> chunkSendQueue = new ConcurrentHashMap<>();
-    private final LongSet chunkSendTasks = new LongOpenHashSet();
+    private final Long2ObjectOpenHashMap<ChunkSendTask> chunkSendTasks = new Long2ObjectOpenHashMap<>();
+
+    private static final class ChunkSendTask {
+        final BaseFullChunk chunk;
+        final long version;
+
+        ChunkSendTask(BaseFullChunk chunk) {
+            this.chunk = chunk;
+            this.version = chunk == null ? -1 : chunk.getNetworkVersion();
+        }
+
+        boolean isCurrent(BaseFullChunk current) {
+            return current != null && current == this.chunk && current.getNetworkVersion() == this.version;
+        }
+    }
 
     private final LongOpenHashSet chunkPopulationQueue = new LongOpenHashSet();
     private final LongOpenHashSet chunkPopulationLock = new LongOpenHashSet();
@@ -3080,7 +3094,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     }
 
     private void sendChunk(int x, int z, long index, DataPacket packet) {
-        if (this.chunkSendTasks.contains(index)) {
+        if (this.chunkSendTasks.containsKey(index)) {
             for (Player player : this.chunkSendQueue.get(index).values()) {
                 if (player.isConnected() && player.usedChunks.containsKey(index)) {
                     player.sendChunk(x, z, packet);
@@ -3094,13 +3108,13 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
 
     private void processChunkRequest() {
         for (long index : this.chunkSendQueue.keySet()) {
-            if (this.chunkSendTasks.contains(index)) {
+            if (this.chunkSendTasks.containsKey(index)) {
                 continue;
             }
             int x = getHashX(index);
             int z = getHashZ(index);
-            this.chunkSendTasks.add(index);
             BaseFullChunk chunk = getChunk(x, z);
+            this.chunkSendTasks.put(index, new ChunkSendTask(chunk));
             if (chunk != null) {
                 BatchPacket packet = chunk.getChunkPacket();
                 if (packet != null) {
@@ -3113,9 +3127,21 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
     }
 
     public void chunkRequestCallback(long timestamp, int x, int z, int subChunkCount, byte[] payload, long index) {
+        ChunkSendTask task = this.chunkSendTasks.get(index);
+        if (task == null) {
+            return;
+        }
+        BaseFullChunk chunk = this.getChunkIfLoaded(x, z);
+        if (!task.isCurrent(chunk)) {
+            // A neighbouring chunk may have fixed the pane/fence connections while this
+            // snapshot was being encoded. Sending it now would overwrite that update.
+            // Keep the waiting players queued and encode a fresh snapshot on the next tick.
+            this.chunkSendTasks.remove(index);
+            return;
+        }
+
         if (server.cacheChunks) {
             BatchPacket data = Player.getChunkCacheFromData(x, z, subChunkCount, payload, this.getDimension());
-            BaseFullChunk chunk = this.getChunkIfLoaded(x, z);
             if (chunk != null && chunk.getChanges() <= timestamp) {
                 chunk.setChunkPacket(data);
             }
@@ -3123,7 +3149,7 @@ public class Level implements ChunkManager, Metadatable, GeneratorTaskFactory {
             return;
         }
 
-        if (this.chunkSendTasks.contains(index)) {
+        if (this.chunkSendTasks.containsKey(index)) {
             for (Player player : this.chunkSendQueue.get(index).values()) {
                 if (player.isConnected() && player.usedChunks.containsKey(index)) {
                     player.sendChunk(x, z, subChunkCount, payload, this.getDimension());

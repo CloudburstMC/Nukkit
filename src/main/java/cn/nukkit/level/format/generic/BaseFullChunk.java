@@ -63,6 +63,9 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
 
     protected long changes;
 
+    // Unlike the disk dirty counter, this must not reset after saving a chunk.
+    private long networkVersion;
+
     protected boolean isInit;
 
     protected BatchPacket chunkPacket;
@@ -542,7 +545,16 @@ public abstract class BaseFullChunk implements FullChunk, ChunkManager {
     @Override
     public void setChanged() {
         this.changes++;
+        this.networkVersion++;
         this.chunkPacket = null;
+    }
+
+    /**
+     * Version of the in-memory chunk used to reject stale asynchronous network snapshots.
+     * Saving the chunk may reset {@link #getChanges()}, but must not reset this version.
+     */
+    public long getNetworkVersion() {
+        return this.networkVersion;
     }
 
     @Override
