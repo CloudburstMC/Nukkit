@@ -44,6 +44,7 @@ import cn.nukkit.item.custom.CustomItemManager;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.item.enchantment.mace.EnchantmentMace;
 import cn.nukkit.lang.TextContainer;
+import cn.nukkit.lang.ClientTranslationKeys;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.level.*;
 import cn.nukkit.level.format.FullChunk;
@@ -5245,7 +5246,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             pk.message = this.server.getLanguage().translateString(message, parameters);
         } else {
             pk.type = TextPacket.TYPE_TRANSLATION;
-            pk.message = this.server.getLanguage().translateString(message, parameters, "nukkit.");
+            String clientKey = ClientTranslationKeys.get(message);
+            pk.message = clientKey.equals(message) ? this.server.getLanguage().translateString(message, parameters, "nukkit.") : clientKey;
             for (int i = 0; i < parameters.length; i++) {
                 parameters[i] = this.server.getLanguage().translateString(parameters[i], parameters, "nukkit.");
             }
