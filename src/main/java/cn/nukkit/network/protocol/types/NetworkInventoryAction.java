@@ -264,10 +264,12 @@ public class NetworkInventoryAction {
                     Inventory inv = player.getWindowById(Player.ANVIL_WINDOW_ID);
 
                     if (!(inv instanceof AnvilInventory)) {
-                        // Hack: Fix beacon payment // TODO: Better fix
                         if ((inv = player.getWindowById(Player.BEACON_WINDOW_ID)) instanceof BeaconInventory) {
-                            ((BeaconInventory) inv).setMaterial();
-                            return null;
+                            if (this.inventorySlot != 0) {
+                                player.getServer().getLogger().debug(player.getName() + ": Unexpected beacon slot " + this.inventorySlot);
+                                return null;
+                            }
+                            return new BeaconItemAction(this.oldItem, this.newItem);
                         }
 
                         if (player.getWindowById(Player.SMITHING_WINDOW_ID) instanceof SmithingInventory) {

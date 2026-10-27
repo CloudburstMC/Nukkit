@@ -14,6 +14,7 @@ import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.network.protocol.ContainerClosePacket;
 import cn.nukkit.network.protocol.types.ContainerIds;
+import cn.nukkit.utils.MainLogger;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +90,16 @@ public class CraftingTransaction extends InventoryTransaction {
 
     public boolean canExecute() {
         this.recipe = source.getServer().getCraftingManager().matchRecipe(inputs, this.primaryOutput, this.secondaryOutputs);
-        return this.recipe != null && super.canExecute();
+        boolean valid = this.recipe != null && super.canExecute();
+
+        if (valid && primaryOutput != null && primaryOutput.hasCompoundTag() && !recipe.getResult().hasCompoundTag()) {
+            if (Nukkit.DEBUG > 1) {
+                MainLogger.getLogger().debug("CraftingTransaction did not expect nbt for " + recipe.getResult());
+            }
+            return false;
+        }
+
+        return valid;
     }
 
     protected boolean callExecuteEvent() {

@@ -9,6 +9,7 @@ import cn.nukkit.inventory.transaction.action.GrindstoneItemAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
+import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
 import lombok.Getter;
 
@@ -101,9 +102,33 @@ public class GrindstoneTransaction extends InventoryTransaction {
 
         Item ingredientOptional = ingredientItem != null ? ingredientItem : Item.get(Item.AIR);
 
-        return ingredientOptional.equals(grindstoneInventory.getIngredient(), true, true)
-                && equipmentItem.equals(grindstoneInventory.getEquipment(), true, true)
-                && outputItem.equals(grindstoneInventory.getResult(), true, true);
+        if (!ingredientOptional.equals(grindstoneInventory.getIngredient())) {
+            source.getServer().getLogger().debug("Ingredient");
+            return false;
+        }
+
+        if (!equipmentItem.equals(grindstoneInventory.getEquipment())) {
+            source.getServer().getLogger().debug("Equipment");
+            return false;
+        }
+
+        if (!outputItem.equals(grindstoneInventory.getResult())) {
+            source.getServer().getLogger().debug("Result");
+            return false;
+        }
+
+        CompoundTag a = this.equipmentItem.getNamedTag();
+        a = a == null ? new CompoundTag() : a.clone().remove("RepairCost").remove("ench");
+        CompoundTag b = this.outputItem.getNamedTag();
+        b = b == null ? new CompoundTag() : b.clone().remove("RepairCost");
+        if (!a.equals(b)) {
+            if (Nukkit.DEBUG > 1) {
+                source.getServer().getLogger().debug("NBT check failed: input=" + a + ", output=" + b);
+            }
+            return false;
+        }
+
+        return true;
     }
 
     @Override

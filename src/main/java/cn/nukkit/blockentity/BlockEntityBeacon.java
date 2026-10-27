@@ -7,7 +7,6 @@ import cn.nukkit.event.entity.EntityPotionEffectEvent;
 import cn.nukkit.inventory.BeaconInventory;
 import cn.nukkit.inventory.Inventory;
 import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemID;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelSoundEventPacket;
@@ -255,7 +254,6 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
     }
 
     private static final IntSet ALLOWED_EFFECTS = new IntOpenHashSet(new int[]{0, Effect.SPEED, Effect.HASTE, Effect.DAMAGE_RESISTANCE, Effect.JUMP, Effect.STRENGTH, Effect.REGENERATION});
-    private static final IntSet ITEMS = new IntOpenHashSet(new int[]{Item.AIR, ItemID.NETHERITE_INGOT, ItemID.EMERALD, ItemID.DIAMOND, ItemID.GOLD_INGOT, ItemID. IRON_INGOT});
 
     @Override
     public boolean updateCompoundTag(CompoundTag nbt, Player player) {
@@ -271,8 +269,7 @@ public class BlockEntityBeacon extends BlockEntitySpawnable {
                 return false;
             }
 
-            int material = ((BeaconInventory) inv).useMaterial();
-            if (!ITEMS.contains(material)) {
+            if (!BeaconInventory.ITEMS.contains(inv.getItemFast(0).getId())) {
                 Server.getInstance().getLogger().debug(player.getName() + " tried to set effect but there's no payment in beacon inventory");
                 return false;
             }

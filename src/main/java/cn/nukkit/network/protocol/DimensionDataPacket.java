@@ -34,6 +34,8 @@ public class DimensionDataPacket extends DataPacket {
             this.putVarInt(definition.getDimensionType());
             this.putUUID(definition.getPackId());
             this.putString(definition.getDefaultBiome());
+            this.putVarInt(definition.getCloudHeight());
+            this.putBoolean(definition.isRenderClouds());
         }
     }
 }

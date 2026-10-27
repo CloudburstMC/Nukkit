@@ -23,4 +23,12 @@ public class DimensionDefinition {
      * @since v2192
      */
     String defaultBiome;
+    /**
+     * @since v2223
+     */
+    int cloudHeight;
+    /**
+     * @since v2223
+     */
+    boolean renderClouds;
 }
