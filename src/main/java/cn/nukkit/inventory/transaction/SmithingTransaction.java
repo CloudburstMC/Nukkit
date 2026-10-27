@@ -11,6 +11,7 @@ import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.inventory.transaction.action.SmithingItemAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.List;
 
@@ -124,10 +125,38 @@ public class SmithingTransaction extends InventoryTransaction {
         Item ingredient = ingredientItem != null ? ingredientItem : air;
         Item template = templateItem != null ? templateItem : air;
 
-        return equipmentItem.equals(smithingInventory.getEquipment(), true, true)
-                && ingredient.equals(smithingInventory.getIngredient(), true, true)
-                && template.equals(smithingInventory.getTemplate(), true, true)
-                && outputItem.equals(smithingInventory.getResult(), true, true);
+        if (!equipmentItem.equals(smithingInventory.getEquipment())) {
+            source.getServer().getLogger().debug("Equipment");
+            return false;
+        }
+
+        if (!ingredient.equals(smithingInventory.getIngredient())) {
+            source.getServer().getLogger().debug("Ingredient");
+            return false;
+        }
+
+        if (!template.equals(smithingInventory.getTemplate())) {
+            source.getServer().getLogger().debug("Template");
+            return false;
+        }
+
+        if (!outputItem.equals(smithingInventory.getResult())) {
+            source.getServer().getLogger().debug("Output");
+            return false;
+        }
+
+        CompoundTag a = this.equipmentItem.getNamedTag();
+        a = a == null ? new CompoundTag() : a.clone().remove("Trim");
+        CompoundTag b = this.outputItem.getNamedTag();
+        b = b == null ? new CompoundTag() : b.clone().remove("Trim");
+        if (!a.equals(b)) {
+            if (Nukkit.DEBUG > 1) {
+                source.getServer().getLogger().debug("NBT check failed: input=" + a + ", output=" + b);
+            }
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -139,7 +168,7 @@ public class SmithingTransaction extends InventoryTransaction {
         }
 
         SmithingInventory inventory = (SmithingInventory) getSource().getWindowById(Player.SMITHING_WINDOW_ID);
-        SmithItemEvent event = new SmithItemEvent(inventory, this.equipmentItem, this.outputItem, this.ingredientItem, this.source);
+        SmithItemEvent event = new SmithItemEvent(inventory, this.equipmentItem, this.outputItem, this.ingredientItem, this.templateItem, this.source);
         this.source.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             this.sendInventories();
@@ -154,7 +183,6 @@ public class SmithingTransaction extends InventoryTransaction {
                 action.onExecuteFail(this.source);
             }
         }
-
 
         this.hasExecuted = true;
         return true;

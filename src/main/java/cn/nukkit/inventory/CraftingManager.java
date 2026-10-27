@@ -102,7 +102,9 @@ public class CraftingManager {
                                 String type = (String) ingredient.get("type");
                                 if (!"default".equals(type)) {
                                     if ("item_tag".equals(type)) {
-                                        buildShapelessRecipeItemTagOverrides(itemMapping, input, outputItem, (String) ingredient.get("itemTag"), null, null);
+                                        if ("crafting_table".equals(smeltingBlock)) {
+                                            buildShapelessRecipeItemTagOverrides(itemMapping, input, outputItem, (String) ingredient.get("itemTag"), null, null);
+                                        }
                                     } else if (Nukkit.DEBUG > 1) {
                                         MainLogger.getLogger().debug("Unknown shapeless ingredient type: " + recipe);
                                     }
@@ -133,19 +135,19 @@ public class CraftingManager {
                                 case "furnace":
                                     if (sorted.size() != 1) throw new IllegalArgumentException("Expected single input");
                                     this.registerRecipe(new FurnaceRecipe((String) recipe.get("id"), outputItem, sorted.get(0)));
-                                    break;
+                                    continue;
                                 case "blast_furnace":
                                     if (sorted.size() != 1) throw new IllegalArgumentException("Expected single input");
                                     this.registerRecipe(new BlastFurnaceRecipe((String) recipe.get("id"), outputItem, sorted.get(0)));
-                                    break;
+                                    continue;
                                 case "smoker":
                                     if (sorted.size() != 1) throw new IllegalArgumentException("Expected single input");
                                     this.registerRecipe(new SmokerRecipe((String) recipe.get("id"), outputItem, sorted.get(0)));
-                                    break;
+                                    continue;
                                 case "campfire":
                                     if (sorted.size() != 1) throw new IllegalArgumentException("Expected single input");
                                     this.registerRecipe(new CampfireRecipe(outputItem, sorted.get(0)));
-                                    break;
+                                    continue;
                                 default:
                                     this.registerRecipe(new ShapelessRecipe((String) recipe.get("id"), priority, outputItem, sorted));
                             }

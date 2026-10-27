@@ -5,6 +5,7 @@ import cn.nukkit.event.Cancellable;
 import cn.nukkit.event.HandlerList;
 import cn.nukkit.inventory.SmithingInventory;
 import cn.nukkit.item.Item;
+import lombok.Getter;
 
 public class SmithItemEvent extends InventoryEvent implements Cancellable {
 
@@ -14,32 +15,23 @@ public class SmithItemEvent extends InventoryEvent implements Cancellable {
         return handlers;
     }
 
+    @Getter
     private final Item oldItem;
+    @Getter
     private final Item newItem;
+    @Getter
     private final Item materialItem;
+    @Getter
+    private final Item templateItem;
+    @Getter
     private final Player player;
 
-    public SmithItemEvent(SmithingInventory inventory, Item oldItem, Item newItem, Item materialItem, Player player) {
+    public SmithItemEvent(SmithingInventory inventory, Item oldItem, Item newItem, Item materialItem, Item templateItem, Player player) {
         super(inventory);
         this.oldItem = oldItem;
         this.newItem = newItem;
         this.materialItem = materialItem;
+        this.templateItem = templateItem;
         this.player = player;
-    }
-
-    public Item getOldItem() {
-        return this.oldItem;
-    }
-
-    public Item getNewItem() {
-        return this.newItem;
-    }
-
-    public Item getMaterialItem() {
-        return this.materialItem;
-    }
-
-    public Player getPlayer() {
-        return this.player;
     }
 }

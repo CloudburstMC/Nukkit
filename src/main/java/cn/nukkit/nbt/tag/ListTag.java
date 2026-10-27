@@ -40,7 +40,7 @@ public class ListTag<T extends Tag> extends Tag {
         type = dis.readByte();
         int size = dis.readInt();
 
-        if (this.type == TAG_End) {
+        if (dis.isReadSafely() && Tag.newTag(type, null) instanceof EndTag) {
             this.list = new ArrayList<>();
             return;
         }

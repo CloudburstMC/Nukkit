@@ -118,6 +118,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 useItemOnEntityData.entityRuntimeId = this.getEntityRuntimeId();
                 useItemOnEntityData.actionType = this.getVarInt();
                 useItemOnEntityData.hotbarSlot = this.getVarInt();
+                useItemOnEntityData.hand = this.getByte();
                 useItemOnEntityData.itemInHand = this.getNetworkItemStackDescriptor();
                 useItemOnEntityData.playerPos = this.getVector3fAsVector3();
                 useItemOnEntityData.clickPos = this.getVector3fAsVector3();
@@ -131,6 +132,7 @@ public class InventoryTransactionPacket extends DataPacket {
                 releaseItemData.hotbarSlot = this.getVarInt();
                 releaseItemData.itemInHand = this.getNetworkItemStackDescriptor();
                 releaseItemData.headRot = this.getVector3fAsVector3();
+                releaseItemData.hand = this.getByte();
 
                 this.transactionData = releaseItemData;
                 break;
