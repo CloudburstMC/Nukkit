@@ -1,5 +1,6 @@
 import com.github.jengelman.gradle.plugins.shadow.transformers.Log4j2PluginsCacheFileTransformer
 import org.gradle.internal.impldep.org.junit.experimental.categories.Categories.CategoryFilter.exclude
+import org.gradle.internal.serialize.graph.codec
 
 @Suppress("DSL_SCOPE_VIOLATION") // https://youtrack.jetbrains.com/issue/IDEA-262280
 
@@ -23,8 +24,12 @@ repositories {
 }
 
 dependencies {
-    api(libs.network)
+    api(libs.nethernet)
+    api(libs.libdatachannel)
+    api(libs.bcpkix)
+    api(libs.bcprov)
     api(libs.epoll)
+    api(libs.netty.codec.http)
     api(libs.fastutil)
     api(libs.bundles.fastutilmaps)
     api(libs.guava)
@@ -60,7 +65,7 @@ dependencies {
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 

@@ -42,11 +42,11 @@ public class ConfigSection extends LinkedHashMap<String, Object> {
         if (map == null || map.isEmpty()) return;
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             if (entry.getValue() instanceof Map) {
-                super.put(entry.getKey(), new ConfigSection((Map<String, Object>) entry.getValue()));
+                super.put(String.valueOf(entry.getKey()), new ConfigSection((Map<String, Object>) entry.getValue()));
             } else if (entry.getValue() instanceof List) {
-                super.put(entry.getKey(), parseList((List) entry.getValue()));
+                super.put(String.valueOf(entry.getKey()), parseList((List) entry.getValue()));
             } else {
-                super.put(entry.getKey(), entry.getValue());
+                super.put(String.valueOf(entry.getKey()), entry.getValue());
             }
         }
     }
