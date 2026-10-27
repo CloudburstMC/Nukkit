@@ -26,4 +26,8 @@ public interface NetworkPlayerSession {
     default long getPing() {
         return -1;
     }
+
+    default void flush() {
+
+    }
 }
