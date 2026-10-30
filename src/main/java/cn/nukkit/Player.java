@@ -35,6 +35,7 @@ import cn.nukkit.form.window.FormWindow;
 import cn.nukkit.form.window.FormWindowCustom;
 import cn.nukkit.inventory.*;
 import cn.nukkit.inventory.transaction.*;
+import cn.nukkit.inventory.transaction.action.BeaconItemAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.data.ReleaseItemData;
 import cn.nukkit.inventory.transaction.data.UseItemData;
@@ -291,8 +292,6 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     private int riptideTicks;
     private int blockingDelay;
     private int fireworkBoostTicks;
-    private int fireworkBoostLevel;
-
     @Setter
     private boolean needSendData;
     private boolean needSendAdventureSettings;
@@ -381,8 +380,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
      */
     public void onFireworkBoost(int boostLevel) {
         this.lastFireworkBoost = this.server.getTick();
-        this.fireworkBoostLevel = boostLevel;
-        this.fireworkBoostTicks = boostLevel == 3 ? 44 : boostLevel == 2 ? 29 : 23;
+        this.fireworkBoostTicks = boostLevel == 3 ? 50 : boostLevel == 2 ? 40 : 30;
     }
 
     /**
@@ -1034,7 +1032,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         level = level == null ? this.level : level;
         long index = Level.chunkHash(x, z);
         if (this.usedChunks.containsKey(index)) {
-            for (Entity entity : level.getChunkEntities(x, z).values()) {
+            for (Entity entity : level.getChunkEntities(x, z, false).values()) {
                 if (entity != this) {
                     entity.despawnFrom(this);
                 }
@@ -1056,7 +1054,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             int chunkZ = Level.getHashZ(index);
             this.level.unregisterChunkLoader(this, chunkX, chunkZ);
 
-            for (Entity entity : level.getChunkEntities(chunkX, chunkZ).values()) {
+            for (Entity entity : level.getChunkEntities(chunkX, chunkZ, false).values()) {
                 if (entity != this) {
                     if (online) {
                         entity.despawnFrom(this);
@@ -2429,7 +2427,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
         if (this.fireworkBoostTicks > 0) {
             this.fireworkBoostTicks -= tickDiff;
 
-            double multiplier = 1 + 0.25 * (this.fireworkBoostLevel < 1 ? 0.25 : this.fireworkBoostLevel);
+            double multiplier = 1.25;
             this.setMotion(new Vector3(
                     -Math.sin(Math.toRadians(this.yaw)) * Math.cos(Math.toRadians(this.pitch)) * multiplier,
                     -Math.sin(Math.toRadians(this.pitch)) * multiplier,
@@ -3224,16 +3222,19 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 }
 
                 if (!authPacket.getBlockActionData().isEmpty()) {
-                    for (PlayerBlockActionData action : authPacket.getBlockActionData().values()) {
+                    for (PlayerBlockActionData action : authPacket.getBlockActionData()) {
                         BlockVector3 blockPos = action.getPosition();
                         BlockFace blockFace = BlockFace.fromIndex(action.getFacing());
+
+                        boolean startNewBreak = false;
                         if (this.lastBlockAction != null && this.lastBlockAction.getAction() == PlayerActionType.PREDICT_DESTROY_BLOCK &&
                                 action.getAction() == PlayerActionType.CONTINUE_DESTROY_BLOCK) {
                             this.onBlockBreakStart(blockPos, blockFace);
+                            startNewBreak = true;
                         }
 
                         BlockVector3 lastBreakPos = this.lastBlockAction == null ? null : this.lastBlockAction.getPosition();
-                        if (lastBreakPos != null && (lastBreakPos.getX() != blockPos.getX() ||
+                        if (!startNewBreak && lastBreakPos != null && (lastBreakPos.getX() != blockPos.getX() ||
                                 lastBreakPos.getY() != blockPos.getY() || lastBreakPos.getZ() != blockPos.getZ())) {
                             this.onBlockBreakAbort(lastBreakPos, BlockFace.DOWN);
                             this.onBlockBreakStart(blockPos, blockFace);
@@ -4157,6 +4158,10 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     }
 
                     actions.add(a);
+
+                    if (a instanceof BeaconItemAction) {
+                        transactionPacket.isRepairItemPart = false;
+                    }
                 }
 
                 if (transactionPacket.isCraftingPart) {

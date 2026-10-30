@@ -152,6 +152,7 @@ public class StartGamePacket extends DataPacket {
         this.putVarInt(this.editorWorldType);
         this.putBoolean(false); // isCreatedInEditor
         this.putBoolean(false); // isExportedFromEditor
+        this.putByte((byte) 0); // EditorLevelMigrationVersion
         this.putVarInt(this.dayCycleStopTime);
         this.putUnsignedVarInt(this.eduEditionOffer);
         this.putBoolean(this.hasEduFeaturesEnabled);

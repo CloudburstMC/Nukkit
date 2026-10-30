@@ -29,7 +29,7 @@ public class PlayerAuthInputPacket extends DataPacket {
     private AuthInteractionModel interactionModel;
     private long tick;
     private Vector3f delta;
-    private final Map<PlayerActionType, PlayerBlockActionData> blockActionData = new EnumMap<>(PlayerActionType.class);
+    private final List<PlayerBlockActionData> blockActionData = new ArrayList<>();
     private long predictedVehicle;
     private Vector2f analogMoveVector = EMPTY_VECTOR2F;
     private Vector2f vehicleRotation = EMPTY_VECTOR2F;
@@ -51,6 +51,10 @@ public class PlayerAuthInputPacket extends DataPacket {
         this.headYaw = this.getLFloat();
 
         int len = (int) this.getUnsignedVarInt();
+        if (len > AuthInputAction.size()) {
+            throw new IllegalArgumentException("Too many AuthInputActions");
+        }
+
         for (int i = 0; i < len; i++) {
             this.inputData.add(AuthInputAction.from(this.getVarInt()));
         }
@@ -87,10 +91,7 @@ public class PlayerAuthInputPacket extends DataPacket {
                     case CRACK_BLOCK:
                     case PREDICT_DESTROY_BLOCK:
                     case CONTINUE_DESTROY_BLOCK:
-                        this.blockActionData.put(type, new PlayerBlockActionData(type, this.getSignedBlockPosition(), this.getVarInt()));
-                        break;
-                    default:
-                        throw new IllegalStateException("Unexpected " + type);
+                        this.blockActionData.add(new PlayerBlockActionData(type, this.getSignedBlockPosition(), this.getVarInt()));
                 }
             }
         }
