@@ -63,7 +63,7 @@ public class Achievement {
             return false;
         }
 
-        String translation = TextFormat.WHITE + Server.getInstance().getLanguage().translateString("chat.type.achievement", player.getDisplayName(), TextFormat.GREEN + "[" + achievements.get(achievementId).message + "]", null);
+        String translation = TextFormat.WHITE + Server.getInstance().getLanguage().translateString("chat.type.achievement", player.getDisplayName(), TextFormat.GREEN + "[" + achievements.get(achievementId).getTranslatedMessage() + "]", null);
 
         if (Server.getInstance().announceAchievements) {
             Server.getInstance().broadcastMessage(translation);
@@ -105,10 +105,24 @@ public class Achievement {
     }
 
     /**
+     * @return the name of the achievement in the language of the server, the english name if it is not translated
+     */
+    public String getTranslatedMessage() {
+        for (java.util.Map.Entry<String, Achievement> entry : achievements.entrySet()) {
+            if (entry.getValue() == this) {
+                String key = "achievement." + entry.getKey();
+                String translated = Server.getInstance().getLanguage().get(key);
+                return key.equals(translated) ? this.message : translated;
+            }
+        }
+        return this.message;
+    }
+
+    /**
      * Broadcasts achievement get message
      */
     public void broadcast(Player player) {
-        String translation = TextFormat.WHITE + Server.getInstance().getLanguage().translateString("chat.type.achievement", player.getDisplayName(), TextFormat.GREEN + "[" + this.message + "]", null);
+        String translation = TextFormat.WHITE + Server.getInstance().getLanguage().translateString("chat.type.achievement", player.getDisplayName(), TextFormat.GREEN + "[" + this.getTranslatedMessage() + "]", null);
 
         if (Server.getInstance().announceAchievements) {
             Server.getInstance().broadcastMessage(translation);

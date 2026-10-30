@@ -51,7 +51,7 @@ public class BanCommand extends VanillaCommand {
 
         Player player = sender.getServer().getPlayerExact(name);
         if (player != null) {
-            player.kick(PlayerKickEvent.Reason.NAME_BANNED, (reason.length() > 0) ? "You are banned! Reason: " + reason : "You are banned!", true);
+            player.kick(PlayerKickEvent.Reason.NAME_BANNED, (reason.length() > 0) ? sender.getServer().getLanguage().translateString("nukkit.player.banned.reason", reason) : sender.getServer().getLanguage().translateString("nukkit.player.banned"), true);
         }
 
         Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.ban.success", player != null ? player.getName() : name));

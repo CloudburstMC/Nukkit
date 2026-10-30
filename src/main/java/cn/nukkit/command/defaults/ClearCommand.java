@@ -6,6 +6,7 @@ import cn.nukkit.command.Command;
 import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
+import cn.nukkit.item.Item;
 import cn.nukkit.lang.TranslationContainer;
 import cn.nukkit.utils.TextFormat;
 
@@ -52,8 +53,24 @@ public class ClearCommand extends VanillaCommand {
         }
 
         for (Player player : targets) {
+            int removed = 0;
+            for (Item item : player.getInventory().getContents().values()) {
+                if (item != null && item.getId() != Item.AIR) {
+                    removed += item.getCount();
+                }
+            }
+            for (Item item : player.getInventory().getArmorContents()) {
+                if (item != null && item.getId() != Item.AIR) {
+                    removed += item.getCount();
+                }
+            }
+            for (Item item : player.getOffhandInventory().getContents().values()) {
+                if (item != null && item.getId() != Item.AIR) {
+                    removed += item.getCount();
+                }
+            }
             player.getInventory().clearAll();
-            Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.clear.success", player.getName()));
+            Command.broadcastCommandMessage(sender, new TranslationContainer("%commands.clear.success", player.getName(), String.valueOf(removed)));
         }
 
         return false;

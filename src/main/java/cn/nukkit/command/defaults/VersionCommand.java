@@ -65,20 +65,20 @@ public class VersionCommand extends VanillaCommand {
 
             if (found[0]) {
                 PluginDescription desc = exactPlugin[0].getDescription();
-                sender.sendMessage(TextFormat.DARK_GREEN + desc.getName() + TextFormat.WHITE + " version " + TextFormat.DARK_GREEN + desc.getVersion());
+                sender.sendMessage(TextFormat.WHITE + sender.getServer().getLanguage().translateString("nukkit.command.version.plugin", new String[]{TextFormat.DARK_GREEN + desc.getName() + TextFormat.WHITE, TextFormat.DARK_GREEN + desc.getVersion()}, null));
                 if (desc.getDescription() != null) {
                     sender.sendMessage(desc.getDescription());
                 }
                 if (desc.getWebsite() != null) {
-                    sender.sendMessage("Website: " + desc.getWebsite());
+                    sender.sendMessage(sender.getServer().getLanguage().translateString("nukkit.command.version.website", desc.getWebsite()));
                 }
                 List<String> authors = desc.getAuthors();
                 final String[] authorsString = {""};
                 authors.forEach((s) -> authorsString[0] += s);
                 if (authors.size() == 1) {
-                    sender.sendMessage("Author: " + authorsString[0]);
+                    sender.sendMessage(sender.getServer().getLanguage().translateString("nukkit.command.version.author", authorsString[0]));
                 } else if (authors.size() >= 2) {
-                    sender.sendMessage("Authors: " + String.join(", ", authors));
+                    sender.sendMessage(sender.getServer().getLanguage().translateString("nukkit.command.version.authors", String.join(", ", authors)));
                 }
             } else {
                 sender.sendMessage(new TranslationContainer("nukkit.command.version.noSuchPlugin"));

@@ -6,6 +6,7 @@ import cn.nukkit.command.CommandSender;
 import cn.nukkit.command.data.CommandParamType;
 import cn.nukkit.command.data.CommandParameter;
 import cn.nukkit.lang.TranslationContainer;
+import cn.nukkit.utils.TextFormat;
 import cn.nukkit.level.Level;
 import cn.nukkit.level.format.generic.Anvil2LevelDBConverter;
 import cn.nukkit.level.format.leveldb.LevelDBProvider;
@@ -33,7 +34,7 @@ public class ConvertCommand extends VanillaCommand {
         }
 
         if (sender instanceof Player) {
-            sender.sendMessage("§cThis command can be used only via console");
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%nukkit.command.world.convert.consoleOnly"));
             return true;
         }
 
@@ -45,22 +46,22 @@ public class ConvertCommand extends VanillaCommand {
         String worldName = String.join(" ", args);
         Level level = Server.getInstance().getLevelByName(worldName);
         if (level == null) {
-            sender.sendMessage("Unknown level: " + worldName);
+            sender.sendMessage(new TranslationContainer("nukkit.command.world.convert.unknownLevel", worldName));
             return true;
         }
 
         if (level.getProvider() instanceof LevelDBProvider) {
-            sender.sendMessage(worldName + " is already in LevelDB format");
+            sender.sendMessage(new TranslationContainer("nukkit.command.world.convert.alreadyLevelDB", worldName));
             return true;
         }
 
         if (!level.getPlayers().isEmpty()) {
-            sender.sendMessage(worldName + " has players in it! Make sure the world is not used while it's being converted");
+            sender.sendMessage(new TranslationContainer("nukkit.command.world.convert.hasPlayers", worldName));
             return true;
         }
 
         if (CONVERSION_IN_PROGRESS.contains(worldName)) {
-            sender.sendMessage(worldName + " is already being converted");
+            sender.sendMessage(new TranslationContainer("nukkit.command.world.convert.inProgress", worldName));
             return true;
         }
 
@@ -69,7 +70,7 @@ public class ConvertCommand extends VanillaCommand {
         Anvil2LevelDBConverter converter = new Anvil2LevelDBConverter(level);
         converter.convert().whenComplete((ignore, error) -> {
            if (error != null) {
-               sender.sendMessage("Error during conversion!");
+               sender.sendMessage(new TranslationContainer("nukkit.command.world.convert.error"));
                Server.getInstance().getLogger().logException(error);
            }
 

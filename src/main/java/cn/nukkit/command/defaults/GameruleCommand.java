@@ -14,7 +14,7 @@ import java.util.*;
 public class GameruleCommand extends VanillaCommand {
 
     public GameruleCommand(String name) {
-        super(name, "%nukkit.command.gamerule.description", "%commands.gamerule.usage");
+        super(name, "%nukkit.command.gamerule.description", "%nukkit.command.gamerule.usage");
         this.setPermission("nukkit.command.gamerule");
         this.commandParameters.clear();
 
@@ -101,7 +101,7 @@ public class GameruleCommand extends VanillaCommand {
             case 1:
                 Optional<GameRule> gameRule = GameRule.parseString(args[0]);
                 if (!gameRule.isPresent() || !rules.hasRule(gameRule.get())) {
-                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule", args[0]));
+                    sender.sendMessage(new TranslationContainer("commands.generic.syntax", "/gamerule", args[0], ""));
                     return true;
                 }
 

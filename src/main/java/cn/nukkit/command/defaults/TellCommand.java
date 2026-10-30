@@ -54,7 +54,7 @@ public class TellCommand extends VanillaCommand {
             msg.append(args[i]).append(' ');
         }
         if (msg.length() > 512) {
-            sender.sendMessage(TextFormat.RED + "The message is too long");
+            sender.sendMessage(new TranslationContainer(TextFormat.RED + "%nukkit.command.tell.tooLong"));
             return true;
         } else if (msg.length() > 0) {
             msg = new StringBuilder(msg.substring(0, msg.length() - 1));
