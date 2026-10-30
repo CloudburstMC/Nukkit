@@ -141,26 +141,26 @@ public class BlockLeaves extends BlockTransparentMeta {
     }
 
     public boolean isCheckDecay() {
-        return (this.getDamage() & 0x08) != 0;
+        return (this.getDamage() & 0x04) != 0;
     }
 
     public void setCheckDecay(boolean checkDecay) {
         if (checkDecay) {
-            this.setDamage(this.getDamage() | 0x08);
+            this.setDamage(this.getDamage() | 0x04);
         } else {
-            this.setDamage(this.getDamage() & -9);
+            this.setDamage(this.getDamage() & -5);
         }
     }
 
     public boolean isPersistent() {
-        return (this.getDamage() & 0x04) != 0;
+        return (this.getDamage() & 0x08) != 0;
     }
 
     public void setPersistent(boolean persistent) {
         if (persistent) {
-            this.setDamage(this.getDamage() | 0x04);
+            this.setDamage(this.getDamage() | 0x08);
         } else {
-            this.setDamage(this.getDamage() & -5);
+            this.setDamage(this.getDamage() & -9);
         }
     }
 
