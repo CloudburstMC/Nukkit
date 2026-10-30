@@ -2,15 +2,11 @@ package cn.nukkit.level;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockID;
-import cn.nukkit.nbt.tag.CompoundTag;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMaps;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import lombok.Data;
 import lombok.extern.log4j.Log4j2;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @Data
 @Log4j2
@@ -19,7 +15,6 @@ public class BlockPalette {
     private final int protocol;
     private final Int2IntMap legacyToRuntimeId = new Int2IntOpenHashMap();
     private final Int2IntMap runtimeIdToLegacy = new Int2IntOpenHashMap();
-    private final Map<CompoundTag, Integer> stateToLegacy = new HashMap<>();
     private volatile boolean locked;
 
     public BlockPalette(int protocol) {
@@ -32,12 +27,6 @@ public class BlockPalette {
         this.locked = false;
         this.legacyToRuntimeId.clear();
         this.runtimeIdToLegacy.clear();
-        this.stateToLegacy.clear();
-    }
-
-    public void registerState(int blockId, int data, int runtimeId, CompoundTag blockState) {
-        this.registerState(blockId, data, runtimeId);
-        this.stateToLegacy.putIfAbsent(blockState, blockId << Block.DATA_BITS | data);
     }
 
     public void registerState(int blockId, int data, int runtimeId) {
@@ -86,10 +75,6 @@ public class BlockPalette {
 
     public int getLegacyFullId(int runtimeId) {
         return this.runtimeIdToLegacy.get(runtimeId);
-    }
-
-    public int getLegacyFullId(CompoundTag state) {
-        return this.stateToLegacy.getOrDefault(state, -1);
     }
 
     public Int2IntMap getLegacyToRuntimeIdMap() {

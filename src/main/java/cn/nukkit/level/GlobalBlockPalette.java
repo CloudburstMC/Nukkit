@@ -142,12 +142,7 @@ public class GlobalBlockPalette {
             return false;
         }
 
-        CompoundTag vanillaState = state
-                .remove("id")
-                .remove("data")
-                .remove("runtimeId")
-                .remove("stateOverload");
-        blockPalette.registerState(id, data, runtimeId, vanillaState);
+        blockPalette.registerState(id, data, runtimeId);
         return true;
     }
 

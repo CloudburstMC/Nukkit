@@ -5668,7 +5668,7 @@
         {
             "id": "minecraft:chorus_plant",
             "groupId": 48,
-            "block_state_b64": "CgAAAwgAYmxvY2tfaWTwAAAACAQAbmFtZRYAbWluZWNyYWZ0OmNob3J1c19wbGFudAQJAG5hbWVfaGFzaJhSrmNGKwaMAwoAbmV0d29ya19pZA3uVqMKBgBzdGF0ZXMAAwcAdmVyc2lvbiE8FQEA"
+            "block_state_b64": "CgAAAwgAYmxvY2tfaWTwAAAACAQAbmFtZRYAbWluZWNyYWZ0OmNob3J1c19wbGFudAQJAG5hbWVfaGFzaJhSrmNGKwaMAwoAbmV0d29ya19pZKaLSyQKBgBzdGF0ZXMBGQBtaW5lY3JhZnQ6Y29ubmVjdGlvbl9kb3duAAEZAG1pbmVjcmFmdDpjb25uZWN0aW9uX2Vhc3QAARoAbWluZWNyYWZ0OmNvbm5lY3Rpb25fbm9ydGgAARoAbWluZWNyYWZ0OmNvbm5lY3Rpb25fc291dGgAARcAbWluZWNyYWZ0OmNvbm5lY3Rpb25fdXAAARkAbWluZWNyYWZ0OmNvbm5lY3Rpb25fd2VzdAAAAwcAdmVyc2lvbiE8FQEA"
         },
         {
             "id": "minecraft:chorus_fruit",

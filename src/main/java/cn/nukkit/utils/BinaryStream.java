@@ -277,8 +277,6 @@ public class BinaryStream {
     public void putSkin(Skin skin) {
         this.putString(skin.getSkinId());
 
-        this.putString(skin.getPlayFabId());
-
         this.putString(skin.getSkinResourcePatch());
         this.putImage(skin.getSkinData());
 
@@ -364,8 +362,6 @@ public class BinaryStream {
     public Skin getSkin() {
         Skin skin = new Skin();
         skin.setSkinId(this.getString());
-
-        skin.setPlayFabId(this.getString());
 
         skin.setSkinResourcePatch(this.getString());
         skin.setSkinData(this.getImage());
