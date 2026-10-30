@@ -17,6 +17,7 @@ public class AnimatePacket extends DataPacket {
     public float data;
     @Deprecated
     public float rowingTime;
+    public int hand;
 
     @Override
     public void decode() {
@@ -29,6 +30,7 @@ public class AnimatePacket extends DataPacket {
         if (this.getBoolean()) {
             this.getString(); // Swing source
         }
+        this.hand = this.getByte();
     }
 
     @Override
@@ -38,6 +40,7 @@ public class AnimatePacket extends DataPacket {
         this.putEntityRuntimeId(this.eid);
         this.putLFloat(this.data);
         this.putBoolean(false); // Swing source (optional)
+        this.putByte((byte) this.hand);
     }
 
     @Override

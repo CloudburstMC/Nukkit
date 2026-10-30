@@ -27,6 +27,7 @@ public class LevelChunkPacket extends DataPacket {
     public int subChunkLimit;
     public long[] blobIds = EMPTY_long;
     public byte[] data;
+    public boolean clientBiomeUpdate;
 
     @Override
     public void decode() {
@@ -56,6 +57,9 @@ public class LevelChunkPacket extends DataPacket {
         for (long blobId : blobIds) {
             this.putLLong(blobId);
         }
+
         this.putByteArray(this.data);
+
+        this.putBoolean(this.clientBiomeUpdate);
     }
 }

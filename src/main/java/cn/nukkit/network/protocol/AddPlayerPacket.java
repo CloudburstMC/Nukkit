@@ -75,6 +75,7 @@ public class AddPlayerPacket extends DataPacket {
         this.putLFloat(1.0f); // getVerticalFlySpeed()
         this.putLFloat(0.05f); // getWalkSpeed()
         this.putUnsignedVarInt(0); // Entity links
+        this.putBoolean(false); // PassengerBlockData not present
         this.putString(deviceId);
         this.putLInt(buildPlatform);
     }

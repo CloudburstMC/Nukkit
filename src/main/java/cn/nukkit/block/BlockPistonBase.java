@@ -108,6 +108,11 @@ public abstract class BlockPistonBase extends BlockSolidMeta implements Faceable
     }
 
     private void checkState() {
+        // Don't create new piston head from the update it created when broken
+        if (this.level.getBlockIdAt((int) this.x, (int) this.y, (int) this.z) != this.getId()) {
+            return;
+        }
+
         BlockFace facing = getFacing();
         boolean isPowered = this.isPowered();
         boolean extended = isExtended();
