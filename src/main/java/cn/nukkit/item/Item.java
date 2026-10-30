@@ -25,6 +25,7 @@ import cn.nukkit.utils.material.MaterialType;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import it.unimi.dsi.fastutil.io.FastByteArrayInputStream;
 import lombok.Data;
 
 import java.io.IOException;
@@ -741,7 +742,7 @@ public class Item implements Cloneable, BlockID, ItemID, ProtocolInfo {
 
     public static CompoundTag parseCompoundTag(byte[] tag) {
         try {
-            return NBTIO.read(tag, ByteOrder.LITTLE_ENDIAN);
+            return NBTIO.readSafely(new FastByteArrayInputStream(tag), ByteOrder.LITTLE_ENDIAN, false);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

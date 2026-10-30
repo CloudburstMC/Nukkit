@@ -10,6 +10,7 @@ import cn.nukkit.inventory.transaction.action.LoomItemAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
 import cn.nukkit.item.Item;
 import cn.nukkit.item.ItemID;
+import cn.nukkit.nbt.tag.CompoundTag;
 
 import java.util.List;
 
@@ -67,7 +68,6 @@ public class LoomTransaction extends InventoryTransaction {
         }
 
         int patternCount = outputItem.getNamedTag().getList("Patterns").size();
-
         if (patternCount > 6) {
             return false;
         }
@@ -77,7 +77,19 @@ public class LoomTransaction extends InventoryTransaction {
             return false;
         }
 
-        return banner.getNamedTag().getList("Patterns").size() + 1 == patternCount;
+        CompoundTag a = banner.getNamedTag();
+        a = a == null ? new CompoundTag() : a.clone().remove("Patterns");
+        CompoundTag b = this.outputItem.getNamedTag();
+        b = b == null ? new CompoundTag() : b.clone().remove("Patterns");
+        if (!a.equals(b)) {
+            if (Nukkit.DEBUG > 1) {
+                source.getServer().getLogger().debug("NBT check failed: input=" + a + ", output=" + b);
+            }
+            return false;
+        }
+
+        CompoundTag nbt = banner.getNamedTag();
+        return (nbt == null ? 0 : nbt.getList("Patterns").size()) + 1 == patternCount;
     }
 
     @Override

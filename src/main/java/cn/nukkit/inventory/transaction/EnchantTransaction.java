@@ -8,10 +8,7 @@ import cn.nukkit.inventory.Inventory;
 import cn.nukkit.inventory.transaction.action.EnchantingAction;
 import cn.nukkit.inventory.transaction.action.InventoryAction;
 import cn.nukkit.inventory.transaction.action.SlotChangeAction;
-import cn.nukkit.item.Item;
-import cn.nukkit.item.ItemArmor;
-import cn.nukkit.item.ItemBookEnchanted;
-import cn.nukkit.item.ItemTool;
+import cn.nukkit.item.*;
 import cn.nukkit.item.enchantment.Enchantment;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.types.NetworkInventoryAction;
@@ -49,16 +46,18 @@ public class EnchantTransaction extends InventoryTransaction {
         EnchantInventory eInv = (EnchantInventory) inv;
         if (!getSource().isCreative()) {
             if (this.cost < 1) {
-                return false;
+                return false; // Not set yet
             } else {
                 Item reagent = eInv.getReagentSlot();
-                if (reagent.count < this.cost || !reagent.equals(Item.get(Item.DYE, 4), true, false)) {
+                if (reagent.count < this.cost || !reagent.equals(Item.get(Item.DYE, ItemDye.LAPIS_LAZULI))) {
+                    source.getServer().getLogger().debug("Lapis count");
                     return false;
                 }
             }
         }
 
-        if (this.outputItem == null || this.outputItem.isNull() || this.inputItem == null || this.inputItem.isNull()) {
+        if (this.outputItem == null || this.outputItem.isNull() || this.inputItem == null || this.inputItem.isNull() ||
+                (!source.isCreative() && (this.materialItem == null || this.materialItem.isNull()))) {
             return false;
         }
 
@@ -78,10 +77,27 @@ public class EnchantTransaction extends InventoryTransaction {
             }
         }
 
-        return this.inputItem.equals(eInv.getInputSlot(), true, true)
-                && (this.inputItem.getId() == this.outputItem.getId() || (this.inputItem.getId() == Item.BOOK && this.outputItem.getId() == Item.ENCHANTED_BOOK))
-                && (this.inputItem.getCount() == this.outputItem.getCount() || (this.outputItem.getId() == Item.ENCHANTED_BOOK && this.outputItem.getCount() == 1)
-                && validateNBT());
+        if (!this.inputItem.equals(eInv.getInputSlot())) { // Note: input slot is also the output slot
+            source.getServer().getLogger().debug("Input");
+            return false;
+        }
+
+        if (this.inputItem.getId() != this.outputItem.getId() && !(this.inputItem.getId() == Item.BOOK && this.outputItem.getId() == Item.ENCHANTED_BOOK)) {
+            source.getServer().getLogger().debug("Item");
+            return false;
+        }
+
+        if (this.inputItem.getCount() != this.outputItem.getCount() && !(this.inputItem.getId() == Item.BOOK && this.outputItem.getId() == Item.ENCHANTED_BOOK && this.outputItem.getCount() == 1)) {
+            source.getServer().getLogger().debug("Count");
+            return false;
+        }
+
+        if (!(source.isCreative() && this.materialItem == null) && !this.materialItem.equals(eInv.getReagentSlot())) {
+            source.getServer().getLogger().debug("Material");
+            return false;
+        }
+
+        return this.validateNBT();
     }
 
     private boolean validateNBT() {
@@ -101,7 +117,7 @@ public class EnchantTransaction extends InventoryTransaction {
             return false;
         }
 
-        IntOpenHashSet added = new IntOpenHashSet(4, 1);
+        IntOpenHashSet added = new IntOpenHashSet(8, 0.99f);
         for (Enchantment e : enchantments) {
             if (e.isTreasure()) {
                 source.getServer().getLogger().debug("Illegal treasure enchantment: " + e.getId());

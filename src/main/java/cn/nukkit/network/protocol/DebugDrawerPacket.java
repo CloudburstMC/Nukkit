@@ -53,7 +53,7 @@ public class DebugDrawerPacket extends DataPacket {
 
             if (shape.getAttachedToEntityId() != null) {
                 putBoolean(true);
-                putUnsignedVarLong(shape.getAttachedToEntityId());
+                putVarLong(shape.getAttachedToEntityId());
             } else putBoolean(false);
 
             putUnsignedVarInt(toPayloadType(shape.getType()));

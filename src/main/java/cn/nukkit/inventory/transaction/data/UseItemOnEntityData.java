@@ -16,4 +16,5 @@ public class UseItemOnEntityData implements TransactionData {
     public Item itemInHand;
     public Vector3 playerPos;
     public Vector3 clickPos;
+    public int hand;
 }
