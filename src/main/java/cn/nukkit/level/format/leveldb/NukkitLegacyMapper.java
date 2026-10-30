@@ -2,13 +2,17 @@ package cn.nukkit.level.format.leveldb;
 
 import cn.nukkit.block.Block;
 import cn.nukkit.level.GlobalBlockPalette;
+import cn.nukkit.level.format.leveldb.structure.BlockStateSnapshot;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.nbt.NbtUtils;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class NukkitLegacyMapper implements LegacyStateMapper {
 
@@ -44,7 +48,113 @@ public class NukkitLegacyMapper implements LegacyStateMapper {
 
     @Override
     public int runtimeToFullId(int runtimeId) {
-        return GlobalBlockPalette.getLeveldbBlockPalette().getLegacyFullId(runtimeId);
+        int fullId = GlobalBlockPalette.getLeveldbBlockPalette().getLegacyFullId(runtimeId);
+        if (fullId == -1) {
+            fullId = doorFullId(runtimeId);
+        }
+        return fullId != -1 ? fullId : siblingFullId(runtimeId);
+    }
+
+    private static final Map<String, Integer> DOOR_IDS = new ConcurrentHashMap<>();
+    private static volatile Map<String, List<int[]>> mappedByName;
+
+    /**
+     * Other states of the shipped palette have no legacy block either, for example a sideways wood block or a stem
+     * that does not face north. They are given the legacy block of the state of the same name that has the most
+     * properties in common and a legacy block of its own, so that the right kind of block is loaded and as much of
+     * the state as possible is kept (the wood type, the growth of a stem) instead of the default block of the palette.
+     */
+    private static int siblingFullId(int runtimeId) {
+        BlockStateSnapshot snapshot = BlockStateMapping.get().peekState(runtimeId);
+        if (snapshot == null) {
+            return -1;
+        }
+
+        NbtMap vanilla = snapshot.getVanillaState();
+        List<int[]> candidates = getMappedByName().get(vanilla.getString("name"));
+        if (candidates == null) {
+            return -1;
+        }
+
+        NbtMap states = vanilla.getCompound("states");
+        int best = -1;
+        int bestMatches = -1;
+        for (int[] candidate : candidates) {
+            BlockStateSnapshot other = BlockStateMapping.get().peekState(candidate[0]);
+            if (other == null) {
+                continue;
+            }
+
+            NbtMap otherStates = other.getVanillaState().getCompound("states");
+            int matches = 0;
+            for (Map.Entry<String, Object> entry : states.entrySet()) {
+                if (entry.getValue().equals(otherStates.get(entry.getKey()))) {
+                    matches++;
+                }
+            }
+            if (matches > bestMatches) {
+                bestMatches = matches;
+                best = candidate[1];
+            }
+        }
+        return best;
+    }
+
+    private static Map<String, List<int[]>> getMappedByName() {
+        Map<String, List<int[]>> mapped = mappedByName;
+        if (mapped == null) {
+            mapped = new ConcurrentHashMap<>();
+            for (int runtimeId : BlockStateMapping.get().getRuntimeIds()) {
+                int fullId = GlobalBlockPalette.getLeveldbBlockPalette().getLegacyFullId(runtimeId);
+                BlockStateSnapshot snapshot = BlockStateMapping.get().peekState(runtimeId);
+                if (fullId != -1 && snapshot != null) {
+                    mapped.computeIfAbsent(snapshot.getVanillaState().getString("name"), key -> new ArrayList<>())
+                            .add(new int[]{runtimeId, fullId});
+                }
+            }
+            mappedByName = mapped;
+        }
+        return mapped;
+    }
+
+    /**
+     * The shipped palette has no legacy block for part of the door states, for example the top half of a door that
+     * faces south, so the door was loaded as the default block and showed up as a missing block. The door halves
+     * are given the data the game gives them itself: the facing and the open bit for the bottom half, the
+     * hinge for the top half.
+     */
+    private static int doorFullId(int runtimeId) {
+        BlockStateSnapshot snapshot = BlockStateMapping.get().peekState(runtimeId);
+        if (snapshot == null) {
+            return -1;
+        }
+
+        NbtMap vanilla = snapshot.getVanillaState();
+        String name = vanilla.getString("name");
+        NbtMap states = vanilla.getCompound("states");
+        if (!name.endsWith("_door") || !states.containsKey("direction") || !states.containsKey("upper_block_bit")) {
+            return -1;
+        }
+
+        Integer id = DOOR_IDS.computeIfAbsent(name, key -> {
+            NbtMapBuilder base = states.toBuilder();
+            base.putInt("direction", 0);
+            base.putByte("door_hinge_bit", (byte) 0);
+            base.putByte("open_bit", (byte) 0);
+            base.putByte("upper_block_bit", (byte) 0);
+            BlockStateSnapshot lower = BlockStateMapping.get().getStateUnsafe(vanilla.toBuilder().putCompound("states", base.build()).build());
+            int baseFullId = lower == null ? -1 : GlobalBlockPalette.getLeveldbBlockPalette().getLegacyFullId(lower.getRuntimeId());
+            return baseFullId == -1 ? -1 : baseFullId >> Block.DATA_BITS;
+        });
+        if (id == -1) {
+            return -1;
+        }
+
+        boolean top = states.getByte("upper_block_bit") != 0;
+        int data = top
+                ? 0x08 | (states.getByte("door_hinge_bit") != 0 ? 0x01 : 0)
+                : (states.getInt("direction") & 0x03) | (states.getByte("open_bit") != 0 ? 0x04 : 0);
+        return id << Block.DATA_BITS | data;
     }
 
     @Override

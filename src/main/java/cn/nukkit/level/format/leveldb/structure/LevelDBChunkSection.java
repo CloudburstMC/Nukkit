@@ -1,5 +1,6 @@
 package cn.nukkit.level.format.leveldb.structure;
 
+import java.util.function.IntPredicate;
 import cn.nukkit.Server;
 import cn.nukkit.block.Block;
 import cn.nukkit.block.BlockLayer;
@@ -52,6 +53,13 @@ public class LevelDBChunkSection implements ChunkSection {
             return this.storages[layer.ordinal()] = new StateBlockStorage();
         }
         return storage;
+    }
+
+    public boolean containsLegacyId(IntPredicate predicate) {
+        synchronized (this.storages) {
+            StateBlockStorage storage = this.storages.length > 0 ? this.storages[0] : null;
+            return storage != null && storage.containsLegacyId(predicate);
+        }
     }
 
     @Override

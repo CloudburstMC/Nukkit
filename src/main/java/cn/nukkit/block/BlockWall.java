@@ -22,6 +22,7 @@ import cn.nukkit.utils.Faceable;
 import java.util.EnumMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * @author MagicDroidX
@@ -200,6 +201,15 @@ public class BlockWall extends BlockTransparentMeta implements BlockPropertiesHe
     }
 
     public boolean autoConfigureState() {
+        return this.autoConfigureState(side -> this.getSide(side));
+    }
+
+    /**
+     * @param sides gives the block next to this one on the given side, UP included, so that the connections of a
+     *              wall can also be worked out from a chunk that is not part of a loaded level yet
+     * @return true if the block data changed
+     */
+    public boolean autoConfigureState(Function<BlockFace, Block> sides) {
         if (!this.canStoreConnections()) {
             return false;
         }
@@ -208,14 +218,14 @@ public class BlockWall extends BlockTransparentMeta implements BlockPropertiesHe
 
         this.setWallPost(true);
 
-        Block above = this.up();
+        Block above = sides.apply(BlockFace.UP);
 
         for (BlockFace blockFace : HORIZONTAL_FACES) {
-            Block side = this.getSide(blockFace);
+            Block side = sides.apply(blockFace);
             if (this.canConnect(side)) {
                 this.connect(blockFace, above, false);
             } else {
-                this.disconnect(blockFace);
+                this.setConnection(blockFace, WallConnectionType.NONE);
             }
         }
 
