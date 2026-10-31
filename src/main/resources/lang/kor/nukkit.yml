@@ -1,100 +1,103 @@
-# Nukkit용 고급 구성 파일
-# 이 설정들 중 일부는 안전하지만, 다른 것들은 잘못 수정되면 서버를 미작동하게 할 수 있습니다.
-# 새로운 설정/기본은 업그레이드할 때 이 파일에 자동으로 나타나지 않습니다
+# Nukkit의 고급 구성 파일
+# 안전한 설정도 있고 잘못 수정하면 서버를 손상시킬 수 있는 설정도 있습니다
+# 새 설정/기본값은 업그레이드할 때 이 파일에 자동으로 나타나지 않습니다
 
 settings:
  #다국어 설정
- #사용 가능: eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, cze
+ #사용 가능한 언어: eng, chs, cht, jpn, rus, spa, pol, bra, kor, ukr, deu, ltu, idn, cze, tur, fin
  language: "kor"
- #모든 문자열을 서버 로캘로 번역해 전송하거나 기기가 처리할 수 있게 할지 여부
+ #모든 문자열을 서버 로캘로 번역하여 전송할지, 아니면 기기가 처리할 수 있게 할지 여부
  force-language: false
  shutdown-message: "Server closed"
- #Query를 통한 플러그인 목록 보기를 허용합니다
+ #Query를 통한 플러그인 목록 표시 허용
  query-plugins: true
- #플러그인이 사용되지 않는 API 메서드를 사용할 때 콘솔 메시지를 표시합니다
+ #플러그인이 지원 중단된 API 메서드를 사용할 때 콘솔 메시지 표시
  deprecated-verbose: true
- #AsyncTask Works의 개수
- #auto로 설정하면, 자동으로 코어의 개수를 감지하려고 시도합니다(최소 4개)
+ #AsyncTask 작업자 수
+ #auto로 설정하면 코어 수를 감지하려고 합니다(최소 4개)
  async-workers: auto
 
 network:
- #일괄 처리 패킷에 대한 임곗값(바이트)입니다. 이 패킷들만 압축됩니다
- #모두 압축하려면 0으로 설정하고, 비활성화하려면 -1으로 설정하세요
+ #일괄 처리 패킷의 임곗값(바이트)입니다. 이 패킷만 압축됩니다
+ #모두 압축하려면 0으로 설정하고, 사용하지 않으려면 -1로 설정합니다
  batch-threshold: 256
- #일괄 처리된 패킷을 전송할 때 Zlib에 사용되는 압축 수준입니다. 높을수록 더 많은 CPU 사용량으로, 적은 대역폭을 사용합니다
+ #일괄 처리된 패킷을 전송할 때 Zlib에 사용되는 압축 수준입니다. 높을수록 CPU 사용량이 많아지지만 대역폭 사용량은 적어집니다
  compression-level: 5
- #Enable high performance packet compression using Snappy (experimental)
+ #Snappy를 사용한 고성능 패킷 압축 사용(실험적)
  compression-use-snappy: false
- #Enable network encryption
+ #네트워크 암호화 사용
  encryption: true
 
 debug:
- #1보다 크면, 콘솔에 디버그 메시지를 표시합니다
+ #> 1이면 콘솔에 디버그 메시지를 표시합니다
  level: 1
 
 level-settings:
- #레벨이 생성될 때 사용할 기본 포맷
- default-format: mcregion
- #1초당 20틱을 유지하기 위해 자동으로 레벨의 틱을 변경합니다
+ #레벨이 만들어질 때 사용할 기본 형식
+ default-format: leveldb
+ #1초당 20틱을 유지하기 위해 레벨 틱 속도를 자동으로 변경
  auto-tick-rate: true
  auto-tick-rate-limit: 20
- #기본 틱을 설정합니다 (1 = 1초당 20틱, 2 = 1초당 10틱, 등등.)
+ #기본 틱 속도 설정(1 = 1초당 20틱, 2 = 1초당 10틱 등)
  base-tick-rate: 1
- #다른 설정들이 이를 허용하지 않더라도 모든 플레이어를 틱 처리합니다
+ #다른 설정이 이를 허용하지 않더라도 모든 플레이어를 틱 처리
  always-tick-players: false
 
 chunk-sending:
- #플레이어에게 틱 당 보낼 청크의 양
+ #플레이어에게 틱당 전송되는 청크의 양
  per-tick: 4
- #플레이어를 생성하기 전에 보내져야 할 청크의 양
+ #플레이어를 생성하기 전에 전송되어야 하는 청크의 양
  spawn-threshold: 56
- #빠른 전송을 위해 메모리에 직렬화된 청크의 복사본을 저장합니다
+ #빠른 전송을 위해 메모리에 청크의 직렬화된 복사본 저장
  #많은 플레이어가 동시에 참여하는 대부분 정적인 세계에서 유용합니다
  cache-chunks: false
 
 chunk-ticking:
- #각 틱 당 처리될 청크의 최대량
+ #각 틱마다 처리되는 청크의 최대량
  per-tick: 40
- #플레이어 주변의 틱 처리할 청크의 범위
+ #플레이어 주변의 틱 처리할 청크의 반지름
  tick-radius: 3
  clear-tick-list: false
 
 chunk-generation:
- #대기열에 있는 생성 대기 중인 청크의 최대량
+ #대기열에 있는 생성될 청크의 최대량
  queue-size: 8
- #대기열에 있는 채울 대기 중인 청크의 최대량
+ #대기열에 있는 채워질 청크의 최대량
  population-queue-size: 8
 
 leveldb:
- #Use native LevelDB implementation for better performance
+ #더 좋은 성능을 위해 네이티브 LevelDB 구현 사용
  use-native: false
- #Set LevelDB memory cache size
+ #LevelDB 메모리 캐시 크기 설정
  cache-size-mb: 80
 
 ticks-per:
+ #server.properties에서 auto-save=on일 때 세계와 플레이어 데이터가 저장되는 빈도
  autosave: 6000
 
 player:
- #true로 설정하면, 플레이어 데이터가 players/플레이어 이름.dat으로 저장됩니다
- #false로 설정하면, Nukkit이 플레이어 데이터를 "dat" 파일로 저장하지 않으므로 플러그인에서 무언가를 수행할 수 있습니다.
+ #true면 플레이어 데이터가 players/플레이어 이름.dat으로 저장됩니다
+ #false면 Nukkit에서 플러그인이 플레이어 데이터에 대해 작업을 수행할 수 있도록 플레이어 데이터를 "dat" 파일로 저장하지 않습니다.
  save-player-data: true
- #The time between skin change action in seconds, set to 0 if you dont want the cooldown
+ #스킨 변경 작업 간 시간(초)입니다. 대기 시간을 원하지 않으면 0으로 설정합니다
  skin-change-cooldown: 15
- 
+ #개체를 공격하면 달리기가 초기화됩니다. 여기에서 사용하지 않도록 설정할 수 있습니다
+ attack-stop-sprint: true
+
 aliases:
  #명령어의 별칭
  #예:
- # showtheversion: version
- # savestop: [save-all, stop]
+ #showtheversion: version
+ #savestop: [save-all, stop]
 
 worlds:
- #Worlds that the server will use. Options are specific to the chosen generator, and may result in broken generation or
- #be ignored completely.
+ #서버에서 사용할 세계입니다. 옵션은 선택한 생성기에 한하며 생성 고장을 초래하거나
+ #완전히 무시될 수 있습니다.
  world:
   #seed: 404
   generator: normal
-  options:
+  #options:
  nether:
   #seed: my_cool_nether_seed
   generator: nether
-  options:
+  #options:
