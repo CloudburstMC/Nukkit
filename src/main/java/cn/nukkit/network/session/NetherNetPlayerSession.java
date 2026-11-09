@@ -4,6 +4,7 @@ import cn.nukkit.Player;
 import cn.nukkit.Server;
 import cn.nukkit.network.CompressionProvider;
 import cn.nukkit.network.NetherNetInterface;
+import cn.nukkit.network.Network;
 import cn.nukkit.network.protocol.BatchPacket;
 import cn.nukkit.network.protocol.DataPacket;
 import cn.nukkit.network.protocol.DisconnectPacket;
@@ -22,21 +23,27 @@ import org.apache.logging.log4j.message.FormattedMessage;
 import org.cloudburstmc.netty.channel.TransportDisconnectReason;
 import org.cloudburstmc.netty.channel.nethernet.NetherNetChannel;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
+import java.net.ProtocolException;
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 @Log4j2
 public class NetherNetPlayerSession extends SimpleChannelInboundHandler<Object> implements NetworkPlayerSession {
 
-    private final NetherNetInterface server;
+    private static final int MAX_INBOUND_PACKETS = 2048;
+    private static final int MAX_INBOUND_BYTES = 8 * 1024 * 1024;
+    private static final int MAX_PACKETS_PER_TICK = 128;
+
+    private final Supplier<Network> network;
     @Getter
     private final Channel channel;
 
-    private final Queue<DataPacket> inbound = PlatformDependent.newSpscQueue();
+    private final Queue<DataPacket> inbound = new ArrayDeque<>();
+    private int inboundBytes;
     private final Queue<DataPacket> outbound = PlatformDependent.newMpscQueue();
 
     private Player player;
@@ -47,15 +54,21 @@ public class NetherNetPlayerSession extends SimpleChannelInboundHandler<Object> 
     private CompressionProvider compressionOut;
     private boolean compressionInitialized;
 
-    public NetherNetPlayerSession(NetherNetInterface server, Channel channel) {
-        this.server = server;
+    public NetherNetPlayerSession(NetherNetInterface source, Channel channel) {
+        this(source::getNetwork, channel);
+    }
+
+    private NetherNetPlayerSession(Supplier<Network> network, Channel channel) {
+        this.network = network;
         this.channel = channel;
         this.compressionIn = this.compressionOut = CompressionProvider.NONE;
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) {
-        this.disconnect("Channel Inactive");
+        this.stopReceiving("Channel Inactive");
+        this.outbound.clear();
+        ctx.fireChannelInactive();
     }
 
     @Override
@@ -67,11 +80,9 @@ public class NetherNetPlayerSession extends SimpleChannelInboundHandler<Object> 
 
     @Override
     public void disconnect(String reason) {
-        if (this.disconnectReason != null) {
+        if (!this.stopReceiving(reason)) {
             return;
         }
-
-        this.disconnectReason = reason;
 
         // Give it a short time to make sure cancel message is delivered
         this.channel.eventLoop().schedule(() -> this.channel.close(), 5, TimeUnit.MILLISECONDS);
@@ -154,8 +165,11 @@ public class NetherNetPlayerSession extends SimpleChannelInboundHandler<Object> 
     }
 
     public void serverTick() {
-        DataPacket packet;
-        while ((packet = this.inbound.poll()) != null) {
+        for (int i = 0; i < MAX_PACKETS_PER_TICK; i++) {
+            DataPacket packet = this.pollInbound();
+            if (packet == null) {
+                return;
+            }
             try {
                 this.player.handleDataPacket(packet);
             } catch (Throwable e) {
@@ -223,10 +237,6 @@ public class NetherNetPlayerSession extends SimpleChannelInboundHandler<Object> 
     }
 
     @Override
-    public void setEncryption(SecretKey encryptionKey, Cipher encryptionCipher, Cipher decryptionCipher) {
-    }
-
-    @Override
     public long getPing() {
         if (this.channel instanceof NetherNetChannel ch) {
             try {
@@ -239,37 +249,67 @@ public class NetherNetPlayerSession extends SimpleChannelInboundHandler<Object> 
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, Object msg) {
-        if (!(msg instanceof ByteBuf)) {
+        if (this.disconnectReason != null || !(msg instanceof ByteBuf buffer)) {
             return;
         }
-
-        ByteBuf buffer = (ByteBuf) msg;
-        int len = buffer.readableBytes();
-        if (len > 12582912) {
-            Server.getInstance().getLogger().error("Received too big packet: " + len);
-            if (this.player != null) {
-                this.player.close("Too big packet");
-            }
-            return;
-        }
-
-        boolean prefixed = this.compressionInitialized;
-
-        CompressionProvider compressionIn = this.compressionIn;
-
-        if (prefixed) {
-            compressionIn = CompressionProvider.byPrefix(buffer.readByte());
-        }
-
-        byte[] packetBuffer = new byte[buffer.readableBytes()];
-
-        buffer.readBytes(packetBuffer);
 
         try {
-            this.server.getNetwork().processBatch(packetBuffer, this.inbound, compressionIn);
+            if (!buffer.isReadable() || buffer.readableBytes() > MAX_INBOUND_BYTES) {
+                throw new ProtocolException("Invalid batch size");
+            }
+
+            CompressionProvider compression = this.compressionInitialized ? CompressionProvider.byPrefix(buffer.readByte()) : this.compressionIn;
+            if (!buffer.isReadable()) {
+                throw new ProtocolException("Missing batch payload");
+            }
+
+            byte[] payload = new byte[buffer.readableBytes()];
+            buffer.readBytes(payload);
+            List<DataPacket> packets = new ObjectArrayList<>();
+            this.network.get().processBatch(payload, packets, compression);
+            if (!this.offerInbound(packets)) {
+                this.disconnect("Too much queued input");
+            }
         } catch (Exception e) {
             this.disconnect("Sent malformed packet");
-            log.error("Unable to process batch packet from {}", (this.player == null ? this.channel.remoteAddress() : this.player.getName()), e);
+            log.debug("Unable to process batch packet from {}", this.channel.remoteAddress(), e);
         }
+    }
+
+    private synchronized boolean offerInbound(List<DataPacket> packets) {
+        if (this.disconnectReason != null || packets.size() > MAX_INBOUND_PACKETS - this.inbound.size()) {
+            return false;
+        }
+
+        int remaining = MAX_INBOUND_BYTES - this.inboundBytes;
+        for (DataPacket packet : packets) {
+            remaining -= packet.getRawBuffer().length;
+            if (remaining < 0) {
+                return false;
+            }
+        }
+
+        this.inbound.addAll(packets);
+        this.inboundBytes = MAX_INBOUND_BYTES - remaining;
+        return true;
+    }
+
+    private synchronized DataPacket pollInbound() {
+        DataPacket packet = this.inbound.poll();
+        if (packet != null) {
+            this.inboundBytes -= packet.getRawBuffer().length;
+        }
+        return packet;
+    }
+
+    private synchronized boolean stopReceiving(String reason) {
+        if (this.disconnectReason != null) {
+            return false;
+        }
+
+        this.disconnectReason = reason;
+        this.inbound.clear();
+        this.inboundBytes = 0;
+        return true;
     }
 }

@@ -86,6 +86,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import org.cloudburstmc.netty.channel.nethernet.NetherNetChildChannel;
+import org.cloudburstmc.netty.util.nethernet.PlayerInfo;
 import org.cloudburstmc.netty.util.nethernet.TransportIdentityBinding;
 
 import javax.annotation.Nullable;
@@ -3034,13 +3035,15 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     return;
                 }
 
-                if (networkSession instanceof NetherNetPlayerSession ps && ps.getChannel() instanceof NetherNetChildChannel ch &&
-                        ((loginChainData.isXboxAuthed() && !loginChainData.getXUID().equals(ch.attr(NetherNetChildChannel.PLAYER_INFO).get().xuid())) ||
-                                loginChainData.getParsedIdentityPublicKey() == null || TransportIdentityBinding.mismatch(ch, loginChainData.getParsedIdentityPublicKey()) != null)
-                ) {
-                    server.getLogger().debug("NetherNet identity mismatch");
-                    this.close("", "disconnectionScreen.notAuthenticated");
-                    return;
+                if (networkSession instanceof NetherNetPlayerSession session && session.getChannel() instanceof NetherNetChildChannel channel) {
+                    PlayerInfo transportPlayer = channel.attr(NetherNetChildChannel.PLAYER_INFO).get();
+                    if (loginChainData.getParsedIdentityPublicKey() == null
+                            || TransportIdentityBinding.mismatch(channel, loginChainData.getParsedIdentityPublicKey()) != null
+                            || (server.xboxAuth && (transportPlayer == null || !loginChainData.getXUID().equals(transportPlayer.xuid())))) {
+                        server.getLogger().debug("NetherNet identity mismatch");
+                        this.close("", "disconnectionScreen.notAuthenticated");
+                        return;
+                    }
                 }
 
                 boolean valid = true;
