@@ -5446,7 +5446,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().unsubscribeFromPermission(Server.BROADCAST_CHANNEL_USERS, this);
             this.spawned = false;
             this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logOut",
-                    TextFormat.AQUA + this.username + TextFormat.WHITE,
+                    TextFormat.AQUA + this.getLogoutLogName() + TextFormat.WHITE,
                     this.getAddress(),
                     String.valueOf(this.getPort()),
                     this.getServer().getLanguage().translateString(reason)));
@@ -5479,6 +5479,25 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.removeOnlinePlayer(this);
             this.loggedIn = false;
         }
+    }
+
+    private String getLogoutLogName() {
+        if (this.username != null && !this.username.isBlank()) {
+            return this.username;
+        }
+
+        if (this.networkSession instanceof NetherNetPlayerSession session) {
+            PlayerInfo player = session.getChannel().attr(NetherNetChildChannel.PLAYER_INFO).get();
+            if (player != null && player.displayName() != null) {
+                String name = TextFormat.clean(player.displayName()).replaceAll("[\\p{Cc}\\p{Cf}\\p{Zl}\\p{Zp}]", "").strip();
+                if (!name.isEmpty()) {
+                    int length = Math.min(32, name.codePointCount(0, name.length()));
+                    return name.substring(0, name.offsetByCodePoints(0, length));
+                }
+            }
+        }
+
+        return "Unknown player";
     }
 
     /**
