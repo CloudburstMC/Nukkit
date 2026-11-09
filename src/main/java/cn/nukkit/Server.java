@@ -51,8 +51,8 @@ import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.nbt.tag.DoubleTag;
 import cn.nukkit.nbt.tag.FloatTag;
 import cn.nukkit.nbt.tag.ListTag;
+import cn.nukkit.network.NetherNetInterface;
 import cn.nukkit.network.Network;
-import cn.nukkit.network.RakNetInterface;
 import cn.nukkit.network.SourceInterface;
 import cn.nukkit.network.encryption.EncryptionUtils;
 import cn.nukkit.network.protocol.*;
@@ -307,10 +307,6 @@ public class Server {
      */
     boolean forceResourcesAllowOwnPacks;
     /**
-     * Enable encryption.
-     */
-    boolean encryptionEnabled;
-    /**
      * Use Snappy for packet compression for 1.19.30+ clients.
      */
     public final boolean useSnappy;
@@ -518,11 +514,7 @@ public class Server {
         this.network = new Network(this);
         this.network.setName(this.getMotd());
         this.network.setSubName(this.getSubMotd());
-        this.network.registerInterface(new RakNetInterface(this));
-
-        if (!this.encryptionEnabled) {
-            this.getLogger().warning("Encryption is not enabled! For better security, it's recommended to enable it (network.encryption: true in nukkit.yml) if you don't use a proxy software.");
-        }
+        this.network.registerInterface(new NetherNetInterface(this));
 
         if (!this.xboxAuth) {
             this.getLogger().warning("Xbox authentication is not enabled! It's recommended to enable it (xbox-auth=on in server.properties) if you don't use a proxy software or an authentication plugin.");
@@ -891,7 +883,7 @@ public class Server {
             this.consoleThread.interrupt();
 
             this.getLogger().debug("Stopping network interfaces...");
-            for (SourceInterface interfaz : this.network.getInterfaces()) {
+            for (SourceInterface interfaz : new ArrayList<>(this.network.getInterfaces())) {
                 interfaz.shutdown();
                 this.network.unregisterInterface(interfaz);
             }
@@ -2861,7 +2853,6 @@ public class Server {
 
         this.networkCompressionThreshold = this.getConfig("network.batch-threshold", 256);
         this.networkCompressionLevel = Math.max(Math.min(this.getConfig("network.compression-level", 5), 9), 0);
-        this.encryptionEnabled = this.getConfig("network.encryption", false);
 
         this.autoTickRate = this.getConfig("level-settings.auto-tick-rate", true);
         this.autoTickRateLimit = this.getConfig("level-settings.auto-tick-rate-limit", 20);

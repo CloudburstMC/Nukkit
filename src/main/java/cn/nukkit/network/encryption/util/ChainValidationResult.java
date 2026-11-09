@@ -130,7 +130,7 @@ public final class ChainValidationResult {
         public final String displayName;
         /**
          * Identity UUID, derived from the XUID when online, or from the username when offline.
-         * @deprecated v818: Use {@link #minecraftId} instead.
+         * Deprecated since v818: Use {@link #minecraftId} instead.
          */
         @Nullable
         public final UUID identity;

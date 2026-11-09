@@ -17,6 +17,7 @@ import org.jose4j.json.JsonUtil;
 import org.jose4j.lang.JoseException;
 
 import java.nio.charset.StandardCharsets;
+import java.security.PublicKey;
 import java.util.*;
 
 /**
@@ -57,6 +58,11 @@ public final class ClientChainData implements LoginChainData {
     @Override
     public String getIdentityPublicKey() {
         return identityPublicKey;
+    }
+
+    @Override
+    public PublicKey getParsedIdentityPublicKey() {
+        return parsedIdentityPublicKey;
     }
 
     @Override
@@ -161,6 +167,7 @@ public final class ClientChainData implements LoginChainData {
     private UUID clientUUID;
     private String xuid;
     private String identityPublicKey;
+    private PublicKey parsedIdentityPublicKey;
 
     private long clientId;
     private String serverAddress;
@@ -225,6 +232,17 @@ public final class ClientChainData implements LoginChainData {
         if (skinToken.has("CapeData")) this.capeData = skinToken.get("CapeData").getAsString();
         this.skin = decodeSkin(skinToken);
         this.rawData = skinToken;
+
+        if (this.serverAddress != null) {
+            // http://127.0.0.1:19122:19122
+            if (this.serverAddress.startsWith("http://")) {
+                String[] split = this.serverAddress.substring(7).split(":", 3);
+                this.serverAddress = split[0] + ":" + split[1];
+            } else if (this.serverAddress.startsWith("https://")) {
+                String[] split = this.serverAddress.substring(8).split(":", 3);
+                this.serverAddress = split[0] + ":" + split[1];
+            }
+        }
     }
 
     public static JsonObject decodeToken(String token) {
@@ -297,6 +315,11 @@ public final class ClientChainData implements LoginChainData {
         this.xuid = extraData.xuid;
         this.titleId = extraData.titleId;
         this.identityPublicKey = result.identityClaims().identityPublicKey;
+        try {
+            this.parsedIdentityPublicKey = result.identityClaims().parsedIdentityPublicKey();
+        } catch (Exception e) {
+            Server.getInstance().getLogger().error("parsedIdentityPublicKey for " + this.username, e);
+        }
     }
 
     private Skin decodeSkin(JsonObject skinToken) {

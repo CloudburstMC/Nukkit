@@ -270,6 +270,8 @@ item_types.txt
 block_types.txt
 discovery-cache.json
 openid-cache.json
+identity.pem
+keystore.p12
 
 run/
 

@@ -59,9 +59,9 @@ import cn.nukkit.nbt.NBTIO;
 import cn.nukkit.nbt.tag.*;
 import cn.nukkit.network.CompressionProvider;
 import cn.nukkit.network.SourceInterface;
-import cn.nukkit.network.encryption.PrepareEncryptionTask;
 import cn.nukkit.network.protocol.*;
 import cn.nukkit.network.protocol.types.*;
+import cn.nukkit.network.session.NetherNetPlayerSession;
 import cn.nukkit.network.session.NetworkPlayerSession;
 import cn.nukkit.permission.PermissibleBase;
 import cn.nukkit.permission.Permission;
@@ -86,6 +86,9 @@ import it.unimi.dsi.fastutil.longs.LongLinkedOpenHashSet;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.cloudburstmc.netty.channel.nethernet.NetherNetChildChannel;
+import org.cloudburstmc.netty.util.nethernet.PlayerInfo;
+import org.cloudburstmc.netty.util.nethernet.TransportIdentityBinding;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -2559,20 +2562,20 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
     }
 
     /**
-     * Internal: Process chunk sending
+     * Internal: Process chunk sending and send queued packets
      */
-    public void checkNetwork() {
-        if (!this.isOnline()) {
-            return;
+    void checkNetwork() {
+        if (this.isOnline()) {
+            if (this.nextChunkOrderRun-- <= 0 || this.chunk == null) {
+                this.orderChunks();
+            }
+
+            if (!this.loadQueue.isEmpty() || !this.spawned) {
+                this.sendNextChunk();
+            }
         }
 
-        if (this.nextChunkOrderRun-- <= 0 || this.chunk == null) {
-            this.orderChunks();
-        }
-
-        if (!this.loadQueue.isEmpty() || !this.spawned) {
-            this.sendNextChunk();
-        }
+        this.networkSession.flush();
     }
 
     /**
@@ -3019,7 +3022,8 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
 
                 server.getLogger().debug("Name: " + loginChainData.getUsername() + " Version: " + loginChainData.getGameVersion());
 
-                if (loginChainData.getUsername() == null || loginChainData.getClientUUID() == null) {
+                if (loginChainData.getUsername() == null || loginChainData.getClientUUID() == null ||
+                        (loginChainData.isXboxAuthed() && (loginChainData.getXUID() == null || loginChainData.getXUID().isEmpty()))) {
                     this.close("", "Invalid login data");
                     return;
                 }
@@ -3027,6 +3031,17 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                 if (!loginChainData.isXboxAuthed() && server.xboxAuth) {
                     this.close("", "disconnectionScreen.notAuthenticated");
                     return;
+                }
+
+                if (networkSession instanceof NetherNetPlayerSession session && session.getChannel() instanceof NetherNetChildChannel channel) {
+                    PlayerInfo transportPlayer = channel.attr(NetherNetChildChannel.PLAYER_INFO).get();
+                    if (loginChainData.getParsedIdentityPublicKey() == null
+                            || TransportIdentityBinding.mismatch(channel, loginChainData.getParsedIdentityPublicKey()) != null
+                            || (server.xboxAuth && (transportPlayer == null || !loginChainData.getXUID().equals(transportPlayer.xuid())))) {
+                        server.getLogger().debug("NetherNet identity mismatch");
+                        this.close("", "disconnectionScreen.notAuthenticated");
+                        return;
+                    }
                 }
 
                 boolean valid = true;
@@ -3084,31 +3099,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
                     return;
                 }
 
-                if (server.encryptionEnabled) {
-                    this.getServer().getScheduler().scheduleAsyncTask(null, new PrepareEncryptionTask(this) {
-
-                        @Override
-                        public void onCompletion(Server server) {
-                            if (!Player.this.connected) {
-                                return;
-                            }
-
-                            if (this.getHandshakeJwt() == null || this.getEncryptionKey() == null || this.getEncryptionCipher() == null || this.getDecryptionCipher() == null) {
-                                Player.this.close("Failed to enable encryption");
-                                return;
-                            }
-
-                            ServerToClientHandshakePacket handshakePacket = new ServerToClientHandshakePacket();
-                            handshakePacket.jwt = this.getHandshakeJwt();
-                            Player.this.forceDataPacket(handshakePacket, () -> {
-                                Player.this.awaitingEncryptionHandshake = true;
-                                Player.this.networkSession.setEncryption(this.getEncryptionKey(), this.getEncryptionCipher(), this.getDecryptionCipher());
-                            });
-                        }
-                    });
-                } else {
-                    this.processPreLogin();
-                }
+                this.processPreLogin();
                 return;
             case ProtocolInfo.CLIENT_TO_SERVER_HANDSHAKE_PACKET:
                 if (!this.awaitingEncryptionHandshake) {
@@ -5460,7 +5451,7 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.getPluginManager().unsubscribeFromPermission(Server.BROADCAST_CHANNEL_USERS, this);
             this.spawned = false;
             this.server.getLogger().info(this.getServer().getLanguage().translateString("nukkit.player.logOut",
-                    TextFormat.AQUA + this.username + TextFormat.WHITE,
+                    TextFormat.AQUA + this.getLogoutLogName() + TextFormat.WHITE,
                     this.getAddress(),
                     String.valueOf(this.getPort()),
                     this.getServer().getLanguage().translateString(reason)));
@@ -5493,6 +5484,25 @@ public class Player extends EntityHuman implements CommandSender, InventoryHolde
             this.server.removeOnlinePlayer(this);
             this.loggedIn = false;
         }
+    }
+
+    private String getLogoutLogName() {
+        if (this.username != null && !this.username.isBlank()) {
+            return this.username;
+        }
+
+        if (this.networkSession instanceof NetherNetPlayerSession session) {
+            PlayerInfo player = session.getChannel().attr(NetherNetChildChannel.PLAYER_INFO).get();
+            if (player != null && player.displayName() != null) {
+                String name = TextFormat.clean(player.displayName()).replaceAll("[\\p{Cc}\\p{Cf}\\p{Zl}\\p{Zp}]", "").strip();
+                if (!name.isEmpty()) {
+                    int length = Math.min(32, name.codePointCount(0, name.length()));
+                    return name.substring(0, name.offsetByCodePoints(0, length));
+                }
+            }
+        }
+
+        return "Unknown player";
     }
 
     /**

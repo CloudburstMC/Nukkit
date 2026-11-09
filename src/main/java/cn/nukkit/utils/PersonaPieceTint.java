@@ -14,7 +14,7 @@ public class PersonaPieceTint {
 
     PersonaPieceType pieceType;
     /**
-     * @deprecated since v2168, use colorsNew
+     * Deprecated since v2168, use colorsNew
      */
     List<String> colors;
     /**
